@@ -44,9 +44,11 @@ class SettingsManager(private val context: Context) {
         )
     }
 
+    private val FIRST_TIME = booleanPreferencesKey("first_time")
+
     suspend fun setFirstTime(firstTime: Boolean) {
         context.dataStore.edit { preferences ->
-            preferences[booleanPreferencesKey("first_time")] = firstTime
+            preferences[FIRST_TIME] = firstTime
         }
     }
 
