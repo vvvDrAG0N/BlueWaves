@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -68,6 +69,8 @@ class MainActivity : ComponentActivity() {
 
 enum class Screen { Library, Reader, Settings }
 
+private const val CURRENT_VERSION_CODE = 2
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation(settingsManager: SettingsManager) {
@@ -77,10 +80,14 @@ fun AppNavigation(settingsManager: SettingsManager) {
     
     val globalSettings by settingsManager.globalSettings.collectAsState(initial = GlobalSettings())
     var showFirstTimeNote by remember { mutableStateOf(false) }
+    var showUpdateNote by remember { mutableStateOf(false) }
 
-    LaunchedEffect(globalSettings.firstTime) {
-        if (globalSettings.firstTime) {
+    LaunchedEffect(Unit) {
+        val settings = settingsManager.globalSettings.first()
+        if (settings.firstTime) {
             showFirstTimeNote = true
+        } else if (settings.lastSeenVersion < CURRENT_VERSION_CODE) {
+            showUpdateNote = true
         }
     }
 
@@ -194,7 +201,13 @@ fun AppNavigation(settingsManager: SettingsManager) {
 
         if (showFirstTimeNote) {
             AlertDialog(
-                onDismissRequest = { },
+                onDismissRequest = {
+                    scope.launch {
+                        settingsManager.setFirstTime(false)
+                        settingsManager.setLastSeenVersion(CURRENT_VERSION_CODE)
+                        showFirstTimeNote = false
+                    }
+                },
                 title = { Text("Welcome to Blue Waves") },
                 text = {
                     Column {
@@ -213,10 +226,45 @@ fun AppNavigation(settingsManager: SettingsManager) {
                     Button(onClick = {
                         scope.launch {
                             settingsManager.setFirstTime(false)
+                            settingsManager.setLastSeenVersion(CURRENT_VERSION_CODE)
                             showFirstTimeNote = false
                         }
                     }) {
                         Text("Get Started")
+                    }
+                }
+            )
+        }
+
+        if (showUpdateNote) {
+            AlertDialog(
+                onDismissRequest = {
+                    scope.launch {
+                        settingsManager.setLastSeenVersion(CURRENT_VERSION_CODE)
+                        showUpdateNote = false
+                    }
+                },
+                title = { Text("What's New in Blue Waves") },
+                text = {
+                    Column {
+                        Text("Version $CURRENT_VERSION_CODE Update:")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("• Fixed: Welcome note reappearing issue.")
+                        Text("• Added: Reading progress display in Library.")
+                        Text("• Added: Update changelog system.")
+                        Text("• Fixed: Chapter navigation scroll direction.")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Enjoy the new version!", style = MaterialTheme.typography.labelMedium)
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        scope.launch {
+                            settingsManager.setLastSeenVersion(CURRENT_VERSION_CODE)
+                            showUpdateNote = false
+                        }
+                    }) {
+                        Text("Great!")
                     }
                 }
             )

@@ -15,7 +15,8 @@ data class GlobalSettings(
     val theme: String = "light",
     val lineHeight: Float = 1.6f,
     val horizontalPadding: Int = 16,
-    val firstTime: Boolean = true
+    val firstTime: Boolean = true,
+    val lastSeenVersion: Int = 0
 )
 
 data class BookProgress(
@@ -32,6 +33,8 @@ class SettingsManager(private val context: Context) {
     private val THEME = stringPreferencesKey("global_theme")
     private val LINE_HEIGHT = floatPreferencesKey("global_line_height")
     private val H_PADDING = intPreferencesKey("global_h_padding")
+    private val FIRST_TIME = booleanPreferencesKey("first_time")
+    private val LAST_SEEN_VERSION = intPreferencesKey("last_seen_version")
 
     val globalSettings: Flow<GlobalSettings> = context.dataStore.data.map { preferences ->
         GlobalSettings(
@@ -40,15 +43,20 @@ class SettingsManager(private val context: Context) {
             theme = preferences[THEME] ?: "light",
             lineHeight = preferences[LINE_HEIGHT] ?: 1.6f,
             horizontalPadding = preferences[H_PADDING] ?: 16,
-            firstTime = preferences[booleanPreferencesKey("first_time")] ?: true
+            firstTime = preferences[FIRST_TIME] ?: true,
+            lastSeenVersion = preferences[LAST_SEEN_VERSION] ?: 0
         )
     }
-
-    private val FIRST_TIME = booleanPreferencesKey("first_time")
 
     suspend fun setFirstTime(firstTime: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[FIRST_TIME] = firstTime
+        }
+    }
+
+    suspend fun setLastSeenVersion(version: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[LAST_SEEN_VERSION] = version
         }
     }
 
