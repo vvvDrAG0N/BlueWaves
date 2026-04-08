@@ -1,0 +1,11 @@
+force left to right reading over system default (for systems thats uses languages like ar)
+add chapter slider and button on the appearance settings in reader
+add sorting to TOC
+add add go to chapter in TOC
+create 2 color theme system, one for widgets, other for background.
+assign library header to widgets theme
+create new theme, oled black, remove sapia theme
+add new theme, custom theme with oled black as default 
+create theme customize right beside custom theme, in both library settings and reader appearance settings
+add a small window open for theme customization, with color picker, two for bg and widgets include save btn and cancel btn
+make sure it remembers properly
