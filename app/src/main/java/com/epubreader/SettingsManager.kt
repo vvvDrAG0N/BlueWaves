@@ -14,7 +14,8 @@ data class GlobalSettings(
     val fontType: String = "serif",
     val theme: String = "light",
     val lineHeight: Float = 1.6f,
-    val horizontalPadding: Int = 16
+    val horizontalPadding: Int = 16,
+    val firstTime: Boolean = true
 )
 
 data class BookProgress(
@@ -38,8 +39,15 @@ class SettingsManager(private val context: Context) {
             fontType = preferences[FONT_TYPE] ?: "serif",
             theme = preferences[THEME] ?: "light",
             lineHeight = preferences[LINE_HEIGHT] ?: 1.6f,
-            horizontalPadding = preferences[H_PADDING] ?: 16
+            horizontalPadding = preferences[H_PADDING] ?: 16,
+            firstTime = preferences[booleanPreferencesKey("first_time")] ?: true
         )
+    }
+
+    suspend fun setFirstTime(firstTime: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[booleanPreferencesKey("first_time")] = firstTime
+        }
     }
 
     suspend fun updateGlobalSettings(settings: GlobalSettings) {

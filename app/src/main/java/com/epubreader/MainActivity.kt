@@ -75,6 +75,15 @@ fun AppNavigation(settingsManager: SettingsManager) {
     val scope = rememberCoroutineScope()
     val parser = remember { EpubParser(context) }
     
+    val globalSettings by settingsManager.globalSettings.collectAsState(initial = GlobalSettings())
+    var showFirstTimeNote by remember { mutableStateOf(false) }
+
+    LaunchedEffect(globalSettings.firstTime) {
+        if (globalSettings.firstTime) {
+            showFirstTimeNote = true
+        }
+    }
+
     var books by remember { mutableStateOf(emptyList<EpubBook>()) }
     var selectedBook by remember { mutableStateOf<EpubBook?>(null) }
     var currentScreen by remember { mutableStateOf(Screen.Library) }
@@ -164,6 +173,7 @@ fun AppNavigation(settingsManager: SettingsManager) {
                                 items(books, key = { it.id }) { book ->
                                     BookItem(
                                         book = book,
+                                        settingsManager = settingsManager,
                                         onClick = {
                                             selectedBook = book
                                             currentScreen = Screen.Reader
@@ -180,6 +190,36 @@ fun AppNavigation(settingsManager: SettingsManager) {
 
         if (isLoading) {
             LoadingOverlay()
+        }
+
+        if (showFirstTimeNote) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text("Welcome to Blue Waves") },
+                text = {
+                    Column {
+                        Text("Blue Waves is a high-performance, native Android EPUB reader designed for a seamless reading experience.")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Features:")
+                        Text("• Smooth vertical scrolling")
+                        Text("• Precise position restoration")
+                        Text("• Immersive mode & Custom themes")
+                        Text("• Quick Table of Contents access")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Created by vvvDrAGON", style = MaterialTheme.typography.labelLarge)
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        scope.launch {
+                            settingsManager.setFirstTime(false)
+                            showFirstTimeNote = false
+                        }
+                    }) {
+                        Text("Get Started")
+                    }
+                }
+            )
         }
 
         bookToDelete?.let { book ->
@@ -210,7 +250,14 @@ fun AppNavigation(settingsManager: SettingsManager) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BookItem(book: EpubBook, onClick: () -> Unit, onLongClick: () -> Unit) {
+fun BookItem(book: EpubBook, settingsManager: SettingsManager, onClick: () -> Unit, onLongClick: () -> Unit) {
+    val progress by settingsManager.getBookProgress(book.id).collectAsState(initial = BookProgress())
+    val currentChapter = remember(progress.lastChapterHref, book.spineHrefs) {
+        val index = book.spineHrefs.indexOf(progress.lastChapterHref)
+        if (index != -1) index + 1 else 1
+    }
+    val totalChapters = book.spineHrefs.size
+
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -238,15 +285,23 @@ fun BookItem(book: EpubBook, onClick: () -> Unit, onLongClick: () -> Unit) {
                         )
                     )
             )
-            Text(
-                text = book.title,
-                style = MaterialTheme.typography.labelMedium,
-                color = Color.White,
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(8.dp),
-                maxLines = 2
-            )
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = book.title,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White,
+                    maxLines = 2
+                )
+                Text(
+                    text = "Ch. $currentChapter / $totalChapters",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            }
         }
     }
 }
