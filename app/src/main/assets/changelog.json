@@ -1,0 +1,25 @@
+[
+  {
+    "versionCode": 2,
+    "versionName": "1.0.2",
+    "changes": [
+      "Added Welcome screen for fresh installs.",
+      "Implemented Chapter Navigation (Previous/Next) in reader controls.",
+      "Added scroll progress slider with percentage indicator.",
+      "Added version tracking and automatic changelog display.",
+      "Added Force LTR support for RTL languages.",
+      "Improved update logic for seamless transitions.",
+      "Enhanced TOC with header icons: Go to Chapter, Flipped Sort, and Locate Current.",
+      "Added Ascending/Descending chapter sorting that preserves list position."
+    ]
+  },
+  {
+    "versionCode": 1,
+    "versionName": "1.0.1",
+    "changes": [
+      "Initial release of Blue Waves EPUB Reader.",
+      "Support for vertical scrolling and position restoration.",
+      "Customizable themes and fonts."
+    ]
+  }
+]

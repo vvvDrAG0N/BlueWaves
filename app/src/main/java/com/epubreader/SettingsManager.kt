@@ -16,7 +16,7 @@ data class GlobalSettings(
     val lineHeight: Float = 1.6f,
     val horizontalPadding: Int = 16,
     val firstTime: Boolean = true,
-    val lastSeenVersion: Int = 0
+    val lastSeenVersionCode: Int = 0
 )
 
 data class BookProgress(
@@ -44,7 +44,7 @@ class SettingsManager(private val context: Context) {
             lineHeight = preferences[LINE_HEIGHT] ?: 1.6f,
             horizontalPadding = preferences[H_PADDING] ?: 16,
             firstTime = preferences[FIRST_TIME] ?: true,
-            lastSeenVersion = preferences[LAST_SEEN_VERSION] ?: 0
+            lastSeenVersionCode = preferences[LAST_SEEN_VERSION] ?: 0
         )
     }
 
@@ -54,7 +54,9 @@ class SettingsManager(private val context: Context) {
         }
     }
 
-    suspend fun setLastSeenVersion(version: Int) {
+    fun getLastSeenVersionCode(): Flow<Int> = context.dataStore.data.map { it[LAST_SEEN_VERSION] ?: 0 }
+
+    suspend fun setLastSeenVersionCode(version: Int) {
         context.dataStore.edit { preferences ->
             preferences[LAST_SEEN_VERSION] = version
         }

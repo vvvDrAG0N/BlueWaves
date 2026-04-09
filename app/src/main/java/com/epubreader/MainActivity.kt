@@ -16,9 +16,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -29,12 +31,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +66,9 @@ class MainActivity : ComponentActivity() {
 
             MaterialTheme(colorScheme = if (isDarkTheme) darkColorScheme() else lightColorScheme()) {
                 Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
-                    AppNavigation(settingsManager)
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        AppNavigation(settingsManager)
+                    }
                 }
             }
         }
@@ -68,8 +76,6 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class Screen { Library, Reader, Settings }
-
-private const val CURRENT_VERSION_CODE = 2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,14 +86,66 @@ fun AppNavigation(settingsManager: SettingsManager) {
     
     val globalSettings by settingsManager.globalSettings.collectAsState(initial = GlobalSettings())
     var showFirstTimeNote by remember { mutableStateOf(false) }
-    var showUpdateNote by remember { mutableStateOf(false) }
+    var changelogToShow by remember { mutableStateOf<List<JSONObject>>(emptyList()) }
+    var detectedVersionCode by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         val settings = settingsManager.globalSettings.first()
-        if (settings.firstTime) {
+        val currentVersion = try {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            val code = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                packageInfo.longVersionCode.toInt()
+            } else {
+                @Suppress("DEPRECATION")
+                packageInfo.versionCode
+            }
+            detectedVersionCode = code
+            code
+        } catch (e: Exception) {
+            0
+        }
+        
+        val hasExistingData = withContext(Dispatchers.IO) {
+            val booksDir = File(context.cacheDir, "books")
+            booksDir.exists() && (booksDir.listFiles()?.any { it.isDirectory } == true)
+        }
+
+        if (settings.firstTime && !hasExistingData) {
+            // First time install: Show welcome message, but skip changelog
             showFirstTimeNote = true
-        } else if (settings.lastSeenVersion < CURRENT_VERSION_CODE) {
-            showUpdateNote = true
+        } else if (currentVersion > 0) {
+            var lastSeen = settings.lastSeenVersionCode
+            
+            // If it's an update from an unversioned build (firstTime was true but we have books)
+            if (settings.firstTime && hasExistingData) {
+                settingsManager.setFirstTime(false)
+                // If they have data, they must have had version 1 (1.0.1) or earlier.
+                // Setting lastSeen to 1 will show them changes since 1.0.1 (i.e., 1.0.2)
+                if (lastSeen == 0) lastSeen = 1
+            }
+
+            if (lastSeen < currentVersion) {
+                // Parse changelog
+                try {
+                    val jsonString = context.assets.open("changelog.json").bufferedReader().use { it.readText() }
+                    val fullChangelog = JSONArray(jsonString)
+                    val newChanges = mutableListOf<JSONObject>()
+                    for (i in 0 until fullChangelog.length()) {
+                        val entry = fullChangelog.getJSONObject(i)
+                        if (entry.getInt("versionCode") > lastSeen) {
+                            newChanges.add(entry)
+                        }
+                    }
+                    if (newChanges.isNotEmpty()) {
+                        changelogToShow = newChanges
+                    } else {
+                        settingsManager.setLastSeenVersionCode(currentVersion)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    settingsManager.setLastSeenVersionCode(currentVersion)
+                }
+            }
         }
     }
 
@@ -204,7 +262,7 @@ fun AppNavigation(settingsManager: SettingsManager) {
                 onDismissRequest = {
                     scope.launch {
                         settingsManager.setFirstTime(false)
-                        settingsManager.setLastSeenVersion(CURRENT_VERSION_CODE)
+                        settingsManager.setLastSeenVersionCode(detectedVersionCode)
                         showFirstTimeNote = false
                     }
                 },
@@ -226,7 +284,7 @@ fun AppNavigation(settingsManager: SettingsManager) {
                     Button(onClick = {
                         scope.launch {
                             settingsManager.setFirstTime(false)
-                            settingsManager.setLastSeenVersion(CURRENT_VERSION_CODE)
+                            settingsManager.setLastSeenVersionCode(detectedVersionCode)
                             showFirstTimeNote = false
                         }
                     }) {
@@ -236,32 +294,40 @@ fun AppNavigation(settingsManager: SettingsManager) {
             )
         }
 
-        if (showUpdateNote) {
+        if (changelogToShow.isNotEmpty()) {
             AlertDialog(
                 onDismissRequest = {
                     scope.launch {
-                        settingsManager.setLastSeenVersion(CURRENT_VERSION_CODE)
-                        showUpdateNote = false
+                        settingsManager.setLastSeenVersionCode(detectedVersionCode)
+                        changelogToShow = emptyList()
                     }
                 },
-                title = { Text("What's New in Blue Waves") },
+                title = { Text("What's New") },
                 text = {
-                    Column {
-                        Text("Version $CURRENT_VERSION_CODE Update:")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("• Fixed: Welcome note reappearing issue.")
-                        Text("• Added: Reading progress display in Library.")
-                        Text("• Added: Update changelog system.")
-                        Text("• Fixed: Chapter navigation scroll direction.")
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text("Enjoy the new version!", style = MaterialTheme.typography.labelMedium)
+                    LazyColumn {
+                        items(changelogToShow) { entry ->
+                            val versionName = entry.optString("versionName", "Update")
+                            val changes = entry.optJSONArray("changes")
+                            
+                            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                Text("Version $versionName", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+                                if (changes != null) {
+                                    for (i in 0 until changes.length()) {
+                                        Text("• ${changes.getString(i)}", style = MaterialTheme.typography.bodyMedium)
+                                    }
+                                }
+                            }
+                            if (changelogToShow.indexOf(entry) < changelogToShow.size - 1) {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                            }
+                        }
                     }
                 },
                 confirmButton = {
                     Button(onClick = {
                         scope.launch {
-                            settingsManager.setLastSeenVersion(CURRENT_VERSION_CODE)
-                            showUpdateNote = false
+                            settingsManager.setLastSeenVersionCode(detectedVersionCode)
+                            changelogToShow = emptyList()
                         }
                     }) {
                         Text("Great!")
