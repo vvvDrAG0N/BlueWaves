@@ -1,5 +1,15 @@
 [
   {
+    "versionCode": 4,
+    "versionName": "1.0.4",
+    "changes": [
+      "New: OLED Dark theme with pure black background for AMOLED screens.",
+      "Improved: Table of Contents and side drawer now respect all reader themes (Sepia, Dark, OLED).",
+      "Improved: \"Previous Chapter\" button now scrolls to the beginning of the chapter (consistent with \"Next\").",
+      "Added: Distinct 'O' icon for OLED theme selection in Settings and Reader controls."
+    ]
+  },
+  {
     "versionCode": 3,
     "versionName": "1.0.3",
     "changes": [

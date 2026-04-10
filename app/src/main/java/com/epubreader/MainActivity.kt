@@ -65,12 +65,28 @@ class MainActivity : ComponentActivity() {
             val globalSettings by settingsManager.globalSettings.collectAsState(initial = GlobalSettings())
             
             val isDarkTheme = when (globalSettings.theme) {
-                "dark" -> true
+                "dark", "oled" -> true
                 "light" -> false
                 else -> androidx.compose.foundation.isSystemInDarkTheme()
             }
 
-            MaterialTheme(colorScheme = if (isDarkTheme) darkColorScheme() else lightColorScheme()) {
+            val colorScheme = if (isDarkTheme) {
+                if (globalSettings.theme == "oled") {
+                    darkColorScheme(
+                        background = Color.Black,
+                        surface = Color.Black,
+                        surfaceVariant = Color(0xFF121212), // Slightly lighter for cards if needed
+                        onBackground = Color.White,
+                        onSurface = Color.White
+                    )
+                } else {
+                    darkColorScheme()
+                }
+            } else {
+                lightColorScheme()
+            }
+
+            MaterialTheme(colorScheme = colorScheme) {
                 Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                         AppNavigation(settingsManager)

@@ -124,6 +124,11 @@ fun SettingsScreen(
                         settingsManager.updateGlobalSettings(settings.copy(theme = "dark"))
                     }
                 }
+                ThemeButton("oled", Color.Black, Color.White, settings.theme == "oled", label = "O") {
+                    scope.launch {
+                        settingsManager.updateGlobalSettings(settings.copy(theme = "oled"))
+                    }
+                }
             }
         }
     }
@@ -135,6 +140,7 @@ fun ThemeButton(
     bgColor: Color,
     textColor: Color,
     isSelected: Boolean,
+    label: String = "Abc",
     onClick: () -> Unit
 ) {
     Box(
@@ -151,7 +157,7 @@ fun ThemeButton(
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Text("Abc", color = textColor, style = MaterialTheme.typography.bodySmall)
+        Text(label, color = textColor, style = MaterialTheme.typography.bodySmall)
     }
 }
 

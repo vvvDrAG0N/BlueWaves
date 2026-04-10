@@ -295,9 +295,9 @@ fun ReaderScreen(
         }
     }
 
-    fun navigatePrev() {
+    fun navigatePrev(toBottom: Boolean = true) {
         if (currentChapterIndex > 0) {
-            shouldScrollToBottom = true
+            shouldScrollToBottom = toBottom
             isGestureNavigation = true
             isInitialScrollDone = true // Sacred flag: ensure isInitialScrollDone is true during navigation
             isRestoringPosition = false
@@ -346,7 +346,10 @@ fun ReaderScreen(
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                ModalDrawerSheet {
+                ModalDrawerSheet(
+                    drawerContainerColor = themeColors.background,
+                    drawerContentColor = themeColors.foreground
+                ) {
                     var showChapterInputInToc by remember { mutableStateOf(false) }
                     var inputChapter by remember { mutableStateOf("") }
                     val focusRequester = remember { FocusRequester() }
@@ -429,7 +432,8 @@ fun ReaderScreen(
                                         placeholder = { 
                                             Text(
                                                 "1-$totalChapters", 
-                                                style = MaterialTheme.typography.bodySmall
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = themeColors.foreground.copy(alpha = 0.5f)
                                             ) 
                                         },
                                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
@@ -441,8 +445,12 @@ fun ReaderScreen(
                                                 colors = OutlinedTextFieldDefaults.colors(
                                                     focusedContainerColor = Color.Transparent,
                                                     unfocusedContainerColor = Color.Transparent,
-                                                    focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                                                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                                                    focusedBorderColor = themeColors.foreground.copy(alpha = 0.5f),
+                                                    unfocusedBorderColor = themeColors.foreground.copy(alpha = 0.1f),
+                                                    focusedTextColor = themeColors.foreground,
+                                                    unfocusedTextColor = themeColors.foreground,
+                                                    focusedPlaceholderColor = themeColors.foreground.copy(alpha = 0.5f),
+                                                    unfocusedPlaceholderColor = themeColors.foreground.copy(alpha = 0.5f)
                                                 ),
                                                 shape = MaterialTheme.shapes.small,
                                             )
@@ -488,6 +496,14 @@ fun ReaderScreen(
                                     },
                                     selected = isSelected,
                                     shape = RectangleShape,
+                                    colors = NavigationDrawerItemDefaults.colors(
+                                        unselectedContainerColor = Color.Transparent,
+                                        selectedContainerColor = themeColors.foreground.copy(alpha = 0.1f),
+                                        unselectedTextColor = themeColors.foreground,
+                                        selectedTextColor = themeColors.foreground,
+                                        unselectedIconColor = themeColors.foreground,
+                                        selectedIconColor = themeColors.foreground
+                                    ),
                                     onClick = {
                                         val index = book.spineHrefs.indexOf(item.href.substringBefore("#"))
                                         if (index != -1) {
@@ -693,7 +709,7 @@ fun ReaderScreen(
                             scope.launch { settingsManager.updateGlobalSettings(it) }
                         },
                         themeColors = themeColors,
-                        onNavigatePrev = { navigatePrev() },
+                        onNavigatePrev = { navigatePrev(toBottom = false) },
                         onNavigateNext = { navigateNext() },
                         listState = listState,
                         itemCount = chapterElements.size,
@@ -926,6 +942,9 @@ fun ReaderControls(
                 ReaderThemeButton("dark", Color(0xFF121212), Color.White, settings.theme == "dark") {
                     onSettingsChange(settings.copy(theme = "dark"))
                 }
+                ReaderThemeButton("oled", Color.Black, Color.White, settings.theme == "oled", label = "O") {
+                    onSettingsChange(settings.copy(theme = "oled"))
+                }
             }
 
             Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
@@ -970,7 +989,7 @@ fun ReaderControls(
 }
 
 @Composable
-fun ReaderThemeButton(name: String, bg: Color, fg: Color, selected: Boolean, onClick: () -> Unit) {
+fun ReaderThemeButton(name: String, bg: Color, fg: Color, selected: Boolean, label: String = "A", onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(48.dp)
@@ -984,7 +1003,7 @@ fun ReaderThemeButton(name: String, bg: Color, fg: Color, selected: Boolean, onC
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Text("A", color = fg, fontWeight = FontWeight.Bold)
+        Text(label, color = fg, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -1017,6 +1036,7 @@ data class ReaderTheme(val background: Color, val foreground: Color)
 
 fun getThemeColors(theme: String): ReaderTheme {
     return when (theme) {
+        "oled" -> ReaderTheme(Color.Black, Color.White)
         "dark" -> ReaderTheme(Color(0xFF121212), Color.White)
         "sepia" -> ReaderTheme(Color(0xFFF4ECD8), Color(0xFF5B4636))
         else -> ReaderTheme(Color.White, Color.Black)
