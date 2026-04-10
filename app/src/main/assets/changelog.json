@@ -1,5 +1,22 @@
 [
   {
+    "versionCode": 3,
+    "versionName": "1.0.3",
+    "changes": [
+      "New: Compact inline 'Go to Chapter' input inside the Table of Contents.",
+      "Fixed issue where the Table of Contents scrubber could become stuck at the top.",
+      "Fixed issue where some chapters would appear blank or truncated.",
+      "Improved XML parsing for EPUBs with non-standard HTML entities.",
+      "Enhanced reader stability with content-stable IDs for chapter elements.",
+      "Added support for common text formatting tags (<br>, <hr>).",
+      "Better handling of SVG-wrapped images in chapters.",
+      "Improved Scrubber accuracy for shorter chapters.",
+      "Enhanced TOC navigation accessibility with wider touch targets.",
+      "Auto-dismiss controls when navigating via TOC or Scrubber.",
+      "Reworked UI element for Table of Contents"
+    ]
+  },
+  {
     "versionCode": 2,
     "versionName": "1.0.2",
     "changes": [

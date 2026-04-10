@@ -15,17 +15,23 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -230,21 +236,24 @@ fun AppNavigation(settingsManager: SettingsManager) {
                                 Text("No books yet. Add one!", style = MaterialTheme.typography.bodyLarge)
                             }
                         } else {
-                            LazyVerticalGrid(
-                                columns = GridCells.Adaptive(140.dp),
-                                contentPadding = padding,
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                items(books, key = { it.id }) { book ->
-                                    BookItem(
-                                        book = book,
-                                        settingsManager = settingsManager,
-                                        onClick = {
-                                            selectedBook = book
-                                            currentScreen = Screen.Reader
-                                        },
-                                        onLongClick = { bookToDelete = book }
-                                    )
+                            val gridState = rememberLazyGridState()
+                            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+                                LazyVerticalGrid(
+                                    state = gridState,
+                                    columns = GridCells.Adaptive(140.dp),
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    items(books, key = { it.id }) { book ->
+                                        BookItem(
+                                            book = book,
+                                            settingsManager = settingsManager,
+                                            onClick = {
+                                                selectedBook = book
+                                                currentScreen = Screen.Reader
+                                            },
+                                            onLongClick = { bookToDelete = book }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -425,18 +434,11 @@ fun LoadingOverlay() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.4f)),
+            .background(Color.Black.copy(alpha = 0.4f))
+            .pointerInput(Unit) {},
         contentAlignment = Alignment.Center
     ) {
-        Card {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("Working...")
-            }
-        }
+        CircularProgressIndicator()
     }
 }
+

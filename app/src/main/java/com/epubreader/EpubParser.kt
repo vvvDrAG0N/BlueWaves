@@ -3,6 +3,7 @@ package com.epubreader
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.util.Log
 import android.util.Xml
 import nl.siegmann.epublib.domain.Book
 import org.json.JSONArray
@@ -21,8 +22,20 @@ data class TocItem(
 )
 
 sealed class ChapterElement {
-    data class Text(val content: String, val type: String = "p", val id: String = UUID.randomUUID().toString()) : ChapterElement()
-    data class Image(val data: ByteArray, val id: String = UUID.randomUUID().toString()) : ChapterElement()
+    abstract val id: String
+    data class Text(val content: String, val type: String = "p", override val id: String = UUID.randomUUID().toString()) : ChapterElement()
+    data class Image(val data: ByteArray, override val id: String = UUID.randomUUID().toString()) : ChapterElement() {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Image) return false
+            return id == other.id && data.contentEquals(other.data)
+        }
+        override fun hashCode(): Int {
+            var result = id.hashCode()
+            result = 31 * result + data.contentHashCode()
+            return result
+        }
+    }
 }
 
 data class EpubBook(
@@ -159,6 +172,23 @@ class EpubParser(private val context: Context) {
         return book.spineHrefs.getOrNull(index)
     }
 
+    private fun String.preProcessXml(): String {
+        return this.replace("&nbsp;", " ")
+            .replace("&rsquo;", "’")
+            .replace("&lsquo;", "‘")
+            .replace("&ldquo;", "“")
+            .replace("&rdquo;", "”")
+            .replace("&mdash;", "—")
+            .replace("&ndash;", "–")
+            .replace("&hellip;", "…")
+            .replace("&copy;", "©")
+            .replace("&reg;", "®")
+            .replace("&deg;", "°")
+            .replace("&prime;", "′")
+            .replace("&Prime;", "″")
+            .replace("&(?!(amp|lt|gt|quot|apos|#[0-9]+|#x[0-9a-fA-F]+);)".toRegex(), "&amp;")
+    }
+
     fun parseChapter(bookFolderPath: String, href: String): List<ChapterElement> {
         val elements = mutableListOf<ChapterElement>()
         val bookFile = File(bookFolderPath, "book.epub")
@@ -174,89 +204,114 @@ class EpubParser(private val context: Context) {
 
                 if (entry == null) return emptyList()
 
-                val xml = zip.getInputStream(entry).bufferedReader().use { it.readText() }
+                val rawXml = zip.getInputStream(entry).bufferedReader().use { it.readText() }
+                val xml = rawXml.preProcessXml()
                 
                 val parser = Xml.newPullParser()
-                parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+                try {
+                    parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+                    parser.setFeature("http://xmlpull.org/v1/doc/features.html#relaxed", true)
+                } catch (e: Exception) {
+                    Log.w("EpubParser", "Relaxed mode not supported")
+                }
+                
                 parser.setInput(StringReader(xml))
 
                 var eventType = parser.eventType
                 val textAccumulator = StringBuilder()
+                var errorCount = 0
 
-                while (eventType != XmlPullParser.END_DOCUMENT) {
+                while (eventType != XmlPullParser.END_DOCUMENT && errorCount < 5) {
                     val name = parser.name?.lowercase()
-                    when (eventType) {
-                        XmlPullParser.START_TAG -> {
-                            if (isBlockTag(name ?: "")) {
-                                flushText(textAccumulator, elements)
-                            }
-                            if (name == "img" || name == "image") {
-                                val src = parser.getAttributeValue(null, "src") 
-                                    ?: parser.getAttributeValue(null, "href")
-                                    ?: parser.getAttributeValue(null, "xlink:href")
-                                
-                                if (src != null) {
-                                    val parentPath = entry.name.substringBeforeLast("/", "")
-                                    val imgHref = if (parentPath.isEmpty()) src else "$parentPath/$src"
-                                    val cleanImgHref = normalizePath(imgHref).removePrefix("/")
-                                    
-                                    val imgEntry = zip.getEntry(cleanImgHref)
-                                        ?: zip.entries().asSequence().find { it.name.endsWith(src.substringAfterLast("/")) }
-                                    
-                                    imgEntry?.let {
-                                        elements.add(ChapterElement.Image(zip.getInputStream(it).readBytes()))
+                    try {
+                        when (eventType) {
+                            XmlPullParser.START_TAG -> {
+                                when (name) {
+                                    "br" -> textAccumulator.append("\n")
+                                    "hr" -> flushText(textAccumulator, elements, href)
+                                    "img", "image" -> {
+                                        val src = parser.getAttributeValue(null, "src") 
+                                            ?: parser.getAttributeValue(null, "href")
+                                            ?: parser.getAttributeValue(null, "xlink:href")
+                                        
+                                        if (src != null) {
+                                            val parentPath = entry.name.substringBeforeLast("/", "")
+                                            val imgHref = if (parentPath.isEmpty()) src else "$parentPath/$src"
+                                            val cleanImgHref = normalizePath(imgHref).removePrefix("/")
+                                            
+                                            val imgEntry = zip.getEntry(cleanImgHref)
+                                                ?: zip.entries().asSequence().find { it.name.endsWith(src.substringAfterLast("/")) }
+                                            
+                                            imgEntry?.let {
+                                                val data = zip.getInputStream(it).readBytes()
+                                                flushText(textAccumulator, elements, href)
+                                                elements.add(ChapterElement.Image(data, id = "$href-img-${elements.size}"))
+                                            }
+                                        }
+                                    }
+                                    else -> {
+                                        if (isBlockTag(name ?: "")) {
+                                            flushText(textAccumulator, elements, href)
+                                        }
                                     }
                                 }
                             }
-                        }
-                        XmlPullParser.TEXT -> {
-                            textAccumulator.append(parser.text)
-                        }
-                        XmlPullParser.END_TAG -> {
-                            if (isBlockTag(name ?: "")) {
-                                val content = textAccumulator.toString().trim()
-                                if (content.isNotEmpty()) {
+                            XmlPullParser.TEXT -> {
+                                textAccumulator.append(parser.text)
+                            }
+                            XmlPullParser.END_TAG -> {
+                                if (isBlockTag(name ?: "")) {
                                     val type = if (name?.startsWith("h") == true) "h" else "p"
-                                    elements.add(ChapterElement.Text(content.unescapeHtml(), type))
+                                    flushText(textAccumulator, elements, href, type)
                                 }
-                                textAccumulator.setLength(0)
                             }
                         }
+                        errorCount = 0 
+                    } catch (e: Exception) {
+                        Log.e("EpubParser", "Error processing event $eventType at tag <$name>: ${e.message}")
+                        errorCount++
                     }
-                    eventType = try { parser.next() } catch (e: Exception) { XmlPullParser.END_DOCUMENT }
+                    
+                    try {
+                        eventType = parser.next()
+                    } catch (e: Exception) {
+                        Log.e("EpubParser", "Parser crash at event $eventType: ${e.message}")
+                        errorCount++
+                        if (errorCount >= 5) {
+                            eventType = XmlPullParser.END_DOCUMENT
+                        } else {
+                            // Try to skip to something that looks like a tag
+                            try { eventType = parser.next() } catch (e2: Exception) { eventType = XmlPullParser.END_DOCUMENT }
+                        }
+                    }
                 }
-                flushText(textAccumulator, elements)
+                flushText(textAccumulator, elements, href)
+                Log.d("EpubParser", "Parsed chapter $href, found ${elements.size} elements")
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("EpubParser", "Critical error parsing chapter $href", e)
         }
 
         return elements
     }
 
-    private fun flushText(accumulator: StringBuilder, elements: MutableList<ChapterElement>) {
+    private fun flushText(accumulator: StringBuilder, elements: MutableList<ChapterElement>, chapterId: String, type: String = "p") {
         val content = accumulator.toString().trim()
         if (content.isNotEmpty()) {
-            elements.add(ChapterElement.Text(content.unescapeHtml()))
+            elements.add(ChapterElement.Text(content.unescapeHtml(), type, id = "$chapterId-txt-${elements.size}"))
             accumulator.setLength(0)
         }
     }
 
-    private fun isBlockTag(tag: String) = tag in listOf("p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "li", "blockquote", "title", "section", "article", "br")
+    private fun isBlockTag(tag: String) = tag in listOf("p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "li", "blockquote", "title", "section", "article", "center")
 
     private fun String.unescapeHtml(): String {
-        return this.replace("&nbsp;", " ")
-            .replace("&amp;", "&")
+        return this.replace("&amp;", "&")
             .replace("&lt;", "<")
             .replace("&gt;", ">")
             .replace("&quot;", "\"")
             .replace("&apos;", "'")
             .replace("&#39;", "'")
-            .replace("&copy;", "©")
-            .replace("&reg;", "®")
-            .replace("&mdash;", "—")
-            .replace("&ndash;", "–")
-            .replace("&hellip;", "…")
     }
 
     private fun normalizePath(path: String): String {

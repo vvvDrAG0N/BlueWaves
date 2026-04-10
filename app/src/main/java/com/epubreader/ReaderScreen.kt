@@ -1,10 +1,12 @@
 package com.epubreader
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,6 +44,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -82,7 +92,7 @@ fun ReaderScreen(
     val themeColors = getThemeColors(globalSettings.theme)
 
     var tocSort by remember { mutableStateOf(TocSort.Ascending) }
-    var showGoToDialog by remember { mutableStateOf(false) }
+    // Removed showGoToDialog as it is now inline in ReaderControls
 
     val sortedToc = remember(book.toc, tocSort) {
         when (tocSort) {
@@ -115,7 +125,7 @@ fun ReaderScreen(
     // Load Chapter
     LaunchedEffect(currentChapterIndex) {
         if (currentChapterIndex == -1 || currentChapterIndex >= book.spineHrefs.size) return@LaunchedEffect
-        
+
         isLoadingChapter = true
         val href = book.spineHrefs[currentChapterIndex]
         val elements = withContext(Dispatchers.IO) {
@@ -123,7 +133,7 @@ fun ReaderScreen(
         }
         chapterElements = elements
         isLoadingChapter = false
-        
+
         scope.launch(Dispatchers.IO) {
             if (currentChapterIndex > 0) {
                 parser.parseChapter(book.rootPath, book.spineHrefs[currentChapterIndex - 1])
@@ -137,12 +147,24 @@ fun ReaderScreen(
     // Restore Reading Position
     LaunchedEffect(chapterElements) {
         if (chapterElements.isNotEmpty() && currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
-            if (isGestureNavigation) {
+            if (skipRestoration) {
                 isRestoringPosition = true
                 snapshotFlow { listState.layoutInfo.visibleItemsInfo }
                     .filter { it.isNotEmpty() && listState.layoutInfo.totalItemsCount >= chapterElements.size }
                     .first()
-                
+                listState.scrollToItem(0, 0)
+                delay(100)
+                skipRestoration = false
+                isInitialScrollDone = true
+                isRestoringPosition = false
+                isGestureNavigation = false
+                shouldScrollToBottom = false
+            } else if (isGestureNavigation) {
+                isRestoringPosition = true
+                snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+                    .filter { it.isNotEmpty() && listState.layoutInfo.totalItemsCount >= chapterElements.size }
+                    .first()
+
                 if (shouldScrollToBottom) {
                     listState.scrollToItem(chapterElements.size - 1, 0)
                 } else {
@@ -156,11 +178,11 @@ fun ReaderScreen(
             } else if (!isInitialScrollDone) {
                 isRestoringPosition = true
                 val savedProgress = settingsManager.getBookProgress(book.id).first()
-                
+
                 snapshotFlow { listState.layoutInfo.visibleItemsInfo }
                     .filter { it.isNotEmpty() && listState.layoutInfo.totalItemsCount >= chapterElements.size }
                     .first()
-                
+
                 if (skipRestoration) {
                     listState.scrollToItem(0, 0)
                     skipRestoration = false
@@ -234,6 +256,19 @@ fun ReaderScreen(
         scope.launch { saveAndBack() }
     }
 
+    fun jumpToChapter(targetIndex: Int) {
+        showControls = false
+        if (targetIndex != currentChapterIndex) {
+            skipRestoration = true
+            isInitialScrollDone = false
+            isRestoringPosition = true
+            shouldScrollToBottom = false
+            currentChapterIndex = targetIndex
+        } else {
+            scope.launch { listState.scrollToItem(0, 0) }
+        }
+    }
+
     // Scroll TOC to current chapter
     LaunchedEffect(drawerState.currentValue, currentChapterIndex) {
         if (drawerState.currentValue == DrawerValue.Open && currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
@@ -254,7 +289,8 @@ fun ReaderScreen(
         if (currentChapterIndex < book.spineHrefs.size - 1) {
             shouldScrollToBottom = false
             isGestureNavigation = true
-            isInitialScrollDone = false
+            isInitialScrollDone = true // Sacred flag: ensure isInitialScrollDone is true during navigation
+            isRestoringPosition = false
             currentChapterIndex++
         }
     }
@@ -263,7 +299,8 @@ fun ReaderScreen(
         if (currentChapterIndex > 0) {
             shouldScrollToBottom = true
             isGestureNavigation = true
-            isInitialScrollDone = false
+            isInitialScrollDone = true // Sacred flag: ensure isInitialScrollDone is true during navigation
+            isRestoringPosition = false
             currentChapterIndex--
         }
     }
@@ -302,129 +339,186 @@ fun ReaderScreen(
         }
     }
 
-    if (showGoToDialog) {
-        var targetChapter by remember { mutableIntStateOf(currentChapterIndex + 1) }
-        AlertDialog(
-            onDismissRequest = { showGoToDialog = false },
-            title = { Text("Go to Chapter") },
-            text = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Select chapter (1 - ${book.spineHrefs.size})")
-                    Spacer(Modifier.height(16.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { if (targetChapter > 1) targetChapter-- }) {
-                            Icon(Icons.Default.Remove, null)
-                        }
-                        Text(
-                            targetChapter.toString(),
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.padding(horizontal = 24.dp)
-                        )
-                        IconButton(onClick = { if (targetChapter < book.spineHrefs.size) targetChapter++ }) {
-                            Icon(Icons.Default.Add, null)
-                        }
-                    }
-                    Slider(
-                        value = targetChapter.toFloat(),
-                        onValueChange = { targetChapter = it.toInt() },
-                        valueRange = 1f..book.spineHrefs.size.toFloat(),
-                        steps = (book.spineHrefs.size - 2).coerceAtLeast(0)
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    val index = (targetChapter - 1).coerceIn(book.spineHrefs.indices)
-                    if (index != currentChapterIndex) {
-                        shouldScrollToBottom = false
-                        skipRestoration = true
-                        currentChapterIndex = index
-                        isInitialScrollDone = false
-                    } else {
-                        scope.launch { listState.scrollToItem(0) }
-                    }
-                    scope.launch { drawerState.close() }
-                    showGoToDialog = false
-                }) {
-                    Text("Confirm")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showGoToDialog = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
+    // Remove any logic related to showGoToDialog as it is now inline
+    // if (showGoToDialog) { ... }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet {
+                    var showChapterInputInToc by remember { mutableStateOf(false) }
+                    var inputChapter by remember { mutableStateOf("") }
+                    val focusRequester = remember { FocusRequester() }
+                    val keyboardController = LocalSoftwareKeyboardController.current
+                    val totalChapters = book.spineHrefs.size
+
+                    val performJump = {
+                        val targetChapter = inputChapter.toIntOrNull()?.coerceIn(1, totalChapters) ?: (currentChapterIndex + 1)
+                        val targetIndex = (targetChapter - 1).coerceIn(0, totalChapters - 1)
+                        keyboardController?.hide()
+                        jumpToChapter(targetIndex)
+                        inputChapter = ""
+                        showChapterInputInToc = false
+                        scope.launch { drawerState.close() }
+                    }
+
+                    LaunchedEffect(showChapterInputInToc, drawerState.currentValue) {
+                        if (showChapterInputInToc && drawerState.isOpen) {
+                            focusRequester.requestFocus()
+                        } else {
+                            keyboardController?.hide()
+                        }
+                    }
+
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Table of Contents", style = MaterialTheme.typography.titleLarge)
-                        Row {
-                            IconButton(onClick = { showGoToDialog = true }) {
-                                Icon(Icons.Default.Tag, contentDescription = "Go to Chapter")
-                            }
-                            IconButton(onClick = {
-                                tocSort = if (tocSort == TocSort.Ascending) TocSort.Descending else TocSort.Ascending
-                            }) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Sort,
-                                    contentDescription = "Toggle Sort",
-                                    modifier = if (tocSort == TocSort.Ascending) Modifier.graphicsLayer { rotationX = 180f } else Modifier
-                                )
-                            }
-                            IconButton(onClick = {
-                                scope.launch {
-                                    if (currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
-                                        val currentHref = book.spineHrefs[currentChapterIndex]
-                                        val tocIndex = sortedToc.indexOfFirst { it.href.substringBefore("#") == currentHref }
-                                        if (tocIndex != -1) {
-                                            tocListState.animateScrollToItem(tocIndex, scrollOffset = -250)
-                                        }
+                        IconButton(onClick = {
+                            tocSort = if (tocSort == TocSort.Ascending) TocSort.Descending else TocSort.Ascending
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Sort,
+                                contentDescription = "Toggle Sort",
+                                modifier = if (tocSort == TocSort.Ascending) Modifier.graphicsLayer { rotationX = 180f } else Modifier
+                            )
+                        }
+                        IconButton(onClick = {
+                            scope.launch {
+                                if (currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
+                                    val currentHref = book.spineHrefs[currentChapterIndex]
+                                    val tocIndex = sortedToc.indexOfFirst { it.href.substringBefore("#") == currentHref }
+                                    if (tocIndex != -1) {
+                                        tocListState.animateScrollToItem(tocIndex, scrollOffset = -250)
                                     }
                                 }
-                            }) {
-                                Icon(Icons.Default.MyLocation, contentDescription = "Locate Current")
                             }
+                        }) {
+                            Icon(Icons.Default.MyLocation, contentDescription = "Locate Current")
+                        }
+
+                        if (showChapterInputInToc) {
+                            BasicTextField(
+                                value = inputChapter,
+                                onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 4) inputChapter = it },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(36.dp)
+                                    .padding(horizontal = 4.dp)
+                                    .focusRequester(focusRequester),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onDone = { performJump() }
+                                ),
+                                singleLine = true,
+                                textStyle = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.onSurface
+                                ),
+                                decorationBox = { innerTextField ->
+                                    OutlinedTextFieldDefaults.DecorationBox(
+                                        value = inputChapter,
+                                        innerTextField = innerTextField,
+                                        enabled = true,
+                                        singleLine = true,
+                                        visualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        placeholder = { 
+                                            Text(
+                                                "1-$totalChapters", 
+                                                style = MaterialTheme.typography.bodySmall
+                                            ) 
+                                        },
+                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                                        container = {
+                                            OutlinedTextFieldDefaults.Container(
+                                                enabled = true,
+                                                isError = false,
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                colors = OutlinedTextFieldDefaults.colors(
+                                                    focusedContainerColor = Color.Transparent,
+                                                    unfocusedContainerColor = Color.Transparent,
+                                                    focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                                                ),
+                                                shape = MaterialTheme.shapes.small,
+                                            )
+                                        }
+                                    )
+                                }
+                            )
+                        } else {
+                            Spacer(Modifier.weight(1f))
+                        }
+
+                        IconButton(onClick = { 
+                            if (showChapterInputInToc) {
+                                showChapterInputInToc = false
+                            } else {
+                                showChapterInputInToc = true
+                            }
+                        }) {
+                            Icon(
+                                imageVector = if (showChapterInputInToc) Icons.Default.Close else Icons.Default.Tag, 
+                                contentDescription = "Go to Chapter",
+                                tint = if (showChapterInputInToc) MaterialTheme.colorScheme.error else LocalContentColor.current
+                            )
                         }
                     }
 
                     HorizontalDivider()
-                    LazyColumn(state = tocListState) {
-                        items(sortedToc, key = { it.href }) { item ->
-                            val isSelected = remember(currentChapterIndex) {
-                                currentChapterIndex != -1 && 
-                                currentChapterIndex < book.spineHrefs.size && 
-                                book.spineHrefs[currentChapterIndex] == item.href.substringBefore("#")
-                            }
-                            NavigationDrawerItem(
-                                label = { Text(item.title) },
-                                selected = isSelected,
-                                shape = RectangleShape,
-                                onClick = {
-                                    val index = book.spineHrefs.indexOf(item.href.substringBefore("#"))
-                                    if (index != -1) {
-                                        if (index != currentChapterIndex) {
-                                            shouldScrollToBottom = false
-                                            skipRestoration = true
-                                            currentChapterIndex = index
-                                            isInitialScrollDone = false
-                                        } else {
-                                            scope.launch { listState.animateScrollToItem(0) }
-                                        }
-                                    }
-                                    scope.launch { drawerState.close() }
+                    Box(modifier = Modifier.weight(1f)) {
+                        LazyColumn(state = tocListState, modifier = Modifier.fillMaxSize()) {
+                            items(sortedToc, key = { it.href }) { item ->
+                                val isSelected = remember(currentChapterIndex) {
+                                    currentChapterIndex != -1 && 
+                                    currentChapterIndex < book.spineHrefs.size && 
+                                    book.spineHrefs[currentChapterIndex] == item.href.substringBefore("#")
                                 }
-                            )
+                                NavigationDrawerItem(
+                                    label = { 
+                                        Text(
+                                            item.title,
+                                            textAlign = TextAlign.Start,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) 
+                                    },
+                                    selected = isSelected,
+                                    shape = RectangleShape,
+                                    onClick = {
+                                        val index = book.spineHrefs.indexOf(item.href.substringBefore("#"))
+                                        if (index != -1) {
+                                            if (index != currentChapterIndex) {
+                                                shouldScrollToBottom = false
+                                                skipRestoration = true
+                                                currentChapterIndex = index
+                                                isInitialScrollDone = true
+                                                isRestoringPosition = false
+                                            } else {
+                                                scope.launch { listState.animateScrollToItem(0) }
+                                            }
+                                        }
+                                        showControls = false
+                                        scope.launch { drawerState.close() }
+                                    }
+                                )
+                            }
                         }
+                        VerticalScrubber(
+                            listState = tocListState,
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .padding(end = 2.dp, top = 16.dp, bottom = 16.dp)
+                                .width(16.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            isTOC = true,
+                            onDragStart = {
+                                // showGoToDialog removed
+                            }
+                        )
                     }
                 }
             },
@@ -471,7 +565,7 @@ fun ReaderScreen(
                                     vertical = 80.dp
                                 )
                             ) {
-                                itemsIndexed(chapterElements, key = { _, item -> item.hashCode() }) { _, element ->
+                                items(chapterElements, key = { it.id }) { element ->
                                     when (element) {
                                         is ChapterElement.Text -> {
                                             val style = if (element.type == "h") {
@@ -522,6 +616,23 @@ fun ReaderScreen(
                                 }
                             }
                         }
+                    }
+
+                    if (globalSettings.showScrubber && !isLoadingChapter && currentChapterIndex != -1) {
+                        VerticalScrubber(
+                            listState = listState,
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .padding(end = 4.dp, top = 80.dp, bottom = 80.dp)
+                                .width(20.dp),
+                            color = themeColors.foreground,
+                            onDragStart = {
+                                showControls = false
+                                scope.launch { drawerState.close() }
+                                isInitialScrollDone = true // Sacred flag: ensure isInitialScrollDone is true during scrubber interaction
+                                isRestoringPosition = false
+                            }
+                        )
                     }
 
                     if (verticalOverscroll > 0) {
@@ -576,19 +687,19 @@ fun ReaderScreen(
                         exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
                         modifier = Modifier.align(Alignment.BottomCenter)
                     ) {
-                        ReaderControls(
-                            settings = globalSettings,
-                            onSettingsChange = {
-                                scope.launch { settingsManager.updateGlobalSettings(it) }
-                            },
-                            themeColors = themeColors,
-                            onNavigatePrev = { navigatePrev() },
-                            onNavigateNext = { navigateNext() },
-                            listState = listState,
-                            itemCount = chapterElements.size,
-                            currentChapterIndex = currentChapterIndex,
-                            totalChapters = book.spineHrefs.size
-                        )
+                    ReaderControls(
+                        settings = globalSettings,
+                        onSettingsChange = {
+                            scope.launch { settingsManager.updateGlobalSettings(it) }
+                        },
+                        themeColors = themeColors,
+                        onNavigatePrev = { navigatePrev() },
+                        onNavigateNext = { navigateNext() },
+                        listState = listState,
+                        itemCount = chapterElements.size,
+                        currentChapterIndex = currentChapterIndex,
+                        totalChapters = book.spineHrefs.size
+                    )
                     }
 
                     var isScrollingUp by remember { mutableStateOf(false) }
@@ -598,7 +709,7 @@ fun ReaderScreen(
                     LaunchedEffect(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset) {
                         val currentIndex = listState.firstVisibleItemIndex
                         val currentOffset = listState.firstVisibleItemScrollOffset
-                        
+
                         if (currentIndex != lastScrollIndex || currentOffset != lastScrollOffset) {
                             isScrollingUp = if (currentIndex < lastScrollIndex) {
                                 true
@@ -681,10 +792,36 @@ fun ReaderControls(
         Column(modifier = Modifier.padding(16.dp)) {
             // Chapter Navigation and Progress
             val scope = rememberCoroutineScope()
-            val scrollProgress = remember(listState.firstVisibleItemIndex, itemCount) {
-                if (itemCount > 1) {
-                    listState.firstVisibleItemIndex.toFloat() / (itemCount - 1).toFloat()
+            
+            // Interaction state for the slider
+            var isDragging by remember { mutableStateOf(false) }
+            var draggingValue by remember { mutableStateOf(0f) }
+
+            // Calculate progress based on pixel-perfect scroll position relative to total content height
+            val scrollProgress = remember(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset, itemCount) {
+                val layoutInfo = listState.layoutInfo
+                val visibleItems = layoutInfo.visibleItemsInfo
+
+                if (visibleItems.isNotEmpty() && itemCount > 0) {
+                    // 1. Find the item crossing the viewport boundary (accounts for content padding)
+                    val viewportStart = layoutInfo.viewportStartOffset
+                    val topItem = visibleItems.firstOrNull { it.offset + it.size > viewportStart } ?: visibleItems.first()
+
+                    // 2. Calculate current absolute scroll position based on viewport logic
+                    val itemTop = topItem.offset
+                    val relativeOffset = (viewportStart - itemTop).coerceAtLeast(0)
+
+                    // Use a more stable progress calculation: (index + offset/size) / total
+                    val itemHeight = if (topItem.size > 0) topItem.size else 1
+                    ((topItem.index.toFloat() + (relativeOffset.toFloat() / itemHeight.toFloat())) / itemCount.toFloat()).coerceIn(0f, 1f)
                 } else 0f
+            }
+
+            // Sync dragging value with scroll progress when not dragging
+            LaunchedEffect(scrollProgress) {
+                if (!isDragging) {
+                    draggingValue = scrollProgress
+                }
             }
 
             Row(
@@ -708,15 +845,22 @@ fun ReaderControls(
 
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     Slider(
-                        value = scrollProgress,
+                        value = draggingValue,
                         onValueChange = { progress ->
-                            val index = (progress * (itemCount - 1)).toInt().coerceIn(0, (itemCount - 1).coerceAtLeast(0))
-                            scope.launch { listState.scrollToItem(index) }
+                            isDragging = true
+                            draggingValue = progress
+                            val targetIndex = (progress * (itemCount - 1)).toInt().coerceIn(0, (itemCount - 1).coerceAtLeast(0))
+                            scope.launch {
+                                listState.scrollToItem(targetIndex)
+                            }
+                        },
+                        onValueChangeFinished = {
+                            isDragging = false
                         },
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
                     )
                     Text(
-                        text = "${(scrollProgress * 100).toInt()}%",
+                        text = "${(draggingValue * 100).toInt()}%",
                         style = MaterialTheme.typography.labelSmall,
                         color = themeColors.foreground.copy(alpha = 0.6f),
                         modifier = Modifier.align(Alignment.BottomCenter).offset(y = 12.dp)
@@ -738,6 +882,7 @@ fun ReaderControls(
                     )
                 }
             }
+            
             Spacer(Modifier.height(12.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -808,6 +953,18 @@ fun ReaderControls(
                     )
                 }
             }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = themeColors.foreground.copy(alpha = 0.2f))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Show Scrubber", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                Switch(
+                    checked = settings.showScrubber,
+                    onCheckedChange = { onSettingsChange(settings.copy(showScrubber = it)) }
+                )
+            }
         }
     }
 }
@@ -831,6 +988,31 @@ fun ReaderThemeButton(name: String, bg: Color, fg: Color, selected: Boolean, onC
     }
 }
 
+@Composable
+fun KeypadButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    themeColors: ReaderTheme,
+    onClick: () -> Unit
+) {
+    val isAction = text == "Clear" || text == "Confirm"
+    Surface(
+        onClick = onClick,
+        modifier = modifier.height(56.dp),
+        color = if (isAction) themeColors.foreground.copy(alpha = 0.15f) else themeColors.foreground.copy(alpha = 0.05f),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = text,
+                style = if (isAction) MaterialTheme.typography.labelLarge else MaterialTheme.typography.titleLarge,
+                color = themeColors.foreground,
+                fontWeight = if (isAction) FontWeight.Bold else FontWeight.Normal
+            )
+        }
+    }
+}
+
 data class ReaderTheme(val background: Color, val foreground: Color)
 
 fun getThemeColors(theme: String): ReaderTheme {
@@ -838,5 +1020,84 @@ fun getThemeColors(theme: String): ReaderTheme {
         "dark" -> ReaderTheme(Color(0xFF121212), Color.White)
         "sepia" -> ReaderTheme(Color(0xFFF4ECD8), Color(0xFF5B4636))
         else -> ReaderTheme(Color.White, Color.Black)
+    }
+}
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+fun VerticalScrubber(
+    listState: LazyListState,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary,
+    onDragStart: () -> Unit = {},
+    isTOC: Boolean = false
+) {
+    val scope = rememberCoroutineScope()
+    val density = LocalDensity.current
+
+    BoxWithConstraints(modifier = modifier.fillMaxHeight()) {
+        val totalHeight = with(density) { maxHeight.toPx() }
+        val thumbHeight = with(density) { 48.dp.toPx() }
+
+        val scrollProgress by remember {
+            derivedStateOf {
+                val layoutInfo = listState.layoutInfo
+                val visibleItems = layoutInfo.visibleItemsInfo
+                val totalItems = layoutInfo.totalItemsCount
+                
+                if (visibleItems.isNotEmpty() && totalItems > 0) {
+                    val viewportStart = layoutInfo.viewportStartOffset
+                    val topItem = visibleItems.firstOrNull { it.offset + it.size > viewportStart } ?: visibleItems.first()
+
+                    val itemTop = topItem.offset
+                    val relativeOffset = (viewportStart - itemTop).coerceAtLeast(0)
+                    val itemHeight = if (topItem.size > 0) topItem.size else 1
+
+                    ((topItem.index.toFloat() + (relativeOffset.toFloat() / itemHeight.toFloat())) / totalItems.toFloat()).coerceIn(0f, 1f)
+                } else 0f
+            }
+        }
+
+        val thumbOffset by remember {
+            derivedStateOf {
+                (totalHeight - thumbHeight) * scrollProgress.coerceIn(0f, 1f)
+            }
+        }
+
+        val showScrubber by remember {
+            derivedStateOf { listState.layoutInfo.totalItemsCount > 1 }
+        }
+
+        if (showScrubber) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(if (isTOC) 16.dp else 20.dp)
+                    .pointerInput(totalHeight) {
+                        detectDragGestures(
+                            onDragStart = { onDragStart() },
+                            onDrag = { change, _ ->
+                                change.consume()
+                                val y = change.position.y
+                                val progress = (y / totalHeight).coerceIn(0f, 1f)
+                                val currentTotalItems = listState.layoutInfo.totalItemsCount
+                                val targetIndex = (progress * currentTotalItems).toInt().coerceIn(0, currentTotalItems - 1)
+                                scope.launch {
+                                    listState.scrollToItem(targetIndex)
+                                }
+                            }
+                        )
+                    }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = with(density) { thumbOffset.toDp() })
+                        .width(if (isTOC) 6.dp else 4.dp)
+                        .height(with(density) { thumbHeight.toDp() })
+                        .background(color.copy(alpha = 0.5f), CircleShape)
+                )
+            }
+        }
     }
 }

@@ -16,7 +16,8 @@ data class GlobalSettings(
     val lineHeight: Float = 1.6f,
     val horizontalPadding: Int = 16,
     val firstTime: Boolean = true,
-    val lastSeenVersionCode: Int = 0
+    val lastSeenVersionCode: Int = 0,
+    val showScrubber: Boolean = false
 )
 
 data class BookProgress(
@@ -35,6 +36,7 @@ class SettingsManager(private val context: Context) {
     private val H_PADDING = intPreferencesKey("global_h_padding")
     private val FIRST_TIME = booleanPreferencesKey("first_time")
     private val LAST_SEEN_VERSION = intPreferencesKey("last_seen_version")
+    private val SHOW_SCRUBBER = booleanPreferencesKey("show_scrubber")
 
     val globalSettings: Flow<GlobalSettings> = context.dataStore.data.map { preferences ->
         GlobalSettings(
@@ -44,7 +46,8 @@ class SettingsManager(private val context: Context) {
             lineHeight = preferences[LINE_HEIGHT] ?: 1.6f,
             horizontalPadding = preferences[H_PADDING] ?: 16,
             firstTime = preferences[FIRST_TIME] ?: true,
-            lastSeenVersionCode = preferences[LAST_SEEN_VERSION] ?: 0
+            lastSeenVersionCode = preferences[LAST_SEEN_VERSION] ?: 0,
+            showScrubber = preferences[SHOW_SCRUBBER] ?: false
         )
     }
 
@@ -69,6 +72,7 @@ class SettingsManager(private val context: Context) {
             preferences[THEME] = settings.theme
             preferences[LINE_HEIGHT] = settings.lineHeight
             preferences[H_PADDING] = settings.horizontalPadding
+            preferences[SHOW_SCRUBBER] = settings.showScrubber
         }
     }
 
