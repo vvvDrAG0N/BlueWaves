@@ -188,7 +188,8 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     // Folder drag-and-drop state
-    var dragFolders by remember { mutableStateOf(emptyList<String>()) }
+    var dragPreviewFolders by remember { mutableStateOf(emptyList<String>()) }
+    var pendingFolderOrder by remember { mutableStateOf<List<String>?>(null) }
     var draggedFolderName by remember { mutableStateOf<String?>(null) }
     var dragOffset by remember { mutableFloatStateOf(0f) }
 
@@ -331,10 +332,18 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         sortedFolders.toList()
     }
 
-    LaunchedEffect(folders) {
+    LaunchedEffect(folders, draggedFolderName, pendingFolderOrder) {
         if (draggedFolderName == null) {
-            dragFolders = folders
+            if (pendingFolderOrder == null || folders == pendingFolderOrder) {
+                dragPreviewFolders = folders
+                pendingFolderOrder = null
+            }
         }
+    }
+    val displayedFolders = when {
+        draggedFolderName != null -> dragPreviewFolders
+        pendingFolderOrder != null -> pendingFolderOrder ?: folders
+        else -> folders
     }
 
     val currentSort = remember(selectedFolderName, globalSettings.librarySort, globalSettings.folderSorts) {
@@ -508,20 +517,17 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                                     state = listState,
                                     modifier = Modifier.weight(1f)
                                 ) {
-                                    itemsIndexed(dragFolders, key = { _, it -> it }) { _, folderName ->
+                                    itemsIndexed(displayedFolders, key = { _, it -> it }) { _, folderName ->
                                         val isFavorite = globalSettings.favoriteLibrary == folderName
                                         val isDragged = folderName == draggedFolderName
                                         val isSelected = foldersToDelete.contains(folderName)
                                         
                                         Box(
                                             modifier = Modifier
+                                                .fillMaxWidth()
                                                 .zIndex(if (isDragged) 10f else 0f)
                                                 .graphicsLayer {
                                                     translationY = if (isDragged) dragOffset else 0f
-                                                    val s = if (isDragged) 1.05f else 1f
-                                                    scaleX = s
-                                                    scaleY = s
-                                                    shadowElevation = if (isDragged) 8f else 0f
                                                 }
                                                 .then(
                                                     if (folderName != "My Library" && !isMoveMode && !isFolderSelectionMode) {
@@ -536,35 +542,38 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                                                                     change.consume()
                                                                     dragOffset += dragAmount.y
 
-                                                                    val currentIdx = dragFolders.indexOf(draggedFolderName)
+                                                                    val currentIdx = dragPreviewFolders.indexOf(draggedFolderName)
                                                                     if (currentIdx == -1) return@detectDragGesturesAfterLongPress
 
-                                                                    if (dragOffset > itemHeightPx * 0.6f && currentIdx < dragFolders.size - 1) {
-                                                                        val updated = dragFolders.toMutableList()
+                                                                    if (dragOffset > itemHeightPx * 0.6f && currentIdx < dragPreviewFolders.size - 1) {
+                                                                        val updated = dragPreviewFolders.toMutableList()
                                                                         val item = updated.removeAt(currentIdx)
                                                                         updated.add(currentIdx + 1, item)
-                                                                        dragFolders = updated
+                                                                        dragPreviewFolders = updated
                                                                         dragOffset -= itemHeightPx
                                                                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                                                     } else if (dragOffset < -itemHeightPx * 0.6f && currentIdx > 1) {
-                                                                        val updated = dragFolders.toMutableList()
+                                                                        val updated = dragPreviewFolders.toMutableList()
                                                                         val item = updated.removeAt(currentIdx)
                                                                         updated.add(currentIdx - 1, item)
-                                                                        dragFolders = updated
+                                                                        dragPreviewFolders = updated
                                                                         dragOffset += itemHeightPx
                                                                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                                                     }
                                                                 },
                                                                 onDragEnd = {
-                                                                    scope.launch {
-                                                                        settingsManager.updateFolderOrder(dragFolders.filter { it != "My Library" })
-                                                                    }
+                                                                    val reorderedFolders = dragPreviewFolders.toList()
+                                                                    pendingFolderOrder = reorderedFolders
                                                                     draggedFolderName = null
                                                                     dragOffset = 0f
+                                                                    scope.launch {
+                                                                        settingsManager.updateFolderOrder(reorderedFolders.filter { it != "My Library" })
+                                                                    }
                                                                 },
                                                                 onDragCancel = {
                                                                     draggedFolderName = null
-                                                                    dragFolders = folders
+                                                                    pendingFolderOrder = null
+                                                                    dragPreviewFolders = folders
                                                                     dragOffset = 0f
                                                                 }
                                                             )
@@ -610,7 +619,27 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                                                         tint = if (selectedFolderName == folderName && !isMoveMode && !isFolderSelectionMode) MaterialTheme.colorScheme.primary else LocalContentColor.current
                                                     )
                                                 },
-                                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp).height(56.dp),
+                                                colors = NavigationDrawerItemDefaults.colors(
+                                                    unselectedContainerColor = if (isDragged) {
+                                                        // Use a semi-transparent white/gray for drag highlight in OLED to ensure visibility
+                                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f)
+                                                    } else Color.Transparent,
+                                                    selectedContainerColor = if (isDragged) {
+                                                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
+                                                    } else MaterialTheme.colorScheme.primaryContainer,
+                                                ),
+                                                modifier = Modifier
+                                                    .padding(horizontal = 12.dp, vertical = 2.dp)
+                                                    .height(56.dp)
+                                                    .graphicsLayer {
+                                                        val s = if (isDragged) 1.05f else 1f
+                                                        scaleX = s
+                                                        scaleY = s
+                                                        shadowElevation = if (isDragged) 10f else 0f
+                                                        shape = CircleShape
+                                                        clip = isDragged
+                                                    },
+                                                shape = CircleShape,
                                                 badge = {
                                                     if (folderName != "My Library" && !isMoveMode) {
                                                         if (isFolderSelectionMode) {
@@ -909,11 +938,12 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                 title = { Text("Create Folder") },
                 text = { TextField(value = folderName, onValueChange = { folderName = it }, placeholder = { Text("Folder Name") }, singleLine = true) },
                 confirmButton = { TextButton(onClick = {
-                    if (folderName.isNotBlank() && !folders.contains(folderName)) {
+                    val newFolderName = folderName.trim()
+                    if (newFolderName.isNotBlank() && !folders.contains(newFolderName)) {
                         scope.launch {
-                            settingsManager.setLibrarySort(folderName, "added_desc")
-                            selectedFolderName = folderName
-                            dragFolders = dragFolders + folderName
+                            settingsManager.createFolder(newFolderName)
+                            selectedFolderName = newFolderName
+                            dragPreviewFolders = dragPreviewFolders + newFolderName
                         }
                     }
                     showCreateFolderDialog = false
@@ -929,12 +959,13 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                 title = { Text("Rename Folder") },
                 text = { TextField(value = newName, onValueChange = { newName = it }, singleLine = true) },
                 confirmButton = { TextButton(onClick = {
-                    if (newName.isNotBlank() && newName != oldName) {
+                    val renamedFolder = newName.trim()
+                    if (renamedFolder.isNotBlank() && renamedFolder != oldName) {
                         scope.launch {
-                            settingsManager.renameFolder(oldName, newName)
-                            if (selectedFolderName == oldName) selectedFolderName = newName
+                            settingsManager.renameFolder(oldName, renamedFolder)
+                            if (selectedFolderName == oldName) selectedFolderName = renamedFolder
+                            dragPreviewFolders = dragPreviewFolders.map { if (it == oldName) renamedFolder else it }
                             refreshLibrary()
-                            dragFolders = dragFolders.map { if (it == oldName) newName else it }
                         }
                     }
                     folderToRename = null
@@ -952,8 +983,8 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                     scope.launch {
                         settingsManager.deleteFolder(folderName)
                         if (selectedFolderName == folderName) selectedFolderName = "My Library"
+                        dragPreviewFolders = dragPreviewFolders.filter { it != folderName }
                         refreshLibrary()
-                        dragFolders = dragFolders.filter { it != folderName }
                     }
                     folderToDelete = null
                 }) { Text("Delete", color = MaterialTheme.colorScheme.error) } },
@@ -995,7 +1026,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                         val toDelete = foldersToDelete.toSet()
                         toDelete.forEach { settingsManager.deleteFolder(it) }
                         if (toDelete.contains(selectedFolderName)) selectedFolderName = "My Library"
-                        dragFolders = dragFolders.filter { !toDelete.contains(it) }
+                        dragPreviewFolders = dragPreviewFolders.filter { !toDelete.contains(it) }
                         isFolderSelectionMode = false
                         foldersToDelete = emptySet()
                         refreshLibrary()

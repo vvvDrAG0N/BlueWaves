@@ -116,6 +116,44 @@ class SettingsManager(private val context: Context) {
     }
 
     /**
+     * PURPOSE: Creates an empty folder and appends it to the saved custom order.
+     * INPUT: folderName, default sort for the new folder.
+     * OUTPUT: None (Suspending).
+     * SIDE EFFECTS: Updates FOLDER_SORTS and FOLDER_ORDER in one transaction.
+     */
+    suspend fun createFolder(folderName: String, sort: String = "added_desc") {
+        context.dataStore.edit { preferences ->
+            val trimmedName = folderName.trim()
+            if (trimmedName.isEmpty() || trimmedName == "My Library") return@edit
+
+            val folderSortsJson = try {
+                org.json.JSONObject(preferences[FOLDER_SORTS] ?: "{}")
+            } catch (e: Exception) {
+                org.json.JSONObject("{}")
+            }
+            folderSortsJson.put(trimmedName, sort)
+            preferences[FOLDER_SORTS] = folderSortsJson.toString()
+
+            val folderOrderJson = try {
+                org.json.JSONArray(preferences[FOLDER_ORDER] ?: "[]")
+            } catch (e: Exception) {
+                org.json.JSONArray()
+            }
+            val existingOrder = buildList {
+                for (i in 0 until folderOrderJson.length()) {
+                    add(folderOrderJson.getString(i))
+                }
+            }
+            if (!existingOrder.contains(trimmedName)) {
+                val newOrder = org.json.JSONArray()
+                existingOrder.forEach { newOrder.put(it) }
+                newOrder.put(trimmedName)
+                preferences[FOLDER_ORDER] = newOrder.toString()
+            }
+        }
+    }
+
+    /**
      * PURPOSE: Sets the sorting preference for a specific folder.
      * INPUT: folderName (null/My Library for default), sort string (e.g., "title_asc").
      * OUTPUT: None (Suspending).

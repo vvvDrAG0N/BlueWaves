@@ -1,5 +1,15 @@
 [
   {
+    "versionCode": 6,
+    "versionName": "1.0.6",
+    "changes": [
+      "Fixed: Folder state desynchronization where library drawer wouldn't reflect changes from management dialogs immediately.",
+      "Improved: Drag-and-drop visual feedback in the library drawer with refined shadows and rounded corners.",
+      "Fixed: Visibility issues in OLED Dark theme when dragging unselected folders.",
+      "Improved: UI consistency by aligning drawer items with Material 3 pill-shaped design during interactions."
+    ]
+  },
+  {
     "versionCode": 5,
     "versionName": "1.0.5",
     "changes": [
