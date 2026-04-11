@@ -1,5 +1,16 @@
 [
   {
+    "versionCode": 7,
+    "versionName": "1.0.7",
+    "changes": [
+      "Major architecture refactoring: Decoupled UI components from business logic for improved stability and maintainability.",
+      "Optimized Navigation: Transitioned to a centralized AppNavigation system for smoother screen switching and state management.",
+      "Enhanced Data Layer: Refined the integration between SettingsManager and the UI, ensuring consistent reactive updates across the app.",
+      "Performance Improvements: Faster library scanning and reduced memory footprint through more efficient EPUB metadata caching.",
+      "Refined Reader Logic: Improved chapter restoration and scroll position accuracy."
+    ]
+  },
+  {
     "versionCode": 6,
     "versionName": "1.0.6",
     "changes": [
