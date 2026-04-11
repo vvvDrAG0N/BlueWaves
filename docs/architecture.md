@@ -1,30 +1,61 @@
 # Architecture Overview
 
-Blue Waves is built with a modern, reactive, single-activity architecture using Jetpack Compose.
+Blue Waves uses a reactive single-activity architecture with manual dependency passing and a small set of clearly separated layers.
 
-## Key Components
+## Structural Summary
 
-### 1. Navigation Controller (`MainActivity.kt`)
-- Manages top-level state using a custom `Screen` enum (`Library`, `Reader`, `Settings`).
-- Uses `AnimatedContent` for screen transitions.
-- Handles system bar visibility and edge-to-edge configuration.
-- Coordinates version-based changelog display on startup.
+### 1. App Entry (`MainActivity.kt`)
 
-### 2. EPUB Engine (`EpubParser.kt`)
-- **Extraction**: Unpacks EPUB files into the app's cache directory.
-- **Parsing**: Uses `epublib` for initial structure and a custom `XmlPullParser` for chapter content.
-- **Sealed Data Model**: Converts HTML into a list of `ChapterElement` (Text/Image) for efficient rendering in Compose.
+- Lives in `com.epubreader`.
+- Owns app bootstrap, edge-to-edge setup, theme selection, and the `Screen` enum.
+- Intentionally small so future edits to navigation logic do not accumulate here.
 
-### 3. Persistence Layer (`SettingsManager.kt`)
-- **Technology**: Jetpack DataStore (Preferences).
-- **Global Settings**: Stores UI preferences like font size, theme, and line height.
-- **Progress Tracking**: Saves per-book reading position (chapter, scroll index, and offset) using book-specific keys.
+### 2. App Shell (`app/AppNavigation.kt`)
 
-### 4. UI Layer
-- **Library**: `LazyVerticalGrid` showing book covers.
-- **Reader**: Complex `LazyColumn` with position restoration logic.
-- **Settings**: Direct interface to update DataStore values.
+- Lives in `com.epubreader.app`.
+- Owns top-level navigation state and library-level transient UI state.
+- Coordinates folder management, selection mode, dialogs, file import, and screen transitions.
+- Instantiates and passes `SettingsManager` and `EpubParser` dependencies manually.
 
-## Dependency Management
-- **Manual DI**: Dependencies (`SettingsManager`, `EpubParser`) are instantiated in the Activity/Navigation level and passed down as parameters.
-- **Reactive Streams**: UI components collect `Flow` from DataStore as `State` to react immediately to preference changes.
+### 3. Shared Models (`core/model`)
+
+- `LibraryModels.kt`: `EpubBook`, `TocItem`, `ChapterElement`
+- `SettingsModels.kt`: `GlobalSettings`, `BookProgress`
+
+These are the shared contracts between persistence, parsing, and UI. They were extracted from large files to reduce cross-file coupling.
+
+### 4. Data Layer (`data/*`)
+
+- `data/settings/SettingsManager.kt`
+  - DataStore-backed source of truth for global settings, folder state, and reading progress.
+- `data/parser/EpubParser.kt`
+  - EPUB extraction, metadata caching, chapter parsing, and cached book scanning.
+
+### 5. Feature Layer (`feature/*`)
+
+- `feature/reader/ReaderScreen.kt`
+  - Reader lifecycle, chapter loading, restoration, overscroll navigation, controls, and TOC behavior.
+- `feature/settings/SettingsScreen.kt`
+  - Reader preference editing UI.
+
+### 6. Shared UI (`core/ui`)
+
+- `LibraryCards.kt`
+  - `BookItem`
+  - `RecentlyViewedStrip`
+
+These remain presentation-oriented and should not become new state owners.
+
+## Architectural Rules
+
+- Navigation remains state-based through the `Screen` enum.
+- `SettingsManager` remains the persisted source of truth.
+- `EpubParser` remains responsible for file system and ZIP interactions.
+- `ReaderScreen` remains the highest-risk feature and should be modified conservatively.
+
+## Why This Layout Is AI-Friendlier
+
+- Smaller files reduce the amount of context an agent must load before making a safe change.
+- Shared models now have one obvious home.
+- Entry, data, feature, and shared UI responsibilities are easier to infer from package names.
+- App bootstrapping and app navigation are no longer mixed into the same file.

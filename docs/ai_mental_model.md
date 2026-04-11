@@ -2,6 +2,12 @@
 
 This document provides a heuristic framework for AI agents to reason about, modify, and validate the Blue Waves EPUB Reader codebase.
 
+Path note after Phase 1 refactor:
+- `ReaderScreen.kt` now lives in `feature/reader/`
+- `EpubParser.kt` now lives in `data/parser/`
+- `SettingsManager.kt` now lives in `data/settings/`
+- Top-level library and navigation orchestration now lives in `app/AppNavigation.kt`
+
 ## 1. Reasoning About State Changes
 
 ### The State Lifecycle

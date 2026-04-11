@@ -1,33 +1,73 @@
 # System Overview
 
-Blue Waves is a native Android EPUB reader focused on a clean, vertical-scrolling reading experience.
+Blue Waves is a native Android EPUB reader focused on fast local reading, clear library management, and accurate reading-position restoration.
 
 ## Tech Stack
-- **UI**: Jetpack Compose (100%)
-- **Language**: Kotlin
-- **Persistence**: Jetpack DataStore (Preferences)
-- **EPUB Engine**: `epublib-core` + Custom `XmlPullParser` logic
-- **Image Loading**: Coil
-- **Concurrency**: Kotlin Coroutines & Flow
 
-## Core Components & Responsibilities
+- UI: Jetpack Compose
+- Language: Kotlin
+- Persistence: Jetpack DataStore (Preferences)
+- EPUB engine: `epublib-core` plus custom `XmlPullParser` logic
+- Image loading: Coil
+- Concurrency: Coroutines and Flow
 
-### `com.epubreader.MainActivity`
-The entry point and navigation host. Manages the `Screen` state and handles top-level events like book selection and global theme toggling.
+## Runtime Layers
 
-### `com.epubreader.EpubParser`
-Handles all file system and ZIP operations. It extracts EPUB files, caches metadata as JSON, and parses XHTML chapters into a list of renderable `ChapterElement` objects.
+### Entry Layer
 
-### `com.epubreader.SettingsManager`
-Wraps Jetpack DataStore. It provides a reactive API (`Flow`) for global settings (font, theme) and per-book reading progress (scroll position).
+`com.epubreader.MainActivity`
+- Starts the app.
+- Selects the app color scheme.
+- Hosts the `Screen` enum used by state-based navigation.
 
-### `com.epubreader.ReaderScreen`
-The most complex UI component. It manages the chapter lifecycle, implements overscroll-based navigation between chapters, and ensures the user's reading position is restored accurately.
+### App Shell
 
-### `com.epubreader.SettingsScreen`
-Provides a user interface for modifying global reader preferences, which are persisted immediately via `SettingsManager`.
+`com.epubreader.app.AppNavigation`
+- Owns current screen selection.
+- Manages library-level transient state such as selected books, drawer state, folder selection, and drag/drop preview state.
+- Connects the library UI to `SettingsManager` and `EpubParser`.
+
+### Data Layer
+
+`com.epubreader.data.settings.SettingsManager`
+- Persists global settings, folder state, and book progress in DataStore.
+
+`com.epubreader.data.parser.EpubParser`
+- Imports EPUB files into cache storage.
+- Rebuilds and reads `metadata.json`.
+- Parses chapters into renderable `ChapterElement` models.
+
+### Feature Layer
+
+`com.epubreader.feature.reader.ReaderScreen`
+- Loads chapters.
+- Restores scroll position.
+- Saves reading progress.
+- Handles overscroll-based chapter navigation and TOC interactions.
+
+`com.epubreader.feature.settings.SettingsScreen`
+- Edits global reader preferences and writes them back through `SettingsManager`.
+
+### Shared Contracts
+
+`com.epubreader.core.model.*`
+- Shared models consumed by parser, persistence, and UI.
+
+`com.epubreader.core.ui.*`
+- Reusable presentational components for the library.
 
 ## Data Storage
-- **Cache Directory**: Books are extracted to `cacheDir/books/{id}/`.
-- **Metadata**: Each book has a `metadata.json` for fast library loading.
-- **Preferences**: Global and progress data are stored in a single DataStore file `epub_settings`.
+
+- Cache: `cacheDir/books/{id}/`
+- EPUB binary: `book.epub` inside each book folder
+- Metadata: `metadata.json` inside each book folder
+- Preferences: single DataStore file named `epub_settings`
+
+## High-Risk Zones
+
+- `feature/reader/ReaderScreen.kt`
+  - timing-sensitive restoration and overscroll logic
+- `data/parser/EpubParser.kt`
+  - ZIP entry handling, malformed EPUB resilience, and image path normalization
+- `data/settings/SettingsManager.kt`
+  - folder/order persistence and progress integrity

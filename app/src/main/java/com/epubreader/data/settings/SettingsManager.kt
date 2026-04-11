@@ -16,47 +16,18 @@
  * DEPENDENCIES: Jetpack DataStore (Preferences).
  * SIDE EFFECTS: Direct disk writes to "epub_settings" DataStore on every update.
  */
-package com.epubreader
+package com.epubreader.data.settings
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.epubreader.core.model.BookProgress
+import com.epubreader.core.model.GlobalSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "epub_settings")
-
-/**
- * Data class representing the global state of the application.
- * AI_NOTE: Adding new fields here requires updating [SettingsManager.updateGlobalSettings] 
- * and the [SettingsManager.globalSettings] mapping logic.
- */
-data class GlobalSettings(
-    val fontSize: Int = 18,
-    val fontType: String = "serif",
-    val theme: String = "light",
-    val lineHeight: Float = 1.6f,
-    val horizontalPadding: Int = 16,
-    val firstTime: Boolean = true,
-    val lastSeenVersionCode: Int = 0,
-    val showScrubber: Boolean = false,
-    val librarySort: String = "added_desc",
-    val favoriteLibrary: String = "My Library",
-    val bookGroups: String = "{}", // JSON string mapping bookId to groupName
-    val folderSorts: String = "{}", // JSON string mapping folderName to sort string
-    val folderOrder: String = "[]" // JSON array of folder names for custom ordering
-)
-
-/**
- * Data class for per-book reading progress.
- * AI_NOTE: scrollIndex refers to the first visible item in the Reader's LazyColumn.
- */
-data class BookProgress(
-    val scrollIndex: Int = 0,
-    val scrollOffset: Int = 0,
-    val lastChapterHref: String? = null
-)
 
 /**
  * Manages all persistent storage using Jetpack DataStore.

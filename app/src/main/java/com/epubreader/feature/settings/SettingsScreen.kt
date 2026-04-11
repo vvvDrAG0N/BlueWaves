@@ -15,7 +15,7 @@
  *    Do not change these strings as they are persisted in DataStore and used for keying in getThemeColors().
  */
 
-package com.epubreader
+package com.epubreader.feature.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.epubreader.core.model.GlobalSettings
+import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.launch
 import java.util.Locale
 

@@ -2,6 +2,12 @@
 
 This document serves as a critical safety manual for AI agents modifying the Blue Waves codebase. It identifies "load-bearing" logic where small changes can cause catastrophic regressions in user experience or data integrity.
 
+Path note after Phase 1 refactor:
+- `ReaderScreen.kt` now lives in `feature/reader/`
+- `EpubParser.kt` now lives in `data/parser/`
+- `SettingsManager.kt` now lives in `data/settings/`
+- `AppNavigation()` now lives in `app/AppNavigation.kt`
+
 ## 1. The "Jump to Top" Regression (ReaderScreen.kt)
 **Area**: Scroll Restoration State Machine
 **Risk Level**: CRITICAL

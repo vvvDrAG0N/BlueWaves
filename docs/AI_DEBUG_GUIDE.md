@@ -1,83 +1,99 @@
 # AI Debug Guide
 
-This guide provides common bug scenarios and exact debugging steps for the Blue Waves EPUB Reader.
+This guide maps common bug types to the current post-refactor file layout.
 
----
+## Scroll Position Not Restored
 
-BUG TYPE: Scroll position not restored when reopening a book
+Primary files:
+- `feature/reader/ReaderScreen.kt`
+- `data/settings/SettingsManager.kt`
 
-DEBUG STEPS:
-1. Check `ReaderScreen.kt` → `LaunchedEffect(chapterElements)`
-2. Verify `isInitialScrollDone` flag and `savedProgress` retrieval from `SettingsManager`.
+Debug steps:
+1. Check `LaunchedEffect(chapterElements)` in `ReaderScreen`.
+2. Verify `isInitialScrollDone`, `isRestoringPosition`, and saved progress retrieval from `SettingsManager`.
 3. Confirm `snapshotFlow` waits for `totalItemsCount >= chapterElements.size`.
-4. Check if `delay(100)` is present after `scrollToItem` to allow for layout settling.
+4. Confirm the `delay(100)` still happens after `scrollToItem`.
 
-COMMON CAUSE:
-- `isInitialScrollDone` set to true before the scroll actually completes.
-- `snapshotFlow` filter condition fails because items aren't fully measured.
-- Missing delay causes a race condition with the Compose layout engine.
+Common causes:
+- `isInitialScrollDone` is set too early.
+- `snapshotFlow` fires before all items are laid out.
+- The restoration path was changed without preserving the existing sequence.
 
----
+## Folder Order Or Visibility Desync
 
-BUG TYPE: Folder deletion not updating UI
+Primary files:
+- `app/AppNavigation.kt`
+- `data/settings/SettingsManager.kt`
 
-DEBUG STEPS:
-1. Trace `SettingsManager.deleteFolder` to ensure DataStore is updated.
-2. Check `MainActivity.kt`'s `AppNavigation` for the `refreshLibrary()` call.
-3. Verify `folders` derived state in `MainActivity.kt` reacts to `globalSettings.bookGroups` or `folderSorts` changes.
+Debug steps:
+1. Trace the persisted mutation in `SettingsManager` first.
+2. Check whether `AppNavigation` is rendering derived folders or temporary drag preview state.
+3. Verify folder creation writes both existence and order data in one transaction.
+4. Confirm selection mode and move mode consume the same derived folder list.
 
-COMMON CAUSE:
-- `refreshLibrary()` not called after the mutation in `SettingsManager`.
-- The `folders` `remember` block missing a dependency on the updated settings key.
+Common causes:
+- Competing UI-local and persisted folder sources of truth.
+- Derived folder state missing dependencies on updated settings keys.
+- Drag preview state not being cleared or persisted correctly.
 
----
+## Duplicate Book Detection Is Wrong
 
-BUG TYPE: Book import shows duplicate detection incorrectly
+Primary files:
+- `data/parser/EpubParser.kt`
+- `app/AppNavigation.kt`
 
-DEBUG STEPS:
-1. Check `EpubParser.parseAndExtract` → `generateMD5` logic.
-2. Verify the MD5 is based on both URI and File size.
-3. Inspect `cache/books/` to see if a folder with that MD5 already exists.
+Debug steps:
+1. Inspect the MD5 generation in `parseAndExtract()`.
+2. Verify the hash still uses both `Uri` and file size.
+3. Inspect `cache/books/` for an existing folder with the same ID.
 
-COMMON CAUSE:
-- URI format changes (e.g., encoded vs decoded) causing different MD5s for the same file.
-- File size read error resulting in "0" or inconsistent values.
+Common causes:
+- File size lookup failure.
+- Input changes to the ID generation string.
+- Duplicate checks using stale in-memory library state.
 
----
+## Chapter Images Not Loading
 
-BUG TYPE: Chapter images not loading
+Primary files:
+- `data/parser/EpubParser.kt`
+- `feature/reader/ReaderScreen.kt`
 
-DEBUG STEPS:
-1. Check `EpubParser.parseChapter` → `ZipFile` entry resolution.
-2. Verify `normalizePath` is correctly handling relative paths (e.g., `../Images/img.jpg`).
-3. Check `AsyncImage` in `ReaderScreen.kt` to see if the file path passed is absolute and exists in the cache.
+Debug steps:
+1. Check `parseChapter()` ZIP entry resolution.
+2. Verify `normalizePath()` against relative image paths like `../Images/img.jpg`.
+3. Confirm the parsed image bytes are reaching the image composable.
 
-COMMON CAUSE:
-- Incorrect base path calculation for images inside the EPUB structure.
-- `ZipFile` entry not found due to case sensitivity or missing subfolder prefix.
+Common causes:
+- Broken relative path normalization.
+- ZIP entry lookup only matching one EPUB directory layout.
+- Malformed XHTML causing the parser to skip image tags.
 
----
+## Overscroll Navigation Not Triggering
 
-BUG TYPE: Overscroll navigation not triggering
+Primary files:
+- `feature/reader/ReaderScreen.kt`
 
-DEBUG STEPS:
-1. Check `ReaderScreen.kt` → `nestedScrollConnection` implementation.
-2. Verify `onPostScroll` captures enough unconsumed delta to trigger the threshold.
-3. Check `pointerInput` for gesture detection interference.
+Debug steps:
+1. Inspect the `NestedScrollConnection`.
+2. Verify `verticalOverscroll` crosses the threshold.
+3. Confirm the release handler resets state and triggers navigation.
 
-COMMON CAUSE:
-- Threshold too high for subtle swipes.
-- `verticalOverscroll` state not resetting on `Release`, blocking subsequent triggers.
+Common causes:
+- Overscroll threshold regression.
+- `verticalOverscroll` not resetting on release.
+- Gesture interception changes elsewhere in the layout tree.
 
----
+## TOC Drawer Does Not Follow Current Chapter
 
-BUG TYPE: TOC drawer not scrolling to current chapter
+Primary files:
+- `feature/reader/ReaderScreen.kt`
 
-DEBUG STEPS:
-1. Check `ReaderScreen.kt` → `LaunchedEffect` with `tocListState`.
-2. Verify `currentChapterIndex` is being passed correctly to `tocListState.scrollToItem`.
-3. Ensure the TOC items are fully composed before scrolling.
+Debug steps:
+1. Check the `LaunchedEffect` that drives `tocListState`.
+2. Verify `currentChapterIndex` is correct when the drawer opens.
+3. Ensure TOC items exist before calling `scrollToItem`.
 
-COMMON CAUSE:
-- `currentChapterIndex` update not triggering the `LaunchedEffect`.
-- TOC list not yet populated when the scroll command is issued.
+Common causes:
+- Effect dependencies no longer include the active chapter.
+- TOC list is not ready when the scroll is requested.
+- Current chapter index was reset during a chapter load transition.

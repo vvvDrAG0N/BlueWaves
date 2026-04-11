@@ -2,6 +2,10 @@
 
 Blue Waves follows a "Content-First" design philosophy, especially within the reader interface.
 
+Path note after Phase 1 refactor:
+- Reader UI logic remains in `feature/reader/ReaderScreen.kt`
+- Shared library presentation components now live in `core/ui/LibraryCards.kt`
+
 ## 1. Global Layout
 - **Forced LTR**: To ensure consistent scrolling and gesture behavior, the entire app (or at least the Navigation and Reader) is wrapped in `LocalLayoutDirection provides LayoutDirection.Ltr`.
 - **Edge-to-Edge**: The app uses `enableEdgeToEdge()` with system bars hidden or in transient mode during reading.

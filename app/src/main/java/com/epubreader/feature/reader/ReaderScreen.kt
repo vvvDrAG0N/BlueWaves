@@ -20,7 +20,7 @@
  *    updating the manual contrast logic in ReaderControls.
  */
 
-package com.epubreader
+package com.epubreader.feature.reader
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -74,6 +74,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.KeyboardActions
+import com.epubreader.R
+import com.epubreader.core.model.BookProgress
+import com.epubreader.core.model.ChapterElement
+import com.epubreader.core.model.EpubBook
+import com.epubreader.core.model.GlobalSettings
+import com.epubreader.data.parser.EpubParser
+import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first

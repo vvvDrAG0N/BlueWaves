@@ -2,6 +2,12 @@
 
 This document details technical risks, timing-sensitive logic, and synchronization hazards within the Blue Waves EPUB Reader.
 
+Path note after Phase 1 refactor:
+- `ReaderScreen.kt` -> `feature/reader/`
+- `EpubParser.kt` -> `data/parser/`
+- `SettingsManager.kt` -> `data/settings/`
+- Version and first-run orchestration now primarily lives in `app/AppNavigation.kt`
+
 ## 1. Position Restoration Race Conditions (`ReaderScreen.kt`)
 The synchronization between loading chapter elements and restoring the user's scroll position is the most fragile part of the application.
 

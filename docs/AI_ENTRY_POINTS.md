@@ -1,117 +1,121 @@
 # AI Entry Points
 
-This file maps each major feature to its entry files and key functions to help AI agents navigate the codebase efficiently.
+This file maps major features to their current package locations, primary files, and the first functions worth tracing.
 
----
+## Library
 
-FEATURE: Library
+Entry point:
+- `com.epubreader.app.AppNavigation` -> `AppNavigation()`
 
-ENTRY POINT:
-MainActivity.kt → AppNavigation()
+Core files:
+- `app/AppNavigation.kt`
+- `core/ui/LibraryCards.kt`
+- `data/settings/SettingsManager.kt`
+- `data/parser/EpubParser.kt`
 
-CORE FILES:
-MainActivity.kt
-SettingsManager.kt
-EpubParser.kt (scanBooks, deleteBook)
+Key functions:
+- `refreshLibrary()`
+- `updateBookGroup()`
+- `updateFolderOrder()`
+- `createFolder()`
+- `renameFolder()`
+- `deleteFolder()`
+- `scanBooks()`
+- `deleteBook()`
 
-KEY FUNCTIONS:
-refreshLibrary()
-deleteBook()
-updateBookGroup()
-scanBooks()
+Data flow:
+- `AppNavigation` -> `EpubParser.scanBooks()` -> `cache/books/*/metadata.json` -> derived folder/book UI
 
-DATA FLOW:
-UI (AppNavigation) → EpubParser.scanBooks() → cache/books/*/metadata.json → UI
+AI hint:
+- Folder and ordering bugs usually start in persisted state or derived folder state, not the row composables.
 
-AI_HINT:
-Start debugging folder/book state in SettingsManager, not UI.
+## Reader
 
----
+Entry point:
+- `com.epubreader.feature.reader.ReaderScreen` -> `ReaderScreen()`
 
-FEATURE: Reader
+Core files:
+- `feature/reader/ReaderScreen.kt`
+- `data/parser/EpubParser.kt`
+- `data/settings/SettingsManager.kt`
+- `core/model/LibraryModels.kt`
+- `core/model/SettingsModels.kt`
 
-ENTRY POINT:
-ReaderScreen.kt → ReaderScreen()
+Key functions and areas:
+- `LaunchedEffect(book.id)`
+- `LaunchedEffect(currentChapterIndex)`
+- `LaunchedEffect(chapterElements)`
+- `saveBookProgress()`
+- `parseChapter()`
+- `getThemeColors()`
 
-CORE FILES:
-ReaderScreen.kt
-EpubParser.kt
-SettingsManager.kt
+Data flow:
+- `EpubParser.parseChapter()` -> `ReaderScreen` state -> `LazyColumn` -> `SettingsManager.saveBookProgress()`
 
-KEY FUNCTIONS:
-loadChapter()
-saveBookProgress()
-scrollToItem()
-parseChapter()
+AI hint:
+- Treat the `chapterElements` restoration effect as load-bearing logic. Preserve sequencing.
 
-DATA FLOW:
-EpubParser (extract/parse) → ReaderScreen (LazyColumn) → SettingsManager (save progress)
+## Settings
 
-AI_HINT:
-Scroll restoration logic is sensitive; verify `isInitialScrollDone` in ReaderScreen.
+Entry point:
+- `com.epubreader.feature.settings.SettingsScreen` -> `SettingsScreen()`
 
----
+Core files:
+- `feature/settings/SettingsScreen.kt`
+- `data/settings/SettingsManager.kt`
+- `core/model/SettingsModels.kt`
 
-FEATURE: Settings
+Key functions:
+- `updateGlobalSettings()`
+- `setFavoriteLibrary()`
+- `setLibrarySort()`
 
-ENTRY POINT:
-SettingsScreen.kt → SettingsScreen()
+Data flow:
+- `SettingsScreen` -> `SettingsManager` -> `globalSettings` Flow -> `MainActivity` and `ReaderScreen`
 
-CORE FILES:
-SettingsScreen.kt
-SettingsManager.kt
+AI hint:
+- Theme and reader preference changes should remain purely DataStore-driven.
 
-KEY FUNCTIONS:
-updateTheme()
-setFontSize()
-toggleAnimation()
+## EPUB Parsing
 
-DATA FLOW:
-UI (SettingsScreen) → SettingsManager (DataStore) → Global Flow → UI (MainActivity/Reader)
+Entry point:
+- `com.epubreader.data.parser.EpubParser`
 
-AI_HINT:
-Settings are persisted in DataStore via SettingsManager.
+Core files:
+- `data/parser/EpubParser.kt`
+- `core/model/LibraryModels.kt`
 
----
+Key functions:
+- `parseAndExtract()`
+- `reparseBook()`
+- `parseChapter()`
+- `scanBooks()`
+- `loadMetadata()`
+- `updateLastRead()`
 
-FEATURE: EPUB Parsing
+Data flow:
+- `Uri` -> `book.epub` in `cache/books/{id}` -> `metadata.json` + parsed chapter elements
 
-ENTRY POINT:
-EpubParser.kt
+AI hint:
+- Check `normalizePath()` and ZIP entry resolution first for broken image/chapter cases.
 
-CORE FILES:
-EpubParser.kt
+## Progress Persistence
 
-KEY FUNCTIONS:
-parseAndExtract()
-parseChapter()
-scanBooks()
-generateMD5()
+Entry point:
+- `com.epubreader.data.settings.SettingsManager`
 
-DATA FLOW:
-Uri/File → ZipFile → cache/books/ → metadata.json / chapter_*.json
+Core files:
+- `data/settings/SettingsManager.kt`
+- `feature/reader/ReaderScreen.kt`
+- `core/model/SettingsModels.kt`
 
-AI_HINT:
-Check `normalizePath` for image loading issues in chapters.
+Key functions:
+- `getBookProgress()`
+- `saveBookProgress()`
+- `deleteBookData()`
 
----
+Data flow:
+- `ReaderScreen` scroll state -> `BookProgress` -> DataStore -> later restoration in `ReaderScreen`
 
-FEATURE: Progress Persistence
-
-ENTRY POINT:
-SettingsManager.kt
-
-CORE FILES:
-SettingsManager.kt
-ReaderScreen.kt
-
-KEY FUNCTIONS:
-saveBookProgress()
-getBookProgress()
-updateLastRead()
-
-DATA FLOW:
-ReaderScreen (scroll) → SettingsManager (DataStore) → MainActivity (Library sort)
-
-AI_HINT:
-Progress is saved by book ID. Verify ID consistency in EpubParser.
+AI hint:
+- Progress correctness depends on stable `book.id` generation in `EpubParser`.
