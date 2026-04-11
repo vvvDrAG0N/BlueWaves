@@ -1,3 +1,20 @@
+/*
+ * AI_SKIP_UNLESS_NEEDED
+ * Reason: Simple UI composition; logic lives in SettingsManager.
+ *
+ * SettingsScreen.kt
+ *
+ * SETTINGS INTERFACE: Manages global reader preferences.
+ *
+ * ARCHITECTURAL CONSTRAINTS:
+ * 1. [AI_NOTE] Direct DataStore Integration: Edits to these settings trigger immediate
+ *    re-renders across the app via Flow collection in SettingsManager.
+ * 2. [AI_WARNING] Parameter Sync: Values (fontSize, lineHeight, horizontalPadding) here MUST
+ *    be kept in sync with the ranges defined in ReaderControls.kt to avoid UI inconsistencies.
+ * 3. [AI_CRITICAL] Theme Identification: Uses string-based identifiers ("light", "sepia", "dark", "oled").
+ *    Do not change these strings as they are persisted in DataStore and used for keying in getThemeColors().
+ */
+
 package com.epubreader
 
 import androidx.compose.foundation.background
@@ -19,6 +36,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import java.util.Locale
 
+/**
+ * Global application settings screen.
+ * [AI_NOTE] This screen primarily modifies the GlobalSettings object in SettingsManager.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(

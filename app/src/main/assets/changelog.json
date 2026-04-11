@@ -1,5 +1,18 @@
 [
   {
+    "versionCode": 5,
+    "versionName": "1.0.5",
+    "changes": [
+      "New: Folder system! Create, rename, delete, and organize folders with drag-and-drop sorting.",
+      "New: Bulk management for folders and books with selection mode and bottom action bar (Delete, Move To).",
+      "New: Each folder now maintains its own independent book sorting settings.",
+      "New: 'Recently Viewed' strip added to the library for quick access to your last-read books.",
+      "New: Favorite Folder support - set a default folder to load automatically on app startup.",
+      "Improved: Advanced Library sorting (Date, Title, Author, Chapters, Recents) with Ascending/Descending support.",
+      "Improved: Redesigned Book Cards and updated Library UI for better organization."
+    ]
+  },
+  {
     "versionCode": 4,
     "versionName": "1.0.4",
     "changes": [

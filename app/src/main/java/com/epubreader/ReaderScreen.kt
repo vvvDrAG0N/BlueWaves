@@ -1,3 +1,25 @@
+/*
+ * AI_ENTRY_POINT
+ * AI_READ_FIRST
+ * AI_RELEVANT_TO: [Reader UI, Scroll Restoration, Reading Progress, Chapter Navigation]
+ * AI_STATE_OWNER: Local composable state (currentChapterIndex, chapterElements)
+ * AI_CRITICAL: Scroll restoration uses fragile LaunchedEffect ordering.
+ * 
+ * ReaderScreen.kt
+ *
+ * MAIN READER COMPONENT: The core reading interface of Blue Waves.
+ *
+ * ARCHITECTURAL CONSTRAINTS:
+ * 1. [AI_CRITICAL] Scroll Restoration: Relies on a complex state machine (isInitialScrollDone,
+ *    isRestoringPosition) and precise timing (delay(100)). Modifying the order of operations in
+ *    the chapter loading/restoration LaunchedEffects will cause "jumpy" UI or loss of reading position.
+ * 2. [AI_NOTE] Global LTR: Enforces LayoutDirection.Ltr via CompositionLocalProvider to avoid
+ *    mirroring issues with fixed-position UI elements (scrubbers, controls) in RTL locales.
+ * 3. [AI_WARNING] Hardcoded Themes: Uses specific hex codes (Sepia: #F4ECD8, Dark: #121212)
+ *    defined in getThemeColors(). Do not replace with MaterialTheme.colorScheme surfaces without
+ *    updating the manual contrast logic in ReaderControls.
+ */
+
 package com.epubreader
 
 import android.annotation.SuppressLint
@@ -64,6 +86,15 @@ val KarlaFont = FontFamily(
 
 enum class TocSort { Ascending, Descending }
 
+/**
+ * The main reader view. Handles chapter rendering, scroll position persistence,
+ * TOC navigation, and reader settings (font, theme, etc.).
+ *
+ * [AI_CRITICAL] This composable manages three distinct "loading" states:
+ * 1. book.id change: Resets the entire reader state.
+ * 2. currentChapterIndex change: Loads new content from disk (IO).
+ * 3. chapterElements change: Restores the scroll position within the loaded content.
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ReaderScreen(
@@ -72,12 +103,15 @@ fun ReaderScreen(
     parser: EpubParser,
     onBack: () -> Unit
 ) {
+    // AI_STATE_OWNER: ReaderScreen composable
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     val globalSettings by settingsManager.globalSettings.collectAsState(initial = GlobalSettings())
 
+    // AI_STATE_OWNER: ReaderScreen (Owned here, reset on book change)
     var currentChapterIndex by remember(book.id) { mutableIntStateOf(-1) }
+    // AI_STATE_OWNER: ReaderScreen (Extracted from EPUB, used for LazyColumn rendering)
     var chapterElements by remember(book.id) { mutableStateOf<List<ChapterElement>>(emptyList()) }
     var isLoadingChapter by remember { mutableStateOf(false) }
     var isInitialScrollDone by remember(book.id) { mutableStateOf(false) }
@@ -106,7 +140,7 @@ fun ReaderScreen(
     val density = LocalDensity.current
     val overscrollThreshold = with(density) { 80.dp.toPx() }
 
-    // 1. Initial State Sync
+    // 1. Initial State Sync: Runs once per book to find the last read chapter.
     LaunchedEffect(book.id) {
         if (currentChapterIndex == -1) {
             val savedProgress = settingsManager.getBookProgress(book.id).first()
@@ -122,7 +156,8 @@ fun ReaderScreen(
         }
     }
 
-    // Load Chapter
+    // Load Chapter: Fetches content for currentChapterIndex and pre-fetches neighbors.
+    // [AI_NOTE] Pre-fetching is done on Dispatchers.IO to prevent UI stutter during rapid navigation.
     LaunchedEffect(currentChapterIndex) {
         if (currentChapterIndex == -1 || currentChapterIndex >= book.spineHrefs.size) return@LaunchedEffect
 
@@ -144,7 +179,14 @@ fun ReaderScreen(
         }
     }
 
-    // Restore Reading Position
+    /**
+     * Restore Reading Position: THE MOST FRAGILE PART OF THE CODEBASE.
+     * [AI_CRITICAL] Sequence is vital:
+     * 1. Wait for LazyColumn to report totalItemsCount >= chapterElements.size using snapshotFlow.
+     * 2. Perform the scroll (scrollToItem).
+     * 3. delay(100) to allow the compose runtime to settle.
+     * 4. Set isInitialScrollDone = true to enable the "Save Progress" effect.
+     */
     LaunchedEffect(chapterElements) {
         if (chapterElements.isNotEmpty() && currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
             if (skipRestoration) {
@@ -211,7 +253,8 @@ fun ReaderScreen(
         }
     }
 
-    // Save Progress
+    // Save Progress: Throttled (500ms) to avoid over-writing DataStore during active scrolling.
+    // [AI_WARNING] Only saves if isInitialScrollDone is true AND we aren't currently restoring position.
     LaunchedEffect(currentChapterIndex, listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset, isInitialScrollDone, isRestoringPosition) {
         if (isInitialScrollDone && chapterElements.isNotEmpty() && !isRestoringPosition && currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
             delay(500)
@@ -1043,6 +1086,12 @@ fun getThemeColors(theme: String): ReaderTheme {
     }
 }
 
+    /**
+     * VerticalScrubber: Provides a fast-scroll handle.
+     * [AI_NOTE] Directly manipulates LazyListState.scrollToItem for instantaneous feedback.
+     * [AI_CRITICAL] Sets isInitialScrollDone = true to prevent the scroll restoration logic
+     * from "fighting" the user's manual dragging.
+     */
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun VerticalScrubber(

@@ -1,3 +1,24 @@
+/**
+ * AI_ENTRY_POINT
+ * AI_READ_FIRST
+ * AI_RELEVANT_TO: [EPUB Parsing, Book Extraction, Chapter Rendering Data, Metadata Management]
+ * AI_STATE_OWNER: Stateless utility – callers manage lifecycle.
+ * AI_DATA_FLOW: Uri → parseAndExtract() → cache/books → EpubBook
+ * AI_WARNING: All parsing is IO‑heavy; call from Dispatchers.IO.
+ * 
+ * FILE: EpubParser.kt
+ * PURPOSE: Core logic for parsing EPUB files and extracting content for the reader.
+ * RESPONSIBILITIES:
+ *  - Imports and extracts EPUB files into internal storage (cache/books).
+ *  - Parses spine structure and Table of Contents (TOC).
+ *  - Extracts individual chapters into [ChapterElement] for rendering in [ReaderScreen].
+ *  - Manages book metadata and persistence (metadata.json).
+ * NON-GOALS:
+ *  - Does not handle UI rendering directly (provides data to ReaderScreen).
+ *  - Does not handle settings or global state (see SettingsManager).
+ * DEPENDENCIES: nl.siegmann.epublib, XmlPullParser, ZipFile.
+ * SIDE EFFECTS: IO operations on cache/books directory.
+ */
 package com.epubreader
 
 import android.content.Context
@@ -16,11 +37,19 @@ import java.security.MessageDigest
 import java.util.UUID
 import java.util.zip.ZipFile
 
+/**
+ * Data class for TOC navigation.
+ * AI_NOTE: href usually points to the XHTML file within the EPUB container.
+ */
 data class TocItem(
     val title: String,
     val href: String
 )
 
+/**
+ * Sealed class representing a single element of content in a chapter.
+ * Used for heterogeneous rendering in [ReaderScreen]'s LazyColumn.
+ */
 sealed class ChapterElement {
     abstract val id: String
     data class Text(val content: String, val type: String = "p", override val id: String = UUID.randomUUID().toString()) : ChapterElement()
@@ -38,6 +67,10 @@ sealed class ChapterElement {
     }
 }
 
+/**
+ * High-level model for a book in the library.
+ * AI_NOTE: bookId is an MD5 hash of (URI + FileSize). Changing this orphans progress!
+ */
 data class EpubBook(
     val id: String,
     val title: String,
@@ -45,9 +78,15 @@ data class EpubBook(
     val coverPath: String?,
     val rootPath: String,
     val toc: List<TocItem> = emptyList(),
-    val spineHrefs: List<String> = emptyList()
+    val spineHrefs: List<String> = emptyList(),
+    val dateAdded: Long = System.currentTimeMillis(),
+    val lastRead: Long = 0L
 )
 
+/**
+ * Handles all EPUB extraction and parsing logic.
+ * AI_WARNING: All methods should ideally be called from Dispatchers.IO.
+ */
 class EpubParser(private val context: Context) {
 
     private val booksDir = File(context.cacheDir, "books")
@@ -74,6 +113,16 @@ class EpubParser(private val context: Context) {
         return result
     }
 
+    /**
+     * AI_MUTATION_POINT
+     * AI_WARNING: Must trigger UI refresh after this.
+     * 
+     * PURPOSE: Imports an EPUB from a Uri, extracts it to internal storage, and generates metadata.
+     * INPUT: Uri of the EPUB file.
+     * OUTPUT: [EpubBook] object if successful, null otherwise.
+     * SIDE EFFECTS: Writes to cache/books directory.
+     * AI_WARNING: This duplicates the entire EPUB file into internal storage.
+     */
     fun parseAndExtract(uri: Uri): EpubBook? {
         return try {
             val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "r") ?: return null
@@ -103,6 +152,15 @@ class EpubParser(private val context: Context) {
         }
     }
 
+    /**
+     * AI_MUTATION_POINT
+     * AI_WARNING: Must trigger UI refresh after this.
+     * 
+     * PURPOSE: Fully parses an extracted EPUB folder into an [EpubBook] model.
+     * INPUT: Folder where "book.epub" is stored.
+     * OUTPUT: [EpubBook] object.
+     * SIDE EFFECTS: Re-writes "metadata.json" in the folder.
+     */
     fun reparseBook(bookFolder: File): EpubBook? {
         val bookFile = File(bookFolder, "book.epub")
         if (!bookFile.exists()) return null
@@ -154,14 +212,23 @@ class EpubParser(private val context: Context) {
             coverPath = coverPath,
             rootPath = bookFolder.absolutePath,
             toc = toc,
-            spineHrefs = spineHrefs
+            spineHrefs = spineHrefs,
+            dateAdded = System.currentTimeMillis()
         )
 
         saveMetadata(bookFolder, epubBook)
         return epubBook
     }
 
+    fun scanBooks(): List<EpubBook> {
+        return booksDir.listFiles()?.filter { it.isDirectory }?.mapNotNull { folder ->
+            loadMetadata(folder)
+        } ?: emptyList()
+    }
+
     fun deleteBook(book: EpubBook) {
+        // AI_MUTATION_POINT: Deletes files from disk.
+        // AI_WARNING: Must trigger UI refresh after this.
         val folder = File(book.rootPath)
         if (folder.exists()) {
             folder.deleteRecursively()
@@ -172,6 +239,10 @@ class EpubParser(private val context: Context) {
         return book.spineHrefs.getOrNull(index)
     }
 
+    /**
+     * PURPOSE: Cleans raw XML content for the parser by replacing HTML entities and fixing unescaped ampersands.
+     * AI_NOTE: This is a pre-parsing step to handle poorly formatted EPUB XHTML.
+     */
     private fun String.preProcessXml(): String {
         return this.replace("&nbsp;", " ")
             .replace("&rsquo;", "’")
@@ -189,6 +260,13 @@ class EpubParser(private val context: Context) {
             .replace("&(?!(amp|lt|gt|quot|apos|#[0-9]+|#x[0-9a-fA-F]+);)".toRegex(), "&amp;")
     }
 
+    /**
+     * PURPOSE: Parses a specific chapter (XHTML file) within the EPUB.
+     * INPUT: bookFolderPath, href of the chapter.
+     * OUTPUT: List of [ChapterElement] (Text and Image nodes).
+     * AI_CRITICAL: This uses [XmlPullParser] with custom logic to handle block tags and image extraction.
+     * AI_WARNING: High memory usage for chapters with many large images.
+     */
     fun parseChapter(bookFolderPath: String, href: String): List<ChapterElement> {
         val elements = mutableListOf<ChapterElement>()
         val bookFile = File(bookFolderPath, "book.epub")
@@ -314,6 +392,10 @@ class EpubParser(private val context: Context) {
             .replace("&#39;", "'")
     }
 
+    /**
+     * PURPOSE: Normalizes relative paths (e.g., "../Images/pic.jpg" -> "Images/pic.jpg").
+     * AI_NOTE: Essential for finding resources inside the EPUB zip container.
+     */
     private fun normalizePath(path: String): String {
         val parts = path.split("/")
         val result = mutableListOf<String>()
@@ -327,6 +409,15 @@ class EpubParser(private val context: Context) {
         return result.joinToString("/")
     }
 
+    fun updateLastRead(book: EpubBook) {
+        // AI_MUTATION_POINT: Updates progress in metadata.json.
+        // AI_WARNING: Must trigger UI refresh after this.
+        val folder = File(booksDir, book.id)
+        if (folder.exists()) {
+            saveMetadata(folder, book)
+        }
+    }
+
     private fun saveMetadata(folder: File, book: EpubBook) {
         val json = JSONObject().apply {
             put("id", book.id)
@@ -334,6 +425,8 @@ class EpubParser(private val context: Context) {
             put("author", book.author)
             put("coverPath", book.coverPath)
             put("rootPath", book.rootPath)
+            put("dateAdded", book.dateAdded)
+            put("lastRead", book.lastRead)
             val tocArray = JSONArray()
             book.toc.forEach { item ->
                 tocArray.put(JSONObject().apply {
@@ -376,7 +469,9 @@ class EpubParser(private val context: Context) {
                 coverPath = json.optString("coverPath").takeIf { it.isNotEmpty() && it != "null" },
                 rootPath = json.getString("rootPath"),
                 toc = toc,
-                spineHrefs = spineHrefs
+                spineHrefs = spineHrefs,
+                dateAdded = json.optLong("dateAdded", folder.lastModified()),
+                lastRead = json.optLong("lastRead", 0L)
             )
         } catch (e: Exception) {
             null
