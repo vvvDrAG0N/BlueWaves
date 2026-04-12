@@ -52,3 +52,17 @@ The app tracks versions to show the changelog and handle migrations.
 *   **The Risk**: Repeating welcome screens or missing changelogs.
 *   **The Logic**: Compares `packageInfo.versionCode` with `lastSeenVersionCode` in DataStore.
 *   **Why it's Risky**: Improper handling of the `firstTime` flag alongside the version check can cause the app to show the "Welcome" screen every time it's opened or miss showing the changelog after an update.
+
+## 7. Parser Split Note (`data/parser/*`)
+The parser is now split into `EpubParser.kt`, `EpubParserBooks.kt`, and `EpubParserChapter.kt`.
+
+*   **The Risk**: Fixes may target the wrong file and miss the actual fragile path.
+*   **The Logic**: `EpubParser.kt` is now the public facade, `EpubParserBooks.kt` owns import/cache metadata concerns, and `EpubParserChapter.kt` owns chapter/image parsing.
+*   **Why it's Risky**: Book ID generation, ZIP safety, malformed XHTML tolerance, and `normalizePath()` are still load-bearing and now live in helper files instead of one monolith.
+
+## 8. Reader Split Note (`feature/reader/*`)
+The reader is now split into `ReaderScreen.kt`, `ReaderScreenContracts.kt`, `ReaderScreenChrome.kt`, and `ReaderScreenControls.kt`.
+
+*   **The Risk**: A fix may land in a presentational helper while the real bug still lives in the restoration state machine.
+*   **The Logic**: `ReaderScreen.kt` still owns chapter loading, restoration flags, progress saving, and navigation behavior. The helper files only render already-derived state.
+*   **Why it's Risky**: Moving behavior out of `ReaderScreen.kt` without explicit validation can reintroduce "Jump to Top" or overscroll regressions even if the UI helpers look harmless.

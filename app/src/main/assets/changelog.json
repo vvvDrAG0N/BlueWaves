@@ -1,5 +1,16 @@
 [
   {
+    "versionCode": 8,
+    "versionName": "1.0.8",
+    "changes": [
+      "Improved overall app stability and reliability across the library, reader, and settings screens.",
+      "Refined book import and parsing behavior for better compatibility with more EPUB files and image paths.",
+      "Improved reading experience consistency with stronger restoration, theme, and navigation reliability.",
+      "Polished folder and library management flows for smoother day-to-day organization.",
+      "Added broader internal validation to reduce regressions and improve update stability."
+    ]
+  },
+  {
     "versionCode": 7,
     "versionName": "1.0.7",
     "changes": [

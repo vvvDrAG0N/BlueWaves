@@ -32,6 +32,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.settings.SettingsManager
@@ -82,7 +85,8 @@ fun SettingsScreen(
                          settingsManager.updateGlobalSettings(settings.copy(fontSize = it.toInt()))
                     }
                 },
-                valueRange = 12f..32f
+                valueRange = 12f..32f,
+                modifier = Modifier.semantics { contentDescription = "Font Size Slider" },
             )
 
             // Line Height
@@ -94,7 +98,8 @@ fun SettingsScreen(
                         settingsManager.updateGlobalSettings(settings.copy(lineHeight = it))
                     }
                 },
-                valueRange = 1.2f..2.0f
+                valueRange = 1.2f..2.0f,
+                modifier = Modifier.semantics { contentDescription = "Line Height Slider" },
             )
 
             // Horizontal Padding
@@ -106,7 +111,8 @@ fun SettingsScreen(
                         settingsManager.updateGlobalSettings(settings.copy(horizontalPadding = it.toInt()))
                     }
                 },
-                valueRange = 0f..32f
+                valueRange = 0f..32f,
+                modifier = Modifier.semantics { contentDescription = "Horizontal Padding Slider" },
             )
 
             // Font Family
@@ -177,6 +183,10 @@ fun ThemeButton(
                 color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray,
                 shape = CircleShape
             )
+            .semantics {
+                contentDescription = "Theme $name"
+                selected = isSelected
+            }
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {

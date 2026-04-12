@@ -40,3 +40,15 @@ Path note after Phase 1 refactor:
 **Risk Level**: MEDIUM
 **Description**: Folder structures and sorting preferences are stored as raw JSON strings within DataStore.
 **Constraint**: There is no schema validation for these strings. Ensure all manual JSON manipulations (`JSONObject`, `JSONArray`) are wrapped in try-catch blocks and provide sensible defaults to prevent app-wide crashes on startup.
+
+## 6. Parser Split Awareness (`data/parser/*`)
+**Area**: EPUB Parsing Boundaries
+**Risk Level**: MEDIUM
+**Description**: The parser is now split across a public facade and two helper files.
+**Constraint**: Start with `docs/epub_parsing.md` and `EpubParser.kt`, then load only the targeted helper file. Do not change `buildBookId(...)`, `normalizePath()`, or ZIP stream handling while working in `EpubParserBooks.kt` or `EpubParserChapter.kt`.
+
+## 7. Reader Split Awareness (`feature/reader/*`)
+**Area**: Reader Boundaries
+**Risk Level**: HIGH
+**Description**: The reader is now split across a state owner, a contract map, and two UI helper files.
+**Constraint**: Start with `docs/reader_screen.md` and `ReaderScreen.kt`, then load only the targeted helper file. Do not move restoration sequencing, progress-save effects, or overscroll state ownership out of `ReaderScreen.kt` without explicit validation.

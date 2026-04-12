@@ -2,6 +2,12 @@
 
 The `ReaderScreen` in `feature/reader/ReaderScreen.kt` is the core of the application, managing a complex interaction between the file system, persistence, and the UI.
 
+Path note after the reader split:
+- `ReaderScreen.kt` now owns state/effects and restoration behavior.
+- `ReaderScreenContracts.kt` holds shared reader contracts and theme helpers.
+- `ReaderScreenChrome.kt` holds the TOC drawer and shell overlays.
+- `ReaderScreenControls.kt` holds reader controls, scrubber UI, and chapter element rendering.
+
 ## 1. Chapter Loading Flow
 
 1. **Trigger**: `currentChapterIndex` changes through TOC selection, restoration, or gesture navigation.
@@ -34,6 +40,9 @@ Warning: Modifying the flags or delays described in this flow will break positio
 ## Related Files
 
 - `feature/reader/ReaderScreen.kt`
+- `feature/reader/ReaderScreenContracts.kt`
+- `feature/reader/ReaderScreenChrome.kt`
+- `feature/reader/ReaderScreenControls.kt`
 - `data/parser/EpubParser.kt`
 - `data/settings/SettingsManager.kt`
 - `core/model/LibraryModels.kt`

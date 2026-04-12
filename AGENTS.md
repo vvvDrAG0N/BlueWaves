@@ -19,6 +19,7 @@ This document defines the architecture, coding standards, and modification safet
 3. **Protect the Reader**: Reader smoothness and scroll position restoration are sacred. Any changes to `ReaderScreen` must be stress-tested for these two properties.
 4. **Confirm Changes**: Always ask for confirmation before making significant architectural changes or altering the DataStore schema.
 5. **Verify Flows**: After any modification, re-verify the affected flow (e.g., if changing the parser, verify both metadata extraction and chapter rendering).
+6. **Right-Sized Tests**: New non-trivial features should ship with the smallest automated test that proves them: JVM for pure logic, Robolectric/local Android-aware tests for framework-dependent logic, instrumentation for runtime/UI flows. If no automated test is added, explain why and provide manual verification steps.
 
 ## 4. Architecture Rules
 
@@ -53,6 +54,7 @@ This document defines the architecture, coding standards, and modification safet
 - **IO Safety**: Always use `withContext(Dispatchers.IO)` for parsing, file operations, and DataStore edits.
 - **HTML Cleanup**: Use the `unescapeHtml()` and `normalizePath()` helpers in `EpubParser` to handle malformed XHTML and relative image paths.
 - **Coroutines**: Prefer `rememberCoroutineScope()` for UI-triggered actions (like button clicks) and `LaunchedEffect` for state-driven side effects.
+- **Logging**: Use `core/debug/AppLog.kt` for new app logs instead of scattering raw `android.util.Log` calls. Keep debug/info logs debug-only, keep warn/error logs high-signal, and never log book contents or noisy per-scroll/per-frame events.
 
 ## 6. Modification Safety Rules (CRITICAL)
 1. **Parser Changes**: When modifying `parseChapter`, ensure that the `ZipFile` stream is always closed and that image path normalization supports various EPUB internal structures (`OEBPS/`, `OPS/`, etc.).
@@ -78,4 +80,20 @@ AI agents must treat AGENT.md and docs/ as stable architectural memory.
 Do not refactor or summarize these files unless explicitly instructed.
 New knowledge must be appended, never replaced.
 
+## graphify
 
+This project has a graphify knowledge graph at graphify-out/.
+
+Rules:
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- After modifying code files in this session, run `python3 -c "from graphify.watch import _rebuild_code; from pathlib import Path; _rebuild_code(Path('.'))"` to keep the graph current
+
+## Graph-First Loading Workflow
+
+For low-token work in this repo:
+- Read `docs/project_graph.md` before broad codebase questions or cross-package tasks.
+- If `graphify-out/GRAPH_REPORT.md` exists, use it before opening raw source files.
+- If scope is unclear, run `graphify query "<question>" --budget 800-1500` to narrow the file set.
+- After the graph narrows the area, read only the relevant area doc and then only the files named by the graph.
+- Use `python scripts/rebuild_graphify.py` when `graphify-out/` is missing, stale, or after structural code changes.

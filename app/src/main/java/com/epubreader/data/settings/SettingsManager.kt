@@ -19,55 +19,29 @@
 package com.epubreader.data.settings
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.core.edit
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.GlobalSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "epub_settings")
-
 /**
  * Manages all persistent storage using Jetpack DataStore.
  * Lifecycle: Singleton-like (bound to application context via Activity/ViewModel).
+ *
+ * AI_LOAD_STRATEGY
+ * - Read this file for public persistence behavior and edit transactions.
+ * - Read `SettingsManagerContracts.kt` for keys/defaults and data mapping.
+ * - Read `SettingsManagerJson.kt` only when folder/group/order JSON mutations are involved.
  */
 class SettingsManager(private val context: Context) {
 
-    // Global Preferences Keys
-    private val FONT_SIZE = intPreferencesKey("global_font_size")
-    private val FONT_TYPE = stringPreferencesKey("global_font_type")
-    private val THEME = stringPreferencesKey("global_theme")
-    private val LINE_HEIGHT = floatPreferencesKey("global_line_height")
-    private val H_PADDING = intPreferencesKey("global_h_padding")
-    private val FIRST_TIME = booleanPreferencesKey("first_time")
-    private val LAST_SEEN_VERSION = intPreferencesKey("last_seen_version")
-    private val SHOW_SCRUBBER = booleanPreferencesKey("show_scrubber")
-    private val LIBRARY_SORT = stringPreferencesKey("library_sort")
-    private val FAVORITE_LIBRARY = stringPreferencesKey("favorite_library")
-    private val BOOK_GROUPS = stringPreferencesKey("book_groups")
-    private val FOLDER_SORTS = stringPreferencesKey("folder_sorts")
-    private val FOLDER_ORDER = stringPreferencesKey("folder_order")
-
     // AI_STATE_OWNER: GlobalSettings (Collected in UI for reactive updates)
-    val globalSettings: Flow<GlobalSettings> = context.dataStore.data.map { preferences ->
-        GlobalSettings(
-            fontSize = preferences[FONT_SIZE] ?: 18,
-            fontType = preferences[FONT_TYPE] ?: "serif",
-            theme = preferences[THEME] ?: "light",
-            lineHeight = preferences[LINE_HEIGHT] ?: 1.6f,
-            horizontalPadding = preferences[H_PADDING] ?: 16,
-            firstTime = preferences[FIRST_TIME] ?: true,
-            lastSeenVersionCode = preferences[LAST_SEEN_VERSION] ?: 0,
-            showScrubber = preferences[SHOW_SCRUBBER] ?: false,
-            librarySort = preferences[LIBRARY_SORT] ?: "added_desc",
-            favoriteLibrary = preferences[FAVORITE_LIBRARY] ?: "My Library",
-            bookGroups = preferences[BOOK_GROUPS] ?: "{}",
-            folderSorts = preferences[FOLDER_SORTS] ?: "{}",
-            folderOrder = preferences[FOLDER_ORDER] ?: "[]"
-        )
+    val globalSettings: Flow<GlobalSettings> = context.settingsDataStore.data.map { preferences ->
+        preferences.toGlobalSettings()
     }
+
+    // Folder and library organization.
 
     /**
      * PURPOSE: Updates the custom display order of folders in the library drawer.
@@ -79,10 +53,8 @@ class SettingsManager(private val context: Context) {
      */
     suspend fun updateFolderOrder(order: List<String>) {
         // AI_MUTATION_POINT
-        context.dataStore.edit { preferences ->
-            val jsonArray = org.json.JSONArray()
-            order.forEach { jsonArray.put(it) }
-            preferences[FOLDER_ORDER] = jsonArray.toString()
+        context.settingsDataStore.edit { preferences ->
+            preferences[SettingsPreferenceKeys.folderOrder] = order.toJsonArray().toString()
         }
     }
 
@@ -92,34 +64,19 @@ class SettingsManager(private val context: Context) {
      * OUTPUT: None (Suspending).
      * SIDE EFFECTS: Updates FOLDER_SORTS and FOLDER_ORDER in one transaction.
      */
-    suspend fun createFolder(folderName: String, sort: String = "added_desc") {
-        context.dataStore.edit { preferences ->
+    suspend fun createFolder(folderName: String, sort: String = DefaultLibrarySort) {
+        context.settingsDataStore.edit { preferences ->
             val trimmedName = folderName.trim()
-            if (trimmedName.isEmpty() || trimmedName == "My Library") return@edit
+            if (trimmedName.isEmpty() || trimmedName == DefaultLibraryName) return@edit
 
-            val folderSortsJson = try {
-                org.json.JSONObject(preferences[FOLDER_SORTS] ?: "{}")
-            } catch (e: Exception) {
-                org.json.JSONObject("{}")
-            }
+            val folderSortsJson = safeJsonObject(preferences[SettingsPreferenceKeys.folderSorts])
             folderSortsJson.put(trimmedName, sort)
-            preferences[FOLDER_SORTS] = folderSortsJson.toString()
+            preferences[SettingsPreferenceKeys.folderSorts] = folderSortsJson.toString()
 
-            val folderOrderJson = try {
-                org.json.JSONArray(preferences[FOLDER_ORDER] ?: "[]")
-            } catch (e: Exception) {
-                org.json.JSONArray()
-            }
-            val existingOrder = buildList {
-                for (i in 0 until folderOrderJson.length()) {
-                    add(folderOrderJson.getString(i))
-                }
-            }
+            val existingOrder = safeJsonArray(preferences[SettingsPreferenceKeys.folderOrder]).toStringList()
             if (!existingOrder.contains(trimmedName)) {
-                val newOrder = org.json.JSONArray()
-                existingOrder.forEach { newOrder.put(it) }
-                newOrder.put(trimmedName)
-                preferences[FOLDER_ORDER] = newOrder.toString()
+                preferences[SettingsPreferenceKeys.folderOrder] =
+                    (existingOrder + trimmedName).toJsonArray().toString()
             }
         }
     }
@@ -134,25 +91,21 @@ class SettingsManager(private val context: Context) {
      */
     suspend fun setLibrarySort(folderName: String?, sort: String) {
         // AI_MUTATION_POINT
-        context.dataStore.edit { preferences ->
-            if (folderName == null || folderName == "My Library") {
-                preferences[LIBRARY_SORT] = sort
+        context.settingsDataStore.edit { preferences ->
+            if (folderName == null || folderName == DefaultLibraryName) {
+                preferences[SettingsPreferenceKeys.librarySort] = sort
             } else {
-                val currentJson = try {
-                    org.json.JSONObject(preferences[FOLDER_SORTS] ?: "{}")
-                } catch (e: Exception) {
-                    org.json.JSONObject("{}")
-                }
+                val currentJson = safeJsonObject(preferences[SettingsPreferenceKeys.folderSorts])
                 currentJson.put(folderName, sort)
-                preferences[FOLDER_SORTS] = currentJson.toString()
+                preferences[SettingsPreferenceKeys.folderSorts] = currentJson.toString()
             }
         }
     }
 
     suspend fun setFavoriteLibrary(libraryName: String) {
         // AI_MUTATION_POINT
-        context.dataStore.edit { preferences ->
-            preferences[FAVORITE_LIBRARY] = libraryName
+        context.settingsDataStore.edit { preferences ->
+            preferences[SettingsPreferenceKeys.favoriteLibrary] = libraryName
         }
     }
 
@@ -166,18 +119,14 @@ class SettingsManager(private val context: Context) {
      */
     suspend fun updateBookGroup(bookId: String, groupName: String?) {
         // AI_MUTATION_POINT
-        context.dataStore.edit { preferences ->
-            val currentJson = try {
-                org.json.JSONObject(preferences[BOOK_GROUPS] ?: "{}")
-            } catch (e: Exception) {
-                org.json.JSONObject("{}")
-            }
-            if (groupName == null || groupName == "My Library") {
+        context.settingsDataStore.edit { preferences ->
+            val currentJson = safeJsonObject(preferences[SettingsPreferenceKeys.bookGroups])
+            if (groupName == null || groupName == DefaultLibraryName) {
                 currentJson.remove(bookId)
             } else {
                 currentJson.put(bookId, groupName)
             }
-            preferences[BOOK_GROUPS] = currentJson.toString()
+            preferences[SettingsPreferenceKeys.bookGroups] = currentJson.toString()
         }
     }
 
@@ -192,39 +141,25 @@ class SettingsManager(private val context: Context) {
      */
     suspend fun renameFolder(oldName: String, newName: String) {
         // AI_MUTATION_POINT
-        context.dataStore.edit { preferences ->
+        context.settingsDataStore.edit { preferences ->
             // Update folder sorts
-            val folderSortsJson = org.json.JSONObject(preferences[FOLDER_SORTS] ?: "{}")
-            if (folderSortsJson.has(oldName)) {
-                val sort = folderSortsJson.getString(oldName)
-                folderSortsJson.remove(oldName)
-                folderSortsJson.put(newName, sort)
-                preferences[FOLDER_SORTS] = folderSortsJson.toString()
-            }
+            val folderSortsJson = strictJsonObject(preferences[SettingsPreferenceKeys.folderSorts])
+            folderSortsJson.renameStringEntry(oldName, newName)
+            preferences[SettingsPreferenceKeys.folderSorts] = folderSortsJson.toString()
 
             // Update folder order
-            val folderOrderJson = org.json.JSONArray(preferences[FOLDER_ORDER] ?: "[]")
-            val newOrder = org.json.JSONArray()
-            for (i in 0 until folderOrderJson.length()) {
-                val name = folderOrderJson.getString(i)
-                if (name == oldName) newOrder.put(newName) else newOrder.put(name)
-            }
-            preferences[FOLDER_ORDER] = newOrder.toString()
+            val folderOrderJson = strictJsonArray(preferences[SettingsPreferenceKeys.folderOrder])
+            preferences[SettingsPreferenceKeys.folderOrder] =
+                folderOrderJson.replacingEntry(oldName, newName).toString()
 
             // Update book groups
-            val bookGroupsJson = org.json.JSONObject(preferences[BOOK_GROUPS] ?: "{}")
-            val keys = bookGroupsJson.keys()
-            while (keys.hasNext()) {
-                val bookId = keys.next()
-                if (bookGroupsJson.getString(bookId) == oldName) {
-                    bookGroupsJson.put(bookId, newName)
-                }
-            }
-            preferences[BOOK_GROUPS] = bookGroupsJson.toString()
+            val bookGroupsJson = strictJsonObject(preferences[SettingsPreferenceKeys.bookGroups])
+            bookGroupsJson.replaceStringValues(oldName, newName)
+            preferences[SettingsPreferenceKeys.bookGroups] = bookGroupsJson.toString()
 
             // Update favorite library if needed
-            if (preferences[FAVORITE_LIBRARY] == oldName) {
-                preferences[FAVORITE_LIBRARY] = newName
+            if (preferences[SettingsPreferenceKeys.favoriteLibrary] == oldName) {
+                preferences[SettingsPreferenceKeys.favoriteLibrary] = newName
             }
         }
     }
@@ -239,83 +174,74 @@ class SettingsManager(private val context: Context) {
      */
     suspend fun deleteFolder(folderName: String) {
         // AI_MUTATION_POINT
-        context.dataStore.edit { preferences ->
+        context.settingsDataStore.edit { preferences ->
             // Remove from folder sorts
-            val folderSortsJson = org.json.JSONObject(preferences[FOLDER_SORTS] ?: "{}")
+            val folderSortsJson = strictJsonObject(preferences[SettingsPreferenceKeys.folderSorts])
             folderSortsJson.remove(folderName)
-            preferences[FOLDER_SORTS] = folderSortsJson.toString()
+            preferences[SettingsPreferenceKeys.folderSorts] = folderSortsJson.toString()
 
             // Remove from folder order
-            val folderOrderJson = org.json.JSONArray(preferences[FOLDER_ORDER] ?: "[]")
-            val newOrder = org.json.JSONArray()
-            for (i in 0 until folderOrderJson.length()) {
-                val name = folderOrderJson.getString(i)
-                if (name != folderName) newOrder.put(name)
-            }
-            preferences[FOLDER_ORDER] = newOrder.toString()
+            val folderOrderJson = strictJsonArray(preferences[SettingsPreferenceKeys.folderOrder])
+            preferences[SettingsPreferenceKeys.folderOrder] = folderOrderJson.withoutEntry(folderName).toString()
 
             // Remove folder association from books (they move back to "My Library")
-            val bookGroupsJson = org.json.JSONObject(preferences[BOOK_GROUPS] ?: "{}")
-            val keys = bookGroupsJson.keys().asSequence().toList()
-            keys.forEach { bookId ->
-                if (bookGroupsJson.getString(bookId) == folderName) {
-                    bookGroupsJson.remove(bookId)
-                }
-            }
-            preferences[BOOK_GROUPS] = bookGroupsJson.toString()
+            val bookGroupsJson = strictJsonObject(preferences[SettingsPreferenceKeys.bookGroups])
+            bookGroupsJson.removeEntriesWithStringValue(folderName)
+            preferences[SettingsPreferenceKeys.bookGroups] = bookGroupsJson.toString()
 
             // Reset favorite library to "My Library" if the favorite was deleted
-            if (preferences[FAVORITE_LIBRARY] == folderName) {
-                preferences[FAVORITE_LIBRARY] = "My Library"
+            if (preferences[SettingsPreferenceKeys.favoriteLibrary] == folderName) {
+                preferences[SettingsPreferenceKeys.favoriteLibrary] = DefaultLibraryName
             }
         }
     }
 
+    // App bootstrap and version tracking.
     suspend fun setFirstTime(firstTime: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[FIRST_TIME] = firstTime
+        context.settingsDataStore.edit { preferences ->
+            preferences[SettingsPreferenceKeys.firstTime] = firstTime
         }
     }
 
-    fun getLastSeenVersionCode(): Flow<Int> = context.dataStore.data.map { it[LAST_SEEN_VERSION] ?: 0 }
+    fun getLastSeenVersionCode(): Flow<Int> = context.settingsDataStore.data.map {
+        it[SettingsPreferenceKeys.lastSeenVersion] ?: 0
+    }
 
     suspend fun setLastSeenVersionCode(version: Int) {
-        context.dataStore.edit { preferences ->
-            preferences[LAST_SEEN_VERSION] = version
+        context.settingsDataStore.edit { preferences ->
+            preferences[SettingsPreferenceKeys.lastSeenVersion] = version
         }
     }
 
+    // Global reader preferences.
     suspend fun updateGlobalSettings(settings: GlobalSettings) {
         // AI_MUTATION_POINT
-        context.dataStore.edit { preferences ->
-            preferences[FONT_SIZE] = settings.fontSize
-            preferences[FONT_TYPE] = settings.fontType
-            preferences[THEME] = settings.theme
-            preferences[LINE_HEIGHT] = settings.lineHeight
-            preferences[H_PADDING] = settings.horizontalPadding
-            preferences[SHOW_SCRUBBER] = settings.showScrubber
+        context.settingsDataStore.edit { preferences ->
+            preferences[SettingsPreferenceKeys.fontSize] = settings.fontSize
+            preferences[SettingsPreferenceKeys.fontType] = settings.fontType
+            preferences[SettingsPreferenceKeys.theme] = settings.theme
+            preferences[SettingsPreferenceKeys.lineHeight] = settings.lineHeight
+            preferences[SettingsPreferenceKeys.horizontalPadding] = settings.horizontalPadding
+            preferences[SettingsPreferenceKeys.showScrubber] = settings.showScrubber
         }
     }
 
     suspend fun toggleTheme() {
-        context.dataStore.edit { preferences ->
-            val current = preferences[THEME] ?: "light"
-            preferences[THEME] = if (current == "dark") "light" else "dark"
+        context.settingsDataStore.edit { preferences ->
+            val current = preferences[SettingsPreferenceKeys.theme] ?: "light"
+            preferences[SettingsPreferenceKeys.theme] = if (current == "dark") "light" else "dark"
         }
     }
 
+    // Per-book progress and cleanup.
     /**
      * PURPOSE: Retrieves current reading progress for a specific book.
      * INPUT: bookId.
      * OUTPUT: Flow of [BookProgress].
      * NOTES: Emits every time any value in DataStore changes.
      */
-    fun getBookProgress(bookId: String): Flow<BookProgress> = context.dataStore.data.map { preferences ->
-        BookProgress(
-            scrollIndex = preferences[intPreferencesKey("${bookId}_scroll_index")] ?: 0,
-            scrollOffset = preferences[intPreferencesKey("${bookId}_scroll_offset")] ?: 0,
-            lastChapterHref = preferences[stringPreferencesKey("${bookId}_chapter")]
-        )
+    fun getBookProgress(bookId: String): Flow<BookProgress> = context.settingsDataStore.data.map { preferences ->
+        preferences.toBookProgress(bookId)
     }
 
     /**
@@ -328,30 +254,28 @@ class SettingsManager(private val context: Context) {
      */
     suspend fun saveBookProgress(bookId: String, progress: BookProgress) {
         // AI_MUTATION_POINT
-        context.dataStore.edit { preferences ->
-            preferences[intPreferencesKey("${bookId}_scroll_index")] = progress.scrollIndex
-            preferences[intPreferencesKey("${bookId}_scroll_offset")] = progress.scrollOffset
+        context.settingsDataStore.edit { preferences ->
+            val keys = bookProgressPreferenceKeys(bookId)
+            preferences[keys.scrollIndex] = progress.scrollIndex
+            preferences[keys.scrollOffset] = progress.scrollOffset
             if (progress.lastChapterHref == null) {
-                preferences.remove(stringPreferencesKey("${bookId}_chapter"))
+                preferences.remove(keys.chapter)
             } else {
-                preferences[stringPreferencesKey("${bookId}_chapter")] = progress.lastChapterHref
+                preferences[keys.chapter] = progress.lastChapterHref
             }
         }
     }
 
     suspend fun deleteBookData(bookId: String) {
-        context.dataStore.edit { preferences ->
-            preferences.remove(intPreferencesKey("${bookId}_scroll_index"))
-            preferences.remove(intPreferencesKey("${bookId}_scroll_offset"))
-            preferences.remove(stringPreferencesKey("${bookId}_chapter"))
-            
-            val bookGroupsJson = try {
-                org.json.JSONObject(preferences[BOOK_GROUPS] ?: "{}")
-            } catch (e: Exception) {
-                org.json.JSONObject("{}")
-            }
+        context.settingsDataStore.edit { preferences ->
+            val keys = bookProgressPreferenceKeys(bookId)
+            preferences.remove(keys.scrollIndex)
+            preferences.remove(keys.scrollOffset)
+            preferences.remove(keys.chapter)
+
+            val bookGroupsJson = safeJsonObject(preferences[SettingsPreferenceKeys.bookGroups])
             bookGroupsJson.remove(bookId)
-            preferences[BOOK_GROUPS] = bookGroupsJson.toString()
+            preferences[SettingsPreferenceKeys.bookGroups] = bookGroupsJson.toString()
         }
     }
 }

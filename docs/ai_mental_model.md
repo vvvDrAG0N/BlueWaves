@@ -68,3 +68,30 @@ This creates an infinite loop: settings change -> effect runs -> updates setting
 - If you modify the overscroll navigation logic (`NestedScrollConnection` or `pointerInput` in `ReaderScreen.kt`), you MUST test pull-to-change-chapter with both fast flicks and slow drags. Verify that `verticalOverscroll` resets correctly on `PointerEventType.Release` and that chapters do not skip.
 - If you modify the flags `isInitialScrollDone` or `isRestoringPosition`, you MUST run the "Jump to Top" regression test: open a book, wait for content to load, ensure scroll position is not (0,0) unless it's a fresh chapter. These flags gate the progress-saving logic and are the single highest-risk area of the codebase.
 
+## Parser Split Note
+
+The parser package now uses a facade-plus-helpers layout:
+
+- `EpubParser.kt` is the public surface.
+- `EpubParserBooks.kt` owns book ID generation, TOC/cover rebuild, and `metadata.json` persistence.
+- `EpubParserChapter.kt` owns the `ZipFile` chapter loop, image resolution, malformed XHTML cleanup, and `normalizePath()`.
+
+Safe loading strategy:
+- Read `docs/epub_parsing.md` first.
+- Open `EpubParser.kt`.
+- Open only the helper file relevant to the bug or refactor.
+
+## Reader Split Note
+
+The reader package now uses a state-owner plus helpers layout:
+
+- `ReaderScreen.kt` is the behavior and restoration surface.
+- `ReaderScreenContracts.kt` owns reader theme helpers and the chrome contract map.
+- `ReaderScreenChrome.kt` owns the TOC drawer, overlays, and shell layout.
+- `ReaderScreenControls.kt` owns controls, scrubber UI, and chapter element rendering.
+
+Safe loading strategy:
+- Read `docs/reader_screen.md` first.
+- Open `ReaderScreen.kt`.
+- Open only the helper file relevant to the bug or refactor.
+

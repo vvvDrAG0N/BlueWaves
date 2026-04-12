@@ -2,6 +2,21 @@
 
 This guide maps common bug types to the current post-refactor file layout.
 
+## Graph-First Debugging
+
+Before opening several raw files:
+1. Read `docs/project_graph.md`.
+2. If present, read `graphify-out/GRAPH_REPORT.md`.
+3. Run `graphify query "<bug question>" --budget 900-1200` if the failing path is unclear.
+
+Then open only the area doc and files pointed to by the graph.
+
+## Shared Logging
+
+- Use `core/debug/AppLog.kt` for new diagnostics instead of adding more raw `Log` calls.
+- Grep `AppLog.PARSER`, `AppLog.APP_SHELL`, `AppLog.READER`, and `AppLog.SETTINGS` first when looking for high-signal logs.
+- Keep debug/info logs for trace points and keep warn/error logs for real fallbacks or failures.
+
 ## Scroll Position Not Restored
 
 Primary files:
@@ -67,6 +82,35 @@ Common causes:
 - Broken relative path normalization.
 - ZIP entry lookup only matching one EPUB directory layout.
 - Malformed XHTML causing the parser to skip image tags.
+
+## Parser File Split Note
+
+For parser bugs after the safe split:
+
+1. Start with `docs/epub_parsing.md`.
+2. Read `data/parser/EpubParser.kt` for the public entry point.
+3. For duplicate/import/cache bugs, inspect `data/parser/EpubParserBooks.kt`.
+4. For chapter/image/path bugs, inspect `data/parser/EpubParserChapter.kt`.
+
+## Reader File Split Note
+
+For reader bugs after the safe split:
+
+1. Start with `docs/reader_screen.md`.
+2. Read `feature/reader/ReaderScreen.kt` for restoration, progress, and navigation behavior.
+3. For TOC, top bar, overscroll prompts, or drawer rendering bugs, inspect `feature/reader/ReaderScreenChrome.kt`.
+4. For controls, scrubber, theme, or chapter element rendering bugs, inspect `feature/reader/ReaderScreenControls.kt`.
+
+## App Shell File Split Note
+
+For library/app-shell bugs after phase 3:
+
+1. Start with `docs/app_shell_navigation.md`.
+2. Read `app/AppNavigation.kt` for state ownership and screen routing.
+3. For first-run/version/changelog bugs, inspect `app/AppNavigationStartup.kt`.
+4. For import/delete/last-read side-effect bugs, inspect `app/AppNavigationOperations.kt`.
+5. For folder-order/sort/drag-preview bugs, inspect `app/AppNavigationLibraryData.kt`.
+6. Read `app/AppNavigationLibrary.kt` or `app/AppNavigationDialogs.kt` only if the bug is rendering-specific.
 
 ## Overscroll Navigation Not Triggering
 

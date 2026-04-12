@@ -1,0 +1,6 @@
+# Keep the architecture graph focused on production code and real entry points.
+build.gradle.kts
+settings.gradle.kts
+app/src/test/**
+app/src/androidTest/**
+scripts/rebuild_graphify.py

@@ -1,0 +1,106 @@
+/**
+ * AI_READ_AFTER: AppNavigation.kt
+ * AI_RELEVANT_TO: [Library Import, Last-Read Updates, Folder/Book Mutations]
+ * PURPOSE: Package-local side-effect helpers for the app shell.
+ * AI_WARNING: Persistence still belongs to `SettingsManager`; file work still belongs to `EpubParser`.
+ */
+package com.epubreader.app
+
+import android.content.Context
+import android.net.Uri
+import com.epubreader.core.model.EpubBook
+import com.epubreader.data.parser.EpubParser
+import com.epubreader.data.settings.SettingsManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.security.MessageDigest
+
+internal sealed interface ImportBookResult {
+    data class Duplicate(val folderName: String) : ImportBookResult
+    data object Imported : ImportBookResult
+    data object Failed : ImportBookResult
+}
+
+internal suspend fun scanLibrary(parser: EpubParser): List<EpubBook> {
+    return withContext(Dispatchers.IO) {
+        parser.scanBooks()
+    }
+}
+
+internal suspend fun touchBookLastRead(
+    parser: EpubParser,
+    book: EpubBook,
+): EpubBook {
+    val updated = book.copy(lastRead = System.currentTimeMillis())
+    withContext(Dispatchers.IO) {
+        parser.updateLastRead(updated)
+    }
+    return updated
+}
+
+internal suspend fun importBookIntoLibrary(
+    books: List<EpubBook>,
+    context: Context,
+    uri: Uri,
+    parser: EpubParser,
+    settingsManager: SettingsManager,
+    selectedFolderName: String,
+    bookGroups: JSONObject,
+): ImportBookResult {
+    val existingBook = withContext(Dispatchers.IO) {
+        findExistingBook(books = books, context = context, uri = uri)
+    }
+    if (existingBook != null) {
+        val folderName = bookGroups.optString(existingBook.id, "").ifEmpty { RootLibraryName }
+        return ImportBookResult.Duplicate(folderName)
+    }
+
+    val newBook = withContext(Dispatchers.IO) {
+        parser.parseAndExtract(uri)
+    } ?: return ImportBookResult.Failed
+
+    settingsManager.updateBookGroup(
+        newBook.id,
+        if (selectedFolderName == RootLibraryName) null else selectedFolderName,
+    )
+    return ImportBookResult.Imported
+}
+
+internal suspend fun moveBooksToFolder(
+    settingsManager: SettingsManager,
+    bookIds: Set<String>,
+    folderName: String,
+) {
+    bookIds.forEach { id ->
+        settingsManager.updateBookGroup(id, if (folderName == RootLibraryName) null else folderName)
+    }
+}
+
+internal suspend fun deleteSelectedBooks(
+    parser: EpubParser,
+    settingsManager: SettingsManager,
+    books: List<EpubBook>,
+    selectedBookIds: Set<String>,
+) {
+    val idsToDelete = selectedBookIds.toList()
+    withContext(Dispatchers.IO) {
+        idsToDelete.forEach { id ->
+            books.find { it.id == id }?.let { parser.deleteBook(it) }
+        }
+    }
+    idsToDelete.forEach { settingsManager.deleteBookData(it) }
+}
+
+private fun findExistingBook(books: List<EpubBook>, context: Context, uri: Uri): EpubBook? {
+    val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
+    val fileSize = fileDescriptor?.statSize ?: 0L
+    fileDescriptor?.close()
+
+    val rawId = "$uri$fileSize"
+    val bookId = MessageDigest.getInstance("MD5")
+        .digest(rawId.toByteArray())
+        .joinToString("") { "%02x".format(it) }
+
+    return books.find { it.id == bookId }
+}
