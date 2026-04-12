@@ -15,4 +15,5 @@
 local.properties
 .idea/
 .kotlin/
-
+*.apk
+*.dm
