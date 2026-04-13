@@ -60,3 +60,25 @@ app/src/main/java/com/epubreader
 - `ReaderScreen` remains the highest-risk file. Preserve the restoration flow unless it is fully revalidated.
 - `SettingsManager` remains the persisted source of truth for app and per-book state.
 - `EpubParser` still owns EPUB extraction and chapter parsing, but shared models no longer live inside it.
+
+## Planned Roadmap
+
+- Theme System
+  - User-defined custom themes and color palettes.
+  - Expected delivery requirement: add unit coverage for theme model, persistence, and application behavior.
+- Format Support
+  - PDF support.
+  - ZIP support.
+  - Expected delivery requirement: add unit coverage for format detection and routing.
+- Edit Book
+  - Custom book cover.
+  - Editable author and title metadata.
+  - Chapter deletion and chapter addition.
+  - Expected delivery requirement: add unit coverage for metadata and chapter mutation flows.
+- Selectable Text
+  - Reader text selection for chapter text only.
+  - Toggle form matching the `Show System Bar` setting.
+  - UI placement in the global `Appearance` settings area.
+  - Expected delivery requirement: add unit coverage for persistence, state, and toggle behavior.
+
+All roadmap items should also update the relevant markdown docs and rebuild `graphify-out/` when implemented.

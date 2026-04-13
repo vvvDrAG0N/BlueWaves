@@ -58,6 +58,7 @@ internal fun LibraryDialogHost(
 
     RenameFolderDialog(
         folderName = state.folderToRename,
+        existingFolders = state.existingFolders,
         onDismiss = actions.onDismissRenameFolder,
         onRenameFolder = actions.onRenameFolder,
     )
@@ -209,12 +210,19 @@ internal fun CreateFolderDialog(
 @Composable
 internal fun RenameFolderDialog(
     folderName: String?,
+    existingFolders: List<String>,
     onDismiss: () -> Unit,
     onRenameFolder: (String, String) -> Unit,
 ) {
     folderName ?: return
 
     var newName by remember(folderName) { mutableStateOf(folderName) }
+    val trimmedNewName = newName.trim()
+    val canRename = trimmedNewName.isNotBlank() &&
+        trimmedNewName != folderName &&
+        trimmedNewName != RootLibraryName &&
+        existingFolders.none { it == trimmedNewName && it != folderName }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Rename Folder") },
@@ -227,12 +235,12 @@ internal fun RenameFolderDialog(
         },
         confirmButton = {
             TextButton(
+                enabled = canRename,
                 onClick = {
-                    val renamedFolder = newName.trim()
-                    if (renamedFolder.isNotBlank() && renamedFolder != folderName) {
-                        onRenameFolder(folderName, renamedFolder)
+                    if (canRename) {
+                        onRenameFolder(folderName, trimmedNewName)
+                        onDismiss()
                     }
-                    onDismiss()
                 },
             ) {
                 Text("Rename")

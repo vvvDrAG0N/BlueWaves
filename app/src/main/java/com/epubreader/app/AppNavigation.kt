@@ -8,7 +8,9 @@
  */
 package com.epubreader.app
 
+import android.app.Activity
 import android.net.Uri
+import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +25,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -35,6 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.epubreader.Screen
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
@@ -42,6 +49,7 @@ import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import com.epubreader.feature.reader.ReaderScreen
 import com.epubreader.feature.settings.SettingsScreen
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -74,6 +82,7 @@ import org.json.JSONObject
 fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettings) {
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
+    val view = LocalView.current
     val scope = rememberCoroutineScope()
     val parser = remember { EpubParser(context) }
 
@@ -93,6 +102,21 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     var isFolderSelectionMode by remember { mutableStateOf(false) }
     var showBulkFolderDeleteConfirm by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Re-apply system bar hide after returning from external activities (like file picker)
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    var resumeTrigger by remember { mutableIntStateOf(0) }
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                resumeTrigger++
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     var selectedFolderName by remember(globalSettings.favoriteLibrary) {
         mutableStateOf(globalSettings.favoriteLibrary.ifEmpty { RootLibraryName })
@@ -144,6 +168,24 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         if (!drawerState.isOpen) {
             clearFolderSelection()
             isMovingMode = false
+        }
+    }
+
+    LaunchedEffect(currentScreen, globalSettings.showSystemBar, resumeTrigger) {
+        val window = (view.context as? Activity)?.window ?: return@LaunchedEffect
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+
+        if (globalSettings.showSystemBar) {
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+        } else if (currentScreen == Screen.Reader || currentScreen == Screen.Library) {
+            // Hide for immersive reading and library browsing if configured.
+            // ReaderScreen also has its own local LaunchedEffect to show/hide based on controls.
+            windowInsetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+        } else {
+            // Always show system bars in Settings for better accessibility and status visibility.
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
         }
     }
 
@@ -267,26 +309,36 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         uri?.let { selectedUri ->
             scope.launch {
                 isLoading = true
-                when (
-                    val result = importBookIntoLibrary(
-                        books = books,
-                        context = context,
-                        uri = selectedUri,
-                        parser = parser,
-                        settingsManager = settingsManager,
-                        selectedFolderName = selectedFolderName,
-                        bookGroups = bookGroups,
-                    )
-                ) {
-                    is ImportBookResult.Duplicate -> {
-                        snackbarHostState.showSnackbar("This book is already in your library (${result.folderName}).")
+                try {
+                    when (
+                        val result = importBookIntoLibrary(
+                            books = books,
+                            context = context,
+                            uri = selectedUri,
+                            parser = parser,
+                            settingsManager = settingsManager,
+                            selectedFolderName = selectedFolderName,
+                            bookGroups = bookGroups,
+                        )
+                    ) {
+                        is ImportBookResult.Duplicate -> {
+                            snackbarHostState.showSnackbar("This book is already in your library (${result.folderName}).")
+                        }
+                        ImportBookResult.Imported -> {
+                            refreshLibrary()
+                        }
+                        ImportBookResult.Failed -> {
+                            snackbarHostState.showSnackbar("Couldn't import this book.")
+                        }
                     }
-                    ImportBookResult.Imported -> {
-                        refreshLibrary()
+                } catch (error: Exception) {
+                    if (error is CancellationException) {
+                        throw error
                     }
-                    ImportBookResult.Failed -> Unit
+                    snackbarHostState.showSnackbar("Couldn't import this book.")
+                } finally {
+                    isLoading = false
                 }
-                isLoading = false
             }
         }
     }
@@ -308,12 +360,22 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     }
     val renameFolder: (String, String) -> Unit = { oldName, newName ->
         scope.launch {
-            settingsManager.renameFolder(oldName, newName)
+            val trimmedNewName = newName.trim()
+            val isInvalidRename = oldName == RootLibraryName ||
+                trimmedNewName.isBlank() ||
+                trimmedNewName == oldName ||
+                trimmedNewName == RootLibraryName ||
+                folders.any { it == trimmedNewName && it != oldName }
+            if (isInvalidRename) {
+                return@launch
+            }
+
+            settingsManager.renameFolder(oldName, trimmedNewName)
             if (selectedFolderName == oldName) {
-                selectedFolderName = newName
+                selectedFolderName = trimmedNewName
             }
             dragPreviewFolders = dragPreviewFolders.map { folderName ->
-                if (folderName == oldName) newName else folderName
+                if (folderName == oldName) trimmedNewName else folderName
             }
             refreshLibrary()
         }

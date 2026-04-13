@@ -1,6 +1,6 @@
 # Test Checklist
 
-This file tracks the baseline automated coverage for Blue Waves after the app-shell, parser, settings, and reader safe refactors.
+This file tracks the baseline automated coverage for Blue Waves after the app-shell, parser, settings, reader, and theme-system work.
 
 Use it to see what is already covered before planning new tests.
 
@@ -9,7 +9,7 @@ Use it to see what is already covered before planning new tests.
 - Plain JVM tests are supported and in use.
 - Robolectric-style local Android tests are configured and in use.
 - Instrumentation tests are in use on device/emulator for the highest-risk runtime behavior.
-- The baseline 15-test execution plan below has been completed.
+- The baseline execution plan below has been completed and extended with custom-theme coverage.
 
 ## Priority 1: JVM Unit Tests
 
@@ -85,6 +85,8 @@ Use it to see what is already covered before planning new tests.
   - default `GlobalSettings` mapping
   - default `BookProgress` mapping
   - missing preference keys produce stable defaults
+  - custom themes parse safely from Preferences
+  - invalid stored active theme IDs fall back safely
 - Why fifth:
   - Guards DataStore default behavior
   - Cheap to maintain
@@ -98,9 +100,31 @@ Use it to see what is already covered before planning new tests.
 - Cover:
   - `getThemeColors()` returns the expected theme colors
   - unknown theme falls back to light
+  - saved custom themes resolve to explicit reader colors
 - Why sixth:
   - Low-risk, low-cost coverage
   - Not as important as app-shell/settings/parser helpers
+
+### 6a. [done] `SettingsModelsThemeTest`
+
+- Path:
+  - `app/src/test/java/com/epubreader/core/model/SettingsModelsThemeTest.kt`
+- Target:
+  - `core/model/SettingsModels.kt`
+- Cover:
+  - built-in theme options stay ahead of custom themes
+  - active theme selection normalizes built-in, custom, and invalid IDs
+  - custom palette hex parsing/formatting stays stable
+
+### 6b. [done] `MainActivityThemeTest`
+
+- Path:
+  - `app/src/test/java/com/epubreader/MainActivityThemeTest.kt`
+- Target:
+  - `MainActivity.kt`
+- Cover:
+  - built-in sepia Material colors remain stable
+  - saved custom themes derive an app-wide Material color scheme
 
 ## Priority 2: Robolectric Tests
 
@@ -148,6 +172,16 @@ These local Android-aware tests are now configured and cover startup, app-shell 
   - Higher integration value than helper tests
   - Needs Android `Context` and filesystem setup
 
+### 9a. [done] `SettingsManagerThemePersistenceTest`
+
+- Path:
+  - `app/src/test/java/com/epubreader/data/settings/SettingsManagerThemePersistenceTest.kt`
+- Target:
+  - `data/settings/SettingsManager.kt`
+- Cover:
+  - saving and activating a custom theme persists through the public SettingsManager API
+  - deleting the active custom theme falls back safely to the built-in light theme
+
 ## Priority 3: Instrumentation / Compose Tests
 
 These are slower and should focus on the most fragile runtime behavior.
@@ -183,6 +217,7 @@ These are slower and should focus on the most fragile runtime behavior.
   - `feature/reader/ReaderScreen.kt`
 - Cover:
   - changing theme updates reader colors without reopening
+  - switching to a saved custom theme updates reader colors without reopening
 
 ### 13. [done] `AppNavigationLibraryFlowTest`
 
@@ -206,6 +241,7 @@ These are slower and should focus on the most fragile runtime behavior.
 - Cover:
   - changing controls writes expected settings
   - values survive recomposition / screen reopen
+  - creating a custom theme auto-selects it and preserves it across screen reopen
 
 ### 15. [done] `ParserIntegrationTest`
 

@@ -81,6 +81,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -123,6 +124,12 @@ private fun ReaderTocDrawerContent(
         val keyboardController = LocalSoftwareKeyboardController.current
         val totalChapters = state.book.spineHrefs.size
 
+        /**
+         * Go to Chapter: Allows direct numeric entry to jump to a specific spine index.
+         * [AI_NOTE] Uses FocusRequester to ensure the keyboard opens immediately when the 
+         * input field is toggled. Interaction is kept local to the drawer to prevent 
+         * unnecessary recompositions of the main ReaderScreen.
+         */
         val performJump = {
             val targetChapter = inputChapter.toIntOrNull()?.coerceIn(1, totalChapters) ?: (state.currentChapterIndex + 1)
             val targetIndex = (targetChapter - 1).coerceIn(0, totalChapters - 1)
@@ -288,6 +295,9 @@ private fun ReaderContentSurface(
     state: ReaderChromeState,
     callbacks: ReaderChromeCallbacks
 ) {
+    var selectionResetToken by remember { mutableIntStateOf(0) }
+    var hasActiveTextSelection by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -307,10 +317,18 @@ private fun ReaderContentSurface(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .testTag("reader_controls_overlay")
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
-                ) { callbacks.onShowControlsChange(!state.showControls) }
+                ) {
+                    if (hasActiveTextSelection) {
+                        hasActiveTextSelection = false
+                        selectionResetToken++
+                    } else {
+                        callbacks.onShowControlsChange(!state.showControls)
+                    }
+                }
         ) {
             ReaderChapterContent(
                 settings = state.settings,
@@ -318,7 +336,9 @@ private fun ReaderContentSurface(
                 listState = state.listState,
                 chapterElements = state.chapterElements,
                 isLoadingChapter = state.isLoadingChapter,
-                currentChapterIndex = state.currentChapterIndex
+                currentChapterIndex = state.currentChapterIndex,
+                selectionResetToken = selectionResetToken,
+                onSelectionActiveChange = { hasActiveTextSelection = it }
             )
         }
 
@@ -411,6 +431,7 @@ private fun ReaderTopBar(
     onOpenToc: () -> Unit
 ) {
     TopAppBar(
+        modifier = Modifier.testTag("reader_top_bar"),
         title = {
             Column {
                 Text(book.title, maxLines = 1, style = MaterialTheme.typography.titleMedium)

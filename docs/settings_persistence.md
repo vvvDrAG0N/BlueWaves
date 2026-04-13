@@ -4,7 +4,7 @@ This file is a low-context map for AI agents working in the DataStore-backed per
 
 ## Purpose
 
-Use this guide when the task is about global settings, folder metadata, library sort/favorite state, or per-book progress persistence.
+Use this guide when the task is about global settings, custom theme palettes, folder metadata, library sort/favorite state, or per-book progress persistence.
 
 ## Fast Load Order
 
@@ -18,11 +18,16 @@ Use this guide when the task is about global settings, folder metadata, library 
 - `SettingsManager.kt`
   - Public persistence API.
   - Owns DataStore edit transactions.
-  - Coordinates folder metadata writes, global setting writes, and progress writes.
+  - Coordinates folder metadata writes, global setting writes, saved custom-theme writes, and progress writes.
 
 - `SettingsManagerContracts.kt`
   - Package-private key/default map.
   - Maps `Preferences` to `GlobalSettings` and `BookProgress`.
+  - Parses and serializes the additive custom-theme registry stored alongside the active theme ID.
+    - **Custom Theme Registry**: Stored as a JSON array string in the `custom_themes` key.
+    - **Schema**: Each object contains `id`, `name`, `primary`, `secondary`, `background`, `surface`, `surfaceVariant`, `outline`, `readerBackground`, `readerForeground`, and `isAdvanced`.
+    - **Rationale**: Using JSON avoids per-theme Preference keys, keeps the registry additive, and allows for flexible palette extension.
+    - **Resilience**: `parseCustomThemes` uses a "skip invalid" strategy. If the entire JSON is corrupt, it falls back to an empty list.
   - Defines book-progress preference key bundles.
 
 - `SettingsManagerJson.kt`
@@ -34,6 +39,7 @@ Use this guide when the task is about global settings, folder metadata, library 
 - Do not change preference key names.
 - Do not change default values unless the task explicitly requires a migration.
 - Keep `SettingsManager` as the only public persistence entry point.
+- Keep built-in theme IDs backward-compatible and keep custom-theme persistence additive.
 - Treat folder/order/group JSON behavior as schema-adjacent even though the schema is still Preferences-backed.
 - If the task affects reader progress semantics, verify that `ReaderScreen` expectations still match the saved values.
 
@@ -44,6 +50,9 @@ Use this guide when the task is about global settings, folder metadata, library 
 
 - Change how settings are written:
   - Start in `SettingsManager.kt`.
+
+- Add or debug custom theme persistence:
+  - Start in `SettingsManagerContracts.kt`, then inspect `SettingsManager.kt`.
 
 - Change folder rename/delete/order behavior:
   - Start in `SettingsManager.kt`, then open `SettingsManagerJson.kt`.
@@ -58,4 +67,5 @@ Use this guide when the task is about global settings, folder metadata, library 
 
 - `SettingsManager.kt` still owns all write transactions to keep behavior centralized.
 - Folder metadata still uses JSON strings inside Preferences, so schema meaning is spread across write helpers and callers.
+- Custom themes are also stored as JSON inside Preferences, but the active theme remains a single string selector so existing built-in values stay compatible.
 - A later phase could separate folder metadata operations from global setting operations, but that would be a bigger architectural move.

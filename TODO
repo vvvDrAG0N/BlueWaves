@@ -1,11 +1,32 @@
-force left to right reading over system default (for systems thats uses languages like ar)
-add chapter slider and button on the appearance settings in reader
-add sorting to TOC
-add add go to chapter in TOC
-create 2 color theme system, one for widgets, other for background.
-assign library header to widgets theme
-create new theme, oled black, remove sapia theme
-add new theme, custom theme with oled black as default 
-create theme customize right beside custom theme, in both library settings and reader appearance settings
-add a small window open for theme customization, with color picker, two for bg and widgets include save btn and cancel btn
-make sure it remembers properly
+TODO
+
+- Theme System DONE
+  - Add user-defined custom themes and color palettes.
+  - Requirement: ship unit tests for theme model, persistence, and application paths.
+  - Requirement: update relevant markdown docs.
+  - Requirement: rebuild graphify artifacts after implementation.
+
+- Format Support
+  - Add support for PDF.
+  - Add support for ZIP-based import flows.
+  - Requirement: ship unit tests for format detection, import routing, and parser/reader entry points.
+  - Requirement: update relevant markdown docs.
+  - Requirement: rebuild graphify artifacts after implementation.
+
+- Edit Book
+  - Allow setting a custom cover for books.
+  - Allow editing author name.
+  - Allow editing title.
+  - Allow deleting chapters.
+  - Allow adding chapters.
+  - Requirement: ship unit tests for metadata editing and chapter mutation paths.
+  - Requirement: update relevant markdown docs.
+  - Requirement: rebuild graphify artifacts after implementation.
+
+- Selectable Text
+  - Add the ability to select text in the reader for chapter text only.
+  - Form: add a toggle button similar to the `Show System Bar` toggle.
+  - UI position: `Appearance` bar and library's global settings.
+  - Requirement: ship unit tests for reader text-selection state, persistence, and UI toggle behavior.
+  - Requirement: update relevant markdown docs.
+  - Requirement: rebuild graphify artifacts after implementation if code structure changes.

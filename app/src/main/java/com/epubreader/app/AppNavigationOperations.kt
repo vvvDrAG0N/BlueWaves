@@ -11,6 +11,7 @@ import android.net.Uri
 import com.epubreader.core.model.EpubBook
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -48,23 +49,30 @@ internal suspend fun importBookIntoLibrary(
     selectedFolderName: String,
     bookGroups: JSONObject,
 ): ImportBookResult {
-    val existingBook = withContext(Dispatchers.IO) {
-        findExistingBook(books = books, context = context, uri = uri)
-    }
-    if (existingBook != null) {
-        val folderName = bookGroups.optString(existingBook.id, "").ifEmpty { RootLibraryName }
-        return ImportBookResult.Duplicate(folderName)
-    }
+    return try {
+        val existingBook = withContext(Dispatchers.IO) {
+            findExistingBook(books = books, context = context, uri = uri)
+        }
+        if (existingBook != null) {
+            val folderName = bookGroups.optString(existingBook.id, "").ifEmpty { RootLibraryName }
+            return ImportBookResult.Duplicate(folderName)
+        }
 
-    val newBook = withContext(Dispatchers.IO) {
-        parser.parseAndExtract(uri)
-    } ?: return ImportBookResult.Failed
+        val newBook = withContext(Dispatchers.IO) {
+            parser.parseAndExtract(uri)
+        } ?: return ImportBookResult.Failed
 
-    settingsManager.updateBookGroup(
-        newBook.id,
-        if (selectedFolderName == RootLibraryName) null else selectedFolderName,
-    )
-    return ImportBookResult.Imported
+        settingsManager.updateBookGroup(
+            newBook.id,
+            if (selectedFolderName == RootLibraryName) null else selectedFolderName,
+        )
+        ImportBookResult.Imported
+    } catch (error: Exception) {
+        if (error is CancellationException) {
+            throw error
+        }
+        ImportBookResult.Failed
+    }
 }
 
 internal suspend fun moveBooksToFolder(
@@ -93,9 +101,11 @@ internal suspend fun deleteSelectedBooks(
 }
 
 private fun findExistingBook(books: List<EpubBook>, context: Context, uri: Uri): EpubBook? {
-    val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
-    val fileSize = fileDescriptor?.statSize ?: 0L
-    fileDescriptor?.close()
+    val fileSize = try {
+        context.contentResolver.openFileDescriptor(uri, "r")?.use { it.statSize } ?: 0L
+    } catch (_: Exception) {
+        return null
+    }
 
     val rawId = "$uri$fileSize"
     val bookId = MessageDigest.getInstance("MD5")

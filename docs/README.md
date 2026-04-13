@@ -37,6 +37,8 @@ This directory is the architectural memory for Blue Waves.
   - UI and styling constraints.
 - `PROMPT_TEMPLATES.md`
   - Copy-paste starter prompts for bug fixes, features, reviews, and safe refactors.
+- `TODO_PROMPTS.md`
+  - Ready-to-use implementation prompts for the current top-level TODO features.
 
 ## Graphify Artifacts
 
@@ -79,3 +81,4 @@ This directory is the architectural memory for Blue Waves.
   - Use this to see what is already covered before planning new tests.
 - `PROMPT_TEMPLATES.md`
   - Includes `Unit Test` and `Instrumentation Test` starter prompts plus the feature test-selection rule.
+# Test change

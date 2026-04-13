@@ -2,7 +2,11 @@ package com.epubreader.data.settings
 
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.preferencesOf
+import com.epubreader.core.model.CustomTheme
+import com.epubreader.core.model.LightThemeId
+import com.epubreader.core.model.ThemePalette
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -20,6 +24,8 @@ class SettingsManagerContractsTest {
         assertEquals(true, settings.firstTime)
         assertEquals(0, settings.lastSeenVersionCode)
         assertEquals(false, settings.showScrubber)
+        assertEquals(false, settings.showSystemBar)
+        assertTrue(settings.customThemes.isEmpty())
         assertEquals(DefaultLibrarySort, settings.librarySort)
         assertEquals(DefaultLibraryName, settings.favoriteLibrary)
         assertEquals(EmptyJsonObject, settings.bookGroups)
@@ -44,6 +50,69 @@ class SettingsManagerContractsTest {
         assertEquals(1.6f, settings.lineHeight)
         assertEquals(DefaultLibrarySort, settings.librarySort)
         assertEquals(EmptyJsonArray, settings.folderOrder)
+    }
+
+    @Test
+    fun toGlobalSettings_readsCustomThemesAndKeepsKnownCustomSelection() {
+        val settings = preferencesOf(
+            SettingsPreferenceKeys.theme to "custom-ocean",
+            SettingsPreferenceKeys.customThemes to """
+                [
+                  {
+                    "id": "custom-ocean",
+                    "name": "Ocean",
+                    "primary": "#2A6F97",
+                    "secondary": "#468FAF",
+                    "background": "#F4FAFF",
+                    "surface": "#FFFFFF",
+                    "surfaceVariant": "#D7EAF7",
+                    "outline": "#8AA7BB",
+                    "readerBackground": "#EEF8FF",
+                    "readerForeground": "#10212D"
+                  }
+                ]
+            """.trimIndent(),
+        ).toGlobalSettings()
+
+        assertEquals("custom-ocean", settings.theme)
+        assertEquals(
+            listOf(
+                CustomTheme(
+                    id = "custom-ocean",
+                    name = "Ocean",
+                    palette = ThemePalette(
+                        primary = 0xFF2A6F97,
+                        secondary = 0xFF468FAF,
+                        background = 0xFFF4FAFF,
+                        surface = 0xFFFFFFFF,
+                        surfaceVariant = 0xFFD7EAF7,
+                        outline = 0xFF8AA7BB,
+                        readerBackground = 0xFFEEF8FF,
+                        readerForeground = 0xFF10212D,
+                    ),
+                )
+            ),
+            settings.customThemes,
+        )
+    }
+
+    @Test
+    fun toGlobalSettings_fallsBackToLightWhenStoredThemeDoesNotExist() {
+        val settings = preferencesOf(
+            SettingsPreferenceKeys.theme to "custom-missing",
+            SettingsPreferenceKeys.customThemes to EmptyJsonArray,
+        ).toGlobalSettings()
+
+        assertEquals(LightThemeId, settings.theme)
+    }
+
+    @Test
+    fun toGlobalSettings_readsShowSystemBarWhenPresent() {
+        val settings = preferencesOf(
+            SettingsPreferenceKeys.showSystemBar to true,
+        ).toGlobalSettings()
+
+        assertEquals(true, settings.showSystemBar)
     }
 
     @Test

@@ -11,10 +11,12 @@ Path note after Phase 1 refactor:
 - **Edge-to-Edge**: The app uses `enableEdgeToEdge()` with system bars hidden or in transient mode during reading.
 
 ## 2. Reader Themes
-The reader does not use standard Material 3 Surface colors for its background. Instead, it uses a hardcoded `ReaderTheme` model:
+The reader does not use standard Material 3 Surface colors for its background. Instead, it uses an explicit `ReaderTheme` model:
 - **Light**: Background `#FFFFFF`, Foreground `#000000`
 - **Sepia**: Background `#F4ECD8`, Foreground `#5B4636`
 - **Dark**: Background `#121212`, Foreground `#FFFFFF`
+- Custom themes may define their own reader background/foreground pair, but those colors must come from the same saved palette that drives the app-level Material theme in `MainActivity`.
+- Library, settings, and drawer surfaces should stay on the Material theme path; only reader content surfaces should use the explicit reader foreground/background pair.
 
 ## 3. Typography
 - **Primary Font**: `Karla` (defined in `ReaderScreen.kt`) is used for a modern, readable feel.

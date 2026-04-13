@@ -20,6 +20,7 @@
  */
 package com.epubreader.feature.reader
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerValue
@@ -42,8 +43,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.EpubBook
@@ -95,7 +100,7 @@ fun ReaderScreen(
 
     val listState = rememberLazyListState()
     val tocListState = rememberLazyListState()
-    val themeColors = getThemeColors(globalSettings.theme)
+    val themeColors = getThemeColors(globalSettings.theme, globalSettings.customThemes)
 
     var tocSort by remember { mutableStateOf(TocSort.Ascending) }
     val sortedToc = remember(book.toc, tocSort) {
@@ -164,6 +169,7 @@ fun ReaderScreen(
                 snapshotFlow { listState.layoutInfo.visibleItemsInfo }
                     .filter { it.isNotEmpty() && listState.layoutInfo.totalItemsCount >= chapterElements.size }
                     .first()
+                delay(1)
                 listState.scrollToItem(0, 0)
                 delay(100)
                 skipRestoration = false
@@ -177,6 +183,7 @@ fun ReaderScreen(
                     .filter { it.isNotEmpty() && listState.layoutInfo.totalItemsCount >= chapterElements.size }
                     .first()
 
+                delay(1)
                 if (shouldScrollToBottom) {
                     listState.scrollToItem(chapterElements.size - 1, 0)
                 } else {
@@ -195,6 +202,7 @@ fun ReaderScreen(
                     .filter { it.isNotEmpty() && listState.layoutInfo.totalItemsCount >= chapterElements.size }
                     .first()
 
+                delay(1)
                 if (skipRestoration) {
                     listState.scrollToItem(0, 0)
                     skipRestoration = false
@@ -215,6 +223,7 @@ fun ReaderScreen(
                 snapshotFlow { listState.layoutInfo.visibleItemsInfo }
                     .filter { it.isNotEmpty() && listState.layoutInfo.totalItemsCount >= chapterElements.size }
                     .first()
+                delay(1)
                 listState.scrollToItem(chapterElements.size - 1, 0)
                 delay(100)
                 shouldScrollToBottom = false
@@ -283,6 +292,7 @@ fun ReaderScreen(
                         .filter { it > 0 }
                         .first()
                 }
+                delay(1)
                 tocListState.animateScrollToItem(index = tocIndex, scrollOffset = -250)
             }
         }
@@ -292,6 +302,15 @@ fun ReaderScreen(
         scope.launch { scrollTocToCurrentChapter() }
     }
 
+    /**
+     * Go to Chapter Flow (Numeric Jump):
+     * Triggered by direct numeric input in the TOC drawer.
+     *
+     * Unlike [selectTocChapter], this uses [jumpToChapter] logic which:
+     * 1. Resets `isInitialScrollDone = false` to trigger a fresh restoration cycle.
+     * 2. Sets `skipRestoration = true` to force the scroll to the top of the target chapter.
+     * 3. Sets `isRestoringPosition = true` to block progress saving until the jump completes.
+     */
     fun jumpToChapter(targetIndex: Int) {
         showControls = false
         if (targetIndex != currentChapterIndex) {
@@ -305,6 +324,15 @@ fun ReaderScreen(
         }
     }
 
+    /**
+     * TOC Selection Flow:
+     * Called when a specific chapter is selected from the Table of Contents drawer.
+     *
+     * [AI_CRITICAL] differs from [navigateNext] in how it handles restoration:
+     * 1. Forces `isInitialScrollDone = true` to bypass progress-based restoration for the new chapter.
+     * 2. Sets `skipRestoration = true` to ensure the next chapter load snaps to the top (index 0).
+     * 3. Resets `isRestoringPosition = false` to allow immediate UI interaction.
+     */
     fun selectTocChapter(targetIndex: Int) {
         if (targetIndex != currentChapterIndex) {
             shouldScrollToBottom = false
@@ -319,11 +347,23 @@ fun ReaderScreen(
         scope.launch { drawerState.close() }
     }
 
+    /**
+     * Gesture Navigation Flow:
+     * Triggered by overscroll (Pull-to-Next/Prev) or bottom bar navigation buttons.
+     *
+     * [AI_CRITICAL] Restoration Logic:
+     * 1. Sets `isGestureNavigation = true` to signal the restoration LaunchedEffect.
+     * 2. Forces `isInitialScrollDone = true` to prevent the effect from loading "stale" 
+     *    progress from the DataStore for the chapter being navigated into.
+     * 3. `shouldScrollToBottom` determines if we snap to the start or end of the new chapter.
+     */
     fun navigateNext() {
         if (currentChapterIndex < book.spineHrefs.size - 1) {
             shouldScrollToBottom = false
             isGestureNavigation = true
-            isInitialScrollDone = true // Sacred flag: ensure isInitialScrollDone is true during navigation
+            // [AI_CRITICAL] Force isInitialScrollDone = true to prevent the restoration effect 
+            // from looking up old progress for a DIFFERENT chapter while the new one is loading.
+            isInitialScrollDone = true 
             isRestoringPosition = false
             currentChapterIndex++
         }
@@ -333,7 +373,9 @@ fun ReaderScreen(
         if (currentChapterIndex > 0) {
             shouldScrollToBottom = toBottom
             isGestureNavigation = true
-            isInitialScrollDone = true // Sacred flag: ensure isInitialScrollDone is true during navigation
+            // [AI_CRITICAL] Force isInitialScrollDone = true to prevent the restoration effect 
+            // from looking up old progress for a DIFFERENT chapter while the new one is loading.
+            isInitialScrollDone = true 
             isRestoringPosition = false
             currentChapterIndex--
         }
@@ -351,7 +393,9 @@ fun ReaderScreen(
     fun handleMainScrubberDragStart() {
         showControls = false
         scope.launch { drawerState.close() }
-        isInitialScrollDone = true // Sacred flag: ensure isInitialScrollDone is true during scrubber interaction
+        // [AI_CRITICAL] Force isInitialScrollDone = true during scrubber interaction 
+        // to prevent the save-progress effect from fighting with the user's active manual scroll.
+        isInitialScrollDone = true
         isRestoringPosition = false
     }
 
@@ -400,6 +444,35 @@ fun ReaderScreen(
         }
     }
 
+    // Control system bar visibility
+    val view = LocalView.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    var resumeTrigger by remember { mutableIntStateOf(0) }
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                resumeTrigger++
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(showControls, globalSettings.showSystemBar, resumeTrigger) {
+        val window = (view.context as? Activity)?.window ?: return@LaunchedEffect
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+
+        if (showControls || globalSettings.showSystemBar) {
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+        } else {
+            windowInsetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
     val chromeState = ReaderChromeState(
         book = book,
         settings = globalSettings,
@@ -429,7 +502,7 @@ fun ReaderScreen(
         onLocateCurrentChapterInToc = ::locateCurrentChapterInToc,
         onJumpToChapter = ::jumpToChapter,
         onSelectTocChapter = ::selectTocChapter,
-        onUpdateSettings = { updated -> scope.launch { settingsManager.updateGlobalSettings(updated) } },
+        onUpdateSettings = { transform -> scope.launch { settingsManager.updateGlobalSettings(transform) } },
         onNavigatePrev = { navigatePrev(toBottom = false) },
         onNavigateNext = ::navigateNext,
         onMainScrubberDragStart = ::handleMainScrubberDragStart

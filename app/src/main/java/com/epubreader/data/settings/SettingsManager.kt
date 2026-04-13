@@ -21,7 +21,12 @@ package com.epubreader.data.settings
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import com.epubreader.core.model.BookProgress
+import com.epubreader.core.model.CustomTheme
+import com.epubreader.core.model.DarkThemeId
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.LightThemeId
+import com.epubreader.core.model.isBuiltInTheme
+import com.epubreader.core.model.normalizeThemeSelection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -142,24 +147,61 @@ class SettingsManager(private val context: Context) {
     suspend fun renameFolder(oldName: String, newName: String) {
         // AI_MUTATION_POINT
         context.settingsDataStore.edit { preferences ->
+            val trimmedOldName = oldName.trim()
+            val trimmedNewName = newName.trim()
+            if (
+                trimmedOldName.isEmpty() ||
+                trimmedOldName == DefaultLibraryName ||
+                trimmedNewName.isEmpty() ||
+                trimmedNewName == trimmedOldName ||
+                trimmedNewName == DefaultLibraryName
+            ) {
+                return@edit
+            }
+
             // Update folder sorts
             val folderSortsJson = strictJsonObject(preferences[SettingsPreferenceKeys.folderSorts])
-            folderSortsJson.renameStringEntry(oldName, newName)
+            val folderOrderJson = strictJsonArray(preferences[SettingsPreferenceKeys.folderOrder])
+            val bookGroupsJson = strictJsonObject(preferences[SettingsPreferenceKeys.bookGroups])
+
+            val existingFolders = linkedSetOf<String>()
+            val sortKeys = folderSortsJson.keys()
+            while (sortKeys.hasNext()) {
+                existingFolders.add(sortKeys.next())
+            }
+            for (index in 0 until folderOrderJson.length()) {
+                existingFolders.add(folderOrderJson.getString(index))
+            }
+            val groupKeys = bookGroupsJson.keys()
+            while (groupKeys.hasNext()) {
+                val key = groupKeys.next()
+                val groupName = bookGroupsJson.optString(key)
+                if (groupName.isNotEmpty()) {
+                    existingFolders.add(groupName)
+                }
+            }
+            preferences[SettingsPreferenceKeys.favoriteLibrary]
+                ?.takeIf { it.isNotEmpty() && it != DefaultLibraryName }
+                ?.let(existingFolders::add)
+
+            if (existingFolders.any { it == trimmedNewName && it != trimmedOldName }) {
+                return@edit
+            }
+
+            folderSortsJson.renameStringEntry(trimmedOldName, trimmedNewName)
             preferences[SettingsPreferenceKeys.folderSorts] = folderSortsJson.toString()
 
             // Update folder order
-            val folderOrderJson = strictJsonArray(preferences[SettingsPreferenceKeys.folderOrder])
             preferences[SettingsPreferenceKeys.folderOrder] =
-                folderOrderJson.replacingEntry(oldName, newName).toString()
+                folderOrderJson.replacingEntry(trimmedOldName, trimmedNewName).toString()
 
             // Update book groups
-            val bookGroupsJson = strictJsonObject(preferences[SettingsPreferenceKeys.bookGroups])
-            bookGroupsJson.replaceStringValues(oldName, newName)
+            bookGroupsJson.replaceStringValues(trimmedOldName, trimmedNewName)
             preferences[SettingsPreferenceKeys.bookGroups] = bookGroupsJson.toString()
 
             // Update favorite library if needed
-            if (preferences[SettingsPreferenceKeys.favoriteLibrary] == oldName) {
-                preferences[SettingsPreferenceKeys.favoriteLibrary] = newName
+            if (preferences[SettingsPreferenceKeys.favoriteLibrary] == trimmedOldName) {
+                preferences[SettingsPreferenceKeys.favoriteLibrary] = trimmedNewName
             }
         }
     }
@@ -214,22 +256,98 @@ class SettingsManager(private val context: Context) {
     }
 
     // Global reader preferences.
-    suspend fun updateGlobalSettings(settings: GlobalSettings) {
+    suspend fun updateGlobalSettings(transform: (GlobalSettings) -> GlobalSettings) {
         // AI_MUTATION_POINT
         context.settingsDataStore.edit { preferences ->
-            preferences[SettingsPreferenceKeys.fontSize] = settings.fontSize
-            preferences[SettingsPreferenceKeys.fontType] = settings.fontType
-            preferences[SettingsPreferenceKeys.theme] = settings.theme
-            preferences[SettingsPreferenceKeys.lineHeight] = settings.lineHeight
-            preferences[SettingsPreferenceKeys.horizontalPadding] = settings.horizontalPadding
-            preferences[SettingsPreferenceKeys.showScrubber] = settings.showScrubber
+            val current = preferences.toGlobalSettings()
+            val updated = transform(current)
+            preferences[SettingsPreferenceKeys.fontSize] = updated.fontSize
+            preferences[SettingsPreferenceKeys.fontType] = updated.fontType
+            preferences[SettingsPreferenceKeys.theme] =
+                normalizeThemeSelection(updated.theme, updated.customThemes)
+            preferences[SettingsPreferenceKeys.customThemes] = updated.customThemes.toCustomThemesJson()
+            preferences[SettingsPreferenceKeys.lineHeight] = updated.lineHeight
+            preferences[SettingsPreferenceKeys.horizontalPadding] = updated.horizontalPadding
+            preferences[SettingsPreferenceKeys.showScrubber] = updated.showScrubber
+            preferences[SettingsPreferenceKeys.showSystemBar] = updated.showSystemBar
+            preferences[SettingsPreferenceKeys.selectableText] = updated.selectableText
+        }
+    }
+
+    suspend fun updateGlobalSettings(settings: GlobalSettings) {
+        updateGlobalSettings { settings }
+    }
+
+    suspend fun setActiveTheme(themeId: String) {
+        context.settingsDataStore.edit { preferences ->
+            val customThemes = parseCustomThemes(preferences[SettingsPreferenceKeys.customThemes])
+            preferences[SettingsPreferenceKeys.theme] = normalizeThemeSelection(themeId, customThemes)
+        }
+    }
+
+    suspend fun saveCustomTheme(theme: CustomTheme, activate: Boolean = false) {
+        context.settingsDataStore.edit { preferences ->
+            val trimmedName = theme.name.trim()
+            val trimmedId = theme.id.trim()
+            if (trimmedName.isEmpty() || trimmedId.isEmpty() || isBuiltInTheme(trimmedId)) {
+                return@edit
+            }
+
+            val existingThemes = parseCustomThemes(preferences[SettingsPreferenceKeys.customThemes])
+            val normalizedTheme = theme.copy(id = trimmedId, name = trimmedName)
+            val updatedThemes = if (existingThemes.any { it.id == normalizedTheme.id }) {
+                existingThemes.map { existing ->
+                    if (existing.id == normalizedTheme.id) normalizedTheme else existing
+                }
+            } else {
+                existingThemes + normalizedTheme
+            }
+
+            preferences[SettingsPreferenceKeys.customThemes] = updatedThemes.toCustomThemesJson()
+            if (activate || preferences[SettingsPreferenceKeys.theme] == normalizedTheme.id) {
+                preferences[SettingsPreferenceKeys.theme] = normalizedTheme.id
+            }
+        }
+    }
+
+    suspend fun deleteCustomTheme(themeId: String) {
+        context.settingsDataStore.edit { preferences ->
+            val existingThemes = parseCustomThemes(preferences[SettingsPreferenceKeys.customThemes])
+            val updatedThemes = existingThemes.filterNot { it.id == themeId }
+            if (updatedThemes.size == existingThemes.size) {
+                return@edit
+            }
+
+            preferences[SettingsPreferenceKeys.customThemes] = updatedThemes.toCustomThemesJson()
+            if (preferences[SettingsPreferenceKeys.theme] == themeId) {
+                preferences[SettingsPreferenceKeys.theme] = LightThemeId
+            }
         }
     }
 
     suspend fun toggleTheme() {
         context.settingsDataStore.edit { preferences ->
-            val current = preferences[SettingsPreferenceKeys.theme] ?: "light"
-            preferences[SettingsPreferenceKeys.theme] = if (current == "dark") "light" else "dark"
+            val customThemes = parseCustomThemes(preferences[SettingsPreferenceKeys.customThemes])
+            val current = normalizeThemeSelection(preferences[SettingsPreferenceKeys.theme], customThemes)
+            preferences[SettingsPreferenceKeys.theme] = if (current == DarkThemeId) {
+                LightThemeId
+            } else {
+                DarkThemeId
+            }
+        }
+    }
+
+    suspend fun toggleShowSystemBar() {
+        context.settingsDataStore.edit { preferences ->
+            val current = preferences[SettingsPreferenceKeys.showSystemBar] ?: false
+            preferences[SettingsPreferenceKeys.showSystemBar] = !current
+        }
+    }
+
+    suspend fun toggleSelectableText() {
+        context.settingsDataStore.edit { preferences ->
+            val current = preferences[SettingsPreferenceKeys.selectableText] ?: false
+            preferences[SettingsPreferenceKeys.selectableText] = !current
         }
     }
 

@@ -29,6 +29,17 @@ Use this guide when the task is about library navigation, folder management, dia
   - Defines app-shell private constants plus state/action contracts for library rendering and dialogs.
   - Use this when you need the shape of the shell without loading full rendering files.
 
+## Architectural Ownership (The "Why")
+
+The 7-file split in `com.epubreader.app` is designed to reduce per-task context load:
+
+1.  **State vs. Derivation**: `AppNavigation.kt` owns the *transient state* (what is selected), while `AppNavigationLibraryData.kt` owns the *logic of derivation* (how folders are built from JSON). This prevents the main shell from becoming a "God Object" of both state and business logic.
+2.  **Startup Precedence**: `AppNavigationStartup.kt` enforces the following priority:
+    -   **First Run (Empty Library)**: Show Welcome Note.
+    -   **Upgrade (Existing Library)**: Show Changelog if `versionCode` has increased since `lastSeenVersionCode`.
+    -   **Normal Run**: Go straight to Library.
+3.  **Side Effect Isolation**: `AppNavigationOperations.kt` centralizes all destructive or file-system-heavy actions (Import, Delete). This ensures that `AppNavigation.kt` only coordinates the UI response to these effects.
+
 - `AppNavigationStartup.kt`
   - Computes first-run, version, and changelog decisions.
   - Does not write settings itself; `AppNavigation` still applies the results.

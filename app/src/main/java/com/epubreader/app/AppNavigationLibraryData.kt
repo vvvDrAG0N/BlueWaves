@@ -34,8 +34,11 @@ internal fun parseFolderOrder(value: String): List<String> {
     }
 }
 
-// Folder ordering includes folders inferred from book groups plus folders that only exist in
-// saved sort/order metadata.
+// Folder ordering logic:
+// 1. Start with RootLibraryName (always first).
+// 2. Add folders from the manual 'folderOrder' list if they still contain books or sort settings.
+// 3. Append any newly discovered folders (from new book groups) alphabetically.
+// This ensures that user-defined order is preserved while automatically handling new folders.
 internal fun buildFolders(
     books: List<EpubBook>,
     bookGroups: JSONObject,

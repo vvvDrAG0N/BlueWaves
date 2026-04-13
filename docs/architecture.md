@@ -19,6 +19,7 @@ Recommended order for low-token work:
 
 - Lives in `com.epubreader`.
 - Owns app bootstrap, edge-to-edge setup, theme selection, and the `Screen` enum.
+- Derives the app-level Material `ColorScheme` from the active built-in theme or saved custom theme.
 - Intentionally small so future edits to navigation logic do not accumulate here.
 
 ### 2. App Shell (`app/AppNavigation.kt`)
@@ -32,6 +33,7 @@ Recommended order for low-token work:
 
 - `LibraryModels.kt`: `EpubBook`, `TocItem`, `ChapterElement`
 - `SettingsModels.kt`: `GlobalSettings`, `BookProgress`
+- `SettingsModels.kt`: `GlobalSettings`, `BookProgress`, and shared theme palette contracts
 
 These are the shared contracts between persistence, parsing, and UI. They were extracted from large files to reduce cross-file coupling.
 
@@ -41,6 +43,7 @@ These are the shared contracts between persistence, parsing, and UI. They were e
   - DataStore-backed source of truth for global settings, folder state, and reading progress.
 - `data/settings/SettingsManagerContracts.kt`
   - Package-private key/default map and `Preferences` to model mappers.
+  - Also maps the additive custom-theme registry stored in DataStore.
 - `data/settings/SettingsManagerJson.kt`
   - Package-private JSON helpers for folder metadata edits.
 - `data/parser/EpubParser.kt`

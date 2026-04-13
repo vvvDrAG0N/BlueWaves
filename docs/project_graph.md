@@ -35,17 +35,25 @@ Stay small first. Only increase the budget if the graph answer is obviously inco
 
 ## Rebuild
 
-If `graphify-out/` is missing or stale, run:
+The graph should be kept in sync with code and documentation changes.
 
+**Manual Rebuild**:
 ```text
 python scripts/rebuild_graphify.py
 ```
 
-This regenerates:
+**Automated Check & Rebuild**:
+Use the staleness checker to verify if the graph is out of date:
+```text
+python scripts/check_graph_staleness.py
+```
 
-- `graphify-out/GRAPH_REPORT.md`
-- `graphify-out/graph.json`
-- `graphify-out/wiki/index.md`
+To automatically rebuild ONLY if stale:
+```text
+python scripts/check_graph_staleness.py --rebuild
+```
+
+This ensures `graphify-out/` reflects the latest `docs/*.md` and core source logic.
 
 ## Query Examples
 

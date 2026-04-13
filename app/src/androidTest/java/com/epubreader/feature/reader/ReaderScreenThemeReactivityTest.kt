@@ -13,12 +13,15 @@ import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.MainActivity
 import com.epubreader.core.model.BookProgress
+import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.ThemePalette
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,12 +44,18 @@ class ReaderScreenThemeReactivityTest {
     private val createdBookIds = mutableListOf<String>()
     private val createdFolders = mutableListOf<File>()
 
+    @Before
+    fun setUp() = runBlocking {
+        settingsManager.updateGlobalSettings(GlobalSettings(theme = "light"))
+    }
+
     @After
     fun tearDown() = runBlocking {
         createdBookIds.forEach { bookId ->
             settingsManager.deleteBookData(bookId)
         }
         createdFolders.forEach(File::deleteRecursively)
+        settingsManager.updateGlobalSettings(GlobalSettings(theme = "light"))
     }
 
     @Test
@@ -83,6 +92,61 @@ class ReaderScreenThemeReactivityTest {
 
         composeRule.onNodeWithText("Theme Paragraph 0").assertIsDisplayed()
         assertBackgroundColor(Color(0xFFF4ECD8))
+    }
+
+    @Test
+    fun changingToCustomThemeUpdatesReaderColorsWithoutReopen() = runBlocking {
+        val book = createThemeBook()
+        val customTheme = CustomTheme(
+            id = "custom-ocean",
+            name = "Ocean",
+            palette = ThemePalette(
+                primary = 0xFF2A6F97,
+                secondary = 0xFF468FAF,
+                background = 0xFFF4FAFF,
+                surface = 0xFFFFFFFF,
+                surfaceVariant = 0xFFD7EAF7,
+                outline = 0xFF8AA7BB,
+                readerBackground = 0xFFEEF8FF,
+                readerForeground = 0xFF10212D,
+            ),
+        )
+        settingsManager.saveBookProgress(
+            book.id,
+            BookProgress(
+                scrollIndex = 0,
+                scrollOffset = 0,
+                lastChapterHref = "chapter1.xhtml",
+            ),
+        )
+
+        composeRule.runOnUiThread {
+            composeRule.activity.setContent {
+                MaterialTheme {
+                    ReaderScreen(
+                        book = book,
+                        settingsManager = settingsManager,
+                        parser = parser,
+                        onBack = {},
+                    )
+                }
+            }
+        }
+
+        waitUntilDisplayed("Theme Paragraph 0")
+        assertBackgroundColor(Color.White)
+
+        settingsManager.updateGlobalSettings(
+            GlobalSettings(
+                theme = customTheme.id,
+                customThemes = listOf(customTheme),
+            ),
+        )
+
+        composeRule.waitUntil(10_000) { backgroundMatches(Color(0xFFEEF8FF)) }
+
+        composeRule.onNodeWithText("Theme Paragraph 0").assertIsDisplayed()
+        assertBackgroundColor(Color(0xFFEEF8FF))
     }
 
     private fun waitUntilDisplayed(text: String, timeoutMillis: Long = 15_000) {

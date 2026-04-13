@@ -22,6 +22,16 @@ internal data class AppShellStartupDecision(
     val versionCodeToMarkSeen: Int?,
 )
 
+/**
+ * Evaluates the startup state of the app shell to decide which initial UI to show.
+ *
+ * [AI_NOTE] Precedence Logic:
+ * 1. Fresh Install (firstTime == true && no existing books): Show Welcome Note.
+ * 2. Upgrade (versionCode > lastSeen): Show Changelog if entries exist.
+ * 3. Normal Startup: Go straight to library.
+ *
+ * This function is pure and IO-bound; it does not perform writes itself.
+ */
 internal suspend fun evaluateAppShellStartup(
     context: Context,
     globalSettings: GlobalSettings,

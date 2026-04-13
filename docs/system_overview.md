@@ -26,7 +26,7 @@ Only after that should you load area docs or raw source files.
 
 `com.epubreader.MainActivity`
 - Starts the app.
-- Selects the app color scheme.
+- Selects the app color scheme from the active built-in theme or saved custom theme.
 - Hosts the `Screen` enum used by state-based navigation.
 
 ### App Shell
@@ -61,7 +61,7 @@ Only after that should you load area docs or raw source files.
 ### Data Layer
 
 `com.epubreader.data.settings.SettingsManager`
-- Persists global settings, folder state, and book progress in DataStore.
+- Persists global settings, saved custom themes, folder state, and book progress in DataStore.
 
 `com.epubreader.data.settings.SettingsManagerContracts`
 - Defines settings-layer private keys, defaults, and mapping helpers.
@@ -85,7 +85,7 @@ Only after that should you load area docs or raw source files.
 - Handles overscroll-based chapter navigation and TOC interactions.
 
 `com.epubreader.feature.settings.SettingsScreen`
-- Edits global reader preferences and writes them back through `SettingsManager`.
+- Edits global reader preferences and saved custom theme palettes, then writes them back through `SettingsManager`.
 
 ### Shared Contracts
 
