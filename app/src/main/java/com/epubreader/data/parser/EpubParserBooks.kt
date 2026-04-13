@@ -7,6 +7,7 @@
 package com.epubreader.data.parser
 
 import android.net.Uri
+import com.epubreader.core.model.BookFormat
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.TocItem
 import nl.siegmann.epublib.domain.Book
@@ -19,9 +20,12 @@ import java.security.MessageDigest
 
 internal const val EPUB_BOOKS_DIR_NAME = "books"
 internal const val EPUB_ARCHIVE_FILE_NAME = "book.epub"
+internal const val PDF_DOCUMENT_FILE_NAME = "book.pdf"
 
 private const val EPUB_METADATA_FILE_NAME = "metadata.json"
 private const val EPUB_COVER_FILE_NAME = "cover_thumb.png"
+private const val PDF_DEFAULT_AUTHOR = "PDF Document"
+private const val PDF_FALLBACK_TITLE = "Untitled PDF"
 
 internal fun buildBookId(uri: Uri, fileSize: Long): String {
     // Book ID must remain MD5(uri + fileSize) to preserve cached folders and reading progress keys.
@@ -61,13 +65,41 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
         author = book.metadata.authors.firstOrNull()?.let { "${it.firstname} ${it.lastname}" } ?: "Unknown Author",
         coverPath = coverPath,
         rootPath = bookFolder.absolutePath,
+        format = BookFormat.EPUB,
         toc = toc,
         spineHrefs = spineHrefs,
+        pageCount = 0,
         dateAdded = System.currentTimeMillis()
     )
 
     saveBookMetadata(bookFolder, epubBook)
     return epubBook
+}
+
+internal fun rebuildPdfMetadata(
+    bookFolder: File,
+    displayName: String?,
+): EpubBook? {
+    val bookFile = File(bookFolder, PDF_DOCUMENT_FILE_NAME)
+    if (!bookFile.exists()) return null
+
+    File(bookFolder, EPUB_COVER_FILE_NAME).takeIf(File::exists)?.delete()
+
+    val pdfBook = EpubBook(
+        id = bookFolder.name,
+        title = deriveTitleFromName(displayName ?: bookFile.name, PDF_FALLBACK_TITLE),
+        author = PDF_DEFAULT_AUTHOR,
+        coverPath = null,
+        rootPath = bookFolder.absolutePath,
+        format = BookFormat.PDF,
+        toc = emptyList(),
+        spineHrefs = emptyList(),
+        pageCount = 0,
+        dateAdded = System.currentTimeMillis(),
+    )
+
+    saveBookMetadata(bookFolder, pdfBook)
+    return pdfBook
 }
 
 internal fun saveBookMetadata(folder: File, book: EpubBook) {
@@ -77,6 +109,7 @@ internal fun saveBookMetadata(folder: File, book: EpubBook) {
         put("author", book.author)
         put("coverPath", book.coverPath)
         put("rootPath", book.rootPath)
+        put("format", book.format.name)
         put("dateAdded", book.dateAdded)
         put("lastRead", book.lastRead)
         val tocArray = JSONArray()
@@ -90,6 +123,7 @@ internal fun saveBookMetadata(folder: File, book: EpubBook) {
         val spineArray = JSONArray()
         book.spineHrefs.forEach { spineArray.put(it) }
         put("spineHrefs", spineArray)
+        put("pageCount", book.pageCount)
     }
     File(folder, EPUB_METADATA_FILE_NAME).writeText(json.toString())
 }
@@ -114,6 +148,10 @@ internal fun loadBookMetadata(folder: File): EpubBook? {
             }
         }
 
+        val format = runCatching {
+            BookFormat.valueOf(json.optString("format", BookFormat.EPUB.name))
+        }.getOrDefault(BookFormat.EPUB)
+
         EpubBook(
             id = json.getString("id"),
             title = json.getString("title"),
@@ -121,8 +159,10 @@ internal fun loadBookMetadata(folder: File): EpubBook? {
             // [SELF-HEALING] Resilience against null/empty cover paths.
             coverPath = json.optString("coverPath").takeIf { it.isNotEmpty() && it != "null" },
             rootPath = json.getString("rootPath"),
+            format = format,
             toc = toc,
             spineHrefs = spineHrefs,
+            pageCount = json.optInt("pageCount", 0),
             // [SELF-HEALING] Preserve sort order even if dateAdded is missing from JSON.
             dateAdded = json.optLong("dateAdded", folder.lastModified()),
             lastRead = json.optLong("lastRead", 0L)

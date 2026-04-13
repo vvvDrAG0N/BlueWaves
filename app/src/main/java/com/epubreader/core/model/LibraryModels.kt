@@ -2,6 +2,11 @@ package com.epubreader.core.model
 
 import java.util.UUID
 
+enum class BookFormat {
+    EPUB,
+    PDF,
+}
+
 /**
  * Data class for TOC navigation.
  * href usually points to the XHTML file within the EPUB container.
@@ -52,8 +57,28 @@ data class EpubBook(
     val author: String,
     val coverPath: String?,
     val rootPath: String,
+    val format: BookFormat = BookFormat.EPUB,
     val toc: List<TocItem> = emptyList(),
     val spineHrefs: List<String> = emptyList(),
+    val pageCount: Int = 0,
     val dateAdded: Long = System.currentTimeMillis(),
     val lastRead: Long = 0L
-)
+) {
+    val readingUnitCount: Int
+        get() = when (format) {
+            BookFormat.EPUB -> spineHrefs.size
+            BookFormat.PDF -> pageCount
+        }
+
+    val progressUnitLabel: String
+        get() = when (format) {
+            BookFormat.EPUB -> "ch"
+            BookFormat.PDF -> "p"
+        }
+
+    val formatLabel: String
+        get() = format.name
+
+    val isPdf: Boolean
+        get() = format == BookFormat.PDF
+}

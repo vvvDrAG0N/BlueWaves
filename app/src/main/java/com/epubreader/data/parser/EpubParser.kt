@@ -20,10 +20,15 @@ package com.epubreader.data.parser
 
 import android.content.Context
 import android.net.Uri
+import android.provider.OpenableColumns
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.EpubBook
+import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.EpubBook
 import java.io.File
+import java.io.BufferedInputStream
 import java.io.FileOutputStream
+import java.util.zip.ZipInputStream
 
 /**
  * Handles all EPUB extraction and parsing logic.
@@ -46,24 +51,126 @@ class EpubParser(private val context: Context) {
      * AI_WARNING: This duplicates the entire EPUB file into internal storage.
      */
     fun parseAndExtract(uri: Uri): EpubBook? {
+        return when (val result = inspectImportSource(uri)) {
+            is ImportInspectionResult.Ready -> importBook(result.request)
+            is ImportInspectionResult.Rejected -> null
+        }
+    }
+
+    fun inspectImportSource(uri: Uri): ImportInspectionResult {
         return try {
-            val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "r") ?: return null
-            val fileSize = fileDescriptor.statSize
-            fileDescriptor.close()
+            val fileSize = queryFileSize(uri) ?: return ImportInspectionResult.Rejected(ImportFailureReason.ReadFailed)
+            val displayName = queryDisplayName(uri)
+            val mimeType = context.contentResolver.getType(uri)
+            val headerBytes = readHeaderBytes(uri)
+            val bookId = buildBookId(uri, fileSize)
+            val normalizedName = displayName?.lowercase().orEmpty()
+            val normalizedMime = mimeType?.lowercase().orEmpty()
+            val shouldInspectAsZip = isZipSignature(headerBytes) ||
+                normalizedName.endsWith(".epub") ||
+                normalizedName.endsWith(".zip") ||
+                normalizedMime == EPUB_MIME_TYPE ||
+                normalizedMime == ZIP_MIME_TYPE ||
+                normalizedMime == ZIP_COMPRESSED_MIME_TYPE ||
+                normalizedMime == OCTET_STREAM_MIME_TYPE
 
-            val bookFolder = File(booksDir, buildBookId(uri, fileSize))
-            if (!bookFolder.exists()) bookFolder.mkdirs()
+            if (shouldInspectAsZip) {
+                return when (val archiveResult = inspectZipSource(uri)) {
+                    ArchiveInspectionResult.DirectEpubContainer -> {
+                        ImportInspectionResult.Ready(
+                            ImportRequest(
+                                bookId = bookId,
+                                uri = uri,
+                                format = BookFormat.EPUB,
+                                displayName = displayName,
+                            ),
+                        )
+                    }
 
-            val bookFile = File(bookFolder, EPUB_ARCHIVE_FILE_NAME)
-            context.contentResolver.openInputStream(uri)?.use { input ->
-                FileOutputStream(bookFile).use { output ->
-                    input.copyTo(output)
+                    is ArchiveInspectionResult.Candidate -> {
+                        ImportInspectionResult.Ready(
+                            ImportRequest(
+                                bookId = bookId,
+                                uri = uri,
+                                format = archiveResult.candidate.format,
+                                archiveEntryPath = archiveResult.candidate.entryPath,
+                                displayName = archiveResult.candidate.entryPath.substringAfterLast('/'),
+                            ),
+                        )
+                    }
+
+                    is ArchiveInspectionResult.Rejected -> {
+                        val fallbackFormat = inferDirectImportFormat(
+                            fileName = displayName,
+                            mimeType = mimeType,
+                            headerBytes = headerBytes,
+                            looksLikeEpubContainer = false,
+                        )
+                        if (fallbackFormat != null && archiveResult.reason == ImportFailureReason.ReadFailed) {
+                            ImportInspectionResult.Ready(
+                                ImportRequest(
+                                    bookId = bookId,
+                                    uri = uri,
+                                    format = fallbackFormat,
+                                    displayName = displayName,
+                                ),
+                            )
+                        } else {
+                            ImportInspectionResult.Rejected(archiveResult.reason)
+                        }
+                    }
                 }
-            } ?: return null
+            }
 
-            reparseBook(bookFolder)
-        } catch (e: Exception) {
-            e.printStackTrace()
+            val directFormat = inferDirectImportFormat(
+                fileName = displayName,
+                mimeType = mimeType,
+                headerBytes = headerBytes,
+                looksLikeEpubContainer = false,
+            )
+
+            if (directFormat != null) {
+                ImportInspectionResult.Ready(
+                    ImportRequest(
+                        bookId = bookId,
+                        uri = uri,
+                        format = directFormat,
+                        displayName = displayName,
+                    ),
+                )
+            } else {
+                ImportInspectionResult.Rejected(ImportFailureReason.UnsupportedFileType)
+            }
+        } catch (error: Exception) {
+            error.printStackTrace()
+            ImportInspectionResult.Rejected(ImportFailureReason.ReadFailed)
+        }
+    }
+
+    fun importBook(request: ImportRequest): EpubBook? {
+        return try {
+            val bookFolder = File(booksDir, request.bookId).apply {
+                if (!exists()) mkdirs()
+            }
+            val targetFile = storedBookFile(bookFolder, request.format)
+            cleanupOtherStoredFiles(bookFolder, request.format)
+
+            val copied = if (request.archiveEntryPath == null) {
+                copyUriToFile(request.uri, targetFile)
+            } else {
+                extractArchiveEntry(request.uri, request.archiveEntryPath, targetFile)
+            }
+
+            if (!copied) {
+                return null
+            }
+
+            when (request.format) {
+                BookFormat.EPUB -> reparseBook(bookFolder)
+                BookFormat.PDF -> rebuildPdfMetadata(bookFolder, request.displayName)
+            }
+        } catch (error: Exception) {
+            error.printStackTrace()
             null
         }
     }
@@ -93,6 +200,9 @@ class EpubParser(private val context: Context) {
     }
 
     fun getChapterHref(book: EpubBook, index: Int): String? {
+        if (book.format != BookFormat.EPUB) {
+            return null
+        }
         return book.spineHrefs.getOrNull(index)
     }
 
@@ -105,6 +215,10 @@ class EpubParser(private val context: Context) {
      */
     fun parseChapter(bookFolderPath: String, href: String): List<ChapterElement> {
         return parseBookChapter(bookFolderPath, href)
+    }
+
+    fun resolveStoredBookFile(book: EpubBook): File {
+        return storedBookFile(File(book.rootPath), book.format)
     }
 
     fun updateLastRead(book: EpubBook) {
@@ -122,4 +236,116 @@ class EpubParser(private val context: Context) {
      * mainly go through scanBooks().
      */
     fun loadMetadata(folder: File): EpubBook? = loadBookMetadata(folder)
+
+    private fun queryFileSize(uri: Uri): Long? {
+        return context.contentResolver.openFileDescriptor(uri, "r")?.use { descriptor ->
+            descriptor.statSize
+        }
+    }
+
+    private fun queryDisplayName(uri: Uri): String? {
+        context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (columnIndex != -1) {
+                    return cursor.getString(columnIndex)
+                }
+            }
+        }
+
+        return uri.lastPathSegment?.substringAfterLast('/')
+    }
+
+    private fun readHeaderBytes(uri: Uri, size: Int = 8): ByteArray {
+        return context.contentResolver.openInputStream(uri)?.use { input ->
+            ByteArray(size).also { buffer ->
+                val read = input.read(buffer)
+                if (read > 0) {
+                    return@use buffer.copyOf(read)
+                }
+            }
+        } ?: ByteArray(0)
+    }
+
+    private fun inspectZipSource(uri: Uri): ArchiveInspectionResult {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                ZipInputStream(BufferedInputStream(input)).use { zipInput ->
+                    val entryNames = mutableListOf<String>()
+                    var looksLikeEpubContainer = false
+                    var entry = zipInput.nextEntry
+                    while (entry != null) {
+                        val entryName = entry.name.orEmpty()
+                        entryNames += entryName
+                        if (entryName.equals("META-INF/container.xml", ignoreCase = true)) {
+                            looksLikeEpubContainer = true
+                        } else if (entryName == "mimetype") {
+                            val mimetype = String(zipInput.readBytes(), Charsets.UTF_8).trim()
+                            if (mimetype == EPUB_MIME_TYPE) {
+                                looksLikeEpubContainer = true
+                            }
+                        }
+                        zipInput.closeEntry()
+                        entry = zipInput.nextEntry
+                    }
+                    inspectArchiveEntries(entryNames, looksLikeEpubContainer)
+                }
+            } ?: ArchiveInspectionResult.Rejected(ImportFailureReason.ReadFailed)
+        } catch (_: Exception) {
+            ArchiveInspectionResult.Rejected(ImportFailureReason.ReadFailed)
+        }
+    }
+
+    private fun copyUriToFile(uri: Uri, targetFile: File): Boolean {
+        return context.contentResolver.openInputStream(uri)?.use { input ->
+            FileOutputStream(targetFile).use { output ->
+                input.copyTo(output)
+            }
+            true
+        } ?: false
+    }
+
+    private fun extractArchiveEntry(
+        uri: Uri,
+        entryPath: String,
+        targetFile: File,
+    ): Boolean {
+        return context.contentResolver.openInputStream(uri)?.use { input ->
+            ZipInputStream(BufferedInputStream(input)).use { zipInput ->
+                var entry = zipInput.nextEntry
+                while (entry != null) {
+                    if (!entry.isDirectory && entry.name == entryPath) {
+                        FileOutputStream(targetFile).use { output ->
+                            zipInput.copyTo(output)
+                        }
+                        zipInput.closeEntry()
+                        return@use true
+                    }
+                    zipInput.closeEntry()
+                    entry = zipInput.nextEntry
+                }
+                false
+            }
+        } ?: false
+    }
+
+    private fun cleanupOtherStoredFiles(bookFolder: File, format: BookFormat) {
+        val currentFileName = storedFileName(format)
+        listOf(EPUB_ARCHIVE_FILE_NAME, PDF_DOCUMENT_FILE_NAME)
+            .filter { it != currentFileName }
+            .map { File(bookFolder, it) }
+            .filter(File::exists)
+            .forEach(File::delete)
+    }
+
+    private fun storedBookFile(bookFolder: File, format: BookFormat): File {
+        return File(bookFolder, storedFileName(format))
+    }
+
+    private fun storedFileName(format: BookFormat): String {
+        return when (format) {
+            BookFormat.EPUB -> EPUB_ARCHIVE_FILE_NAME
+            BookFormat.PDF -> PDF_DOCUMENT_FILE_NAME
+        }
+    }
 }
