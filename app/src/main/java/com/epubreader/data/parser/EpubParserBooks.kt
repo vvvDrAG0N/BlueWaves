@@ -73,6 +73,20 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
 
         val spineHrefs = book.spine.spineReferences.map { it.resource.href }
         val toc = buildTableOfContents(book, spineHrefs)
+        val conversionTotalPages = when (sourceFormat) {
+            BookFormat.PDF -> {
+                existingMetadata?.conversionTotalPages
+                    ?.takeIf { it > 0 }
+                    ?: existingMetadata?.pageCount
+                    ?: spineHrefs.size
+            }
+
+            BookFormat.EPUB -> 0
+        }
+        val conversionCompletedPages = when (sourceFormat) {
+            BookFormat.PDF -> conversionTotalPages
+            BookFormat.EPUB -> 0
+        }
 
         val epubBook = EpubBook(
             id = bookFolder.name,
@@ -90,6 +104,8 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
                 BookFormat.EPUB -> ConversionStatus.NONE
             },
             hasPdfFallback = sourceFormat == BookFormat.PDF && ensureCanonicalSourcePdfFile(bookFolder) != null,
+            conversionCompletedPages = conversionCompletedPages,
+            conversionTotalPages = conversionTotalPages,
             toc = toc,
             spineHrefs = spineHrefs,
             pageCount = if (sourceFormat == BookFormat.PDF) existingMetadata?.pageCount ?: spineHrefs.size else 0,
@@ -106,17 +122,31 @@ internal fun rebuildPdfMetadata(
     bookFolder: File,
     displayName: String?,
     conversionStatus: ConversionStatus = ConversionStatus.NONE,
+    preferredFormat: BookFormat = BookFormat.PDF,
+    conversionCompletedPages: Int? = null,
+    conversionTotalPages: Int? = null,
 ): EpubBook? {
     val bookFile = ensureCanonicalSourcePdfFile(bookFolder) ?: return null
     val existingMetadata = loadBookMetadata(bookFolder)
 
     File(bookFolder, EPUB_COVER_FILE_NAME).takeIf(File::exists)?.delete()
-    val pdfInfo = readPdfDocumentInfo(bookFile, bookFolder) ?: return null
+    val pdfInfo = readPdfDocumentInfo(bookFile, bookFolder) ?: PdfDocumentInfo(
+        pageCount = existingMetadata?.pageCount ?: 0,
+        coverPath = existingMetadata?.coverPath,
+    )
     val title = when {
         !displayName.isNullOrBlank() -> deriveTitleFromName(displayName, existingMetadata?.title ?: PDF_FALLBACK_TITLE)
         !existingMetadata?.title.isNullOrBlank() -> existingMetadata!!.title
         else -> deriveTitleFromName(bookFile.name, PDF_FALLBACK_TITLE)
     }
+    val totalPages = conversionTotalPages
+        ?: existingMetadata?.conversionTotalPages
+            ?.takeIf { it > 0 }
+        ?: pdfInfo.pageCount
+    val completedPages = (conversionCompletedPages
+        ?: existingMetadata?.conversionCompletedPages
+        ?: if (conversionStatus == ConversionStatus.READY) totalPages else 0)
+        .coerceIn(0, totalPages)
 
     val pdfBook = EpubBook(
         id = bookFolder.name,
@@ -124,10 +154,12 @@ internal fun rebuildPdfMetadata(
         author = existingMetadata?.author?.takeIf { it.isNotBlank() } ?: PDF_DEFAULT_AUTHOR,
         coverPath = pdfInfo.coverPath,
         rootPath = bookFolder.absolutePath,
-        format = BookFormat.PDF,
+        format = preferredFormat,
         sourceFormat = BookFormat.PDF,
         conversionStatus = conversionStatus,
         hasPdfFallback = true,
+        conversionCompletedPages = completedPages,
+        conversionTotalPages = totalPages,
         toc = emptyList(),
         spineHrefs = emptyList(),
         pageCount = pdfInfo.pageCount,
@@ -150,6 +182,8 @@ internal fun saveBookMetadata(folder: File, book: EpubBook) {
         put("sourceFormat", book.sourceFormat.name)
         put("conversionStatus", book.conversionStatus.name)
         put("hasPdfFallback", book.hasPdfFallback)
+        put("conversionCompletedPages", book.conversionCompletedPages)
+        put("conversionTotalPages", book.conversionTotalPages)
         put("dateAdded", book.dateAdded)
         put("lastRead", book.lastRead)
         val tocArray = JSONArray()
@@ -218,6 +252,8 @@ internal fun loadBookMetadata(folder: File): EpubBook? {
                 ConversionStatus.valueOf(json.optString("conversionStatus", ConversionStatus.NONE.name))
             }.getOrDefault(ConversionStatus.NONE),
             hasPdfFallback = json.optBoolean("hasPdfFallback", sourceFormat == BookFormat.PDF),
+            conversionCompletedPages = json.optInt("conversionCompletedPages", 0),
+            conversionTotalPages = json.optInt("conversionTotalPages", json.optInt("pageCount", 0)),
             toc = toc,
             spineHrefs = spineHrefs,
             pageCount = json.optInt("pageCount", 0),

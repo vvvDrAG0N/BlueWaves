@@ -1,5 +1,15 @@
 [
   {
+    "versionCode": 10,
+    "versionName": "1.0.10",
+    "changes": [
+      "Large PDF imports now appear in the library immediately and convert to EPUB in the background.",
+      "Added background PDF conversion progress with queued, running, ready, and failed states.",
+      "Improved PDF conversion performance with direct text extraction before OCR and disk-streamed page staging.",
+      "Books now keep raw-PDF fallback readable while conversion continues or fails."
+    ]
+  },
+  {
     "versionCode": 9,
     "versionName": "1.0.9",
     "changes": [

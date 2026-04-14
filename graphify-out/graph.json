@@ -90,7 +90,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigation.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigation_kt",
-      "community": 25,
+      "community": 27,
       "norm_label": "appnavigation.kt"
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigation.kt",
       "source_location": "L89",
       "id": "appnavigation_appnavigation",
-      "community": 25,
+      "community": 27,
       "norm_label": "appnavigation()"
     },
     {
@@ -288,7 +288,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationlibrary_kt",
-      "community": 18,
+      "community": 20,
       "norm_label": "appnavigationlibrary.kt"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L91",
       "id": "appnavigationlibrary_libraryscreen",
-      "community": 18,
+      "community": 20,
       "norm_label": "libraryscreen()"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L152",
       "id": "appnavigationlibrary_librarydrawercontent",
-      "community": 18,
+      "community": 20,
       "norm_label": "librarydrawercontent()"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L387",
       "id": "appnavigationlibrary_librarytopbar",
-      "community": 18,
+      "community": 20,
       "norm_label": "librarytopbar()"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L449",
       "id": "appnavigationlibrary_librarybookgrid",
-      "community": 18,
+      "community": 20,
       "norm_label": "librarybookgrid()"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L538",
       "id": "appnavigationlibrary_bookselectionactionbar",
-      "community": 18,
+      "community": 20,
       "norm_label": "bookselectionactionbar()"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationlibrarydata_kt",
-      "community": 17,
+      "community": 19,
       "norm_label": "appnavigationlibrarydata.kt"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L13",
       "id": "appnavigationlibrarydata_folderdragpreviewupdate",
-      "community": 17,
+      "community": 19,
       "norm_label": "folderdragpreviewupdate"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L19",
       "id": "appnavigationlibrarydata_parsejsonobject",
-      "community": 17,
+      "community": 19,
       "norm_label": "parsejsonobject()"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L27",
       "id": "appnavigationlibrarydata_parsefolderorder",
-      "community": 17,
+      "community": 19,
       "norm_label": "parsefolderorder()"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L42",
       "id": "appnavigationlibrarydata_buildfolders",
-      "community": 17,
+      "community": 19,
       "norm_label": "buildfolders()"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L77",
       "id": "appnavigationlibrarydata_buildlibraryitems",
-      "community": 17,
+      "community": 19,
       "norm_label": "buildlibraryitems()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L106",
       "id": "appnavigationlibrarydata_updatefolderdragpreview",
-      "community": 17,
+      "community": 19,
       "norm_label": "updatefolderdragpreview()"
     },
     {
@@ -412,7 +412,7 @@
       "label": "ImportBookResult",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L20",
+      "source_location": "L21",
       "id": "appnavigationoperations_importbookresult",
       "community": 9,
       "norm_label": "importbookresult"
@@ -421,7 +421,7 @@
       "label": "Duplicate",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L21",
+      "source_location": "L22",
       "id": "appnavigationoperations_duplicate",
       "community": 9,
       "norm_label": "duplicate"
@@ -430,7 +430,7 @@
       "label": "Imported",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L22",
+      "source_location": "L23",
       "id": "appnavigationoperations_imported",
       "community": 9,
       "norm_label": "imported"
@@ -439,7 +439,7 @@
       "label": "Failed",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L23",
+      "source_location": "L24",
       "id": "appnavigationoperations_failed",
       "community": 9,
       "norm_label": "failed"
@@ -448,7 +448,7 @@
       "label": "scanLibrary()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L26",
+      "source_location": "L27",
       "id": "appnavigationoperations_scanlibrary",
       "community": 9,
       "norm_label": "scanlibrary()"
@@ -457,7 +457,7 @@
       "label": "touchBookLastRead()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L32",
+      "source_location": "L33",
       "id": "appnavigationoperations_touchbooklastread",
       "community": 9,
       "norm_label": "touchbooklastread()"
@@ -466,7 +466,7 @@
       "label": "importBookIntoLibrary()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L43",
+      "source_location": "L44",
       "id": "appnavigationoperations_importbookintolibrary",
       "community": 9,
       "norm_label": "importbookintolibrary()"
@@ -475,7 +475,7 @@
       "label": "moveBooksToFolder()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L85",
+      "source_location": "L91",
       "id": "appnavigationoperations_movebookstofolder",
       "community": 9,
       "norm_label": "movebookstofolder()"
@@ -484,7 +484,7 @@
       "label": "deleteSelectedBooks()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L95",
+      "source_location": "L101",
       "id": "appnavigationoperations_deleteselectedbooks",
       "community": 9,
       "norm_label": "deleteselectedbooks()"
@@ -493,7 +493,7 @@
       "label": "findExistingBook()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L110",
+      "source_location": "L117",
       "id": "appnavigationoperations_findexistingbook",
       "community": 9,
       "norm_label": "findexistingbook()"
@@ -504,7 +504,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationstartup_kt",
-      "community": 19,
+      "community": 21,
       "norm_label": "appnavigationstartup.kt"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L17",
       "id": "appnavigationstartup_appshellstartupdecision",
-      "community": 19,
+      "community": 21,
       "norm_label": "appshellstartupdecision"
     },
     {
@@ -522,7 +522,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L35",
       "id": "appnavigationstartup_evaluateappshellstartup",
-      "community": 19,
+      "community": 21,
       "norm_label": "evaluateappshellstartup()"
     },
     {
@@ -531,7 +531,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L101",
       "id": "appnavigationstartup_readcurrentversioncode",
-      "community": 19,
+      "community": 21,
       "norm_label": "readcurrentversioncode()"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L115",
       "id": "appnavigationstartup_hasexistinglibrarydata",
-      "community": 19,
+      "community": 21,
       "norm_label": "hasexistinglibrarydata()"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L120",
       "id": "appnavigationstartup_readpendingchangelogentries",
-      "community": 19,
+      "community": 21,
       "norm_label": "readpendingchangelogentries()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_debug_applog_kt",
-      "community": 20,
+      "community": 22,
       "norm_label": "applog.kt"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L11",
       "id": "applog_applog",
-      "community": 20,
+      "community": 22,
       "norm_label": "applog"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L25",
       "id": "applog_applog_d",
-      "community": 20,
+      "community": 22,
       "norm_label": ".d()"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L31",
       "id": "applog_applog_i",
-      "community": 20,
+      "community": 22,
       "norm_label": ".i()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L37",
       "id": "applog_applog_w",
-      "community": 20,
+      "community": 22,
       "norm_label": ".w()"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L45",
       "id": "applog_applog_e",
-      "community": 20,
+      "community": 22,
       "norm_label": ".e()"
     },
     {
@@ -637,7 +637,7 @@
       "label": "BookRepresentation",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L16",
+      "source_location": "L18",
       "id": "librarymodels_bookrepresentation",
       "community": 10,
       "norm_label": "bookrepresentation"
@@ -646,7 +646,7 @@
       "label": "TocItem",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L25",
+      "source_location": "L27",
       "id": "librarymodels_tocitem",
       "community": 10,
       "norm_label": "tocitem"
@@ -655,7 +655,7 @@
       "label": "ChapterElement",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L34",
+      "source_location": "L36",
       "id": "librarymodels_chapterelement",
       "community": 10,
       "norm_label": "chapterelement"
@@ -664,7 +664,7 @@
       "label": "Text",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L37",
+      "source_location": "L39",
       "id": "librarymodels_text",
       "community": 10,
       "norm_label": "text"
@@ -673,7 +673,7 @@
       "label": "Image",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L43",
+      "source_location": "L45",
       "id": "librarymodels_image",
       "community": 10,
       "norm_label": "image"
@@ -682,7 +682,7 @@
       "label": ".equals()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L47",
+      "source_location": "L49",
       "id": "librarymodels_image_equals",
       "community": 10,
       "norm_label": ".equals()"
@@ -691,7 +691,7 @@
       "label": ".hashCode()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L53",
+      "source_location": "L55",
       "id": "librarymodels_image_hashcode",
       "community": 10,
       "norm_label": ".hashcode()"
@@ -700,7 +700,7 @@
       "label": "EpubBook",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L65",
+      "source_location": "L67",
       "id": "librarymodels_epubbook",
       "community": 10,
       "norm_label": "epubbook"
@@ -711,7 +711,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_model_settingsmodels_kt",
-      "community": 2,
+      "community": 3,
       "norm_label": "settingsmodels.kt"
     },
     {
@@ -720,7 +720,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L15",
       "id": "settingsmodels_themepalette",
-      "community": 2,
+      "community": 3,
       "norm_label": "themepalette"
     },
     {
@@ -729,7 +729,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L26",
       "id": "settingsmodels_customtheme",
-      "community": 2,
+      "community": 3,
       "norm_label": "customtheme"
     },
     {
@@ -738,7 +738,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L33",
       "id": "settingsmodels_themeoption",
-      "community": 2,
+      "community": 3,
       "norm_label": "themeoption"
     },
     {
@@ -747,7 +747,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L103",
       "id": "settingsmodels_isbuiltintheme",
-      "community": 2,
+      "community": 3,
       "norm_label": "isbuiltintheme()"
     },
     {
@@ -756,7 +756,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L107",
       "id": "settingsmodels_availablethemeoptions",
-      "community": 2,
+      "community": 3,
       "norm_label": "availablethemeoptions()"
     },
     {
@@ -765,7 +765,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L118",
       "id": "settingsmodels_findthemeoption",
-      "community": 2,
+      "community": 3,
       "norm_label": "findthemeoption()"
     },
     {
@@ -774,7 +774,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L122",
       "id": "settingsmodels_normalizethemeselection",
-      "community": 2,
+      "community": 3,
       "norm_label": "normalizethemeselection()"
     },
     {
@@ -783,7 +783,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L127",
       "id": "settingsmodels_themepaletteseed",
-      "community": 2,
+      "community": 3,
       "norm_label": "themepaletteseed()"
     },
     {
@@ -792,7 +792,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L131",
       "id": "settingsmodels_parsethemecolorornull",
-      "community": 2,
+      "community": 3,
       "norm_label": "parsethemecolorornull()"
     },
     {
@@ -801,7 +801,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L144",
       "id": "settingsmodels_calculateluminance",
-      "community": 2,
+      "community": 3,
       "norm_label": "calculateluminance()"
     },
     {
@@ -810,7 +810,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L154",
       "id": "settingsmodels_lerpcolor",
-      "community": 2,
+      "community": 3,
       "norm_label": "lerpcolor()"
     },
     {
@@ -819,7 +819,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L173",
       "id": "settingsmodels_contrastcolor",
-      "community": 2,
+      "community": 3,
       "norm_label": "contrastcolor()"
     },
     {
@@ -828,7 +828,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L177",
       "id": "settingsmodels_generatepalettefrombase",
-      "community": 2,
+      "community": 3,
       "norm_label": "generatepalettefrombase()"
     },
     {
@@ -837,7 +837,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L212",
       "id": "settingsmodels_formatthemecolor",
-      "community": 2,
+      "community": 3,
       "norm_label": "formatthemecolor()"
     },
     {
@@ -846,7 +846,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L216",
       "id": "settingsmodels_themebuttonlabel",
-      "community": 2,
+      "community": 3,
       "norm_label": "themebuttonlabel()"
     },
     {
@@ -855,7 +855,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L244",
       "id": "settingsmodels_globalsettings",
-      "community": 2,
+      "community": 3,
       "norm_label": "globalsettings"
     },
     {
@@ -864,7 +864,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L267",
       "id": "settingsmodels_bookprogress",
-      "community": 2,
+      "community": 3,
       "norm_label": "bookprogress"
     },
     {
@@ -873,34 +873,34 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_ui_librarycards_kt",
-      "community": 23,
+      "community": 25,
       "norm_label": "librarycards.kt"
     },
     {
       "label": "RecentlyViewedStrip()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
-      "source_location": "L43",
+      "source_location": "L44",
       "id": "librarycards_recentlyviewedstrip",
-      "community": 23,
+      "community": 25,
       "norm_label": "recentlyviewedstrip()"
     },
     {
       "label": "BookItem()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
-      "source_location": "L136",
+      "source_location": "L137",
       "id": "librarycards_bookitem",
-      "community": 23,
+      "community": 25,
       "norm_label": "bookitem()"
     },
     {
       "label": "formatReadingProgress()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
-      "source_location": "L275",
+      "source_location": "L276",
       "id": "librarycards_formatreadingprogress",
-      "community": 23,
+      "community": 25,
       "norm_label": "formatreadingprogress()"
     },
     {
@@ -909,7 +909,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparser_kt",
-      "community": 0,
+      "community": 1,
       "norm_label": "epubparser.kt"
     },
     {
@@ -918,7 +918,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
       "source_location": "L40",
       "id": "epubparser_epubparser",
-      "community": 0,
+      "community": 1,
       "norm_label": "epubparser"
     },
     {
@@ -927,7 +927,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
       "source_location": "L59",
       "id": "epubparser_epubparser_parseandextract",
-      "community": 0,
+      "community": 1,
       "norm_label": ".parseandextract()"
     },
     {
@@ -936,7 +936,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
       "source_location": "L66",
       "id": "epubparser_epubparser_inspectimportsource",
-      "community": 0,
+      "community": 1,
       "norm_label": ".inspectimportsource()"
     },
     {
@@ -945,241 +945,259 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
       "source_location": "L156",
       "id": "epubparser_epubparser_importbook",
-      "community": 0,
+      "community": 1,
       "norm_label": ".importbook()"
     },
     {
       "label": ".reparseBook()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L204",
+      "source_location": "L207",
       "id": "epubparser_epubparser_reparsebook",
-      "community": 0,
+      "community": 1,
       "norm_label": ".reparsebook()"
     },
     {
       "label": ".scanBooks()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L206",
+      "source_location": "L209",
       "id": "epubparser_epubparser_scanbooks",
-      "community": 0,
+      "community": 1,
       "norm_label": ".scanbooks()"
     },
     {
       "label": ".deleteBook()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L232",
+      "source_location": "L238",
       "id": "epubparser_epubparser_deletebook",
-      "community": 0,
+      "community": 1,
       "norm_label": ".deletebook()"
     },
     {
       "label": ".getChapterHref()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L241",
+      "source_location": "L247",
       "id": "epubparser_epubparser_getchapterhref",
-      "community": 0,
+      "community": 1,
       "norm_label": ".getchapterhref()"
     },
     {
       "label": ".parseChapter()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L255",
+      "source_location": "L261",
       "id": "epubparser_epubparser_parsechapter",
-      "community": 0,
+      "community": 1,
       "norm_label": ".parsechapter()"
     },
     {
       "label": ".resolveStoredBookFile()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L259",
+      "source_location": "L265",
       "id": "epubparser_epubparser_resolvestoredbookfile",
-      "community": 0,
+      "community": 1,
       "norm_label": ".resolvestoredbookfile()"
     },
     {
       "label": ".updateLastRead()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L274",
+      "source_location": "L280",
       "id": "epubparser_epubparser_updatelastread",
-      "community": 0,
+      "community": 1,
       "norm_label": ".updatelastread()"
     },
     {
       "label": ".loadMetadata()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L288",
+      "source_location": "L294",
       "id": "epubparser_epubparser_loadmetadata",
-      "community": 0,
+      "community": 1,
       "norm_label": ".loadmetadata()"
     },
     {
       "label": ".prepareBookForReading()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L290",
+      "source_location": "L296",
       "id": "epubparser_epubparser_preparebookforreading",
-      "community": 0,
+      "community": 1,
       "norm_label": ".preparebookforreading()"
     },
     {
       "label": ".setBookRepresentation()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L309",
+      "source_location": "L323",
       "id": "epubparser_epubparser_setbookrepresentation",
-      "community": 0,
+      "community": 1,
       "norm_label": ".setbookrepresentation()"
     },
     {
       "label": ".retryPdfConversion()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L338",
+      "source_location": "L352",
       "id": "epubparser_epubparser_retrypdfconversion",
-      "community": 0,
+      "community": 1,
       "norm_label": ".retrypdfconversion()"
+    },
+    {
+      "label": ".cancelPdfConversion()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
+      "source_location": "L370",
+      "id": "epubparser_epubparser_cancelpdfconversion",
+      "community": 1,
+      "norm_label": ".cancelpdfconversion()"
+    },
+    {
+      "label": ".convertStoredPdfForBook()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
+      "source_location": "L374",
+      "id": "epubparser_epubparser_convertstoredpdfforbook",
+      "community": 1,
+      "norm_label": ".convertstoredpdfforbook()"
     },
     {
       "label": ".queryFileSize()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L345",
+      "source_location": "L476",
       "id": "epubparser_epubparser_queryfilesize",
-      "community": 0,
+      "community": 1,
       "norm_label": ".queryfilesize()"
     },
     {
       "label": ".queryDisplayName()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L351",
+      "source_location": "L482",
       "id": "epubparser_epubparser_querydisplayname",
-      "community": 0,
+      "community": 1,
       "norm_label": ".querydisplayname()"
     },
     {
       "label": ".readHeaderBytes()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L364",
+      "source_location": "L495",
       "id": "epubparser_epubparser_readheaderbytes",
-      "community": 0,
+      "community": 1,
       "norm_label": ".readheaderbytes()"
     },
     {
       "label": ".inspectZipSource()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L375",
+      "source_location": "L506",
       "id": "epubparser_epubparser_inspectzipsource",
-      "community": 0,
+      "community": 1,
       "norm_label": ".inspectzipsource()"
     },
     {
       "label": ".copyUriToFile()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L404",
+      "source_location": "L535",
       "id": "epubparser_epubparser_copyuritofile",
-      "community": 0,
+      "community": 1,
       "norm_label": ".copyuritofile()"
     },
     {
       "label": ".extractArchiveEntry()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L413",
+      "source_location": "L544",
       "id": "epubparser_epubparser_extractarchiveentry",
-      "community": 0,
+      "community": 1,
       "norm_label": ".extractarchiveentry()"
     },
     {
       "label": ".stagedStoredBookFile()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L437",
+      "source_location": "L568",
       "id": "epubparser_epubparser_stagedstoredbookfile",
-      "community": 0,
+      "community": 1,
       "norm_label": ".stagedstoredbookfile()"
     },
     {
       "label": ".cleanupFailedImport()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L441",
+      "source_location": "L572",
       "id": "epubparser_epubparser_cleanupfailedimport",
-      "community": 0,
+      "community": 1,
       "norm_label": ".cleanupfailedimport()"
     },
     {
       "label": ".storedBookFile()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L450",
+      "source_location": "L581",
       "id": "epubparser_epubparser_storedbookfile",
-      "community": 0,
+      "community": 1,
       "norm_label": ".storedbookfile()"
     },
     {
       "label": ".storedFileName()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L454",
+      "source_location": "L585",
       "id": "epubparser_epubparser_storedfilename",
-      "community": 0,
+      "community": 1,
       "norm_label": ".storedfilename()"
     },
     {
-      "label": ".importPdfWithFallback()",
+      "label": ".importPdfSource()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L461",
-      "id": "epubparser_epubparser_importpdfwithfallback",
-      "community": 0,
-      "norm_label": ".importpdfwithfallback()"
+      "source_location": "L592",
+      "id": "epubparser_epubparser_importpdfsource",
+      "community": 1,
+      "norm_label": ".importpdfsource()"
     },
     {
       "label": ".healCachedBook()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L518",
+      "source_location": "L614",
       "id": "epubparser_epubparser_healcachedbook",
-      "community": 0,
+      "community": 1,
       "norm_label": ".healcachedbook()"
     },
     {
       "label": ".cleanupArtifactsForNativeEpub()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L549",
+      "source_location": "L654",
       "id": "epubparser_epubparser_cleanupartifactsfornativeepub",
-      "community": 0,
+      "community": 1,
       "norm_label": ".cleanupartifactsfornativeepub()"
     },
     {
       "label": ".cleanupArtifactsForPdfImport()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L557",
+      "source_location": "L666",
       "id": "epubparser_epubparser_cleanupartifactsforpdfimport",
-      "community": 0,
+      "community": 1,
       "norm_label": ".cleanupartifactsforpdfimport()"
     },
     {
       "label": ".validateGeneratedEpub()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L563",
+      "source_location": "L681",
       "id": "epubparser_epubparser_validategeneratedepub",
-      "community": 0,
+      "community": 1,
       "norm_label": ".validategeneratedepub()"
     },
     {
@@ -1213,7 +1231,7 @@
       "label": "rebuildPdfMetadata()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L105",
+      "source_location": "L121",
       "id": "epubparserbooks_rebuildpdfmetadata",
       "community": 7,
       "norm_label": "rebuildpdfmetadata()"
@@ -1222,7 +1240,7 @@
       "label": "saveBookMetadata()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L142",
+      "source_location": "L174",
       "id": "epubparserbooks_savebookmetadata",
       "community": 7,
       "norm_label": "savebookmetadata()"
@@ -1231,7 +1249,7 @@
       "label": "loadBookMetadata()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L180",
+      "source_location": "L214",
       "id": "epubparserbooks_loadbookmetadata",
       "community": 7,
       "norm_label": "loadbookmetadata()"
@@ -1240,7 +1258,7 @@
       "label": "buildTableOfContents()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L235",
+      "source_location": "L271",
       "id": "epubparserbooks_buildtableofcontents",
       "community": 7,
       "norm_label": "buildtableofcontents()"
@@ -1249,7 +1267,7 @@
       "label": "addTocReferences()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L254",
+      "source_location": "L290",
       "id": "epubparserbooks_addtocreferences",
       "community": 7,
       "norm_label": "addtocreferences()"
@@ -1258,7 +1276,7 @@
       "label": "activeEpubFile()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L275",
+      "source_location": "L311",
       "id": "epubparserbooks_activeepubfile",
       "community": 7,
       "norm_label": "activeepubfile()"
@@ -1267,7 +1285,7 @@
       "label": "ensureCanonicalSourcePdfFile()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L282",
+      "source_location": "L318",
       "id": "epubparserbooks_ensurecanonicalsourcepdffile",
       "community": 7,
       "norm_label": "ensurecanonicalsourcepdffile()"
@@ -1276,7 +1294,7 @@
       "label": "replaceFileAtomically()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L301",
+      "source_location": "L337",
       "id": "epubparserbooks_replacefileatomically",
       "community": 7,
       "norm_label": "replacefileatomically()"
@@ -1285,7 +1303,7 @@
       "label": "PdfDocumentInfo",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L318",
+      "source_location": "L354",
       "id": "epubparserbooks_pdfdocumentinfo",
       "community": 7,
       "norm_label": "pdfdocumentinfo"
@@ -1294,7 +1312,7 @@
       "label": "readPdfDocumentInfo()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L323",
+      "source_location": "L359",
       "id": "epubparserbooks_readpdfdocumentinfo",
       "community": 7,
       "norm_label": "readpdfdocumentinfo()"
@@ -1303,7 +1321,7 @@
       "label": "renderPdfCoverThumbnail()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L340",
+      "source_location": "L376",
       "id": "epubparserbooks_renderpdfcoverthumbnail",
       "community": 7,
       "norm_label": "renderpdfcoverthumbnail()"
@@ -1543,166 +1561,454 @@
       "norm_label": "isignorablearchiveentry()"
     },
     {
+      "label": "PdfConversionWorker.kt",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L1",
+      "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "community": 16,
+      "norm_label": "pdfconversionworker.kt"
+    },
+    {
+      "label": "enqueuePdfConversionWork()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L19",
+      "id": "pdfconversionworker_enqueuepdfconversionwork",
+      "community": 16,
+      "norm_label": "enqueuepdfconversionwork()"
+    },
+    {
+      "label": "cancelPdfConversionWork()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L37",
+      "id": "pdfconversionworker_cancelpdfconversionwork",
+      "community": 16,
+      "norm_label": "cancelpdfconversionwork()"
+    },
+    {
+      "label": "uniquePdfConversionWorkName()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L44",
+      "id": "pdfconversionworker_uniquepdfconversionworkname",
+      "community": 16,
+      "norm_label": "uniquepdfconversionworkname()"
+    },
+    {
+      "label": "PdfConversionWorker",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L46",
+      "id": "pdfconversionworker_pdfconversionworker",
+      "community": 16,
+      "norm_label": "pdfconversionworker"
+    },
+    {
+      "label": ".doWork()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L51",
+      "id": "pdfconversionworker_pdfconversionworker_dowork",
+      "community": 16,
+      "norm_label": ".dowork()"
+    },
+    {
+      "label": ".createForegroundInfo()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L94",
+      "id": "pdfconversionworker_pdfconversionworker_createforegroundinfo",
+      "community": 16,
+      "norm_label": ".createforegroundinfo()"
+    },
+    {
+      "label": ".ensureNotificationChannel()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L119",
+      "id": "pdfconversionworker_pdfconversionworker_ensurenotificationchannel",
+      "community": 16,
+      "norm_label": ".ensurenotificationchannel()"
+    },
+    {
       "label": "PdfToEpubConverter.kt",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "community": 3,
+      "community": 0,
       "norm_label": "pdftoepubconverter.kt"
+    },
+    {
+      "label": "PdfConversionProgress",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L37",
+      "id": "pdftoepubconverter_pdfconversionprogress",
+      "community": 0,
+      "norm_label": "pdfconversionprogress"
+    },
+    {
+      "label": "PdfConversionResult",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L42",
+      "id": "pdftoepubconverter_pdfconversionresult",
+      "community": 0,
+      "norm_label": "pdfconversionresult"
+    },
+    {
+      "label": "PdfConversionProgressListener",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L50",
+      "id": "pdftoepubconverter_pdfconversionprogresslistener",
+      "community": 0,
+      "norm_label": "pdfconversionprogresslistener"
+    },
+    {
+      "label": ".onProgress()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L51",
+      "id": "pdftoepubconverter_pdfconversionprogresslistener_onprogress",
+      "community": 0,
+      "norm_label": ".onprogress()"
     },
     {
       "label": "PdfToEpubConverter",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L26",
+      "source_location": "L54",
       "id": "pdftoepubconverter_pdftoepubconverter",
-      "community": 3,
+      "community": 0,
       "norm_label": "pdftoepubconverter"
     },
     {
       "label": ".convert()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L27",
+      "source_location": "L55",
       "id": "pdftoepubconverter_pdftoepubconverter_convert",
-      "community": 3,
+      "community": 0,
       "norm_label": ".convert()"
     },
     {
       "label": "MlKitPdfToEpubConverter",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L35",
+      "source_location": "L65",
       "id": "pdftoepubconverter_mlkitpdftoepubconverter",
-      "community": 3,
+      "community": 0,
       "norm_label": "mlkitpdftoepubconverter"
     },
     {
       "label": ".convert()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L37",
+      "source_location": "L69",
       "id": "pdftoepubconverter_mlkitpdftoepubconverter_convert",
-      "community": 3,
+      "community": 0,
       "norm_label": ".convert()"
     },
     {
-      "label": "PdfPageContent",
+      "label": "PdfTextExtractionMethod",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L70",
-      "id": "pdftoepubconverter_pdfpagecontent",
-      "community": 3,
-      "norm_label": "pdfpagecontent"
+      "source_location": "L230",
+      "id": "pdftoepubconverter_pdftextextractionmethod",
+      "community": 0,
+      "norm_label": "pdftextextractionmethod"
     },
     {
-      "label": "extractPages()",
+      "label": "WorkspacePageStat",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L78",
-      "id": "pdftoepubconverter_extractpages",
-      "community": 3,
-      "norm_label": "extractpages()"
+      "source_location": "L236",
+      "id": "pdftoepubconverter_workspacepagestat",
+      "community": 0,
+      "norm_label": "workspacepagestat"
+    },
+    {
+      "label": "PdfConversionWorkspaceState",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L242",
+      "id": "pdftoepubconverter_pdfconversionworkspacestate",
+      "community": 17,
+      "norm_label": "pdfconversionworkspacestate"
+    },
+    {
+      "label": ".reset()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L246",
+      "id": "pdftoepubconverter_pdfconversionworkspacestate_reset",
+      "community": 17,
+      "norm_label": ".reset()"
+    },
+    {
+      "label": ".hasPage()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L251",
+      "id": "pdftoepubconverter_pdfconversionworkspacestate_haspage",
+      "community": 17,
+      "norm_label": ".haspage()"
+    },
+    {
+      "label": ".record()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L253",
+      "id": "pdftoepubconverter_pdfconversionworkspacestate_record",
+      "community": 17,
+      "norm_label": ".record()"
+    },
+    {
+      "label": ".completedPages()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L265",
+      "id": "pdftoepubconverter_pdfconversionworkspacestate_completedpages",
+      "community": 17,
+      "norm_label": ".completedpages()"
+    },
+    {
+      "label": ".qualifiesForGeneratedEpub()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L269",
+      "id": "pdftoepubconverter_pdfconversionworkspacestate_qualifiesforgeneratedepub",
+      "community": 17,
+      "norm_label": ".qualifiesforgeneratedepub()"
+    },
+    {
+      "label": ".toJson()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L284",
+      "id": "pdftoepubconverter_pdfconversionworkspacestate_tojson",
+      "community": 17,
+      "norm_label": ".tojson()"
+    },
+    {
+      "label": ".toResult()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L303",
+      "id": "pdftoepubconverter_pdfconversionworkspacestate_toresult",
+      "community": 17,
+      "norm_label": ".toresult()"
+    },
+    {
+      "label": "extractDirectTextParagraphs()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L317",
+      "id": "pdftoepubconverter_extractdirecttextparagraphs",
+      "community": 0,
+      "norm_label": "extractdirecttextparagraphs()"
     },
     {
       "label": "recognizePageParagraphs()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L118",
+      "source_location": "L336",
       "id": "pdftoepubconverter_recognizepageparagraphs",
-      "community": 3,
+      "community": 0,
       "norm_label": "recognizepageparagraphs()"
     },
     {
-      "label": "qualifiesForGeneratedEpub()",
+      "label": "recognizeBitmapParagraphs()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L152",
-      "id": "pdftoepubconverter_qualifiesforgeneratedepub",
-      "community": 3,
-      "norm_label": "qualifiesforgeneratedepub()"
+      "source_location": "L364",
+      "id": "pdftoepubconverter_recognizebitmapparagraphs",
+      "community": 0,
+      "norm_label": "recognizebitmapparagraphs()"
+    },
+    {
+      "label": "writeWorkspaceStylesheet()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L397",
+      "id": "pdftoepubconverter_writeworkspacestylesheet",
+      "community": 0,
+      "norm_label": "writeworkspacestylesheet()"
+    },
+    {
+      "label": "clearWorkspacePages()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L409",
+      "id": "pdftoepubconverter_clearworkspacepages",
+      "community": 0,
+      "norm_label": "clearworkspacepages()"
+    },
+    {
+      "label": "writeWorkspacePage()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L414",
+      "id": "pdftoepubconverter_writeworkspacepage",
+      "community": 0,
+      "norm_label": "writeworkspacepage()"
+    },
+    {
+      "label": "workspacePageFile()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L430",
+      "id": "pdftoepubconverter_workspacepagefile",
+      "community": 0,
+      "norm_label": "workspacepagefile()"
+    },
+    {
+      "label": "buildPageDocument()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L434",
+      "id": "pdftoepubconverter_buildpagedocument",
+      "community": 0,
+      "norm_label": "buildpagedocument()"
+    },
+    {
+      "label": "loadWorkspaceState()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L464",
+      "id": "pdftoepubconverter_loadworkspacestate",
+      "community": 0,
+      "norm_label": "loadworkspacestate()"
+    },
+    {
+      "label": "saveWorkspaceState()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L496",
+      "id": "pdftoepubconverter_saveworkspacestate",
+      "community": 0,
+      "norm_label": "saveworkspacestate()"
     },
     {
       "label": "writeGeneratedEpub()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L168",
+      "source_location": "L506",
       "id": "pdftoepubconverter_writegeneratedepub",
-      "community": 3,
+      "community": 0,
       "norm_label": "writegeneratedepub()"
-    },
-    {
-      "label": "fileName()",
-      "file_type": "code",
-      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L211",
-      "id": "pdftoepubconverter_filename",
-      "community": 3,
-      "norm_label": "filename()"
-    },
-    {
-      "label": "toXhtmlDocument()",
-      "file_type": "code",
-      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L213",
-      "id": "pdftoepubconverter_toxhtmldocument",
-      "community": 3,
-      "norm_label": "toxhtmldocument()"
     },
     {
       "label": "buildOpfDocument()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L239",
+      "source_location": "L545",
       "id": "pdftoepubconverter_buildopfdocument",
-      "community": 3,
+      "community": 0,
       "norm_label": "buildopfdocument()"
     },
     {
       "label": "buildNcxDocument()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L277",
+      "source_location": "L583",
       "id": "pdftoepubconverter_buildncxdocument",
-      "community": 3,
+      "community": 0,
       "norm_label": "buildncxdocument()"
     },
     {
       "label": "addStoredEntry()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L303",
+      "source_location": "L609",
       "id": "pdftoepubconverter_addstoredentry",
-      "community": 3,
+      "community": 0,
       "norm_label": "addstoredentry()"
     },
     {
       "label": "addEntry()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L317",
+      "source_location": "L623",
       "id": "pdftoepubconverter_addentry",
-      "community": 3,
+      "community": 0,
       "norm_label": "addentry()"
+    },
+    {
+      "label": "addFileEntry()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L629",
+      "id": "pdftoepubconverter_addfileentry",
+      "community": 0,
+      "norm_label": "addfileentry()"
+    },
+    {
+      "label": "readPageCountWithRenderer()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L641",
+      "id": "pdftoepubconverter_readpagecountwithrenderer",
+      "community": 0,
+      "norm_label": "readpagecountwithrenderer()"
+    },
+    {
+      "label": "hasUsableText()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L651",
+      "id": "pdftoepubconverter_hasusabletext",
+      "community": 0,
+      "norm_label": "hasusabletext()"
+    },
+    {
+      "label": "characterCount()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L653",
+      "id": "pdftoepubconverter_charactercount",
+      "community": 0,
+      "norm_label": "charactercount()"
+    },
+    {
+      "label": "normalizePdfParagraphs()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L657",
+      "id": "pdftoepubconverter_normalizepdfparagraphs",
+      "community": 0,
+      "norm_label": "normalizepdfparagraphs()"
     },
     {
       "label": "normalizePdfParagraph()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L323",
+      "source_location": "L674",
       "id": "pdftoepubconverter_normalizepdfparagraph",
-      "community": 3,
+      "community": 0,
       "norm_label": "normalizepdfparagraph()"
     },
     {
       "label": "escapeForXhtml()",
       "file_type": "code",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L331",
+      "source_location": "L682",
       "id": "pdftoepubconverter_escapeforxhtml",
-      "community": 3,
+      "community": 0,
       "norm_label": "escapeforxhtml()"
+    },
+    {
+      "label": "pageFileName()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L697",
+      "id": "pdftoepubconverter_pagefilename",
+      "community": 0,
+      "norm_label": "pagefilename()"
     },
     {
       "label": "SettingsManager.kt",
@@ -1710,7 +2016,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_settings_settingsmanager_kt",
-      "community": 1,
+      "community": 2,
       "norm_label": "settingsmanager.kt"
     },
     {
@@ -1719,7 +2025,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L43",
       "id": "settingsmanager_settingsmanager",
-      "community": 1,
+      "community": 2,
       "norm_label": "settingsmanager"
     },
     {
@@ -1728,7 +2034,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L60",
       "id": "settingsmanager_settingsmanager_updatefolderorder",
-      "community": 1,
+      "community": 2,
       "norm_label": ".updatefolderorder()"
     },
     {
@@ -1737,7 +2043,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L73",
       "id": "settingsmanager_settingsmanager_createfolder",
-      "community": 1,
+      "community": 2,
       "norm_label": ".createfolder()"
     },
     {
@@ -1746,7 +2052,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L98",
       "id": "settingsmanager_settingsmanager_setlibrarysort",
-      "community": 1,
+      "community": 2,
       "norm_label": ".setlibrarysort()"
     },
     {
@@ -1755,7 +2061,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L111",
       "id": "settingsmanager_settingsmanager_setfavoritelibrary",
-      "community": 1,
+      "community": 2,
       "norm_label": ".setfavoritelibrary()"
     },
     {
@@ -1764,7 +2070,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L126",
       "id": "settingsmanager_settingsmanager_updatebookgroup",
-      "community": 1,
+      "community": 2,
       "norm_label": ".updatebookgroup()"
     },
     {
@@ -1773,7 +2079,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L148",
       "id": "settingsmanager_settingsmanager_renamefolder",
-      "community": 1,
+      "community": 2,
       "norm_label": ".renamefolder()"
     },
     {
@@ -1782,7 +2088,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L218",
       "id": "settingsmanager_settingsmanager_deletefolder",
-      "community": 1,
+      "community": 2,
       "norm_label": ".deletefolder()"
     },
     {
@@ -1791,7 +2097,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L243",
       "id": "settingsmanager_settingsmanager_setfirsttime",
-      "community": 1,
+      "community": 2,
       "norm_label": ".setfirsttime()"
     },
     {
@@ -1800,7 +2106,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L249",
       "id": "settingsmanager_settingsmanager_getlastseenversioncode",
-      "community": 1,
+      "community": 2,
       "norm_label": ".getlastseenversioncode()"
     },
     {
@@ -1809,7 +2115,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L253",
       "id": "settingsmanager_settingsmanager_setlastseenversioncode",
-      "community": 1,
+      "community": 2,
       "norm_label": ".setlastseenversioncode()"
     },
     {
@@ -1818,7 +2124,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L260",
       "id": "settingsmanager_settingsmanager_updateglobalsettings",
-      "community": 1,
+      "community": 2,
       "norm_label": ".updateglobalsettings()"
     },
     {
@@ -1827,7 +2133,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L282",
       "id": "settingsmanager_settingsmanager_setactivetheme",
-      "community": 1,
+      "community": 2,
       "norm_label": ".setactivetheme()"
     },
     {
@@ -1836,7 +2142,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L289",
       "id": "settingsmanager_settingsmanager_savecustomtheme",
-      "community": 1,
+      "community": 2,
       "norm_label": ".savecustomtheme()"
     },
     {
@@ -1845,7 +2151,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L314",
       "id": "settingsmanager_settingsmanager_deletecustomtheme",
-      "community": 1,
+      "community": 2,
       "norm_label": ".deletecustomtheme()"
     },
     {
@@ -1854,7 +2160,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L329",
       "id": "settingsmanager_settingsmanager_toggletheme",
-      "community": 1,
+      "community": 2,
       "norm_label": ".toggletheme()"
     },
     {
@@ -1863,7 +2169,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L341",
       "id": "settingsmanager_settingsmanager_toggleshowsystembar",
-      "community": 1,
+      "community": 2,
       "norm_label": ".toggleshowsystembar()"
     },
     {
@@ -1872,7 +2178,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L348",
       "id": "settingsmanager_settingsmanager_toggleselectabletext",
-      "community": 1,
+      "community": 2,
       "norm_label": ".toggleselectabletext()"
     },
     {
@@ -1881,7 +2187,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L362",
       "id": "settingsmanager_settingsmanager_getbookprogress",
-      "community": 1,
+      "community": 2,
       "norm_label": ".getbookprogress()"
     },
     {
@@ -1890,7 +2196,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L377",
       "id": "settingsmanager_settingsmanager_savebookprogress",
-      "community": 1,
+      "community": 2,
       "norm_label": ".savebookprogress()"
     },
     {
@@ -1899,7 +2205,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L406",
       "id": "settingsmanager_settingsmanager_deletebookdata",
-      "community": 1,
+      "community": 2,
       "norm_label": ".deletebookdata()"
     },
     {
@@ -2097,7 +2403,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\PdfReaderScreen.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_feature_reader_pdfreaderscreen_kt",
-      "community": 16,
+      "community": 18,
       "norm_label": "pdfreaderscreen.kt"
     },
     {
@@ -2106,7 +2412,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\PdfReaderScreen.kt",
       "source_location": "L95",
       "id": "pdfreaderscreen_pdfreaderscreen",
-      "community": 16,
+      "community": 18,
       "norm_label": "pdfreaderscreen()"
     },
     {
@@ -2115,7 +2421,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\PdfReaderScreen.kt",
       "source_location": "L392",
       "id": "pdfreaderscreen_pdfpageitem",
-      "community": 16,
+      "community": 18,
       "norm_label": "pdfpageitem()"
     },
     {
@@ -2124,7 +2430,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\PdfReaderScreen.kt",
       "source_location": "L437",
       "id": "pdfreaderscreen_pdfreadererrorstate",
-      "community": 16,
+      "community": 18,
       "norm_label": "pdfreadererrorstate()"
     },
     {
@@ -2133,7 +2439,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\PdfReaderScreen.kt",
       "source_location": "L475",
       "id": "pdfreaderscreen_pdfdocumenthandle",
-      "community": 16,
+      "community": 18,
       "norm_label": "pdfdocumenthandle"
     },
     {
@@ -2142,7 +2448,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\PdfReaderScreen.kt",
       "source_location": "L483",
       "id": "pdfreaderscreen_pdfdocumenthandle_renderpage",
-      "community": 16,
+      "community": 18,
       "norm_label": ".renderpage()"
     },
     {
@@ -2151,7 +2457,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\PdfReaderScreen.kt",
       "source_location": "L510",
       "id": "pdfreaderscreen_pdfdocumenthandle_close",
-      "community": 16,
+      "community": 18,
       "norm_label": ".close()"
     },
     {
@@ -2160,7 +2466,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\PdfReaderScreen.kt",
       "source_location": "L516",
       "id": "pdfreaderscreen_open",
-      "community": 16,
+      "community": 18,
       "norm_label": "open()"
     },
     {
@@ -2169,7 +2475,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreen.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_feature_reader_readerscreen_kt",
-      "community": 26,
+      "community": 28,
       "norm_label": "readerscreen.kt"
     },
     {
@@ -2178,7 +2484,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreen.kt",
       "source_location": "L76",
       "id": "readerscreen_readerscreen",
-      "community": 26,
+      "community": 28,
       "norm_label": "readerscreen()"
     },
     {
@@ -2187,7 +2493,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt",
-      "community": 21,
+      "community": 23,
       "norm_label": "readerscreenchrome.kt"
     },
     {
@@ -2196,7 +2502,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L89",
       "id": "readerscreenchrome_readerscreenchrome",
-      "community": 21,
+      "community": 23,
       "norm_label": "readerscreenchrome()"
     },
     {
@@ -2205,7 +2511,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L112",
       "id": "readerscreenchrome_readertocdrawercontent",
-      "community": 21,
+      "community": 23,
       "norm_label": "readertocdrawercontent()"
     },
     {
@@ -2214,7 +2520,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L294",
       "id": "readerscreenchrome_readercontentsurface",
-      "community": 21,
+      "community": 23,
       "norm_label": "readercontentsurface()"
     },
     {
@@ -2223,7 +2529,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L427",
       "id": "readerscreenchrome_readertopbar",
-      "community": 21,
+      "community": 23,
       "norm_label": "readertopbar()"
     },
     {
@@ -2232,7 +2538,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L469",
       "id": "readerscreenchrome_readerscrolltotopfab",
-      "community": 21,
+      "community": 23,
       "norm_label": "readerscrolltotopfab()"
     },
     {
@@ -2241,7 +2547,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_feature_reader_readerscreencontracts_kt",
-      "community": 22,
+      "community": 24,
       "norm_label": "readerscreencontracts.kt"
     },
     {
@@ -2250,7 +2556,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L29",
       "id": "readerscreencontracts_tocsort",
-      "community": 22,
+      "community": 24,
       "norm_label": "tocsort"
     },
     {
@@ -2259,7 +2565,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L31",
       "id": "readerscreencontracts_readertheme",
-      "community": 22,
+      "community": 24,
       "norm_label": "readertheme"
     },
     {
@@ -2268,7 +2574,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L35",
       "id": "readerscreencontracts_getthemecolors",
-      "community": 22,
+      "community": 24,
       "norm_label": "getthemecolors()"
     },
     {
@@ -2277,7 +2583,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L47",
       "id": "readerscreencontracts_readerchromestate",
-      "community": 22,
+      "community": 24,
       "norm_label": "readerchromestate"
     },
     {
@@ -2286,7 +2592,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L65",
       "id": "readerscreencontracts_readerchromecallbacks",
-      "community": 22,
+      "community": 24,
       "norm_label": "readerchromecallbacks"
     },
     {
@@ -2601,7 +2907,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\scripts\\check_graph_staleness.py",
       "source_location": "L1",
       "id": "c_users_abdul_desktop_projects_bluewaves_scripts_check_graph_staleness_py",
-      "community": 24,
+      "community": 26,
       "norm_label": "check_graph_staleness.py"
     },
     {
@@ -2610,7 +2916,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\scripts\\check_graph_staleness.py",
       "source_location": "L5",
       "id": "check_graph_staleness_get_last_modified",
-      "community": 24,
+      "community": 26,
       "norm_label": "get_last_modified()"
     },
     {
@@ -2619,7 +2925,7 @@
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\scripts\\check_graph_staleness.py",
       "source_location": "L17",
       "id": "check_graph_staleness_check_staleness",
-      "community": 24,
+      "community": 26,
       "norm_label": "check_staleness()"
     }
   ],
@@ -3084,7 +3390,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_importbookresult",
@@ -3096,7 +3402,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_duplicate",
@@ -3108,7 +3414,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_imported",
@@ -3120,7 +3426,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_failed",
@@ -3132,7 +3438,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_scanlibrary",
@@ -3144,7 +3450,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_touchbooklastread",
@@ -3156,7 +3462,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_importbookintolibrary",
@@ -3168,7 +3474,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L85",
+      "source_location": "L91",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_movebookstofolder",
@@ -3180,7 +3486,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L95",
+      "source_location": "L101",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_deleteselectedbooks",
@@ -3192,7 +3498,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
-      "source_location": "L110",
+      "source_location": "L117",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
       "_tgt": "appnavigationoperations_findexistingbook",
@@ -3348,7 +3654,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_model_librarymodels_kt",
       "_tgt": "librarymodels_bookrepresentation",
@@ -3360,7 +3666,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L25",
+      "source_location": "L27",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_model_librarymodels_kt",
       "_tgt": "librarymodels_tocitem",
@@ -3372,7 +3678,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L34",
+      "source_location": "L36",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_model_librarymodels_kt",
       "_tgt": "librarymodels_chapterelement",
@@ -3384,7 +3690,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_model_librarymodels_kt",
       "_tgt": "librarymodels_text",
@@ -3396,7 +3702,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L43",
+      "source_location": "L45",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_model_librarymodels_kt",
       "_tgt": "librarymodels_image",
@@ -3408,7 +3714,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_model_librarymodels_kt",
       "_tgt": "librarymodels_epubbook",
@@ -3420,7 +3726,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L47",
+      "source_location": "L49",
       "weight": 1.0,
       "_src": "librarymodels_image",
       "_tgt": "librarymodels_image_equals",
@@ -3432,7 +3738,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
-      "source_location": "L53",
+      "source_location": "L55",
       "weight": 1.0,
       "_src": "librarymodels_image",
       "_tgt": "librarymodels_image_hashcode",
@@ -3648,7 +3954,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_ui_librarycards_kt",
       "_tgt": "librarycards_recentlyviewedstrip",
@@ -3660,7 +3966,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
-      "source_location": "L136",
+      "source_location": "L137",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_ui_librarycards_kt",
       "_tgt": "librarycards_bookitem",
@@ -3672,7 +3978,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
-      "source_location": "L275",
+      "source_location": "L276",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_core_ui_librarycards_kt",
       "_tgt": "librarycards_formatreadingprogress",
@@ -3732,7 +4038,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L204",
+      "source_location": "L207",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_reparsebook",
@@ -3744,7 +4050,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L206",
+      "source_location": "L209",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_scanbooks",
@@ -3756,7 +4062,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L232",
+      "source_location": "L238",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_deletebook",
@@ -3768,7 +4074,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L241",
+      "source_location": "L247",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_getchapterhref",
@@ -3780,7 +4086,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L255",
+      "source_location": "L261",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_parsechapter",
@@ -3792,7 +4098,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L263",
+      "source_location": "L269",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_resolvestoredbookfile",
@@ -3804,7 +4110,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L274",
+      "source_location": "L280",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_updatelastread",
@@ -3816,7 +4122,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L288",
+      "source_location": "L294",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_loadmetadata",
@@ -3828,7 +4134,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L290",
+      "source_location": "L296",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_preparebookforreading",
@@ -3840,7 +4146,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L309",
+      "source_location": "L323",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_setbookrepresentation",
@@ -3852,7 +4158,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L338",
+      "source_location": "L352",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_retrypdfconversion",
@@ -3864,7 +4170,31 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L345",
+      "source_location": "L370",
+      "weight": 1.0,
+      "_src": "epubparser_epubparser",
+      "_tgt": "epubparser_epubparser_cancelpdfconversion",
+      "source": "epubparser_epubparser",
+      "target": "epubparser_epubparser_cancelpdfconversion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
+      "source_location": "L374",
+      "weight": 1.0,
+      "_src": "epubparser_epubparser",
+      "_tgt": "epubparser_epubparser_convertstoredpdfforbook",
+      "source": "epubparser_epubparser",
+      "target": "epubparser_epubparser_convertstoredpdfforbook",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
+      "source_location": "L476",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_queryfilesize",
@@ -3876,7 +4206,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L351",
+      "source_location": "L482",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_querydisplayname",
@@ -3888,7 +4218,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L364",
+      "source_location": "L495",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_readheaderbytes",
@@ -3900,7 +4230,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L375",
+      "source_location": "L506",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_inspectzipsource",
@@ -3912,7 +4242,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L404",
+      "source_location": "L535",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_copyuritofile",
@@ -3924,7 +4254,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L413",
+      "source_location": "L544",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_extractarchiveentry",
@@ -3936,7 +4266,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L437",
+      "source_location": "L568",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_stagedstoredbookfile",
@@ -3948,7 +4278,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L441",
+      "source_location": "L572",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_cleanupfailedimport",
@@ -3960,7 +4290,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L450",
+      "source_location": "L581",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_storedbookfile",
@@ -3972,7 +4302,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L454",
+      "source_location": "L585",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_storedfilename",
@@ -3984,19 +4314,19 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L461",
+      "source_location": "L592",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
-      "_tgt": "epubparser_epubparser_importpdfwithfallback",
+      "_tgt": "epubparser_epubparser_importpdfsource",
       "source": "epubparser_epubparser",
-      "target": "epubparser_epubparser_importpdfwithfallback",
+      "target": "epubparser_epubparser_importpdfsource",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L518",
+      "source_location": "L614",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_healcachedbook",
@@ -4008,7 +4338,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L549",
+      "source_location": "L654",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_cleanupartifactsfornativeepub",
@@ -4020,7 +4350,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L557",
+      "source_location": "L666",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_cleanupartifactsforpdfimport",
@@ -4032,7 +4362,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParser.kt",
-      "source_location": "L563",
+      "source_location": "L681",
       "weight": 1.0,
       "_src": "epubparser_epubparser",
       "_tgt": "epubparser_epubparser_validategeneratedepub",
@@ -4068,7 +4398,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L105",
+      "source_location": "L121",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_rebuildpdfmetadata",
@@ -4080,7 +4410,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L142",
+      "source_location": "L174",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_savebookmetadata",
@@ -4092,7 +4422,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L180",
+      "source_location": "L214",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_loadbookmetadata",
@@ -4104,7 +4434,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L235",
+      "source_location": "L271",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_buildtableofcontents",
@@ -4116,7 +4446,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L254",
+      "source_location": "L290",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_addtocreferences",
@@ -4128,7 +4458,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L275",
+      "source_location": "L311",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_activeepubfile",
@@ -4140,7 +4470,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L282",
+      "source_location": "L318",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_ensurecanonicalsourcepdffile",
@@ -4152,7 +4482,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L301",
+      "source_location": "L337",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_replacefileatomically",
@@ -4164,7 +4494,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L318",
+      "source_location": "L354",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_pdfdocumentinfo",
@@ -4176,7 +4506,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L323",
+      "source_location": "L359",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_readpdfdocumentinfo",
@@ -4188,7 +4518,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L340",
+      "source_location": "L376",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_renderpdfcoverthumbnail",
@@ -4487,8 +4817,128 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "_tgt": "pdfconversionworker_enqueuepdfconversionwork",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "target": "pdfconversionworker_enqueuepdfconversionwork",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "_tgt": "pdfconversionworker_cancelpdfconversionwork",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "target": "pdfconversionworker_cancelpdfconversionwork",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "_tgt": "pdfconversionworker_uniquepdfconversionworkname",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "target": "pdfconversionworker_uniquepdfconversionworkname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "_tgt": "pdfconversionworker_pdfconversionworker",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdfconversionworker_kt",
+      "target": "pdfconversionworker_pdfconversionworker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "pdfconversionworker_pdfconversionworker",
+      "_tgt": "pdfconversionworker_pdfconversionworker_dowork",
+      "source": "pdfconversionworker_pdfconversionworker",
+      "target": "pdfconversionworker_pdfconversionworker_dowork",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L94",
+      "weight": 1.0,
+      "_src": "pdfconversionworker_pdfconversionworker",
+      "_tgt": "pdfconversionworker_pdfconversionworker_createforegroundinfo",
+      "source": "pdfconversionworker_pdfconversionworker",
+      "target": "pdfconversionworker_pdfconversionworker_createforegroundinfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfConversionWorker.kt",
+      "source_location": "L119",
+      "weight": 1.0,
+      "_src": "pdfconversionworker_pdfconversionworker",
+      "_tgt": "pdfconversionworker_pdfconversionworker_ensurenotificationchannel",
+      "source": "pdfconversionworker_pdfconversionworker",
+      "target": "pdfconversionworker_pdfconversionworker_ensurenotificationchannel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L26",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_pdfconversionprogress",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_pdfconversionprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_pdfconversionresult",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_pdfconversionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_pdfconversionprogresslistener",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_pdfconversionprogresslistener",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L54",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_pdftoepubconverter",
@@ -4500,7 +4950,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L35",
+      "source_location": "L65",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_mlkitpdftoepubconverter",
@@ -4512,31 +4962,55 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L70",
+      "source_location": "L230",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "_tgt": "pdftoepubconverter_pdfpagecontent",
+      "_tgt": "pdftoepubconverter_pdftextextractionmethod",
       "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "target": "pdftoepubconverter_pdfpagecontent",
+      "target": "pdftoepubconverter_pdftextextractionmethod",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L78",
+      "source_location": "L236",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "_tgt": "pdftoepubconverter_extractpages",
+      "_tgt": "pdftoepubconverter_workspacepagestat",
       "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "target": "pdftoepubconverter_extractpages",
+      "target": "pdftoepubconverter_workspacepagestat",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L118",
+      "source_location": "L242",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_pdfconversionworkspacestate",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_pdfconversionworkspacestate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L317",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_extractdirecttextparagraphs",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_extractdirecttextparagraphs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L336",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_recognizepageparagraphs",
@@ -4548,19 +5022,103 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L152",
+      "source_location": "L364",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "_tgt": "pdftoepubconverter_qualifiesforgeneratedepub",
+      "_tgt": "pdftoepubconverter_recognizebitmapparagraphs",
       "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "target": "pdftoepubconverter_qualifiesforgeneratedepub",
+      "target": "pdftoepubconverter_recognizebitmapparagraphs",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L168",
+      "source_location": "L397",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_writeworkspacestylesheet",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_writeworkspacestylesheet",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L409",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_clearworkspacepages",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_clearworkspacepages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L414",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_writeworkspacepage",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_writeworkspacepage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L430",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_workspacepagefile",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_workspacepagefile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L434",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_buildpagedocument",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_buildpagedocument",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L464",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_loadworkspacestate",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_loadworkspacestate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L496",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_saveworkspacestate",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_saveworkspacestate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L506",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_writegeneratedepub",
@@ -4572,31 +5130,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L211",
-      "weight": 1.0,
-      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "_tgt": "pdftoepubconverter_filename",
-      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "target": "pdftoepubconverter_filename",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L213",
-      "weight": 1.0,
-      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "_tgt": "pdftoepubconverter_toxhtmldocument",
-      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
-      "target": "pdftoepubconverter_toxhtmldocument",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L239",
+      "source_location": "L545",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_buildopfdocument",
@@ -4608,7 +5142,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L277",
+      "source_location": "L583",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_buildncxdocument",
@@ -4620,7 +5154,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L303",
+      "source_location": "L609",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_addstoredentry",
@@ -4632,7 +5166,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L317",
+      "source_location": "L623",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_addentry",
@@ -4644,7 +5178,67 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L323",
+      "source_location": "L629",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_addfileentry",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_addfileentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L641",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_readpagecountwithrenderer",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_readpagecountwithrenderer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L651",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_hasusabletext",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_hasusabletext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L653",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_charactercount",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_charactercount",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L657",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_normalizepdfparagraphs",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_normalizepdfparagraphs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L674",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_normalizepdfparagraph",
@@ -4656,7 +5250,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L331",
+      "source_location": "L682",
       "weight": 1.0,
       "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
       "_tgt": "pdftoepubconverter_escapeforxhtml",
@@ -4665,10 +5259,34 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L697",
+      "weight": 1.0,
+      "_src": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "_tgt": "pdftoepubconverter_pagefilename",
+      "source": "c_users_abdul_desktop_projects_bluewaves_app_src_main_java_com_epubreader_data_parser_pdftoepubconverter_kt",
+      "target": "pdftoepubconverter_pagefilename",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L27",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "pdftoepubconverter_pdfconversionprogresslistener",
+      "_tgt": "pdftoepubconverter_pdfconversionprogresslistener_onprogress",
+      "source": "pdftoepubconverter_pdfconversionprogresslistener",
+      "target": "pdftoepubconverter_pdfconversionprogresslistener_onprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L55",
       "weight": 1.0,
       "_src": "pdftoepubconverter_pdftoepubconverter",
       "_tgt": "pdftoepubconverter_pdftoepubconverter_convert",
@@ -4680,12 +5298,96 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
-      "source_location": "L37",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "pdftoepubconverter_mlkitpdftoepubconverter",
       "_tgt": "pdftoepubconverter_mlkitpdftoepubconverter_convert",
       "source": "pdftoepubconverter_mlkitpdftoepubconverter",
       "target": "pdftoepubconverter_mlkitpdftoepubconverter_convert",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L246",
+      "weight": 1.0,
+      "_src": "pdftoepubconverter_pdfconversionworkspacestate",
+      "_tgt": "pdftoepubconverter_pdfconversionworkspacestate_reset",
+      "source": "pdftoepubconverter_pdfconversionworkspacestate",
+      "target": "pdftoepubconverter_pdfconversionworkspacestate_reset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L251",
+      "weight": 1.0,
+      "_src": "pdftoepubconverter_pdfconversionworkspacestate",
+      "_tgt": "pdftoepubconverter_pdfconversionworkspacestate_haspage",
+      "source": "pdftoepubconverter_pdfconversionworkspacestate",
+      "target": "pdftoepubconverter_pdfconversionworkspacestate_haspage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L253",
+      "weight": 1.0,
+      "_src": "pdftoepubconverter_pdfconversionworkspacestate",
+      "_tgt": "pdftoepubconverter_pdfconversionworkspacestate_record",
+      "source": "pdftoepubconverter_pdfconversionworkspacestate",
+      "target": "pdftoepubconverter_pdfconversionworkspacestate_record",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L265",
+      "weight": 1.0,
+      "_src": "pdftoepubconverter_pdfconversionworkspacestate",
+      "_tgt": "pdftoepubconverter_pdfconversionworkspacestate_completedpages",
+      "source": "pdftoepubconverter_pdfconversionworkspacestate",
+      "target": "pdftoepubconverter_pdfconversionworkspacestate_completedpages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L269",
+      "weight": 1.0,
+      "_src": "pdftoepubconverter_pdfconversionworkspacestate",
+      "_tgt": "pdftoepubconverter_pdfconversionworkspacestate_qualifiesforgeneratedepub",
+      "source": "pdftoepubconverter_pdfconversionworkspacestate",
+      "target": "pdftoepubconverter_pdfconversionworkspacestate_qualifiesforgeneratedepub",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L284",
+      "weight": 1.0,
+      "_src": "pdftoepubconverter_pdfconversionworkspacestate",
+      "_tgt": "pdftoepubconverter_pdfconversionworkspacestate_tojson",
+      "source": "pdftoepubconverter_pdfconversionworkspacestate",
+      "target": "pdftoepubconverter_pdfconversionworkspacestate_tojson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Abdul\\Desktop\\projects\\BlueWaves\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfToEpubConverter.kt",
+      "source_location": "L303",
+      "weight": 1.0,
+      "_src": "pdftoepubconverter_pdfconversionworkspacestate",
+      "_tgt": "pdftoepubconverter_pdfconversionworkspacestate_toresult",
+      "source": "pdftoepubconverter_pdfconversionworkspacestate",
+      "target": "pdftoepubconverter_pdfconversionworkspacestate_toresult",
       "confidence_score": 1.0
     },
     {

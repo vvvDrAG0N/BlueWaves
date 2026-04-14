@@ -9,6 +9,8 @@ enum class BookFormat {
 
 enum class ConversionStatus {
     NONE,
+    QUEUED,
+    RUNNING,
     READY,
     FAILED,
 }
@@ -72,6 +74,8 @@ data class EpubBook(
     val sourceFormat: BookFormat = format,
     val conversionStatus: ConversionStatus = ConversionStatus.NONE,
     val hasPdfFallback: Boolean = false,
+    val conversionCompletedPages: Int = 0,
+    val conversionTotalPages: Int = 0,
     val toc: List<TocItem> = emptyList(),
     val spineHrefs: List<String> = emptyList(),
     val pageCount: Int = 0,
@@ -92,6 +96,16 @@ data class EpubBook(
 
     val canOpenGeneratedEpub: Boolean
         get() = sourceFormat == BookFormat.PDF && conversionStatus == ConversionStatus.READY
+
+    val isPdfConversionInFlight: Boolean
+        get() = sourceFormat == BookFormat.PDF && (
+            conversionStatus == ConversionStatus.QUEUED || conversionStatus == ConversionStatus.RUNNING
+        )
+
+    val canRetryPdfConversion: Boolean
+        get() = sourceFormat == BookFormat.PDF && (
+            conversionStatus == ConversionStatus.NONE || conversionStatus == ConversionStatus.FAILED
+        )
 
     val readingUnitCount: Int
         get() = when (activeRepresentation) {

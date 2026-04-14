@@ -68,9 +68,10 @@ class AppNavigationPdfRepresentationFlowTest {
             )
             createdPdfs += pdfFile
             val importedBook = requireNotNull(parser.parseAndExtract(android.net.Uri.fromFile(pdfFile)))
+            val convertedBook = requireNotNull(parser.convertStoredPdfForBook(importedBook.id))
 
             settingsManager.saveBookProgress(
-                importedBook.id,
+                convertedBook.id,
                 BookProgress(
                     scrollIndex = 0,
                     scrollOffset = 0,
@@ -79,7 +80,7 @@ class AppNavigationPdfRepresentationFlowTest {
                 representation = BookRepresentation.EPUB,
             )
             settingsManager.saveBookProgress(
-                importedBook.id,
+                convertedBook.id,
                 BookProgress(
                     scrollIndex = 1,
                     scrollOffset = 0,
@@ -89,9 +90,9 @@ class AppNavigationPdfRepresentationFlowTest {
             )
 
             launchAppShell()
-            waitUntilDisplayed(importedBook.title, timeoutMillis = 60_000)
+            waitUntilDisplayed(convertedBook.title, timeoutMillis = 60_000)
 
-            composeRule.onNodeWithText(importedBook.title).performClick()
+            composeRule.onNodeWithText(convertedBook.title).performClick()
 
             waitUntilTagExists("reader_controls_overlay", timeoutMillis = 60_000)
             composeRule.onNodeWithTag("reader_controls_overlay", useUnmergedTree = true).performClick()

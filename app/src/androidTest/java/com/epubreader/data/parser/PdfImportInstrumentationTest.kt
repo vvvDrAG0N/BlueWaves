@@ -49,7 +49,18 @@ class PdfImportInstrumentationTest {
         assertEquals(BookFormat.PDF, request.format)
 
         val imported = requireNotNull(parser.importBook(request))
-        val prepared = parser.prepareBookForReading(imported)
+        assertEquals(BookFormat.PDF, imported.sourceFormat)
+        assertEquals(BookFormat.PDF, imported.format)
+        assertEquals(ConversionStatus.QUEUED, imported.conversionStatus)
+        assertTrue(File(imported.rootPath, PDF_DOCUMENT_FILE_NAME).exists())
+        assertTrue(File(imported.rootPath, GENERATED_EPUB_FILE_NAME).exists().not())
+
+        val converted = requireNotNull(
+            kotlinx.coroutines.runBlocking {
+                parser.convertStoredPdfForBook(imported.id)
+            },
+        )
+        val prepared = parser.prepareBookForReading(converted)
 
         assertEquals(BookFormat.PDF, prepared.sourceFormat)
         assertEquals(BookFormat.EPUB, prepared.format)

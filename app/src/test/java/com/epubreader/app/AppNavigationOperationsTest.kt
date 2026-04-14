@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.parser.ImportFailureReason
@@ -115,6 +116,43 @@ class AppNavigationOperationsTest {
     }
 
     @Test
+    fun importBook_pdfQueuesBackgroundConversion() = runBlocking {
+        val uri = Uri.parse("content://books/new-paper.pdf")
+        val fileSize = 654L
+        val newBook = book(
+            id = "new-paper",
+            format = BookFormat.PDF,
+            sourceFormat = BookFormat.PDF,
+            conversionStatus = ConversionStatus.QUEUED,
+        )
+        val (context, _, _, parser, settingsManager) = mockImportDeps(uri, fileSize)
+        every { parser.inspectImportSource(uri) } returns ImportInspectionResult.Ready(
+            ImportRequest(
+                bookId = "new-paper",
+                uri = uri,
+                format = BookFormat.PDF,
+                displayName = "new-paper.pdf",
+            ),
+        )
+        every { parser.importBook(any()) } returns newBook
+        every { parser.retryPdfConversion(newBook) } returns newBook
+        coEvery { settingsManager.updateBookGroup(any(), any()) } just runs
+
+        val result = importBookIntoLibrary(
+            books = emptyList(),
+            context = context,
+            uri = uri,
+            parser = parser,
+            settingsManager = settingsManager,
+            selectedFolderName = RootLibraryName,
+            bookGroups = JSONObject(),
+        )
+
+        assertEquals(ImportBookResult.Imported, result)
+        verify { parser.retryPdfConversion(newBook) }
+    }
+
+    @Test
     fun importBook_unsupportedFile_surfacesReason() = runBlocking {
         val uri = Uri.parse("content://books/document.pdf")
         val fileSize = 111L
@@ -154,6 +192,27 @@ class AppNavigationOperationsTest {
         verify { parser.updateLastRead(updated) }
     }
 
+    @Test
+    fun deleteSelectedBooks_cancelsPdfWorkBeforeDeleting() = runBlocking {
+        val parser = mockk<EpubParser>(relaxed = true)
+        val settingsManager = mockk<SettingsManager>(relaxed = true)
+        val books = listOf(book(id = "book-1"), book(id = "book-2"))
+
+        deleteSelectedBooks(
+            parser = parser,
+            settingsManager = settingsManager,
+            books = books,
+            selectedBookIds = setOf("book-1", "book-2"),
+        )
+
+        verify { parser.cancelPdfConversion("book-1") }
+        verify { parser.cancelPdfConversion("book-2") }
+        verify { parser.deleteBook(match { it.id == "book-1" }) }
+        verify { parser.deleteBook(match { it.id == "book-2" }) }
+        coVerify { settingsManager.deleteBookData("book-1") }
+        coVerify { settingsManager.deleteBookData("book-2") }
+    }
+
     private fun mockImportDeps(
         uri: Uri,
         fileSize: Long,
@@ -179,13 +238,22 @@ class AppNavigationOperationsTest {
             .joinToString("") { "%02x".format(it) }
     }
 
-    private fun book(id: String, lastRead: Long = 0L): EpubBook {
+    private fun book(
+        id: String,
+        lastRead: Long = 0L,
+        format: BookFormat = BookFormat.EPUB,
+        sourceFormat: BookFormat = format,
+        conversionStatus: ConversionStatus = ConversionStatus.NONE,
+    ): EpubBook {
         return EpubBook(
             id = id,
             title = "Title $id",
             author = "Author",
             coverPath = null,
             rootPath = "/books/$id",
+            format = format,
+            sourceFormat = sourceFormat,
+            conversionStatus = conversionStatus,
             dateAdded = 1L,
             lastRead = lastRead,
         )

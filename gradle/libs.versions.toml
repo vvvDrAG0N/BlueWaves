@@ -11,10 +11,12 @@ activity = "1.9.3"
 constraintlayout = "2.2.0"
 composeBom = "2024.10.01"
 datastore = "1.1.1"
+work = "2.9.1"
 epublib = "3.1"
 coil = "2.7.0"
 slf4j = "1.7.36"
 mlkitTextRecognition = "16.0.1"
+pdfboxAndroid = "2.0.27.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,9 +43,12 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 
 # DataStore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
 
 # EPUB
 epublib = { group = "com.positiondev.epublib", name = "epublib-core", version.ref = "epublib" }
+pdfbox-android = { group = "com.tom-roush", name = "pdfbox-android", version.ref = "pdfboxAndroid" }
 
 # Coil
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }

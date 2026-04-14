@@ -215,10 +215,11 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                     }
                     if (updatedBook != null) {
                         applyUpdatedBook(updatedBook)
-                        val message = if (updatedBook.format == com.epubreader.core.model.BookFormat.EPUB) {
-                            "Generated EPUB is ready."
-                        } else {
-                            "Staying in original PDF mode for this book."
+                        val message = when (updatedBook.conversionStatus) {
+                            com.epubreader.core.model.ConversionStatus.READY -> "Generated EPUB is ready."
+                            com.epubreader.core.model.ConversionStatus.QUEUED,
+                            com.epubreader.core.model.ConversionStatus.RUNNING -> "PDF conversion queued in background."
+                            else -> "Staying in original PDF mode for this book."
                         }
                         snackbarHostState.showSnackbar(message)
                     } else {
@@ -668,7 +669,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                             } else {
                                 null
                             },
-                            onRetryPdfConversion = if (!book.canOpenGeneratedEpub && book.sourceFormat == com.epubreader.core.model.BookFormat.PDF) {
+                            onRetryPdfConversion = if (book.canRetryPdfConversion) {
                                 retrySelectedPdfConversion
                             } else {
                                 null

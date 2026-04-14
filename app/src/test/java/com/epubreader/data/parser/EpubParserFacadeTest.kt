@@ -8,6 +8,7 @@ import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.TocItem
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -131,6 +132,78 @@ class EpubParserFacadeTest {
         val ready = inspection as ImportInspectionResult.Ready
         assertEquals(BookFormat.PDF, ready.request.format)
         assertTrue(ready.request.displayName?.endsWith("import.pdf") == true)
+    }
+
+    @Test
+    fun importBook_pdfStaysInRawModeUntilBackgroundConversionRuns() {
+        val pdfFile = copyFixturePdf("queued-import.pdf")
+        val inspection = parser.inspectImportSource(Uri.fromFile(pdfFile)) as ImportInspectionResult.Ready
+
+        val imported = requireNotNull(parser.importBook(inspection.request))
+
+        assertEquals(BookFormat.PDF, imported.format)
+        assertEquals(BookFormat.PDF, imported.sourceFormat)
+        assertEquals(ConversionStatus.QUEUED, imported.conversionStatus)
+        assertTrue(File(imported.rootPath, PDF_DOCUMENT_FILE_NAME).exists())
+        assertFalse(File(imported.rootPath, GENERATED_EPUB_FILE_NAME).exists())
+    }
+
+    @Test
+    fun convertStoredPdfForBook_publishesGeneratedEpubWhenValidationPasses() {
+        val conversionParser = EpubParser(
+            context = context,
+            pdfToEpubConverter = FakePdfToEpubConverter { _, _, outputFile, title, author, _ ->
+                createGeneratedPdfFallbackEpub(outputFile, title, author)
+                PdfConversionResult(
+                    succeeded = true,
+                    completedPages = 2,
+                    totalPages = 2,
+                    directTextPages = 2,
+                    ocrPages = 0,
+                )
+            },
+        )
+        val pdfFile = copyFixturePdf("convert-success.pdf")
+        val inspection = conversionParser.inspectImportSource(Uri.fromFile(pdfFile)) as ImportInspectionResult.Ready
+        val imported = requireNotNull(conversionParser.importBook(inspection.request))
+
+        val converted = requireNotNull(
+            kotlinx.coroutines.runBlocking { conversionParser.convertStoredPdfForBook(imported.id) },
+        )
+
+        assertEquals(BookFormat.EPUB, converted.format)
+        assertEquals(BookFormat.PDF, converted.sourceFormat)
+        assertEquals(ConversionStatus.READY, converted.conversionStatus)
+        assertTrue(File(converted.rootPath, GENERATED_EPUB_FILE_NAME).exists())
+        assertTrue(File(converted.rootPath, PDF_DOCUMENT_FILE_NAME).exists())
+    }
+
+    @Test
+    fun convertStoredPdfForBook_failedValidationKeepsRawPdfMode() {
+        val conversionParser = EpubParser(
+            context = context,
+            pdfToEpubConverter = FakePdfToEpubConverter { _, _, outputFile, _, _, _ ->
+                outputFile.writeText("not an epub")
+                PdfConversionResult(
+                    succeeded = true,
+                    completedPages = 1,
+                    totalPages = 1,
+                    directTextPages = 1,
+                    ocrPages = 0,
+                )
+            },
+        )
+        val pdfFile = copyFixturePdf("convert-failure.pdf")
+        val inspection = conversionParser.inspectImportSource(Uri.fromFile(pdfFile)) as ImportInspectionResult.Ready
+        val imported = requireNotNull(conversionParser.importBook(inspection.request))
+
+        val converted = requireNotNull(
+            kotlinx.coroutines.runBlocking { conversionParser.convertStoredPdfForBook(imported.id) },
+        )
+
+        assertEquals(BookFormat.PDF, converted.format)
+        assertEquals(ConversionStatus.FAILED, converted.conversionStatus)
+        assertFalse(File(converted.rootPath, GENERATED_EPUB_FILE_NAME).exists())
     }
 
     @Test
@@ -315,6 +388,94 @@ class EpubParserFacadeTest {
         zip.putNextEntry(entry)
         zip.write(content.toByteArray(StandardCharsets.UTF_8))
         zip.closeEntry()
+    }
+
+    private fun createGeneratedPdfFallbackEpub(
+        outputFile: File,
+        title: String,
+        author: String,
+    ) {
+        outputFile.parentFile?.mkdirs()
+        ZipOutputStream(FileOutputStream(outputFile)).use { zip ->
+            addStoredEntry(zip, "mimetype", "application/epub+zip")
+            addEntry(
+                zip,
+                "META-INF/container.xml",
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+                  <rootfiles>
+                    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+                  </rootfiles>
+                </container>
+                """.trimIndent(),
+            )
+            addEntry(
+                zip,
+                "OEBPS/content.opf",
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
+                  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+                    <dc:title>$title</dc:title>
+                    <dc:creator>$author</dc:creator>
+                    <dc:identifier id="BookId">urn:uuid:generated-book</dc:identifier>
+                    <dc:language>en</dc:language>
+                  </metadata>
+                  <manifest>
+                    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+                    <item id="page1" href="pages/page-0001.xhtml" media-type="application/xhtml+xml"/>
+                  </manifest>
+                  <spine toc="ncx">
+                    <itemref idref="page1"/>
+                  </spine>
+                </package>
+                """.trimIndent(),
+            )
+            addEntry(
+                zip,
+                "OEBPS/toc.ncx",
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+                  <head/>
+                  <docTitle><text>$title</text></docTitle>
+                  <navMap>
+                    <navPoint id="navPoint-1" playOrder="1">
+                      <navLabel><text>Page 1</text></navLabel>
+                      <content src="pages/page-0001.xhtml"/>
+                    </navPoint>
+                  </navMap>
+                </ncx>
+                """.trimIndent(),
+            )
+            addEntry(
+                zip,
+                "OEBPS/pages/page-0001.xhtml",
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <html xmlns="http://www.w3.org/1999/xhtml">
+                  <head><title>Page 1</title></head>
+                  <body><p>Converted PDF text.</p></body>
+                </html>
+                """.trimIndent(),
+            )
+        }
+    }
+
+    private class FakePdfToEpubConverter(
+        private val block: suspend (File, File, File, String, String, PdfConversionProgressListener) -> PdfConversionResult,
+    ) : PdfToEpubConverter {
+        override suspend fun convert(
+            pdfFile: File,
+            workspaceDir: File,
+            outputFile: File,
+            title: String,
+            author: String,
+            onProgress: PdfConversionProgressListener,
+        ): PdfConversionResult {
+            return block(pdfFile, workspaceDir, outputFile, title, author, onProgress)
+        }
     }
 
 }

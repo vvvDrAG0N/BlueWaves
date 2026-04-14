@@ -28,6 +28,8 @@ class EpubParserBooksTest {
                 sourceFormat = BookFormat.PDF,
                 conversionStatus = ConversionStatus.READY,
                 hasPdfFallback = true,
+                conversionCompletedPages = 10,
+                conversionTotalPages = 10,
                 toc = listOf(
                     TocItem("1. Chapter One", "Text/ch1.xhtml"),
                     TocItem("2. Chapter Two", "Text/ch2.xhtml"),
@@ -142,6 +144,35 @@ class EpubParserBooksTest {
 
             assertEquals(updated, loadBookMetadata(folder))
             assertFalse(File(folder, "metadata.json.tmp").exists())
+        } finally {
+            folder.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun loadBookMetadata_roundTripsQueuedConversionProgress() {
+        val folder = createTempBookFolder()
+        try {
+            val original = EpubBook(
+                id = "pdf-book",
+                title = "Queued PDF",
+                author = "PDF Author",
+                coverPath = null,
+                rootPath = folder.absolutePath,
+                format = BookFormat.PDF,
+                sourceFormat = BookFormat.PDF,
+                conversionStatus = ConversionStatus.RUNNING,
+                hasPdfFallback = true,
+                conversionCompletedPages = 125,
+                conversionTotalPages = 500,
+                pageCount = 500,
+                dateAdded = 55L,
+                lastRead = 66L,
+            )
+
+            saveBookMetadata(folder, original)
+
+            assertEquals(original, loadBookMetadata(folder))
         } finally {
             folder.deleteRecursively()
         }

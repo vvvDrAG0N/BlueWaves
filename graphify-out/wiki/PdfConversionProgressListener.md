@@ -1,4 +1,4 @@
-# MlKitPdfToEpubConverter
+# PdfConversionProgressListener
 
 > God node · 2 connections · `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
 
@@ -8,7 +8,7 @@
 - [[PdfToEpubConverter.kt]] `EXTRACTED`
 
 ### method
-- [[.convert()]] `EXTRACTED`
+- [[.onProgress()]] `EXTRACTED`
 
 ---
 

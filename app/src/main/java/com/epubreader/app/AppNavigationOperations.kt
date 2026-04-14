@@ -8,6 +8,7 @@ package com.epubreader.app
 
 import android.content.Context
 import android.net.Uri
+import com.epubreader.core.model.BookFormat
 import com.epubreader.core.model.EpubBook
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
@@ -73,6 +74,11 @@ internal suspend fun importBookIntoLibrary(
             newBook.id,
             if (selectedFolderName == RootLibraryName) null else selectedFolderName,
         )
+        if (newBook.sourceFormat == BookFormat.PDF) {
+            withContext(Dispatchers.IO) {
+                parser.retryPdfConversion(newBook)
+            }
+        }
         ImportBookResult.Imported
     } catch (error: Exception) {
         if (error is CancellationException) {
@@ -101,6 +107,7 @@ internal suspend fun deleteSelectedBooks(
     val idsToDelete = selectedBookIds.toList()
     withContext(Dispatchers.IO) {
         idsToDelete.forEach { id ->
+            parser.cancelPdfConversion(id)
             books.find { it.id == id }?.let { parser.deleteBook(it) }
         }
     }

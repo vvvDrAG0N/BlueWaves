@@ -31,7 +31,7 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.zip.ZipInputStream
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CancellationException
 
 /**
  * Handles all EPUB extraction and parsing logic.
@@ -39,7 +39,7 @@ import kotlinx.coroutines.runBlocking
  */
 class EpubParser internal constructor(
     private val context: Context,
-    private val pdfToEpubConverter: PdfToEpubConverter = MlKitPdfToEpubConverter(),
+    private val pdfToEpubConverter: PdfToEpubConverter = MlKitPdfToEpubConverter(context),
 ) {
 
     private val booksDir = File(context.cacheDir, EPUB_BOOKS_DIR_NAME).apply {
@@ -183,9 +183,12 @@ class EpubParser internal constructor(
                     cleanupArtifactsForNativeEpub(bookFolder)
                     reparseBook(bookFolder)
                 }
-                BookFormat.PDF -> importPdfWithFallback(bookFolder, request.displayName)
+                BookFormat.PDF -> importPdfSource(bookFolder, request.displayName)
             }
         } catch (error: Exception) {
+            if (error is CancellationException) {
+                throw error
+            }
             cleanupFailedImport(bookFolder, stagedTargetFile, folderExisted)
             AppLog.e(AppLog.PARSER, error) { "Failed to import ${request.uri}" }
             null
@@ -221,6 +224,9 @@ class EpubParser internal constructor(
                         folder,
                         displayName = null,
                         conversionStatus = book.conversionStatus,
+                        preferredFormat = book.format,
+                        conversionCompletedPages = book.conversionCompletedPages,
+                        conversionTotalPages = book.conversionTotalPages,
                     )
                 }
 
@@ -288,22 +294,30 @@ class EpubParser internal constructor(
     fun loadMetadata(folder: File): EpubBook? = loadBookMetadata(folder)
 
     fun prepareBookForReading(book: EpubBook): EpubBook {
-        if (book.sourceFormat != BookFormat.PDF || book.format != BookFormat.EPUB) {
-            return book
+        val bookFolder = File(book.rootPath)
+        val current = loadBookMetadata(bookFolder) ?: book
+        if (current.sourceFormat != BookFormat.PDF) {
+            return current
         }
 
-        val bookFolder = File(book.rootPath)
+        if (current.format != BookFormat.EPUB) {
+            return current.copy(hasPdfFallback = ensureCanonicalSourcePdfFile(bookFolder) != null)
+        }
+
         val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
         if (!generatedEpub.exists() || !validateGeneratedEpub(generatedEpub)) {
-            AppLog.w(AppLog.PARSER) { "Generated EPUB fallback failed for ${book.id}; demoting to raw PDF" }
+            AppLog.w(AppLog.PARSER) { "Generated EPUB fallback failed for ${current.id}; demoting to raw PDF" }
             return rebuildPdfMetadata(
                 bookFolder,
                 displayName = null,
                 conversionStatus = ConversionStatus.FAILED,
-            ) ?: book
+                preferredFormat = BookFormat.PDF,
+                conversionCompletedPages = current.conversionCompletedPages,
+                conversionTotalPages = current.conversionTotalPages,
+            ) ?: current
         }
 
-        return book
+        return current
     }
 
     fun setBookRepresentation(
@@ -339,7 +353,124 @@ class EpubParser internal constructor(
         if (book.sourceFormat != BookFormat.PDF) {
             return null
         }
-        return importPdfWithFallback(File(book.rootPath), displayName = null)
+        val bookFolder = File(book.rootPath)
+        val current = loadBookMetadata(bookFolder) ?: book
+        val queued = rebuildPdfMetadata(
+            bookFolder = bookFolder,
+            displayName = null,
+            conversionStatus = ConversionStatus.QUEUED,
+            preferredFormat = BookFormat.PDF,
+            conversionCompletedPages = current.conversionCompletedPages,
+            conversionTotalPages = current.conversionTotalPages.takeIf { it > 0 } ?: current.pageCount,
+        ) ?: return null
+        enqueuePdfConversionWork(context, queued.id)
+        return queued
+    }
+
+    fun cancelPdfConversion(bookId: String) {
+        cancelPdfConversionWork(context, bookId)
+    }
+
+    internal suspend fun convertStoredPdfForBook(
+        bookId: String,
+        onProgress: PdfConversionProgressListener = PdfConversionProgressListener {},
+    ): EpubBook? {
+        val bookFolder = File(booksDir, bookId)
+        if (!bookFolder.exists()) {
+            return null
+        }
+
+        val existing = loadBookMetadata(bookFolder)
+            ?: rebuildPdfMetadata(
+                bookFolder = bookFolder,
+                displayName = null,
+                conversionStatus = ConversionStatus.NONE,
+            )
+            ?: return null
+        if (existing.sourceFormat != BookFormat.PDF) {
+            return existing
+        }
+
+        val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
+        if (generatedEpub.exists() && validateGeneratedEpub(generatedEpub)) {
+            return rebuildBookMetadata(bookFolder) ?: existing
+        }
+
+        val sourcePdf = ensureCanonicalSourcePdfFile(bookFolder) ?: return null
+        val workspaceDir = File(bookFolder, PDF_CONVERSION_WORKSPACE_DIR_NAME)
+        val stagedGeneratedEpub = File(bookFolder, "$GENERATED_EPUB_FILE_NAME.importing")
+        stagedGeneratedEpub.delete()
+        generatedEpub.takeIf { it.exists() && !validateGeneratedEpub(it) }?.delete()
+
+        val runningBook = rebuildPdfMetadata(
+            bookFolder = bookFolder,
+            displayName = null,
+            conversionStatus = ConversionStatus.RUNNING,
+            preferredFormat = BookFormat.PDF,
+            conversionCompletedPages = existing.conversionCompletedPages,
+            conversionTotalPages = existing.conversionTotalPages.takeIf { it > 0 } ?: existing.pageCount,
+        ) ?: existing
+        onProgress.onProgress(
+            PdfConversionProgress(
+                completedPages = runningBook.conversionCompletedPages,
+                totalPages = runningBook.conversionTotalPages.takeIf { it > 0 } ?: runningBook.pageCount,
+            ),
+        )
+
+        try {
+            val conversionResult = pdfToEpubConverter.convert(
+                pdfFile = sourcePdf,
+                workspaceDir = workspaceDir,
+                outputFile = stagedGeneratedEpub,
+                title = runningBook.title,
+                author = runningBook.author,
+                onProgress = PdfConversionProgressListener { progress ->
+                    rebuildPdfMetadata(
+                        bookFolder = bookFolder,
+                        displayName = null,
+                        conversionStatus = ConversionStatus.RUNNING,
+                        preferredFormat = BookFormat.PDF,
+                        conversionCompletedPages = progress.completedPages,
+                        conversionTotalPages = progress.totalPages,
+                    )
+                    onProgress.onProgress(progress)
+                },
+            )
+
+            if (conversionResult.succeeded && stagedGeneratedEpub.exists() && validateGeneratedEpub(stagedGeneratedEpub)) {
+                replaceFileAtomically(stagedGeneratedEpub, generatedEpub)
+                workspaceDir.deleteRecursively()
+                return rebuildBookMetadata(bookFolder)
+            }
+
+            stagedGeneratedEpub.takeIf(File::exists)?.delete()
+            generatedEpub.takeIf(File::exists)?.delete()
+            workspaceDir.deleteRecursively()
+            return rebuildPdfMetadata(
+                bookFolder = bookFolder,
+                displayName = null,
+                conversionStatus = ConversionStatus.FAILED,
+                preferredFormat = BookFormat.PDF,
+                conversionCompletedPages = conversionResult.completedPages,
+                conversionTotalPages = conversionResult.totalPages.takeIf { it > 0 } ?: existing.pageCount,
+            )
+        } catch (error: Exception) {
+            if (error is CancellationException) {
+                throw error
+            }
+            AppLog.w(AppLog.PARSER, error) { "Stored PDF conversion failed for $bookId" }
+            stagedGeneratedEpub.takeIf(File::exists)?.delete()
+            generatedEpub.takeIf { it.exists() && !validateGeneratedEpub(it) }?.delete()
+            workspaceDir.deleteRecursively()
+            return rebuildPdfMetadata(
+                bookFolder = bookFolder,
+                displayName = null,
+                conversionStatus = ConversionStatus.FAILED,
+                preferredFormat = BookFormat.PDF,
+                conversionCompletedPages = runningBook.conversionCompletedPages,
+                conversionTotalPages = runningBook.conversionTotalPages.takeIf { it > 0 } ?: runningBook.pageCount,
+            )
+        }
     }
 
     private fun queryFileSize(uri: Uri): Long? {
@@ -458,61 +589,26 @@ class EpubParser internal constructor(
         }
     }
 
-    private fun importPdfWithFallback(
+    private fun importPdfSource(
         bookFolder: File,
         displayName: String?,
     ): EpubBook? {
         cleanupArtifactsForPdfImport(bookFolder)
 
-        val rawPdfBook = rebuildPdfMetadata(
+        val queuedPdfBook = rebuildPdfMetadata(
             bookFolder,
             displayName = displayName,
-            conversionStatus = ConversionStatus.NONE,
+            conversionStatus = ConversionStatus.QUEUED,
+            preferredFormat = BookFormat.PDF,
+            conversionCompletedPages = 0,
+            conversionTotalPages = 0,
         ) ?: return null
 
-        val sourcePdf = ensureCanonicalSourcePdfFile(bookFolder) ?: return rawPdfBook
+        val sourcePdf = ensureCanonicalSourcePdfFile(bookFolder) ?: return queuedPdfBook
         File(bookFolder, LEGACY_PDF_DOCUMENT_FILE_NAME)
             .takeIf { it.exists() && it.absolutePath != sourcePdf.absolutePath }
             ?.delete()
-        val stagedGeneratedEpub = File(bookFolder, "$GENERATED_EPUB_FILE_NAME.importing")
-        val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
-        stagedGeneratedEpub.delete()
-
-        val converted = runCatching {
-            runBlocking {
-                pdfToEpubConverter.convert(
-                    pdfFile = sourcePdf,
-                    outputFile = stagedGeneratedEpub,
-                    title = rawPdfBook.title,
-                    author = rawPdfBook.author,
-                )
-            }
-        }.getOrDefault(false)
-
-        if (converted && stagedGeneratedEpub.exists() && validateGeneratedEpub(stagedGeneratedEpub)) {
-            replaceFileAtomically(stagedGeneratedEpub, generatedEpub)
-            saveBookMetadata(
-                bookFolder,
-                rawPdfBook.copy(
-                    format = BookFormat.EPUB,
-                    sourceFormat = BookFormat.PDF,
-                    conversionStatus = ConversionStatus.READY,
-                    hasPdfFallback = true,
-                ),
-            )
-            rebuildBookMetadata(bookFolder)?.let { return it }
-        }
-
-        if (stagedGeneratedEpub.exists()) {
-            stagedGeneratedEpub.delete()
-        }
-        generatedEpub.takeIf(File::exists)?.delete()
-
-        return rebuildPdfMetadata(
-            bookFolder,
-            displayName = displayName,
-            conversionStatus = ConversionStatus.FAILED,
-        )
+        return queuedPdfBook
     }
 
     private fun healCachedBook(
@@ -530,6 +626,9 @@ class EpubParser internal constructor(
                     bookFolder,
                     displayName = null,
                     conversionStatus = ConversionStatus.FAILED,
+                    preferredFormat = BookFormat.PDF,
+                    conversionCompletedPages = book.conversionCompletedPages,
+                    conversionTotalPages = book.conversionTotalPages,
                 )
             }
 
@@ -539,10 +638,16 @@ class EpubParser internal constructor(
                         bookFolder,
                         displayName = null,
                         conversionStatus = ConversionStatus.FAILED,
+                        preferredFormat = BookFormat.PDF,
+                        conversionCompletedPages = book.conversionCompletedPages,
+                        conversionTotalPages = book.conversionTotalPages,
                     )
             }
 
-            else -> book.copy(hasPdfFallback = ensureCanonicalSourcePdfFile(bookFolder) != null)
+            else -> book.copy(
+                hasPdfFallback = ensureCanonicalSourcePdfFile(bookFolder) != null,
+                conversionTotalPages = book.conversionTotalPages.takeIf { it > 0 } ?: book.pageCount,
+            )
         }
     }
 
@@ -551,13 +656,26 @@ class EpubParser internal constructor(
             File(bookFolder, GENERATED_EPUB_FILE_NAME),
             File(bookFolder, PDF_DOCUMENT_FILE_NAME),
             File(bookFolder, LEGACY_PDF_DOCUMENT_FILE_NAME),
+            File(bookFolder, "$GENERATED_EPUB_FILE_NAME.importing"),
         ).filter(File::exists).forEach(File::delete)
+        File(bookFolder, PDF_CONVERSION_WORKSPACE_DIR_NAME)
+            .takeIf(File::exists)
+            ?.deleteRecursively()
     }
 
     private fun cleanupArtifactsForPdfImport(bookFolder: File) {
         File(bookFolder, EPUB_ARCHIVE_FILE_NAME)
             .takeIf(File::exists)
             ?.delete()
+        File(bookFolder, GENERATED_EPUB_FILE_NAME)
+            .takeIf(File::exists)
+            ?.delete()
+        File(bookFolder, "$GENERATED_EPUB_FILE_NAME.importing")
+            .takeIf(File::exists)
+            ?.delete()
+        File(bookFolder, PDF_CONVERSION_WORKSPACE_DIR_NAME)
+            .takeIf(File::exists)
+            ?.deleteRecursively()
     }
 
     private fun validateGeneratedEpub(epubFile: File): Boolean {
