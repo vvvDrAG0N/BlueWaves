@@ -4,17 +4,17 @@
 
 ## Key Concepts
 
-- **LibraryModels.kt** (8 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **Image** (3 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **BookFormat** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **BookRepresentation** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **ChapterElement** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **ConversionStatus** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **EpubBook** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **.equals()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **.hashCode()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **Text** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **TocItem** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **LibraryModels.kt** (8 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **Image** (3 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **BookFormat** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **BookRepresentation** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **ChapterElement** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **ConversionStatus** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **EpubBook** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **.equals()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **.hashCode()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **Text** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **TocItem** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
 
 ## Relationships
 
@@ -22,7 +22,7 @@
 
 ## Source Files
 
-- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
 
 ## Audit Trail
 

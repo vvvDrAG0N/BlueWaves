@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **AppNavigationLibrary.kt** (5 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
-- **BookSelectionActionBar()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
-- **LibraryBookGrid()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
-- **LibraryDrawerContent()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
-- **LibraryScreen()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
-- **LibraryTopBar()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
+- **AppNavigationLibrary.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
+- **BookSelectionActionBar()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
+- **LibraryBookGrid()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
+- **LibraryDrawerContent()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
+- **LibraryScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
+- **LibraryTopBar()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibrary.kt`
 
 ## Audit Trail
 

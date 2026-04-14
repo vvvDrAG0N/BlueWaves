@@ -30,6 +30,7 @@ import com.epubreader.core.model.EpubBook
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 import kotlinx.coroutines.CancellationException
 
@@ -679,6 +680,26 @@ class EpubParser internal constructor(
     }
 
     private fun validateGeneratedEpub(epubFile: File): Boolean {
+        val looksLikeZip = runCatching {
+            epubFile.inputStream().use { input ->
+                val headerBytes = ByteArray(4)
+                val read = input.read(headerBytes)
+                isZipSignature(if (read > 0) headerBytes.copyOf(read) else ByteArray(0))
+            }
+        }.getOrDefault(false)
+        if (!looksLikeZip) {
+            return false
+        }
+
+        val hasEpubContainer = runCatching {
+            ZipFile(epubFile).use { zip ->
+                zip.getEntry("META-INF/container.xml") != null || zip.getEntry("mimetype") != null
+            }
+        }.getOrDefault(false)
+        if (!hasEpubContainer) {
+            return false
+        }
+
         return runCatching {
             epubFile.inputStream().use { input ->
                 val book = nl.siegmann.epublib.epub.EpubReader().readEpub(input)

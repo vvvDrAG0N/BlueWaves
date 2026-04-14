@@ -6,6 +6,8 @@ import com.epubreader.core.model.BookFormat
 import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.TocItem
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.pdmodel.PDPage
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -351,22 +353,20 @@ class EpubParserFacadeTest {
 
     private fun copyFixturePdf(name: String): File {
         val file = File(context.cacheDir, name)
-        val source = sequenceOf(
-            File("test-books", "Horror Game Developer My games aren t that scary!.pdf"),
-            File("../test-books", "Horror Game Developer My games aren t that scary!.pdf"),
-        ).firstOrNull(File::exists)
-        requireNotNull(source) { "Missing PDF fixture in test-books/" }
-        source.copyTo(file, overwrite = true)
+        writeFixturePdf(file)
         return file
     }
 
     private fun copyFixturePdfTo(target: File) {
-        val source = sequenceOf(
-            File("test-books", "Horror Game Developer My games aren t that scary!.pdf"),
-            File("../test-books", "Horror Game Developer My games aren t that scary!.pdf"),
-        ).firstOrNull(File::exists)
-        requireNotNull(source) { "Missing PDF fixture in test-books/" }
-        source.copyTo(target, overwrite = true)
+        writeFixturePdf(target)
+    }
+
+    private fun writeFixturePdf(target: File) {
+        target.parentFile?.mkdirs()
+        PDDocument().use { document ->
+            document.addPage(PDPage())
+            document.save(target)
+        }
     }
 
     private fun addStoredEntry(zip: ZipOutputStream, name: String, content: String) {

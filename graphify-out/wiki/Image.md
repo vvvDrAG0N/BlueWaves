@@ -1,6 +1,6 @@
 # Image
 
-> God node · 3 connections · `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+> God node · 3 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\model\LibraryModels.kt`
 
 ## Connections by Relation
 

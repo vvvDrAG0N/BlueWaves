@@ -4,20 +4,20 @@
 
 ## Key Concepts
 
-- **EpubParserBooks.kt** (13 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **activeEpubFile()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **addTocReferences()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **buildBookId()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **buildTableOfContents()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **ensureCanonicalSourcePdfFile()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **loadBookMetadata()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **PdfDocumentInfo** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **readPdfDocumentInfo()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **rebuildBookMetadata()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **rebuildPdfMetadata()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **renderPdfCoverThumbnail()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **replaceFileAtomically()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
-- **saveBookMetadata()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **EpubParserBooks.kt** (13 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **activeEpubFile()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **addTocReferences()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **buildBookId()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **buildTableOfContents()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **ensureCanonicalSourcePdfFile()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **loadBookMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **PdfDocumentInfo** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **readPdfDocumentInfo()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **rebuildBookMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **rebuildPdfMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **renderPdfCoverThumbnail()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **replaceFileAtomically()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- **saveBookMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
 
 ## Relationships
 
@@ -25,7 +25,7 @@
 
 ## Source Files
 
-- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserBooks.kt`
 
 ## Audit Trail
 

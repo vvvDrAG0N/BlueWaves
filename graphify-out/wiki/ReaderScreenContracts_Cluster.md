@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **ReaderScreenContracts.kt** (5 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
-- **getThemeColors()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
-- **ReaderChromeCallbacks** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
-- **ReaderChromeState** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
-- **ReaderTheme** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
-- **TocSort** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **ReaderScreenContracts.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **getThemeColors()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **ReaderChromeCallbacks** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **ReaderChromeState** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **ReaderTheme** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **TocSort** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
 
 ## Audit Trail
 

@@ -1,7 +1,7 @@
-# Graph Report - C:\Users\Abdul\Desktop\projects\BlueWaves  (2026-04-14)
+# Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-14)
 
 ## Corpus Check
-- 28 files · ~53,297 words
+- 28 files · ~53,420 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -18,10 +18,10 @@
 - [[_COMMUNITY_ImportRouting Cluster|ImportRouting Cluster]]
 - [[_COMMUNITY_ReaderScreenControls Cluster|ReaderScreenControls Cluster]]
 - [[_COMMUNITY_EpubParserBooks Cluster|EpubParserBooks Cluster]]
-- [[_COMMUNITY_SettingsManagerJson Cluster|SettingsManagerJson Cluster]]
+- [[_COMMUNITY_app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster|app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster]]
 - [[_COMMUNITY_AppNavigationOperations Cluster|AppNavigationOperations Cluster]]
 - [[_COMMUNITY_LibraryModels Cluster|LibraryModels Cluster]]
-- [[_COMMUNITY_AppNavigationContracts Cluster|AppNavigationContracts Cluster]]
+- [[_COMMUNITY_app_src_main_java_com_epubreader_app_appnavigationcontracts_kt Cluster|app_src_main_java_com_epubreader_app_appnavigationcontracts_kt Cluster]]
 - [[_COMMUNITY_AppNavigationDialogs Cluster|AppNavigationDialogs Cluster]]
 - [[_COMMUNITY_MainActivity Cluster|MainActivity Cluster]]
 - [[_COMMUNITY_EpubParserChapter Cluster|EpubParserChapter Cluster]]
@@ -89,7 +89,7 @@ Nodes (1): ReaderControlsTab
 Cohesion: 0.14
 Nodes (1): PdfDocumentInfo
 
-### Community 8 - "SettingsManagerJson Cluster"
+### Community 8 - "app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster"
 Cohesion: 0.17
 Nodes (0): 
 
@@ -101,7 +101,7 @@ Nodes (4): Duplicate, Failed, ImportBookResult, Imported
 Cohesion: 0.18
 Nodes (8): BookFormat, BookRepresentation, ChapterElement, ConversionStatus, EpubBook, Image, Text, TocItem
 
-### Community 11 - "AppNavigationContracts Cluster"
+### Community 11 - "app_src_main_java_com_epubreader_app_appnavigationcontracts_kt Cluster"
 Cohesion: 0.2
 Nodes (9): BookSelectionActionBarActions, BookSelectionActionBarState, BookSelectionUiState, FolderDrawerActions, FolderDrawerUiState, LibraryDialogActions, LibraryDialogState, LibraryScreenActions (+1 more)
 

@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **AppNavigationStartup.kt** (5 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
-- **AppShellStartupDecision** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
-- **evaluateAppShellStartup()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
-- **hasExistingLibraryData()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
-- **readCurrentVersionCode()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
-- **readPendingChangelogEntries()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
+- **AppNavigationStartup.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
+- **AppShellStartupDecision** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
+- **evaluateAppShellStartup()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
+- **hasExistingLibraryData()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
+- **readCurrentVersionCode()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
+- **readPendingChangelogEntries()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationStartup.kt`
 
 ## Audit Trail
 

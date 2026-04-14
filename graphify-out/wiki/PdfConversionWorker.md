@@ -1,6 +1,6 @@
 # PdfConversionWorker
 
-> God node · 4 connections · `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
+> God node · 4 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
 
 ## Connections by Relation
 

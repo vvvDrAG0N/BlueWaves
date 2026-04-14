@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **ImportRouting.kt** (16 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **archiveCandidateFor()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **ArchiveImportCandidate** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **ArchiveInspectionResult** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **Candidate** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **deriveTitleFromName()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **DirectEpubContainer** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **ImportFailureReason** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **ImportInspectionResult** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **ImportRequest** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **inferDirectImportFormat()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **inspectArchiveEntries()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **isIgnorableArchiveEntry()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **isPdfSignature()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **isZipSignature()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **Ready** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
-- **Rejected** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **ImportRouting.kt** (16 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **archiveCandidateFor()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **ArchiveImportCandidate** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **ArchiveInspectionResult** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **Candidate** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **deriveTitleFromName()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **DirectEpubContainer** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **ImportFailureReason** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **ImportInspectionResult** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **ImportRequest** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **inferDirectImportFormat()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **inspectArchiveEntries()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **isIgnorableArchiveEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **isPdfSignature()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **isZipSignature()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **Ready** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- **Rejected** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
 
 ## Relationships
 
@@ -28,7 +28,7 @@
 
 ## Source Files
 
-- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\ImportRouting.kt`
 
 ## Audit Trail
 

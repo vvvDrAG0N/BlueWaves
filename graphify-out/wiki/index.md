@@ -17,10 +17,10 @@
 - [[ImportRouting Cluster]] — 17 nodes
 - [[ReaderScreenControls Cluster]] — 16 nodes
 - [[EpubParserBooks Cluster]] — 14 nodes
-- [[SettingsManagerJson Cluster]] — 12 nodes
+- [[app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster]] — 12 nodes
 - [[AppNavigationOperations Cluster]] — 11 nodes
 - [[LibraryModels Cluster]] — 11 nodes
-- [[AppNavigationContracts Cluster]] — 10 nodes
+- [[app_src_main_java_com_epubreader_app_appnavigationcontracts_kt Cluster]] — 10 nodes
 - [[AppNavigationDialogs Cluster]] — 10 nodes
 - [[MainActivity Cluster]] — 9 nodes
 - [[EpubParserChapter Cluster]] — 9 nodes

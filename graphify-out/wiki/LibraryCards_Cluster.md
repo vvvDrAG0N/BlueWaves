@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **LibraryCards.kt** (3 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
-- **BookItem()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
-- **formatReadingProgress()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
-- **RecentlyViewedStrip()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
+- **LibraryCards.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
+- **BookItem()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
+- **formatReadingProgress()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
+- **RecentlyViewedStrip()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\ui\LibraryCards.kt`
 
 ## Audit Trail
 

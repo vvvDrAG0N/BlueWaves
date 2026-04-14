@@ -1,6 +1,6 @@
 # PdfDocumentHandle
 
-> God node · 3 connections · `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\PdfReaderScreen.kt`
+> God node · 3 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\PdfReaderScreen.kt`
 
 ## Connections by Relation
 
