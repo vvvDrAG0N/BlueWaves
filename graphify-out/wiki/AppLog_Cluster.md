@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **AppLog** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
-- **.d()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
-- **.e()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
-- **.i()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
-- **.w()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
-- **AppLog.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
+- **AppLog** (5 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
+- **.d()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
+- **.e()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
+- **.i()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
+- **.w()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
+- **AppLog.kt** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
+- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
 
 ## Audit Trail
 

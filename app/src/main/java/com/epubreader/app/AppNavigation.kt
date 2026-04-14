@@ -42,15 +42,23 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.Screen
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
+import com.epubreader.data.parser.EPUB_MIME_TYPE
+import com.epubreader.data.parser.PDF_MIME_TYPE
+import com.epubreader.data.parser.ZIP_COMPRESSED_MIME_TYPE
+import com.epubreader.data.parser.ZIP_MIME_TYPE
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.feature.reader.PdfReaderScreen
 import com.epubreader.feature.reader.ReaderScreen
 import com.epubreader.feature.settings.SettingsScreen
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 /**
@@ -152,12 +160,74 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         foldersToDelete = emptySet()
     }
 
+    fun applyUpdatedBook(updatedBook: EpubBook) {
+        books = books.map { existing -> if (existing.id == updatedBook.id) updatedBook else existing }
+        if (selectedBook?.id == updatedBook.id) {
+            selectedBook = updatedBook
+        }
+    }
+
     val openBook: (EpubBook) -> Unit = { book ->
-        selectedBook = book
-        currentScreen = Screen.Reader
         scope.launch {
-            val updated = touchBookLastRead(parser, book)
-            books = books.map { existing -> if (existing.id == book.id) updated else existing }
+            isLoading = true
+            try {
+                val preparedBook = withContext(Dispatchers.IO) {
+                    parser.prepareBookForReading(book)
+                }
+                selectedBook = preparedBook
+                currentScreen = Screen.Reader
+
+                val updated = touchBookLastRead(parser, preparedBook)
+                applyUpdatedBook(updated)
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    val switchSelectedBookRepresentation: (BookRepresentation) -> Unit = { representation ->
+        selectedBook?.let { currentBook ->
+            scope.launch {
+                isLoading = true
+                try {
+                    val updatedBook = withContext(Dispatchers.IO) {
+                        parser.setBookRepresentation(currentBook, representation)?.let(parser::prepareBookForReading)
+                    }
+                    if (updatedBook != null) {
+                        applyUpdatedBook(updatedBook)
+                    } else {
+                        snackbarHostState.showSnackbar("That reader mode isn't available for this book.")
+                    }
+                } finally {
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    val retrySelectedPdfConversion: () -> Unit = {
+        selectedBook?.let { currentBook ->
+            scope.launch {
+                isLoading = true
+                try {
+                    val updatedBook = withContext(Dispatchers.IO) {
+                        parser.retryPdfConversion(currentBook)?.let(parser::prepareBookForReading)
+                    }
+                    if (updatedBook != null) {
+                        applyUpdatedBook(updatedBook)
+                        val message = if (updatedBook.format == com.epubreader.core.model.BookFormat.EPUB) {
+                            "Generated EPUB is ready."
+                        } else {
+                            "Staying in original PDF mode for this book."
+                        }
+                        snackbarHostState.showSnackbar(message)
+                    } else {
+                        snackbarHostState.showSnackbar("Couldn't retry PDF conversion.")
+                    }
+                } finally {
+                    isLoading = false
+                }
+            }
         }
     }
 
@@ -327,8 +397,8 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                         ImportBookResult.Imported -> {
                             refreshLibrary()
                         }
-                        ImportBookResult.Failed -> {
-                            snackbarHostState.showSnackbar("Couldn't import this book.")
+                        is ImportBookResult.Failed -> {
+                            snackbarHostState.showSnackbar(result.message)
                         }
                     }
                 } catch (error: Exception) {
@@ -451,7 +521,16 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         folderDrawer = folderDrawerState,
     )
     val libraryScreenActions = LibraryScreenActions(
-        onAddBookClick = { launcher.launch(arrayOf("application/epub+zip")) },
+        onAddBookClick = {
+            launcher.launch(
+                arrayOf(
+                    EPUB_MIME_TYPE,
+                    PDF_MIME_TYPE,
+                    ZIP_MIME_TYPE,
+                    ZIP_COMPRESSED_MIME_TYPE,
+                ),
+            )
+        },
         onRefreshLibrary = ::refreshLibrary,
         onOpenDrawer = openDrawer,
         onSetFavoriteFolder = {
@@ -578,12 +657,36 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                     onBack = { currentScreen = Screen.Library },
                 )
                 Screen.Reader -> selectedBook?.let { book ->
-                    ReaderScreen(
-                        book = book,
-                        settingsManager = settingsManager,
-                        parser = parser,
-                        onBack = { currentScreen = Screen.Library },
-                    )
+                    if (book.activeRepresentation == BookRepresentation.PDF) {
+                        PdfReaderScreen(
+                            book = book,
+                            settingsManager = settingsManager,
+                            parser = parser,
+                            onBack = { currentScreen = Screen.Library },
+                            onOpenGeneratedEpub = if (book.canOpenGeneratedEpub) {
+                                { switchSelectedBookRepresentation(BookRepresentation.EPUB) }
+                            } else {
+                                null
+                            },
+                            onRetryPdfConversion = if (!book.canOpenGeneratedEpub && book.sourceFormat == com.epubreader.core.model.BookFormat.PDF) {
+                                retrySelectedPdfConversion
+                            } else {
+                                null
+                            },
+                        )
+                    } else {
+                        ReaderScreen(
+                            book = book,
+                            settingsManager = settingsManager,
+                            parser = parser,
+                            onBack = { currentScreen = Screen.Library },
+                            onOpenOriginalPdf = if (book.canOpenOriginalPdf) {
+                                { switchSelectedBookRepresentation(BookRepresentation.PDF) }
+                            } else {
+                                null
+                            },
+                        )
+                    }
                 }
                 Screen.Library -> LibraryScreen(
                     state = libraryScreenState,

@@ -95,7 +95,7 @@ internal fun buildLibraryItems(
         "author" -> compareBy<EpubBook> { it.author.lowercase() }
         "recent" -> compareBy<EpubBook> { it.lastRead }
         "added" -> compareBy<EpubBook> { it.dateAdded }
-        "chapters" -> compareBy<EpubBook> { it.spineHrefs.size }
+        "chapters" -> compareBy<EpubBook> { it.readingUnitCount }
         else -> compareBy<EpubBook> { it.dateAdded }
     }
 

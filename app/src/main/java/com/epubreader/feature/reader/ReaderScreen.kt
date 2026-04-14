@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.EpubBook
@@ -78,7 +79,8 @@ fun ReaderScreen(
     book: EpubBook,
     settingsManager: SettingsManager,
     parser: EpubParser,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenOriginalPdf: (() -> Unit)? = null,
 ) {
     // AI_STATE_OWNER: ReaderScreen composable
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -118,7 +120,9 @@ fun ReaderScreen(
     // 1. Initial State Sync: Runs once per book to find the last read chapter.
     LaunchedEffect(book.id) {
         if (currentChapterIndex == -1) {
-            val savedProgress = settingsManager.getBookProgress(book.id).first()
+            val savedProgress = settingsManager
+                .getBookProgress(book.id, BookRepresentation.EPUB)
+                .first()
             if (book.spineHrefs.isNotEmpty()) {
                 val index = if (savedProgress.lastChapterHref != null) {
                     val foundIndex = book.spineHrefs.indexOf(savedProgress.lastChapterHref)
@@ -196,7 +200,9 @@ fun ReaderScreen(
                 shouldScrollToBottom = false
             } else if (!isInitialScrollDone) {
                 isRestoringPosition = true
-                val savedProgress = settingsManager.getBookProgress(book.id).first()
+                val savedProgress = settingsManager
+                    .getBookProgress(book.id, BookRepresentation.EPUB)
+                    .first()
 
                 snapshotFlow { listState.layoutInfo.visibleItemsInfo }
                     .filter { it.isNotEmpty() && listState.layoutInfo.totalItemsCount >= chapterElements.size }
@@ -249,7 +255,8 @@ fun ReaderScreen(
                     scrollIndex = listState.firstVisibleItemIndex,
                     scrollOffset = listState.firstVisibleItemScrollOffset,
                     lastChapterHref = book.spineHrefs[currentChapterIndex]
-                )
+                ),
+                representation = BookRepresentation.EPUB,
             )
         }
     }
@@ -276,7 +283,13 @@ fun ReaderScreen(
 
                     else -> null
                 }
-                progress?.let { settingsManager.saveBookProgress(book.id, it) }
+                progress?.let {
+                    settingsManager.saveBookProgress(
+                        book.id,
+                        it,
+                        representation = BookRepresentation.EPUB,
+                    )
+                }
             }
         }
         onBack()
@@ -497,6 +510,7 @@ fun ReaderScreen(
         },
         onReleaseOverscroll = ::releaseOverscroll,
         onSaveAndBack = { scope.launch { saveAndBack() } },
+        onOpenOriginalPdf = onOpenOriginalPdf,
         onOpenToc = { scope.launch { drawerState.open() } },
         onCloseToc = { scope.launch { drawerState.close() } },
         onLocateCurrentChapterInToc = ::locateCurrentChapterInToc,

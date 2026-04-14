@@ -46,6 +46,7 @@ class ReaderControlsSettingsUpdateTest {
                         itemCount = 8,
                         currentChapterIndex = 0,
                         totalChapters = 3,
+                        sectionLabel = "Chapter",
                     )
                 }
             }

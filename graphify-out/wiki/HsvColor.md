@@ -1,6 +1,6 @@
 # HsvColor
 
-> God node · 2 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
+> God node · 2 connections · `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
 
 ## Connections by Relation
 

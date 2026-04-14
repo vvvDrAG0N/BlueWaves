@@ -4,17 +4,17 @@
 
 ## Key Concepts
 
-- **AppNavigationOperations.kt** (10 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **deleteSelectedBooks()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **Duplicate** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **Failed** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **findExistingBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **importBookIntoLibrary()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **ImportBookResult** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **Imported** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **moveBooksToFolder()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **scanLibrary()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
-- **touchBookLastRead()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **AppNavigationOperations.kt** (10 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **deleteSelectedBooks()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **Duplicate** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **Failed** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **findExistingBook()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **importBookIntoLibrary()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **ImportBookResult** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **Imported** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **moveBooksToFolder()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **scanLibrary()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- **touchBookLastRead()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
 
 ## Relationships
 
@@ -22,7 +22,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
+- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationOperations.kt`
 
 ## Audit Trail
 

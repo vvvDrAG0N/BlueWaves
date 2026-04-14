@@ -6,8 +6,14 @@
  */
 package com.epubreader.data.parser
 
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.pdf.PdfRenderer
+import android.os.ParcelFileDescriptor
 import android.net.Uri
 import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.TocItem
 import nl.siegmann.epublib.domain.Book
@@ -16,16 +22,23 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
+import kotlin.math.max
 
 internal const val EPUB_BOOKS_DIR_NAME = "books"
 internal const val EPUB_ARCHIVE_FILE_NAME = "book.epub"
-internal const val PDF_DOCUMENT_FILE_NAME = "book.pdf"
+internal const val GENERATED_EPUB_FILE_NAME = "generated.epub"
+internal const val PDF_DOCUMENT_FILE_NAME = "source.pdf"
+internal const val LEGACY_PDF_DOCUMENT_FILE_NAME = "book.pdf"
 
 private const val EPUB_METADATA_FILE_NAME = "metadata.json"
 private const val EPUB_COVER_FILE_NAME = "cover_thumb.png"
 private const val PDF_DEFAULT_AUTHOR = "PDF Document"
 private const val PDF_FALLBACK_TITLE = "Untitled PDF"
+private const val PDF_COVER_WIDTH_PX = 320
 
 internal fun buildBookId(uri: Uri, fileSize: Long): String {
     // Book ID must remain MD5(uri + fileSize) to preserve cached folders and reading progress keys.
@@ -36,66 +49,90 @@ internal fun buildBookId(uri: Uri, fileSize: Long): String {
 }
 
 internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
-    val bookFile = File(bookFolder, EPUB_ARCHIVE_FILE_NAME)
+    val existingMetadata = loadBookMetadata(bookFolder)
+    val sourceFormat = existingMetadata?.sourceFormat ?: BookFormat.EPUB
+    val bookFile = activeEpubFile(bookFolder, sourceFormat)
     if (!bookFile.exists()) return null
 
-    // [SELF-HEALING] Always re-read the binary to ensure metadata is perfectly synced
-    // with the actual file content, even if metadata.json was corrupted or outdated.
-    val book: Book = bookFile.inputStream().use { input ->
-        nl.siegmann.epublib.epub.EpubReader().readEpub(input)
-    }
-
-    val coverPath = book.coverImage?.let { coverResource ->
-        val coverFile = File(bookFolder, EPUB_COVER_FILE_NAME)
-        coverResource.inputStream.use { input ->
-            FileOutputStream(coverFile).use { output ->
-                input.copyTo(output)
-            }
+    return runCatching {
+        // [SELF-HEALING] Always re-read the binary to ensure metadata is perfectly synced
+        // with the actual file content, even if metadata.json was corrupted or outdated.
+        val book: Book = bookFile.inputStream().use { input ->
+            nl.siegmann.epublib.epub.EpubReader().readEpub(input)
         }
-        coverFile.absolutePath
-    }
 
-    val spineHrefs = book.spine.spineReferences.map { it.resource.href }
-    val toc = buildTableOfContents(book, spineHrefs)
+        val coverPath = book.coverImage?.let { coverResource ->
+            val coverFile = File(bookFolder, EPUB_COVER_FILE_NAME)
+            coverResource.inputStream.use { input ->
+                FileOutputStream(coverFile).use { output ->
+                    input.copyTo(output)
+                }
+            }
+            coverFile.absolutePath
+        } ?: existingMetadata?.coverPath
 
-    val epubBook = EpubBook(
-        id = bookFolder.name,
-        // [SELF-HEALING] Fallbacks for missing core metadata to prevent UI crashes.
-        title = book.title ?: "Unknown Title",
-        author = book.metadata.authors.firstOrNull()?.let { "${it.firstname} ${it.lastname}" } ?: "Unknown Author",
-        coverPath = coverPath,
-        rootPath = bookFolder.absolutePath,
-        format = BookFormat.EPUB,
-        toc = toc,
-        spineHrefs = spineHrefs,
-        pageCount = 0,
-        dateAdded = System.currentTimeMillis()
-    )
+        val spineHrefs = book.spine.spineReferences.map { it.resource.href }
+        val toc = buildTableOfContents(book, spineHrefs)
 
-    saveBookMetadata(bookFolder, epubBook)
-    return epubBook
+        val epubBook = EpubBook(
+            id = bookFolder.name,
+            // [SELF-HEALING] Fallbacks for missing core metadata to prevent UI crashes.
+            title = book.title ?: existingMetadata?.title ?: "Unknown Title",
+            author = book.metadata.authors.firstOrNull()?.let { "${it.firstname} ${it.lastname}" }
+                ?: existingMetadata?.author
+                ?: "Unknown Author",
+            coverPath = coverPath,
+            rootPath = bookFolder.absolutePath,
+            format = BookFormat.EPUB,
+            sourceFormat = sourceFormat,
+            conversionStatus = when (sourceFormat) {
+                BookFormat.PDF -> ConversionStatus.READY
+                BookFormat.EPUB -> ConversionStatus.NONE
+            },
+            hasPdfFallback = sourceFormat == BookFormat.PDF && ensureCanonicalSourcePdfFile(bookFolder) != null,
+            toc = toc,
+            spineHrefs = spineHrefs,
+            pageCount = if (sourceFormat == BookFormat.PDF) existingMetadata?.pageCount ?: spineHrefs.size else 0,
+            dateAdded = existingMetadata?.dateAdded ?: System.currentTimeMillis(),
+            lastRead = existingMetadata?.lastRead ?: 0L,
+        )
+
+        saveBookMetadata(bookFolder, epubBook)
+        epubBook
+    }.getOrNull()
 }
 
 internal fun rebuildPdfMetadata(
     bookFolder: File,
     displayName: String?,
+    conversionStatus: ConversionStatus = ConversionStatus.NONE,
 ): EpubBook? {
-    val bookFile = File(bookFolder, PDF_DOCUMENT_FILE_NAME)
-    if (!bookFile.exists()) return null
+    val bookFile = ensureCanonicalSourcePdfFile(bookFolder) ?: return null
+    val existingMetadata = loadBookMetadata(bookFolder)
 
     File(bookFolder, EPUB_COVER_FILE_NAME).takeIf(File::exists)?.delete()
+    val pdfInfo = readPdfDocumentInfo(bookFile, bookFolder) ?: return null
+    val title = when {
+        !displayName.isNullOrBlank() -> deriveTitleFromName(displayName, existingMetadata?.title ?: PDF_FALLBACK_TITLE)
+        !existingMetadata?.title.isNullOrBlank() -> existingMetadata!!.title
+        else -> deriveTitleFromName(bookFile.name, PDF_FALLBACK_TITLE)
+    }
 
     val pdfBook = EpubBook(
         id = bookFolder.name,
-        title = deriveTitleFromName(displayName ?: bookFile.name, PDF_FALLBACK_TITLE),
-        author = PDF_DEFAULT_AUTHOR,
-        coverPath = null,
+        title = title,
+        author = existingMetadata?.author?.takeIf { it.isNotBlank() } ?: PDF_DEFAULT_AUTHOR,
+        coverPath = pdfInfo.coverPath,
         rootPath = bookFolder.absolutePath,
         format = BookFormat.PDF,
+        sourceFormat = BookFormat.PDF,
+        conversionStatus = conversionStatus,
+        hasPdfFallback = true,
         toc = emptyList(),
         spineHrefs = emptyList(),
-        pageCount = 0,
-        dateAdded = System.currentTimeMillis(),
+        pageCount = pdfInfo.pageCount,
+        dateAdded = existingMetadata?.dateAdded ?: System.currentTimeMillis(),
+        lastRead = existingMetadata?.lastRead ?: 0L,
     )
 
     saveBookMetadata(bookFolder, pdfBook)
@@ -110,6 +147,9 @@ internal fun saveBookMetadata(folder: File, book: EpubBook) {
         put("coverPath", book.coverPath)
         put("rootPath", book.rootPath)
         put("format", book.format.name)
+        put("sourceFormat", book.sourceFormat.name)
+        put("conversionStatus", book.conversionStatus.name)
+        put("hasPdfFallback", book.hasPdfFallback)
         put("dateAdded", book.dateAdded)
         put("lastRead", book.lastRead)
         val tocArray = JSONArray()
@@ -125,7 +165,16 @@ internal fun saveBookMetadata(folder: File, book: EpubBook) {
         put("spineHrefs", spineArray)
         put("pageCount", book.pageCount)
     }
-    File(folder, EPUB_METADATA_FILE_NAME).writeText(json.toString())
+    val metadataFile = File(folder, EPUB_METADATA_FILE_NAME)
+    val stagedMetadataFile = File(folder, "$EPUB_METADATA_FILE_NAME.tmp")
+    try {
+        stagedMetadataFile.writeText(json.toString())
+        replaceFileAtomically(stagedMetadataFile, metadataFile)
+    } finally {
+        if (stagedMetadataFile.exists()) {
+            stagedMetadataFile.delete()
+        }
+    }
 }
 
 internal fun loadBookMetadata(folder: File): EpubBook? {
@@ -152,6 +201,10 @@ internal fun loadBookMetadata(folder: File): EpubBook? {
             BookFormat.valueOf(json.optString("format", BookFormat.EPUB.name))
         }.getOrDefault(BookFormat.EPUB)
 
+        val sourceFormat = runCatching {
+            BookFormat.valueOf(json.optString("sourceFormat", format.name))
+        }.getOrDefault(format)
+
         EpubBook(
             id = json.getString("id"),
             title = json.getString("title"),
@@ -160,6 +213,11 @@ internal fun loadBookMetadata(folder: File): EpubBook? {
             coverPath = json.optString("coverPath").takeIf { it.isNotEmpty() && it != "null" },
             rootPath = json.getString("rootPath"),
             format = format,
+            sourceFormat = sourceFormat,
+            conversionStatus = runCatching {
+                ConversionStatus.valueOf(json.optString("conversionStatus", ConversionStatus.NONE.name))
+            }.getOrDefault(ConversionStatus.NONE),
+            hasPdfFallback = json.optBoolean("hasPdfFallback", sourceFormat == BookFormat.PDF),
             toc = toc,
             spineHrefs = spineHrefs,
             pageCount = json.optInt("pageCount", 0),
@@ -212,4 +270,104 @@ private fun addTocReferences(
             addTocReferences(ref.children, toc, currentNumber)
         }
     }
+}
+
+internal fun activeEpubFile(bookFolder: File, sourceFormat: BookFormat): File {
+    return when (sourceFormat) {
+        BookFormat.EPUB -> File(bookFolder, EPUB_ARCHIVE_FILE_NAME)
+        BookFormat.PDF -> File(bookFolder, GENERATED_EPUB_FILE_NAME)
+    }
+}
+
+internal fun ensureCanonicalSourcePdfFile(bookFolder: File): File? {
+    val sourceFile = File(bookFolder, PDF_DOCUMENT_FILE_NAME)
+    if (sourceFile.exists()) {
+        return sourceFile
+    }
+
+    val legacyFile = File(bookFolder, LEGACY_PDF_DOCUMENT_FILE_NAME)
+    if (!legacyFile.exists()) {
+        return null
+    }
+
+    return runCatching {
+        replaceFileAtomically(legacyFile, sourceFile)
+        sourceFile
+    }.getOrElse {
+        legacyFile
+    }
+}
+
+internal fun replaceFileAtomically(source: File, target: File) {
+    try {
+        Files.move(
+            source.toPath(),
+            target.toPath(),
+            StandardCopyOption.REPLACE_EXISTING,
+            StandardCopyOption.ATOMIC_MOVE,
+        )
+    } catch (_: AtomicMoveNotSupportedException) {
+        Files.move(
+            source.toPath(),
+            target.toPath(),
+            StandardCopyOption.REPLACE_EXISTING,
+        )
+    }
+}
+
+private data class PdfDocumentInfo(
+    val pageCount: Int,
+    val coverPath: String?,
+)
+
+private fun readPdfDocumentInfo(bookFile: File, bookFolder: File): PdfDocumentInfo? {
+    return runCatching {
+        ParcelFileDescriptor.open(bookFile, ParcelFileDescriptor.MODE_READ_ONLY).use { descriptor ->
+            PdfRenderer(descriptor).use { renderer ->
+                if (renderer.pageCount <= 0) {
+                    null
+                } else {
+                    PdfDocumentInfo(
+                        pageCount = renderer.pageCount,
+                        coverPath = renderPdfCoverThumbnail(renderer, bookFolder),
+                    )
+                }
+            }
+        }
+    }.getOrNull()
+}
+
+private fun renderPdfCoverThumbnail(renderer: PdfRenderer, bookFolder: File): String? {
+    if (renderer.pageCount <= 0) {
+        return null
+    }
+
+    return runCatching {
+        renderer.openPage(0).use { page ->
+            val targetWidth = PDF_COVER_WIDTH_PX
+            val targetHeight = max(
+                1,
+                (targetWidth.toFloat() * page.height / page.width).toInt(),
+            )
+            val bitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
+            try {
+                bitmap.eraseColor(Color.WHITE)
+                val matrix = Matrix().apply {
+                    setScale(
+                        targetWidth.toFloat() / page.width.toFloat(),
+                        targetHeight.toFloat() / page.height.toFloat(),
+                    )
+                }
+                page.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+
+                val coverFile = File(bookFolder, EPUB_COVER_FILE_NAME)
+                FileOutputStream(coverFile).use { output ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)
+                }
+                coverFile.absolutePath
+            } finally {
+                bitmap.recycle()
+            }
+        }
+    }.getOrNull()
 }

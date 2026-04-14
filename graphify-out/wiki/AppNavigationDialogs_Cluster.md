@@ -4,16 +4,16 @@
 
 ## Key Concepts
 
-- **AppNavigationDialogs.kt** (9 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **ChangelogDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **CreateFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **DeleteBooksDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **DeleteFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **DeleteFoldersDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **LibraryDialogHost()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **LibrarySortSheet()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **RenameFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
-- **WelcomeDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **AppNavigationDialogs.kt** (9 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **ChangelogDialog()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **CreateFolderDialog()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **DeleteBooksDialog()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **DeleteFolderDialog()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **DeleteFoldersDialog()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **LibraryDialogHost()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **LibrarySortSheet()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **RenameFolderDialog()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- **WelcomeDialog()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
 
 ## Relationships
 
@@ -21,7 +21,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
+- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationDialogs.kt`
 
 ## Audit Trail
 

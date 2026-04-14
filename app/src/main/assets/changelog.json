@@ -1,5 +1,15 @@
 [
   {
+    "versionCode": 9,
+    "versionName": "1.0.9",
+    "changes": [
+      "Added PDF import with generated EPUB conversion and automatic raw-PDF fallback.",
+      "Separated EPUB and PDF progress persistence so switching reader modes no longer restores stale state.",
+      "Added reader actions to switch between generated EPUB and the original PDF from a single library item.",
+      "Improved parser self-healing for missing generated EPUB files and legacy PDF cache migration."
+    ]
+  },
+  {
     "versionCode": 8,
     "versionName": "1.0.8",
     "changes": [

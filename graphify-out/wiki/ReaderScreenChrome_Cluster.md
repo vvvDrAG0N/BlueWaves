@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **ReaderScreenChrome.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderContentSurface()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderScreenChrome()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderScrollToTopFab()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderTocDrawerContent()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderTopBar()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderScreenChrome.kt** (5 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderContentSurface()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderScreenChrome()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderScrollToTopFab()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderTocDrawerContent()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderTopBar()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
 
 ## Audit Trail
 

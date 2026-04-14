@@ -20,6 +20,7 @@ package com.epubreader.data.settings
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.DarkThemeId
@@ -358,8 +359,11 @@ class SettingsManager(private val context: Context) {
      * OUTPUT: Flow of [BookProgress].
      * NOTES: Emits every time any value in DataStore changes.
      */
-    fun getBookProgress(bookId: String): Flow<BookProgress> = context.settingsDataStore.data.map { preferences ->
-        preferences.toBookProgress(bookId)
+    fun getBookProgress(
+        bookId: String,
+        representation: BookRepresentation = BookRepresentation.EPUB,
+    ): Flow<BookProgress> = context.settingsDataStore.data.map { preferences ->
+        preferences.toBookProgress(bookId, representation)
     }
 
     /**
@@ -370,10 +374,14 @@ class SettingsManager(private val context: Context) {
      * AI_WARNING: Frequent calls may cause excessive disk IO. Typically debounced in UI.
      * // AI_MUTATION_POINT: Saves reading progress to DataStore.
      */
-    suspend fun saveBookProgress(bookId: String, progress: BookProgress) {
+    suspend fun saveBookProgress(
+        bookId: String,
+        progress: BookProgress,
+        representation: BookRepresentation = BookRepresentation.EPUB,
+    ) {
         // AI_MUTATION_POINT
         context.settingsDataStore.edit { preferences ->
-            val keys = bookProgressPreferenceKeys(bookId)
+            val keys = bookProgressPreferenceKeys(bookId, representation)
             preferences[keys.scrollIndex] = progress.scrollIndex
             preferences[keys.scrollOffset] = progress.scrollOffset
             if (progress.lastChapterHref == null) {
@@ -381,15 +389,32 @@ class SettingsManager(private val context: Context) {
             } else {
                 preferences[keys.chapter] = progress.lastChapterHref
             }
+
+            if (representation == BookRepresentation.EPUB) {
+                val legacyKeys = legacyBookProgressPreferenceKeys(bookId)
+                preferences[legacyKeys.scrollIndex] = progress.scrollIndex
+                preferences[legacyKeys.scrollOffset] = progress.scrollOffset
+                if (progress.lastChapterHref == null) {
+                    preferences.remove(legacyKeys.chapter)
+                } else {
+                    preferences[legacyKeys.chapter] = progress.lastChapterHref
+                }
+            }
         }
     }
 
     suspend fun deleteBookData(bookId: String) {
         context.settingsDataStore.edit { preferences ->
-            val keys = bookProgressPreferenceKeys(bookId)
-            preferences.remove(keys.scrollIndex)
-            preferences.remove(keys.scrollOffset)
-            preferences.remove(keys.chapter)
+            BookRepresentation.entries.forEach { representation ->
+                val keys = bookProgressPreferenceKeys(bookId, representation)
+                preferences.remove(keys.scrollIndex)
+                preferences.remove(keys.scrollOffset)
+                preferences.remove(keys.chapter)
+            }
+            val legacyKeys = legacyBookProgressPreferenceKeys(bookId)
+            preferences.remove(legacyKeys.scrollIndex)
+            preferences.remove(legacyKeys.scrollOffset)
+            preferences.remove(legacyKeys.chapter)
 
             val bookGroupsJson = safeJsonObject(preferences[SettingsPreferenceKeys.bookGroups])
             bookGroupsJson.remove(bookId)

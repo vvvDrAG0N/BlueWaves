@@ -1,11 +1,15 @@
 package com.epubreader.data.parser
 
 import android.net.Uri
+import com.epubreader.core.model.BookRepresentation
+import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.TocItem
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -29,6 +33,7 @@ class EpubParserFacadeTest {
     @Before
     fun setUp() {
         booksDir.deleteRecursively()
+        booksDir.mkdirs()
     }
 
     @After
@@ -68,12 +73,39 @@ class EpubParserFacadeTest {
                 lastRead = 20L,
             ),
         )
+        File(folder, EPUB_ARCHIVE_FILE_NAME).writeBytes(byteArrayOf(1))
 
         val books = parser.scanBooks()
 
         assertEquals(1, books.size)
         assertEquals("cached-book", books.first().id)
         assertEquals("Cached Title", books.first().title)
+    }
+
+    @Test
+    fun scanBooks_returnsCachedPdfMetadata() {
+        val folder = File(booksDir, "cached-pdf").apply { mkdirs() }
+        saveBookMetadata(
+            folder,
+            EpubBook(
+                id = "cached-pdf",
+                title = "Cached PDF",
+                author = "Cached Author",
+                coverPath = null,
+                rootPath = folder.absolutePath,
+                format = BookFormat.PDF,
+                pageCount = 42,
+                dateAdded = 10L,
+                lastRead = 20L,
+            ),
+        )
+        copyFixturePdfTo(File(folder, PDF_DOCUMENT_FILE_NAME))
+
+        val books = parser.scanBooks()
+
+        assertEquals(1, books.size)
+        assertEquals(BookFormat.PDF, books.first().format)
+        assertEquals(42, books.first().pageCount)
     }
 
     @Test
@@ -89,8 +121,94 @@ class EpubParserFacadeTest {
         assertEquals(1, booksDir.listFiles()?.count { it.isDirectory })
     }
 
+    @Test
+    fun inspectImportSource_acceptsPdfFiles() {
+        val pdfFile = copyFixturePdf("import.pdf")
+
+        val inspection = parser.inspectImportSource(Uri.fromFile(pdfFile))
+
+        assertTrue(inspection is ImportInspectionResult.Ready)
+        val ready = inspection as ImportInspectionResult.Ready
+        assertEquals(BookFormat.PDF, ready.request.format)
+        assertTrue(ready.request.displayName?.endsWith("import.pdf") == true)
+    }
+
+    @Test
+    fun resolveStoredBookFile_prefersGeneratedEpubForConvertedPdf() {
+        val folder = File(booksDir, "converted-reader").apply { mkdirs() }
+        val book = EpubBook(
+            id = "converted-reader",
+            title = "Converted PDF",
+            author = "Author",
+            coverPath = null,
+            rootPath = folder.absolutePath,
+            format = BookFormat.EPUB,
+            sourceFormat = BookFormat.PDF,
+            conversionStatus = ConversionStatus.READY,
+            hasPdfFallback = true,
+            toc = listOf(TocItem("1. Page 1", "pages/page-0001.xhtml")),
+            spineHrefs = listOf("pages/page-0001.xhtml"),
+            pageCount = 1,
+        )
+        File(folder, GENERATED_EPUB_FILE_NAME).writeBytes(byteArrayOf(1))
+        File(folder, PDF_DOCUMENT_FILE_NAME).writeBytes("%PDF-1.4".toByteArray(StandardCharsets.UTF_8))
+
+        val resolved = parser.resolveStoredBookFile(book)
+
+        assertEquals(GENERATED_EPUB_FILE_NAME, resolved.name)
+    }
+
+    @Test
+    fun setBookRepresentation_switchesBetweenGeneratedEpubAndSourcePdf() {
+        val folder = File(booksDir, "switchable-book").apply { mkdirs() }
+        val book = EpubBook(
+            id = "switchable-book",
+            title = "Switchable PDF",
+            author = "Author",
+            coverPath = null,
+            rootPath = folder.absolutePath,
+            format = BookFormat.EPUB,
+            sourceFormat = BookFormat.PDF,
+            conversionStatus = ConversionStatus.READY,
+            hasPdfFallback = true,
+            toc = listOf(TocItem("1. Page 1", "pages/page-0001.xhtml")),
+            spineHrefs = listOf("pages/page-0001.xhtml"),
+            pageCount = 1,
+        )
+        saveBookMetadata(folder, book)
+        File(folder, GENERATED_EPUB_FILE_NAME).writeBytes(byteArrayOf(1))
+        File(folder, PDF_DOCUMENT_FILE_NAME).writeBytes("%PDF-1.4".toByteArray(StandardCharsets.UTF_8))
+
+        val pdfMode = requireNotNull(parser.setBookRepresentation(book, BookRepresentation.PDF))
+        val epubMode = requireNotNull(parser.setBookRepresentation(pdfMode, BookRepresentation.EPUB))
+
+        assertEquals(BookFormat.PDF, pdfMode.format)
+        assertEquals(BookFormat.EPUB, epubMode.format)
+    }
+
+    @Test
+    fun importBook_failedCopy_cleansUpCreatedFolder() {
+        val missingFile = File(context.cacheDir, "missing.epub")
+        val book = parser.importBook(
+            ImportRequest(
+                bookId = "broken-import",
+                uri = Uri.fromFile(missingFile),
+                format = BookFormat.EPUB,
+                displayName = "missing.epub",
+            ),
+        )
+
+        assertNull(book)
+        assertTrue(booksDir.listFiles()?.none { it.isDirectory } ?: true)
+    }
+
     private fun createMinimalEpub(name: String): File {
         val file = File(context.cacheDir, name)
+        createMinimalEpubFile(file)
+        return file
+    }
+
+    private fun createMinimalEpubFile(file: File) {
         ZipOutputStream(FileOutputStream(file)).use { zip ->
             addStoredEntry(zip, "mimetype", "application/epub+zip")
             addEntry(
@@ -156,7 +274,26 @@ class EpubParserFacadeTest {
                 """.trimIndent(),
             )
         }
+    }
+
+    private fun copyFixturePdf(name: String): File {
+        val file = File(context.cacheDir, name)
+        val source = sequenceOf(
+            File("test-books", "Horror Game Developer My games aren t that scary!.pdf"),
+            File("../test-books", "Horror Game Developer My games aren t that scary!.pdf"),
+        ).firstOrNull(File::exists)
+        requireNotNull(source) { "Missing PDF fixture in test-books/" }
+        source.copyTo(file, overwrite = true)
         return file
+    }
+
+    private fun copyFixturePdfTo(target: File) {
+        val source = sequenceOf(
+            File("test-books", "Horror Game Developer My games aren t that scary!.pdf"),
+            File("../test-books", "Horror Game Developer My games aren t that scary!.pdf"),
+        ).firstOrNull(File::exists)
+        requireNotNull(source) { "Missing PDF fixture in test-books/" }
+        source.copyTo(target, overwrite = true)
     }
 
     private fun addStoredEntry(zip: ZipOutputStream, name: String, content: String) {
@@ -179,4 +316,5 @@ class EpubParserFacadeTest {
         zip.write(content.toByteArray(StandardCharsets.UTF_8))
         zip.closeEntry()
     }
+
 }

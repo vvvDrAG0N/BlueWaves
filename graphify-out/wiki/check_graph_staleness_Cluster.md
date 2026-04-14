@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **check_graph_staleness.py** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
-- **check_staleness()** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
-- **get_last_modified()** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
+- **check_graph_staleness.py** (2 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\scripts\check_graph_staleness.py`
+- **check_staleness()** (2 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\scripts\check_graph_staleness.py`
+- **get_last_modified()** (2 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\scripts\check_graph_staleness.py`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
+- `C:\Users\Abdul\Desktop\projects\BlueWaves\scripts\check_graph_staleness.py`
 
 ## Audit Trail
 

@@ -24,10 +24,10 @@ internal sealed interface ImportInspectionResult {
 }
 
 internal enum class ImportFailureReason(val userMessage: String) {
-    UnsupportedFileType("This file type is not supported. Import an EPUB, PDF, or ZIP archive."),
+    UnsupportedFileType("This file type is not supported. Import an EPUB, PDF, or a ZIP archive containing one supported book."),
     EmptyArchive("This ZIP archive is empty."),
     UnsupportedArchive("This ZIP archive does not contain a supported EPUB or PDF."),
-    AmbiguousArchive("This ZIP archive contains multiple supported books. Import one EPUB or PDF at a time."),
+    AmbiguousArchive("This ZIP archive contains multiple supported books. Import one book at a time."),
     ReadFailed("Couldn't read this file."),
 }
 
@@ -72,10 +72,6 @@ internal fun inferDirectImportFormat(
     val normalizedName = fileName?.trim()?.lowercase(Locale.US).orEmpty()
     val normalizedMime = mimeType?.trim()?.lowercase(Locale.US).orEmpty()
 
-    if (isPdfSignature(headerBytes)) {
-        return BookFormat.PDF
-    }
-
     if (looksLikeEpubContainer) {
         return BookFormat.EPUB
     }
@@ -84,7 +80,7 @@ internal fun inferDirectImportFormat(
         return BookFormat.EPUB
     }
 
-    if (normalizedName.endsWith(".pdf") || normalizedMime == PDF_MIME_TYPE) {
+    if (isPdfSignature(headerBytes) || normalizedMime == PDF_MIME_TYPE) {
         return BookFormat.PDF
     }
 
@@ -113,19 +109,18 @@ internal fun deriveTitleFromName(rawName: String?, fallback: String): String {
     }
 }
 
-internal fun isPdfSignature(headerBytes: ByteArray): Boolean {
-    return headerBytes.size >= 5 &&
-        headerBytes[0] == '%'.code.toByte() &&
-        headerBytes[1] == 'P'.code.toByte() &&
-        headerBytes[2] == 'D'.code.toByte() &&
-        headerBytes[3] == 'F'.code.toByte() &&
-        headerBytes[4] == '-'.code.toByte()
-}
-
 internal fun isZipSignature(headerBytes: ByteArray): Boolean {
     return headerBytes.size >= 2 &&
         headerBytes[0] == 'P'.code.toByte() &&
         headerBytes[1] == 'K'.code.toByte()
+}
+
+internal fun isPdfSignature(headerBytes: ByteArray): Boolean {
+    return headerBytes.size >= 4 &&
+        headerBytes[0] == '%'.code.toByte() &&
+        headerBytes[1] == 'P'.code.toByte() &&
+        headerBytes[2] == 'D'.code.toByte() &&
+        headerBytes[3] == 'F'.code.toByte()
 }
 
 private fun archiveCandidateFor(entryName: String): ArchiveImportCandidate? {

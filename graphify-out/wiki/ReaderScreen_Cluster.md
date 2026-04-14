@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReaderScreen.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreen.kt`
-- **ReaderScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreen.kt`
+- **ReaderScreen.kt** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreen.kt`
+- **ReaderScreen()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreen.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreen.kt`
+- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\feature\reader\ReaderScreen.kt`
 
 ## Audit Trail
 

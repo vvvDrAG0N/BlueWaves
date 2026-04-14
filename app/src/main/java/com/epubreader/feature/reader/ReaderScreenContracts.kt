@@ -67,6 +67,7 @@ internal data class ReaderChromeCallbacks(
     val onToggleTocSort: () -> Unit,
     val onReleaseOverscroll: () -> Unit,
     val onSaveAndBack: () -> Unit,
+    val onOpenOriginalPdf: (() -> Unit)?,
     val onOpenToc: () -> Unit,
     val onCloseToc: () -> Unit,
     val onLocateCurrentChapterInToc: () -> Unit,

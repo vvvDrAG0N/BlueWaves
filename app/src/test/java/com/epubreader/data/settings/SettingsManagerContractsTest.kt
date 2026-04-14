@@ -2,6 +2,7 @@ package com.epubreader.data.settings
 
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.preferencesOf
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.ThemePalette
@@ -117,7 +118,7 @@ class SettingsManagerContractsTest {
 
     @Test
     fun toBookProgress_returnsDefaultsForEmptyPreferences() {
-        val progress = preferencesOf().toBookProgress("book-1")
+        val progress = preferencesOf().toBookProgress("book-1", BookRepresentation.EPUB)
 
         assertEquals(0, progress.scrollIndex)
         assertEquals(0, progress.scrollOffset)
@@ -126,7 +127,7 @@ class SettingsManagerContractsTest {
 
     @Test
     fun toBookProgress_readsValuesForRequestedBookOnly() {
-        val requested = bookProgressPreferenceKeys("book-1")
+        val requested = bookProgressPreferenceKeys("book-1", BookRepresentation.EPUB)
         val otherBookIndexKey = intPreferencesKey("book-2_scroll_index")
         val preferences = preferencesOf(
             requested.scrollIndex to 12,
@@ -135,10 +136,42 @@ class SettingsManagerContractsTest {
             otherBookIndexKey to 999,
         )
 
-        val progress = preferences.toBookProgress("book-1")
+        val progress = preferences.toBookProgress("book-1", BookRepresentation.EPUB)
 
         assertEquals(12, progress.scrollIndex)
         assertEquals(34, progress.scrollOffset)
         assertEquals("Text/ch2.xhtml", progress.lastChapterHref)
+    }
+
+    @Test
+    fun toBookProgress_fallsBackToLegacyKeysForEpubRepresentation() {
+        val legacyKeys = legacyBookProgressPreferenceKeys("book-1")
+        val preferences = preferencesOf(
+            legacyKeys.scrollIndex to 7,
+            legacyKeys.scrollOffset to 19,
+            legacyKeys.chapter to "Text/legacy.xhtml",
+        )
+
+        val progress = preferences.toBookProgress("book-1", BookRepresentation.EPUB)
+
+        assertEquals(7, progress.scrollIndex)
+        assertEquals(19, progress.scrollOffset)
+        assertEquals("Text/legacy.xhtml", progress.lastChapterHref)
+    }
+
+    @Test
+    fun toBookProgress_keepsPdfRepresentationIsolatedFromLegacyEpubKeys() {
+        val legacyKeys = legacyBookProgressPreferenceKeys("book-1")
+        val preferences = preferencesOf(
+            legacyKeys.scrollIndex to 7,
+            legacyKeys.scrollOffset to 19,
+            legacyKeys.chapter to "Text/legacy.xhtml",
+        )
+
+        val progress = preferences.toBookProgress("book-1", BookRepresentation.PDF)
+
+        assertEquals(0, progress.scrollIndex)
+        assertEquals(0, progress.scrollOffset)
+        assertNull(progress.lastChapterHref)
     }
 }

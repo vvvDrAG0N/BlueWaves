@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.GlobalSettings
@@ -63,11 +64,27 @@ internal data class BookProgressPreferenceKeys(
     val chapter: Preferences.Key<String>,
 )
 
-internal fun bookProgressPreferenceKeys(bookId: String): BookProgressPreferenceKeys {
+private fun bookProgressKeyPrefix(bookId: String, representation: BookRepresentation): String {
+    return "${bookId}_${representation.name.lowercase()}"
+}
+
+internal fun legacyBookProgressPreferenceKeys(bookId: String): BookProgressPreferenceKeys {
     return BookProgressPreferenceKeys(
         scrollIndex = intPreferencesKey("${bookId}_scroll_index"),
         scrollOffset = intPreferencesKey("${bookId}_scroll_offset"),
         chapter = stringPreferencesKey("${bookId}_chapter"),
+    )
+}
+
+internal fun bookProgressPreferenceKeys(
+    bookId: String,
+    representation: BookRepresentation,
+): BookProgressPreferenceKeys {
+    val prefix = bookProgressKeyPrefix(bookId, representation)
+    return BookProgressPreferenceKeys(
+        scrollIndex = intPreferencesKey("${prefix}_scroll_index"),
+        scrollOffset = intPreferencesKey("${prefix}_scroll_offset"),
+        chapter = stringPreferencesKey("${prefix}_chapter"),
     )
 }
 
@@ -190,11 +207,18 @@ internal fun List<CustomTheme>.toCustomThemesJson(): String {
     }.toString()
 }
 
-internal fun Preferences.toBookProgress(bookId: String): BookProgress {
-    val keys = bookProgressPreferenceKeys(bookId)
+internal fun Preferences.toBookProgress(
+    bookId: String,
+    representation: BookRepresentation,
+): BookProgress {
+    val keys = bookProgressPreferenceKeys(bookId, representation)
+    val legacyKeys = legacyBookProgressPreferenceKeys(bookId)
     return BookProgress(
-        scrollIndex = this[keys.scrollIndex] ?: 0,
-        scrollOffset = this[keys.scrollOffset] ?: 0,
-        lastChapterHref = this[keys.chapter],
+        scrollIndex = this[keys.scrollIndex]
+            ?: if (representation == BookRepresentation.EPUB) this[legacyKeys.scrollIndex] ?: 0 else 0,
+        scrollOffset = this[keys.scrollOffset]
+            ?: if (representation == BookRepresentation.EPUB) this[legacyKeys.scrollOffset] ?: 0 else 0,
+        lastChapterHref = this[keys.chapter]
+            ?: if (representation == BookRepresentation.EPUB) this[legacyKeys.chapter] else null,
     )
 }

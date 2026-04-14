@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
@@ -66,11 +67,10 @@ fun RecentlyViewedStrip(
                 "My Library"
             }
         }
-        val progress by settingsManager.getBookProgress(book.id).collectAsState(initial = BookProgress())
-        val chapterIndex = remember(progress, book) {
-            val idx = book.spineHrefs.indexOf(progress.lastChapterHref)
-            if (idx == -1) 1 else idx + 1
-        }
+        val progress by settingsManager
+            .getBookProgress(book.id, book.activeRepresentation)
+            .collectAsState(initial = BookProgress())
+        val progressLabel = remember(progress, book) { formatReadingProgress(book, progress) }
 
         Surface(
             onClick = { onOpen(book) },
@@ -123,7 +123,7 @@ fun RecentlyViewedStrip(
                     )
                 }
                 Text(
-                    text = "$chapterIndex / ${book.spineHrefs.size}",
+                    text = progressLabel,
                     style = MaterialTheme.typography.labelSmall
                 )
                 Icon(Icons.AutoMirrored.Filled.ArrowRight, null, modifier = Modifier.size(16.dp))
@@ -140,11 +140,10 @@ fun BookItem(
     isCompact: Boolean = false,
     isSelected: Boolean = false
 ) {
-    val progress by settingsManager.getBookProgress(book.id).collectAsState(initial = BookProgress())
-    val currentChapter = remember(progress, book.spineHrefs) {
-        val index = book.spineHrefs.indexOf(progress.lastChapterHref)
-        if (index != -1) index + 1 else 1
-    }
+    val progress by settingsManager
+        .getBookProgress(book.id, book.activeRepresentation)
+        .collectAsState(initial = BookProgress())
+    val progressLabel = remember(progress, book) { formatReadingProgress(book, progress) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -190,7 +189,7 @@ fun BookItem(
                         )
                         Spacer(Modifier.height(2.dp))
                         Text(
-                            text = "$currentChapter / ${book.spineHrefs.size} ch",
+                            text = progressLabel,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
@@ -242,7 +241,7 @@ fun BookItem(
                         )
                         Spacer(Modifier.height(2.dp))
                         Text(
-                            text = "$currentChapter / ${book.spineHrefs.size} ch",
+                            text = progressLabel,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
@@ -271,4 +270,21 @@ fun BookItem(
             }
         }
     }
+}
+
+private fun formatReadingProgress(book: EpubBook, progress: BookProgress): String {
+    val totalUnits = book.readingUnitCount
+    if (totalUnits <= 0) {
+        return book.formatLabel
+    }
+
+    val currentUnit = when {
+        book.activeRepresentation == BookRepresentation.PDF -> progress.scrollIndex.coerceIn(0, totalUnits - 1) + 1
+        else -> {
+            val chapterIndex = book.spineHrefs.indexOf(progress.lastChapterHref)
+            if (chapterIndex == -1) 1 else chapterIndex + 1
+        }
+    }.coerceIn(1, totalUnits)
+
+    return "$currentUnit / $totalUnits ${book.progressUnitLabel}"
 }

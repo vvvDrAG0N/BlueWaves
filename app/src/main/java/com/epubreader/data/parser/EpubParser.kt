@@ -21,20 +21,26 @@ package com.epubreader.data.parser
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
-import com.epubreader.core.model.ChapterElement
-import com.epubreader.core.model.EpubBook
+import com.epubreader.core.debug.AppLog
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.ChapterElement
+import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
-import java.io.File
 import java.io.BufferedInputStream
+import java.io.File
 import java.io.FileOutputStream
 import java.util.zip.ZipInputStream
+import kotlinx.coroutines.runBlocking
 
 /**
  * Handles all EPUB extraction and parsing logic.
  * AI_WARNING: All methods should ideally be called from Dispatchers.IO.
  */
-class EpubParser(private val context: Context) {
+class EpubParser internal constructor(
+    private val context: Context,
+    private val pdfToEpubConverter: PdfToEpubConverter = MlKitPdfToEpubConverter(),
+) {
 
     private val booksDir = File(context.cacheDir, EPUB_BOOKS_DIR_NAME).apply {
         if (!exists()) mkdirs()
@@ -57,7 +63,7 @@ class EpubParser(private val context: Context) {
         }
     }
 
-    fun inspectImportSource(uri: Uri): ImportInspectionResult {
+    internal fun inspectImportSource(uri: Uri): ImportInspectionResult {
         return try {
             val fileSize = queryFileSize(uri) ?: return ImportInspectionResult.Rejected(ImportFailureReason.ReadFailed)
             val displayName = queryDisplayName(uri)
@@ -147,30 +153,41 @@ class EpubParser(private val context: Context) {
         }
     }
 
-    fun importBook(request: ImportRequest): EpubBook? {
+    internal fun importBook(request: ImportRequest): EpubBook? {
+        val bookFolder = File(booksDir, request.bookId)
+        val folderExisted = bookFolder.exists()
+        val stagedTargetFile = stagedStoredBookFile(bookFolder, request.format)
+        val targetFile = storedBookFile(bookFolder, request.format)
+
         return try {
-            val bookFolder = File(booksDir, request.bookId).apply {
-                if (!exists()) mkdirs()
+            if (!folderExisted) {
+                bookFolder.mkdirs()
             }
-            val targetFile = storedBookFile(bookFolder, request.format)
-            cleanupOtherStoredFiles(bookFolder, request.format)
+            stagedTargetFile.delete()
 
             val copied = if (request.archiveEntryPath == null) {
-                copyUriToFile(request.uri, targetFile)
+                copyUriToFile(request.uri, stagedTargetFile)
             } else {
-                extractArchiveEntry(request.uri, request.archiveEntryPath, targetFile)
+                extractArchiveEntry(request.uri, request.archiveEntryPath, stagedTargetFile)
             }
 
             if (!copied) {
+                cleanupFailedImport(bookFolder, stagedTargetFile, folderExisted)
                 return null
             }
 
+            replaceFileAtomically(stagedTargetFile, targetFile)
+
             when (request.format) {
-                BookFormat.EPUB -> reparseBook(bookFolder)
-                BookFormat.PDF -> rebuildPdfMetadata(bookFolder, request.displayName)
+                BookFormat.EPUB -> {
+                    cleanupArtifactsForNativeEpub(bookFolder)
+                    reparseBook(bookFolder)
+                }
+                BookFormat.PDF -> importPdfWithFallback(bookFolder, request.displayName)
             }
         } catch (error: Exception) {
-            error.printStackTrace()
+            cleanupFailedImport(bookFolder, stagedTargetFile, folderExisted)
+            AppLog.e(AppLog.PARSER, error) { "Failed to import ${request.uri}" }
             null
         }
     }
@@ -187,7 +204,29 @@ class EpubParser(private val context: Context) {
     fun reparseBook(bookFolder: File): EpubBook? = rebuildBookMetadata(bookFolder)
 
     fun scanBooks(): List<EpubBook> {
-        return booksDir.listFiles()?.filter { it.isDirectory }?.mapNotNull(::loadBookMetadata) ?: emptyList()
+        return booksDir.listFiles()
+            ?.filter(File::isDirectory)
+            ?.mapNotNull { folder ->
+                val cachedBook = loadBookMetadata(folder) ?: return@mapNotNull null
+                val book = healCachedBook(folder, cachedBook) ?: return@mapNotNull null
+                val storedFile = resolveStoredBookFile(book)
+                if (!storedFile.exists()) {
+                    AppLog.w(AppLog.PARSER) { "Skipping cached book ${folder.name} because ${storedFile.name} is missing" }
+                    return@mapNotNull null
+                }
+
+                if (book.format == BookFormat.PDF && book.pageCount <= 0) {
+                    AppLog.w(AppLog.PARSER) { "Rebuilding legacy PDF metadata for ${folder.name}" }
+                    return@mapNotNull rebuildPdfMetadata(
+                        folder,
+                        displayName = null,
+                        conversionStatus = book.conversionStatus,
+                    )
+                }
+
+                book
+            }
+            ?: emptyList()
     }
 
     fun deleteBook(book: EpubBook) {
@@ -218,7 +257,18 @@ class EpubParser(private val context: Context) {
     }
 
     fun resolveStoredBookFile(book: EpubBook): File {
-        return storedBookFile(File(book.rootPath), book.format)
+        return resolveStoredBookFile(book, book.activeRepresentation)
+    }
+
+    fun resolveStoredBookFile(
+        book: EpubBook,
+        representation: BookRepresentation,
+    ): File {
+        val bookFolder = File(book.rootPath)
+        return when (representation) {
+            BookRepresentation.EPUB -> activeEpubFile(bookFolder, book.sourceFormat)
+            BookRepresentation.PDF -> ensureCanonicalSourcePdfFile(bookFolder) ?: File(bookFolder, PDF_DOCUMENT_FILE_NAME)
+        }
     }
 
     fun updateLastRead(book: EpubBook) {
@@ -236,6 +286,61 @@ class EpubParser(private val context: Context) {
      * mainly go through scanBooks().
      */
     fun loadMetadata(folder: File): EpubBook? = loadBookMetadata(folder)
+
+    fun prepareBookForReading(book: EpubBook): EpubBook {
+        if (book.sourceFormat != BookFormat.PDF || book.format != BookFormat.EPUB) {
+            return book
+        }
+
+        val bookFolder = File(book.rootPath)
+        val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
+        if (!generatedEpub.exists() || !validateGeneratedEpub(generatedEpub)) {
+            AppLog.w(AppLog.PARSER) { "Generated EPUB fallback failed for ${book.id}; demoting to raw PDF" }
+            return rebuildPdfMetadata(
+                bookFolder,
+                displayName = null,
+                conversionStatus = ConversionStatus.FAILED,
+            ) ?: book
+        }
+
+        return book
+    }
+
+    fun setBookRepresentation(
+        book: EpubBook,
+        representation: BookRepresentation,
+    ): EpubBook? {
+        val bookFolder = File(book.rootPath)
+        val current = loadBookMetadata(bookFolder) ?: book
+        return when (representation) {
+            BookRepresentation.EPUB -> {
+                if (!current.canOpenGeneratedEpub) {
+                    null
+                } else {
+                    val updated = current.copy(format = BookFormat.EPUB)
+                    saveBookMetadata(bookFolder, updated)
+                    updated
+                }
+            }
+
+            BookRepresentation.PDF -> {
+                if (current.sourceFormat != BookFormat.PDF || ensureCanonicalSourcePdfFile(bookFolder) == null) {
+                    null
+                } else {
+                    val updated = current.copy(format = BookFormat.PDF, hasPdfFallback = true)
+                    saveBookMetadata(bookFolder, updated)
+                    updated
+                }
+            }
+        }
+    }
+
+    fun retryPdfConversion(book: EpubBook): EpubBook? {
+        if (book.sourceFormat != BookFormat.PDF) {
+            return null
+        }
+        return importPdfWithFallback(File(book.rootPath), displayName = null)
+    }
 
     private fun queryFileSize(uri: Uri): Long? {
         return context.contentResolver.openFileDescriptor(uri, "r")?.use { descriptor ->
@@ -329,13 +434,17 @@ class EpubParser(private val context: Context) {
         } ?: false
     }
 
-    private fun cleanupOtherStoredFiles(bookFolder: File, format: BookFormat) {
-        val currentFileName = storedFileName(format)
-        listOf(EPUB_ARCHIVE_FILE_NAME, PDF_DOCUMENT_FILE_NAME)
-            .filter { it != currentFileName }
-            .map { File(bookFolder, it) }
-            .filter(File::exists)
-            .forEach(File::delete)
+    private fun stagedStoredBookFile(bookFolder: File, format: BookFormat): File {
+        return File(bookFolder, "${storedFileName(format)}.importing")
+    }
+
+    private fun cleanupFailedImport(bookFolder: File, stagedTargetFile: File, folderExisted: Boolean) {
+        if (stagedTargetFile.exists()) {
+            stagedTargetFile.delete()
+        }
+        if (!folderExisted && bookFolder.exists()) {
+            bookFolder.deleteRecursively()
+        }
     }
 
     private fun storedBookFile(bookFolder: File, format: BookFormat): File {
@@ -347,5 +456,116 @@ class EpubParser(private val context: Context) {
             BookFormat.EPUB -> EPUB_ARCHIVE_FILE_NAME
             BookFormat.PDF -> PDF_DOCUMENT_FILE_NAME
         }
+    }
+
+    private fun importPdfWithFallback(
+        bookFolder: File,
+        displayName: String?,
+    ): EpubBook? {
+        cleanupArtifactsForPdfImport(bookFolder)
+
+        val rawPdfBook = rebuildPdfMetadata(
+            bookFolder,
+            displayName = displayName,
+            conversionStatus = ConversionStatus.NONE,
+        ) ?: return null
+
+        val sourcePdf = ensureCanonicalSourcePdfFile(bookFolder) ?: return rawPdfBook
+        File(bookFolder, LEGACY_PDF_DOCUMENT_FILE_NAME)
+            .takeIf { it.exists() && it.absolutePath != sourcePdf.absolutePath }
+            ?.delete()
+        val stagedGeneratedEpub = File(bookFolder, "$GENERATED_EPUB_FILE_NAME.importing")
+        val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
+        stagedGeneratedEpub.delete()
+
+        val converted = runCatching {
+            runBlocking {
+                pdfToEpubConverter.convert(
+                    pdfFile = sourcePdf,
+                    outputFile = stagedGeneratedEpub,
+                    title = rawPdfBook.title,
+                    author = rawPdfBook.author,
+                )
+            }
+        }.getOrDefault(false)
+
+        if (converted && stagedGeneratedEpub.exists() && validateGeneratedEpub(stagedGeneratedEpub)) {
+            replaceFileAtomically(stagedGeneratedEpub, generatedEpub)
+            saveBookMetadata(
+                bookFolder,
+                rawPdfBook.copy(
+                    format = BookFormat.EPUB,
+                    sourceFormat = BookFormat.PDF,
+                    conversionStatus = ConversionStatus.READY,
+                    hasPdfFallback = true,
+                ),
+            )
+            rebuildBookMetadata(bookFolder)?.let { return it }
+        }
+
+        if (stagedGeneratedEpub.exists()) {
+            stagedGeneratedEpub.delete()
+        }
+        generatedEpub.takeIf(File::exists)?.delete()
+
+        return rebuildPdfMetadata(
+            bookFolder,
+            displayName = displayName,
+            conversionStatus = ConversionStatus.FAILED,
+        )
+    }
+
+    private fun healCachedBook(
+        bookFolder: File,
+        book: EpubBook,
+    ): EpubBook? {
+        if (book.sourceFormat != BookFormat.PDF) {
+            return book
+        }
+
+        val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
+        return when {
+            book.format == BookFormat.EPUB && !generatedEpub.exists() -> {
+                rebuildPdfMetadata(
+                    bookFolder,
+                    displayName = null,
+                    conversionStatus = ConversionStatus.FAILED,
+                )
+            }
+
+            book.format == BookFormat.EPUB && book.spineHrefs.isEmpty() -> {
+                rebuildBookMetadata(bookFolder)
+                    ?: rebuildPdfMetadata(
+                        bookFolder,
+                        displayName = null,
+                        conversionStatus = ConversionStatus.FAILED,
+                    )
+            }
+
+            else -> book.copy(hasPdfFallback = ensureCanonicalSourcePdfFile(bookFolder) != null)
+        }
+    }
+
+    private fun cleanupArtifactsForNativeEpub(bookFolder: File) {
+        listOf(
+            File(bookFolder, GENERATED_EPUB_FILE_NAME),
+            File(bookFolder, PDF_DOCUMENT_FILE_NAME),
+            File(bookFolder, LEGACY_PDF_DOCUMENT_FILE_NAME),
+        ).filter(File::exists).forEach(File::delete)
+    }
+
+    private fun cleanupArtifactsForPdfImport(bookFolder: File) {
+        File(bookFolder, EPUB_ARCHIVE_FILE_NAME)
+            .takeIf(File::exists)
+            ?.delete()
+    }
+
+    private fun validateGeneratedEpub(epubFile: File): Boolean {
+        return runCatching {
+            epubFile.inputStream().use { input ->
+                val book = nl.siegmann.epublib.epub.EpubReader().readEpub(input)
+                book.spine.spineReferences.isNotEmpty()
+            }
+        }.getOrDefault(false)
     }
 }

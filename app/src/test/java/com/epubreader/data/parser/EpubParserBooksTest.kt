@@ -2,7 +2,10 @@ package com.epubreader.data.parser
 
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.TocItem
+import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.ConversionStatus
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -21,11 +24,16 @@ class EpubParserBooksTest {
                 author = "Test Author",
                 coverPath = File(folder, "cover_thumb.png").absolutePath,
                 rootPath = folder.absolutePath,
+                format = BookFormat.EPUB,
+                sourceFormat = BookFormat.PDF,
+                conversionStatus = ConversionStatus.READY,
+                hasPdfFallback = true,
                 toc = listOf(
                     TocItem("1. Chapter One", "Text/ch1.xhtml"),
                     TocItem("2. Chapter Two", "Text/ch2.xhtml"),
                 ),
                 spineHrefs = listOf("Text/ch1.xhtml", "Text/ch2.xhtml"),
+                pageCount = 10,
                 dateAdded = 1234L,
                 lastRead = 5678L,
             )
@@ -108,6 +116,32 @@ class EpubParserBooksTest {
             writeMetadata(folder, "{ broken json")
 
             assertNull(loadBookMetadata(folder))
+        } finally {
+            folder.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun saveBookMetadata_replacesExistingMetadataWithoutTempResidue() {
+        val folder = createTempBookFolder()
+        try {
+            writeMetadata(folder, """{"id":"stale","title":"Stale","author":"Author","rootPath":"${escapeJson(folder.absolutePath)}","toc":[],"spineHrefs":[]}""")
+            val updated = EpubBook(
+                id = "book-4",
+                title = "Fresh Title",
+                author = "Fresh Author",
+                coverPath = null,
+                rootPath = folder.absolutePath,
+                toc = listOf(TocItem("1. Fresh", "Text/ch1.xhtml")),
+                spineHrefs = listOf("Text/ch1.xhtml"),
+                dateAdded = 99L,
+                lastRead = 100L,
+            )
+
+            saveBookMetadata(folder, updated)
+
+            assertEquals(updated, loadBookMetadata(folder))
+            assertFalse(File(folder, "metadata.json.tmp").exists())
         } finally {
             folder.deleteRecursively()
         }

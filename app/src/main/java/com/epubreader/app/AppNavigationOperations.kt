@@ -20,7 +20,7 @@ import java.security.MessageDigest
 internal sealed interface ImportBookResult {
     data class Duplicate(val folderName: String) : ImportBookResult
     data object Imported : ImportBookResult
-    data object Failed : ImportBookResult
+    data class Failed(val message: String) : ImportBookResult
 }
 
 internal suspend fun scanLibrary(parser: EpubParser): List<EpubBook> {
@@ -58,9 +58,16 @@ internal suspend fun importBookIntoLibrary(
             return ImportBookResult.Duplicate(folderName)
         }
 
+        val request = when (val inspection = withContext(Dispatchers.IO) { parser.inspectImportSource(uri) }) {
+            is com.epubreader.data.parser.ImportInspectionResult.Ready -> inspection.request
+            is com.epubreader.data.parser.ImportInspectionResult.Rejected -> {
+                return ImportBookResult.Failed(inspection.reason.userMessage)
+            }
+        }
+
         val newBook = withContext(Dispatchers.IO) {
-            parser.parseAndExtract(uri)
-        } ?: return ImportBookResult.Failed
+            parser.importBook(request)
+        } ?: return ImportBookResult.Failed("Couldn't import this book.")
 
         settingsManager.updateBookGroup(
             newBook.id,
@@ -71,7 +78,7 @@ internal suspend fun importBookIntoLibrary(
         if (error is CancellationException) {
             throw error
         }
-        ImportBookResult.Failed
+        ImportBookResult.Failed("Couldn't import this book.")
     }
 }
 

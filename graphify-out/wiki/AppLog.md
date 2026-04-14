@@ -1,6 +1,6 @@
 # AppLog
 
-> God node · 5 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
+> God node · 5 connections · `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\core\debug\AppLog.kt`
 
 ## Connections by Relation
 

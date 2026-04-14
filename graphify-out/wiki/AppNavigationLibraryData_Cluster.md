@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **AppNavigationLibraryData.kt** (6 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
-- **buildFolders()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
-- **buildLibraryItems()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
-- **FolderDragPreviewUpdate** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
-- **parseFolderOrder()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
-- **parseJsonObject()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
-- **updateFolderDragPreview()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
+- **AppNavigationLibraryData.kt** (6 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
+- **buildFolders()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
+- **buildLibraryItems()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
+- **FolderDragPreviewUpdate** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
+- **parseFolderOrder()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
+- **parseJsonObject()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
+- **updateFolderDragPreview()** (1 connections) — `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
+- `C:\Users\Abdul\Desktop\projects\BlueWaves\app\src\main\java\com\epubreader\app\AppNavigationLibraryData.kt`
 
 ## Audit Trail
 

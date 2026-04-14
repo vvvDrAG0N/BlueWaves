@@ -7,6 +7,17 @@ enum class BookFormat {
     PDF,
 }
 
+enum class ConversionStatus {
+    NONE,
+    READY,
+    FAILED,
+}
+
+enum class BookRepresentation {
+    EPUB,
+    PDF,
+}
+
 /**
  * Data class for TOC navigation.
  * href usually points to the XHTML file within the EPUB container.
@@ -58,26 +69,53 @@ data class EpubBook(
     val coverPath: String?,
     val rootPath: String,
     val format: BookFormat = BookFormat.EPUB,
+    val sourceFormat: BookFormat = format,
+    val conversionStatus: ConversionStatus = ConversionStatus.NONE,
+    val hasPdfFallback: Boolean = false,
     val toc: List<TocItem> = emptyList(),
     val spineHrefs: List<String> = emptyList(),
     val pageCount: Int = 0,
     val dateAdded: Long = System.currentTimeMillis(),
     val lastRead: Long = 0L
 ) {
+    val activeRepresentation: BookRepresentation
+        get() = if (format == BookFormat.PDF) BookRepresentation.PDF else BookRepresentation.EPUB
+
+    val sourceRepresentation: BookRepresentation
+        get() = if (sourceFormat == BookFormat.PDF) BookRepresentation.PDF else BookRepresentation.EPUB
+
+    val isConvertedPdf: Boolean
+        get() = sourceFormat == BookFormat.PDF && format == BookFormat.EPUB
+
+    val canOpenOriginalPdf: Boolean
+        get() = sourceFormat == BookFormat.PDF && hasPdfFallback
+
+    val canOpenGeneratedEpub: Boolean
+        get() = sourceFormat == BookFormat.PDF && conversionStatus == ConversionStatus.READY
+
     val readingUnitCount: Int
-        get() = when (format) {
-            BookFormat.EPUB -> spineHrefs.size
-            BookFormat.PDF -> pageCount
+        get() = when (activeRepresentation) {
+            BookRepresentation.EPUB -> spineHrefs.size
+            BookRepresentation.PDF -> pageCount
         }
 
     val progressUnitLabel: String
-        get() = when (format) {
-            BookFormat.EPUB -> "ch"
-            BookFormat.PDF -> "p"
+        get() = when {
+            sourceFormat == BookFormat.PDF -> "p"
+            else -> "ch"
         }
 
     val formatLabel: String
-        get() = format.name
+        get() = when {
+            sourceFormat == BookFormat.PDF && format == BookFormat.EPUB -> "PDF"
+            else -> format.name
+        }
+
+    val navigationUnitLabel: String
+        get() = when {
+            sourceFormat == BookFormat.PDF -> "Page"
+            else -> "Chapter"
+        }
 
     val isPdf: Boolean
         get() = format == BookFormat.PDF

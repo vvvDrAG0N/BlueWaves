@@ -4,8 +4,12 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
+import com.epubreader.core.model.BookFormat
 import com.epubreader.core.model.EpubBook
 import com.epubreader.data.parser.EpubParser
+import com.epubreader.data.parser.ImportFailureReason
+import com.epubreader.data.parser.ImportInspectionResult
+import com.epubreader.data.parser.ImportRequest
 import com.epubreader.data.settings.SettingsManager
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -54,7 +58,15 @@ class AppNavigationOperationsTest {
         val fileSize = 456L
         val newBook = book(id = "new-root")
         val (context, _, _, parser, settingsManager) = mockImportDeps(uri, fileSize)
-        every { parser.parseAndExtract(uri) } returns newBook
+        every { parser.inspectImportSource(uri) } returns ImportInspectionResult.Ready(
+            ImportRequest(
+                bookId = "new-root",
+                uri = uri,
+                format = BookFormat.EPUB,
+                displayName = "new-root.epub",
+            ),
+        )
+        every { parser.importBook(any()) } returns newBook
         coEvery { settingsManager.updateBookGroup(any(), any()) } just runs
 
         val result = importBookIntoLibrary(
@@ -77,7 +89,15 @@ class AppNavigationOperationsTest {
         val fileSize = 789L
         val newBook = book(id = "new-folder")
         val (context, _, _, parser, settingsManager) = mockImportDeps(uri, fileSize)
-        every { parser.parseAndExtract(uri) } returns newBook
+        every { parser.inspectImportSource(uri) } returns ImportInspectionResult.Ready(
+            ImportRequest(
+                bookId = "new-folder",
+                uri = uri,
+                format = BookFormat.EPUB,
+                displayName = "new-folder.epub",
+            ),
+        )
+        every { parser.importBook(any()) } returns newBook
         coEvery { settingsManager.updateBookGroup(any(), any()) } just runs
 
         val result = importBookIntoLibrary(
@@ -92,6 +112,33 @@ class AppNavigationOperationsTest {
 
         assertEquals(ImportBookResult.Imported, result)
         coVerify { settingsManager.updateBookGroup("new-folder", "Sci-Fi") }
+    }
+
+    @Test
+    fun importBook_unsupportedFile_surfacesReason() = runBlocking {
+        val uri = Uri.parse("content://books/document.pdf")
+        val fileSize = 111L
+        val (context, _, _, parser, settingsManager) = mockImportDeps(uri, fileSize)
+        every { parser.inspectImportSource(uri) } returns ImportInspectionResult.Rejected(
+            ImportFailureReason.UnsupportedFileType,
+        )
+
+        val result = importBookIntoLibrary(
+            books = emptyList(),
+            context = context,
+            uri = uri,
+            parser = parser,
+            settingsManager = settingsManager,
+            selectedFolderName = RootLibraryName,
+            bookGroups = JSONObject(),
+        )
+
+        assertEquals(
+            ImportBookResult.Failed("This file type is not supported. Import an EPUB, PDF, or a ZIP archive containing one supported book."),
+            result,
+        )
+        verify(exactly = 0) { parser.importBook(any()) }
+        coVerify(exactly = 0) { settingsManager.updateBookGroup(any(), any()) }
     }
 
     @Test

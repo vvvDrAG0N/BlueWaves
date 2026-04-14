@@ -290,7 +290,8 @@ fun ReaderControls(
     listState: LazyListState,
     itemCount: Int,
     currentChapterIndex: Int,
-    totalChapters: Int
+    totalChapters: Int,
+    sectionLabel: String,
 ) {
     Card(
         modifier = Modifier
@@ -319,6 +320,7 @@ fun ReaderControls(
                     itemCount = itemCount,
                     currentChapterIndex = currentChapterIndex,
                     totalChapters = totalChapters,
+                    sectionLabel = sectionLabel,
                 )
 
                 ReaderControlsTab.Font -> ReaderFontControlsTab(
@@ -360,6 +362,7 @@ private fun ReaderChapterControlsTab(
     itemCount: Int,
     currentChapterIndex: Int,
     totalChapters: Int,
+    sectionLabel: String,
 ) {
     val scope = rememberCoroutineScope()
     var isDragging by remember { mutableStateOf(false) }
@@ -397,7 +400,7 @@ private fun ReaderChapterControlsTab(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Chapter ${currentChapterIndex + 1} of $totalChapters",
+                text = "$sectionLabel ${currentChapterIndex + 1} of $totalChapters",
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -418,10 +421,10 @@ private fun ReaderChapterControlsTab(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconButton(onClick = onNavigatePrev) {
-                    Icon(Icons.Default.SkipPrevious, contentDescription = "Previous Chapter")
+                    Icon(Icons.Default.SkipPrevious, contentDescription = "Previous $sectionLabel")
                 }
                 Text(
-                    text = if (currentChapterIndex > 0) "Ch. $currentChapterIndex" else "",
+                    text = if (currentChapterIndex > 0) "${sectionLabel.take(1)}. $currentChapterIndex" else "",
                     style = MaterialTheme.typography.labelSmall,
                     color = themeColors.foreground.copy(alpha = 0.6f),
                     maxLines = 1
@@ -449,10 +452,10 @@ private fun ReaderChapterControlsTab(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconButton(onClick = onNavigateNext) {
-                    Icon(Icons.Default.SkipNext, contentDescription = "Next Chapter")
+                    Icon(Icons.Default.SkipNext, contentDescription = "Next $sectionLabel")
                 }
                 Text(
-                    text = if (currentChapterIndex < totalChapters - 1) "Ch. ${currentChapterIndex + 2}" else "",
+                    text = if (currentChapterIndex < totalChapters - 1) "${sectionLabel.take(1)}. ${currentChapterIndex + 2}" else "",
                     style = MaterialTheme.typography.labelSmall,
                     color = themeColors.foreground.copy(alpha = 0.6f),
                     maxLines = 1

@@ -17,3 +17,4 @@ local.properties
 .kotlin/
 *.apk
 *.dm
+test-books/
