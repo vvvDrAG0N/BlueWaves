@@ -1,24 +1,17 @@
 TODO
 
+- There is no visual identifier when importing large book, large book take some time so it appears as if stuck without visual change.
+- Chaper information on the book's cover uses reader foreground as color, if light themes is begin applied it takes black color, which is hard to read over some covers.
+- Size issues: the app size jumpes from 15.1MB to over 60MB, this needs to be investigated and fixed.
+- Performance issues when first opening the app, this extends to other area like settings, making it feels laggy and unsmooth experience. with system bar change on settings perhabs this cause an extra lag. we need a performance pass here.
+- Add support for bulk importing themes: by either a importing a .zip containing multiple theme files or picking multiple themes at once.
+- Add swipe gesture support for "settings" to swipe between tabs.
+- Performance issue: Saving a large book after editing take long time depending on it size, we need a another performance pass here.
+
 - PDF / Format Support LATER
   - Add support for PDF.
   - Revisit ZIP-based import flows only when the format/runtime story is coherent again.
   - Requirement: ship unit tests for format detection, import routing, and parser/reader entry points.
   - Requirement: update relevant markdown docs.
   - Requirement: rebuild graphify artifacts after implementation.
-
-
-- There is no visual identifier when importing large book, large book take some time so it appears as if stuck without visual change.
-
-- Chaper information on the book's cover uses reader foreground as color, if light themes is begin applied it takes black color, which is hard to read over some covers.
-
-- Size issues: the app size jumpes from 15.1MB to over 60MB, this needs to be investigated and fixed.
-
-- Performance issues when first opening the app, this extends to other area like settings, making it feels laggy and unsmooth experience. with system bar change on settings perhabs this cause an extra lag. we need a performance pass here.
-
-- Add support for bulk importing themes: by either a importing a .zip containing multiple theme files or picking multiple themes at once.
-
-- Add swipe gesture support for "settings" to swipe between tabs.
-
-- Performance issue: Saving a large book after editing take long time depending on it size, we need a another performance pass here.
 
