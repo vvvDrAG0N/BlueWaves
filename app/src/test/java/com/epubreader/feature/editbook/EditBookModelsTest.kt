@@ -35,6 +35,19 @@ class EditBookModelsTest {
     }
 
     @Test
+    fun selectSpecificChapter_selectsOnlyRequestedIndex() {
+        val chapters = listOf(
+            buildTextDraftChapter("One", "Body 1"),
+            buildTextDraftChapter("Two", "Body 2"),
+            buildTextDraftChapter("Three", "Body 3"),
+        )
+
+        val selected = selectSpecificChapter(chapters, position = 2)
+
+        assertEquals(listOf(chapters[1].id), selected.toList())
+    }
+
+    @Test
     fun moveSelectedChapterItems_movesBlockToRequestedPosition() {
         val chapters = listOf(
             buildTextDraftChapter("One", "Body 1"),
@@ -60,6 +73,21 @@ class EditBookModelsTest {
         )
 
         assertEquals("Imported Bonus", title)
+    }
+
+    @Test
+    fun matchesChapterSearch_supportsExactIndexQueries() {
+        val chapter = EditableChapterItem(
+            id = "chapter-700",
+            title = "Appendix",
+            href = "OEBPS/appendix.xhtml",
+            content = null,
+            isPersisted = true,
+            source = EditableChapterSource.EXISTING,
+        )
+
+        assertEquals(true, matchesChapterSearch(chapter, position = 700, query = "700"))
+        assertEquals(false, matchesChapterSearch(chapter, position = 700, query = "70"))
     }
 
     @Test

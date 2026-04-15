@@ -165,6 +165,16 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         foldersToDelete = emptySet()
     }
 
+    fun openEditBook(book: EpubBook) {
+        if (book.sourceFormat != BookFormat.EPUB || editBookSaveInFlight) {
+            return
+        }
+        clearBookSelection()
+        editingBook = book
+        editBookErrorMessage = null
+        currentScreen = Screen.EditBook
+    }
+
     fun exitEditBook() {
         editingBook = null
         editBookErrorMessage = null
@@ -333,6 +343,13 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         books
             .filter { it.lastRead > 0 && it.sourceFormat != BookFormat.PDF }
             .maxByOrNull { it.lastRead }
+    }
+    val selectedEditableBook = remember(books, selectedBookIds) {
+        if (selectedBookIds.size != 1) {
+            null
+        } else {
+            books.firstOrNull { it.id == selectedBookIds.first() && it.sourceFormat == BookFormat.EPUB }
+        }
     }
 
     // Action lambdas remain here so persistence writes and transient shell state stay coordinated.
@@ -533,13 +550,6 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         },
         onShowSortMenu = { showSortMenu = true },
         onOpenSettings = { currentScreen = Screen.Settings },
-        onEditBook = { book ->
-            if (book.sourceFormat == BookFormat.EPUB && !editBookSaveInFlight) {
-                editingBook = book
-                editBookErrorMessage = null
-                currentScreen = Screen.EditBook
-            }
-        },
         onSelectAllBooks = { selectedBookIds = libraryItems.map { it.id }.toSet() },
         onClearBookSelection = { clearBookSelection() },
         onOpenBook = openBook,
@@ -597,6 +607,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     val selectionBarState = BookSelectionActionBarState(
         visible = isBookSelectionMode && !isMovingMode,
         theme = globalSettings.theme,
+        canEditSelection = selectedEditableBook != null,
     )
     val selectionBarActions = BookSelectionActionBarActions(
         onDeleteSelectedBooks = {
@@ -609,6 +620,9 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                 isMovingMode = true
                 openDrawer()
             }
+        },
+        onEditSelectedBook = {
+            selectedEditableBook?.let(::openEditBook)
         },
     )
     val dialogState = LibraryDialogState(

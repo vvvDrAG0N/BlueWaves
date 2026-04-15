@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -92,8 +94,10 @@ class AppNavigationLibraryFlowTest {
 
         composeRule.onNodeWithText("Flow Book One").performTouchInput { longClick() }
         waitUntilDisplayed("1 Selected")
+        composeRule.onNodeWithContentDescription("Edit Selected Book").assertIsEnabled()
         composeRule.onNodeWithText("Flow Book Two").performClick()
         waitUntilDisplayed("2 Selected")
+        composeRule.onNodeWithContentDescription("Edit Selected Book").assertIsNotEnabled()
 
         composeRule.onNodeWithContentDescription("Move Selected Books").performClick()
         waitUntilDisplayed("Move To")

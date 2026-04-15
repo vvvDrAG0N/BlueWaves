@@ -2,6 +2,7 @@ package com.epubreader.app
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
@@ -79,7 +80,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.epubreader.core.model.BookFormat
 import com.epubreader.core.ui.BookItem
 import com.epubreader.core.ui.RecentlyViewedStrip
 
@@ -534,11 +534,6 @@ private fun LibraryBookGrid(
                     book = book,
                     settingsManager = state.settingsManager,
                     isSelected = isSelected,
-                    onEdit = if (!state.selection.isBookSelectionMode && book.sourceFormat == BookFormat.EPUB) {
-                        { actions.onEditBook(book) }
-                    } else {
-                        null
-                    },
                 )
             }
         }
@@ -612,7 +607,55 @@ internal fun BoxScope.BookSelectionActionBar(
                         )
                     }
                 }
+
+                SelectionActionButton(
+                    enabled = state.canEditSelection,
+                    onClick = actions.onEditSelectedBook,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
+                    contentColor = MaterialTheme.colorScheme.secondary,
+                    contentDescription = "Edit Selected Book",
+                    icon = Icons.Default.Edit,
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun SelectionActionButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+    containerColor: Color,
+    contentColor: Color,
+    contentDescription: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+) {
+    Surface(
+        color = if (enabled) {
+            containerColor
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+        },
+        shape = CircleShape,
+        modifier = Modifier
+            .size(56.dp)
+            .semantics { this.contentDescription = contentDescription }
+            .clickable(enabled = enabled, onClick = onClick),
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = if (enabled) {
+                    contentColor
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                },
+                modifier = Modifier.size(24.dp),
+            )
         }
     }
 }

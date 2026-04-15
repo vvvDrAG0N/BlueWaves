@@ -71,7 +71,6 @@ internal data class LibraryScreenActions(
     val onSetFavoriteFolder: () -> Unit,
     val onShowSortMenu: () -> Unit,
     val onOpenSettings: () -> Unit,
-    val onEditBook: (EpubBook) -> Unit,
     val onSelectAllBooks: () -> Unit,
     val onClearBookSelection: () -> Unit,
     val onOpenBook: (EpubBook) -> Unit,
@@ -102,11 +101,13 @@ internal data class FolderDrawerActions(
 internal data class BookSelectionActionBarState(
     val visible: Boolean,
     val theme: String,
+    val canEditSelection: Boolean,
 )
 
 internal data class BookSelectionActionBarActions(
     val onDeleteSelectedBooks: () -> Unit,
     val onMoveSelectedBooks: () -> Unit,
+    val onEditSelectedBook: () -> Unit,
 )
 
 // Dialog host bundle. Dialog composables stay dumb and receive only visibility plus callbacks.

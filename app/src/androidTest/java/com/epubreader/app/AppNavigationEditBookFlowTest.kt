@@ -12,6 +12,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.longClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.MainActivity
 import com.epubreader.core.model.EpubBook
@@ -71,15 +73,15 @@ class AppNavigationEditBookFlowTest {
         launchAppShell()
 
         waitUntilDisplayed("Flow Edit Book")
-        waitUntilContentDescriptionExists("Edit Flow Edit Book")
-
-        composeRule.onNodeWithContentDescription("Edit Flow Edit Book").performClick()
+        composeRule.onNodeWithText("Flow Edit Book").performTouchInput { longClick() }
+        waitUntilContentDescriptionExists("Edit Selected Book")
+        composeRule.onNodeWithContentDescription("Edit Selected Book").performClick()
         waitUntilDisplayed("Edit Book")
 
         composeRule.onNodeWithTag("edit-book-title").performTextReplacement("Edited Flow Book")
         composeRule.onNodeWithTag("edit-book-author").performTextReplacement("Edited Flow Author")
         composeRule.onNodeWithText("Chapters").performClick()
-        composeRule.onNodeWithText("Add Text").performClick()
+        composeRule.onNodeWithTag("edit-book-action-add-text").performClick()
         composeRule.onNodeWithTag("edit-book-add-title").performTextReplacement("Bonus Chapter")
         composeRule.onNodeWithTag("edit-book-add-body").performTextReplacement("Bonus chapter body.")
         composeRule.onNodeWithText("Add").performClick()

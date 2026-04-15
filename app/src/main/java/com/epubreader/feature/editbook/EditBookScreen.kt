@@ -8,9 +8,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,24 +32,31 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Deselect
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,14 +83,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.epubreader.core.model.BookCoverAction
 import com.epubreader.core.model.BookCoverUpdate
@@ -96,11 +112,7 @@ private val SupportedImportMimeTypes = arrayOf("text/html", "application/xhtml+x
 private val SupportedImportExtensions = setOf("html", "htm", "xhtml")
 
 private enum class EditBookTab { DETAILS, CHAPTERS }
-
-private data class RangeSelectionRequest(
-    val title: String,
-    val action: (Int, Int) -> Unit,
-)
+private enum class ChapterSelectionMode { SPECIFIC, RANGE, OUTSIDE }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,38 +124,36 @@ fun EditBookScreen(
     onBack: () -> Unit,
     onSave: (BookEditRequest) -> Unit,
 ) {
+    val originalChapterItems = remember(book.id) { buildEditableChapterItems(book) }
     var selectedTab by rememberSaveable(book.id) { mutableStateOf(EditBookTab.DETAILS) }
     var title by rememberSaveable(book.id) { mutableStateOf(book.title) }
     var author by rememberSaveable(book.id) { mutableStateOf(book.author) }
     var coverAction by remember(book.id) { mutableStateOf<BookCoverAction>(BookCoverAction.Keep) }
-    var chapterItems by remember(book.id) { mutableStateOf(buildEditableChapterItems(book)) }
+    var chapterItems by remember(book.id) { mutableStateOf(originalChapterItems) }
     var selectedChapterIds by remember(book.id) { mutableStateOf<Set<String>>(emptySet()) }
     var chapterQuery by rememberSaveable(book.id) { mutableStateOf("") }
     var showUnsavedChangesDialog by remember { mutableStateOf(false) }
     var showDeleteSelectionDialog by remember { mutableStateOf(false) }
-    var rangeSelectionRequest by remember { mutableStateOf<RangeSelectionRequest?>(null) }
     var showAddTextDialog by remember { mutableStateOf(false) }
-    var showImportPositionDialog by remember { mutableStateOf(false) }
     var showMoveSelectionDialog by remember { mutableStateOf(false) }
+    var showSelectionDialog by remember { mutableStateOf(false) }
+    var showGoToChapterDialog by remember { mutableStateOf(false) }
     var renameTargetId by remember { mutableStateOf<String?>(null) }
     var pendingInsertPosition by remember { mutableIntStateOf(0) }
+    var pendingGoToChapterIndex by remember { mutableIntStateOf(0) }
     var coverLoadInFlight by remember { mutableStateOf(false) }
-    var importLoadInFlight by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    val originalChapterItems = remember(book.id) { buildEditableChapterItems(book) }
     val chapterListState = rememberLazyListState()
     val filteredChapterItems = remember(chapterItems, chapterQuery) {
-        val query = chapterQuery.trim()
-        if (query.isBlank()) {
-            chapterItems.mapIndexed(::IndexedValue)
-        } else {
-            chapterItems.mapIndexedNotNull { index, item ->
-                val matches = item.title.contains(query, ignoreCase = true) ||
-                    item.href.orEmpty().contains(query, ignoreCase = true)
-                if (matches) IndexedValue(index, item) else null
+        chapterItems.mapIndexedNotNull { index, item ->
+            if (matchesChapterSearch(item, index + 1, chapterQuery)) {
+                IndexedValue(index, item)
+            } else {
+                null
             }
         }
     }
@@ -191,6 +201,13 @@ fun EditBookScreen(
         }
     }
 
+    LaunchedEffect(pendingGoToChapterIndex, chapterQuery) {
+        if (pendingGoToChapterIndex > 0 && chapterQuery.isBlank()) {
+            chapterListState.animateScrollToItem(pendingGoToChapterIndex - 1)
+            pendingGoToChapterIndex = 0
+        }
+    }
+
     val coverPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri ?: return@rememberLauncherForActivityResult
         scope.launch {
@@ -201,23 +218,6 @@ fun EditBookScreen(
                 coverAction = BookCoverAction.Replace(coverUpdate)
             } else {
                 snackbarHostState.showSnackbar("Pick a PNG, JPG, GIF, or WEBP image.")
-            }
-        }
-    }
-
-    val htmlImportPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
-        if (uris.isEmpty()) return@rememberLauncherForActivityResult
-        scope.launch {
-            importLoadInFlight = true
-            val importedChapters = withContext(Dispatchers.IO) { loadImportedChapterDrafts(context, uris) }
-            importLoadInFlight = false
-            if (importedChapters.isEmpty()) {
-                snackbarHostState.showSnackbar("Pick HTML or XHTML chapter files.")
-            } else {
-                chapterItems = insertChapterItems(chapterItems, pendingInsertPosition, importedChapters)
-                selectedChapterIds = importedChapters.mapTo(linkedSetOf(), EditableChapterItem::id)
-                selectedTab = EditBookTab.CHAPTERS
-                snackbarHostState.showSnackbar("Imported ${importedChapters.size} chapter file(s).")
             }
         }
     }
@@ -275,63 +275,70 @@ fun EditBookScreen(
                 )
             }
 
-            when (selectedTab) {
-                EditBookTab.DETAILS -> EditBookDetailsTab(
-                    book = book,
-                    title = title,
-                    author = author,
-                    coverModel = coverModel,
-                    chapterCount = chapterItems.size,
-                    isSaving = isSaving,
-                    coverLoadInFlight = coverLoadInFlight,
-                    onTitleChange = { title = it },
-                    onAuthorChange = { author = it },
-                    onPickCover = { coverPicker.launch(SupportedCoverMimeTypes) },
-                    onRemoveCover = { coverAction = BookCoverAction.Remove },
-                )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = { focusManager.clearFocus(force = true) })
+                    },
+            ) {
+                when (selectedTab) {
+                    EditBookTab.DETAILS -> EditBookDetailsTab(
+                        book = book,
+                        title = title,
+                        author = author,
+                        coverModel = coverModel,
+                        chapterCount = chapterItems.size,
+                        isSaving = isSaving,
+                        coverLoadInFlight = coverLoadInFlight,
+                        onTitleChange = { title = it },
+                        onAuthorChange = { author = it },
+                        onToggleCoverAction = {
+                            if (coverModel == null) {
+                                coverPicker.launch(SupportedCoverMimeTypes)
+                            } else {
+                                coverAction = BookCoverAction.Remove
+                            }
+                        },
+                    )
 
-                EditBookTab.CHAPTERS -> EditBookChaptersTab(
-                    chapterItems = chapterItems,
-                    filteredChapterItems = filteredChapterItems,
-                    selectedChapterIds = selectedChapterIds,
-                    query = chapterQuery,
-                    isSaving = isSaving,
-                    importLoadInFlight = importLoadInFlight,
-                    listState = chapterListState,
-                    onQueryChange = { chapterQuery = it },
-                    onToggleChapterSelection = { chapterId ->
-                        selectedChapterIds = if (chapterId in selectedChapterIds) {
-                            selectedChapterIds - chapterId
-                        } else {
-                            selectedChapterIds + chapterId
-                        }
-                    },
-                    onClearSelection = { selectedChapterIds = emptySet() },
-                    onRequestAddText = {
-                        pendingInsertPosition = defaultInsertPosition()
-                        showAddTextDialog = true
-                    },
-                    onRequestImportHtml = {
-                        pendingInsertPosition = defaultInsertPosition()
-                        showImportPositionDialog = true
-                    },
-                    onRequestRename = { renameTargetId = selectedChapterItems.singleOrNull()?.id },
-                    onRequestDelete = {
-                        if (selectedChapterIds.isEmpty()) return@EditBookChaptersTab
-                        if (hasPersistedSelection) showDeleteSelectionDialog = true else deleteSelection()
-                    },
-                    onRequestSelectRange = {
-                        rangeSelectionRequest = RangeSelectionRequest("Select From X To X") { start, end ->
-                            selectedChapterIds = selectChapterRange(chapterItems, start, end)
-                        }
-                    },
-                    onRequestSelectOutsideRange = {
-                        rangeSelectionRequest = RangeSelectionRequest("Select Outside X To X") { start, end ->
-                            selectedChapterIds = selectOutsideChapterRange(chapterItems, start, end)
-                        }
-                    },
-                    onRequestMoveSelection = { showMoveSelectionDialog = true },
-                )
+                    EditBookTab.CHAPTERS -> EditBookChaptersTab(
+                        chapterItems = chapterItems,
+                        filteredChapterItems = filteredChapterItems,
+                        selectedChapterIds = selectedChapterIds,
+                        query = chapterQuery,
+                        isSaving = isSaving,
+                        listState = chapterListState,
+                        onQueryChange = { chapterQuery = it },
+                        onToggleChapterSelection = { chapterId ->
+                            selectedChapterIds = if (chapterId in selectedChapterIds) {
+                                selectedChapterIds - chapterId
+                            } else {
+                                selectedChapterIds + chapterId
+                            }
+                        },
+                        onToggleAllSelection = {
+                            selectedChapterIds = if (selectedChapterIds.isEmpty()) {
+                                chapterItems.mapTo(linkedSetOf(), EditableChapterItem::id)
+                            } else {
+                                emptySet()
+                            }
+                        },
+                        onRequestAddText = {
+                            pendingInsertPosition = defaultInsertPosition()
+                            showAddTextDialog = true
+                        },
+                        onRequestRename = { renameTargetId = selectedChapterItems.singleOrNull()?.id },
+                        onRequestDelete = {
+                            if (selectedChapterIds.isEmpty()) return@EditBookChaptersTab
+                            if (hasPersistedSelection) showDeleteSelectionDialog = true else deleteSelection()
+                        },
+                        onRequestSelectionDialog = { showSelectionDialog = true },
+                        onRequestMoveSelection = { showMoveSelectionDialog = true },
+                        onRequestGoToChapter = { showGoToChapterDialog = true },
+                    )
+                }
             }
 
             if (isSaving) {
@@ -376,48 +383,52 @@ fun EditBookScreen(
         )
     }
 
-    rangeSelectionRequest?.let { request ->
-        RangeSelectionDialog(
-            title = request.title,
+    if (showSelectionDialog) {
+        ChapterSelectionDialog(
             chapterCount = chapterItems.size,
-            onDismiss = { rangeSelectionRequest = null },
-            onConfirm = { start, end ->
-                request.action(start, end)
-                rangeSelectionRequest = null
+            onDismiss = { showSelectionDialog = false },
+            onConfirm = { mode, first, second ->
+                selectedChapterIds = when (mode) {
+                    ChapterSelectionMode.SPECIFIC -> selectSpecificChapter(chapterItems, first)
+                    ChapterSelectionMode.RANGE -> selectChapterRange(chapterItems, first, second)
+                    ChapterSelectionMode.OUTSIDE -> selectOutsideChapterRange(chapterItems, first, second)
+                }
+                showSelectionDialog = false
             },
         )
     }
 
     if (showAddTextDialog) {
-        AddTextChapterDialog(
+        AddTextOrImportChapterDialog(
             chapterCount = chapterItems.size,
             defaultPosition = pendingInsertPosition.coerceAtLeast(1),
             onDismiss = { showAddTextDialog = false },
-            onAddChapter = { chapterTitle, chapterBody, insertPosition ->
+            onAddChapter = { chapter, insertPosition ->
                 chapterItems = insertChapterItems(
                     chapterItems,
                     insertPosition,
-                    listOf(buildTextDraftChapter(chapterTitle, chapterBody)),
+                    listOf(chapter),
                 )
                 selectedTab = EditBookTab.CHAPTERS
-                selectedChapterIds = emptySet()
+                selectedChapterIds = linkedSetOf(chapter.id)
                 showAddTextDialog = false
             },
         )
     }
 
-    if (showImportPositionDialog) {
+    if (showGoToChapterDialog) {
         PositionDialog(
-            title = "Import HTML/XHTML",
-            label = "Insert at position",
+            title = "Go To Chapter",
+            label = "Index",
             chapterCount = chapterItems.size,
-            defaultPosition = pendingInsertPosition.coerceAtLeast(1),
-            confirmLabel = "Pick Files",
-            onDismiss = { showImportPositionDialog = false },
+            defaultPosition = 1,
+            maxPosition = chapterItems.size,
+            confirmLabel = "Go",
+            onDismiss = { showGoToChapterDialog = false },
             onConfirm = { position ->
-                pendingInsertPosition = position
-                showImportPositionDialog = false
-                htmlImportPicker.launch(SupportedImportMimeTypes)
+                pendingGoToChapterIndex = position
+                chapterQuery = ""
+                showGoToChapterDialog = false
             },
         )
     }
@@ -464,8 +475,7 @@ private fun EditBookDetailsTab(
     coverLoadInFlight: Boolean,
     onTitleChange: (String) -> Unit,
     onAuthorChange: (String) -> Unit,
-    onPickCover: () -> Unit,
-    onRemoveCover: () -> Unit,
+    onToggleCoverAction: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -476,80 +486,46 @@ private fun EditBookDetailsTab(
     ) {
         Card {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.Top,
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(0.36f)
-                            .aspectRatio(0.7f)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        if (coverModel != null) {
-                            AsyncImage(
-                                model = coverModel,
-                                contentDescription = "Cover preview",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop,
+                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                    val useStackedLayout = maxWidth < 520.dp
+                    if (useStackedLayout) {
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            CoverPreviewPane(
+                                coverModel = coverModel,
+                                isSaving = isSaving,
+                                coverLoadInFlight = coverLoadInFlight,
+                                onToggleCoverAction = onToggleCoverAction,
+                                modifier = Modifier.fillMaxWidth(),
                             )
-                        } else {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                Icon(Icons.Default.Image, contentDescription = null, modifier = Modifier.size(32.dp))
-                                Text("No cover", style = MaterialTheme.typography.bodySmall)
-                            }
+                            DetailsFieldColumn(
+                                title = title,
+                                author = author,
+                                isSaving = isSaving,
+                                onTitleChange = onTitleChange,
+                                onAuthorChange = onAuthorChange,
+                            )
                         }
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(0.64f),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        OutlinedTextField(
-                            value = title,
-                            onValueChange = onTitleChange,
-                            modifier = Modifier.fillMaxWidth().testTag("edit-book-title"),
-                            label = { Text("Title") },
-                            singleLine = true,
-                            enabled = !isSaving,
-                        )
-                        OutlinedTextField(
-                            value = author,
-                            onValueChange = onAuthorChange,
-                            modifier = Modifier.fillMaxWidth().testTag("edit-book-author"),
-                            label = { Text("Author") },
-                            singleLine = true,
-                            enabled = !isSaving,
-                        )
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FilledTonalButton(
-                                enabled = !isSaving && !coverLoadInFlight,
-                                onClick = onPickCover,
-                                modifier = Modifier.weight(1f),
-                            ) {
-                                if (coverLoadInFlight) {
-                                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
-                                } else {
-                                    Icon(Icons.Default.Image, contentDescription = null)
-                                }
-                                Spacer(Modifier.width(8.dp))
-                                Text("Replace")
-                            }
-                            FilledTonalButton(
-                                enabled = !isSaving && coverModel != null,
-                                onClick = onRemoveCover,
-                                modifier = Modifier.weight(1f),
-                            ) {
-                                Icon(Icons.Default.Delete, contentDescription = null)
-                                Spacer(Modifier.width(8.dp))
-                                Text("Remove")
-                            }
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.Top,
+                        ) {
+                            CoverPreviewPane(
+                                coverModel = coverModel,
+                                isSaving = isSaving,
+                                coverLoadInFlight = coverLoadInFlight,
+                                onToggleCoverAction = onToggleCoverAction,
+                                modifier = Modifier.weight(0.34f),
+                            )
+                            DetailsFieldColumn(
+                                title = title,
+                                author = author,
+                                isSaving = isSaving,
+                                onTitleChange = onTitleChange,
+                                onAuthorChange = onAuthorChange,
+                                modifier = Modifier.weight(0.66f),
+                            )
                         }
                     }
                 }
@@ -571,83 +547,121 @@ private fun EditBookChaptersTab(
     selectedChapterIds: Set<String>,
     query: String,
     isSaving: Boolean,
-    importLoadInFlight: Boolean,
     listState: LazyListState,
     onQueryChange: (String) -> Unit,
     onToggleChapterSelection: (String) -> Unit,
-    onClearSelection: () -> Unit,
+    onToggleAllSelection: () -> Unit,
     onRequestAddText: () -> Unit,
-    onRequestImportHtml: () -> Unit,
     onRequestRename: () -> Unit,
     onRequestDelete: () -> Unit,
-    onRequestSelectRange: () -> Unit,
-    onRequestSelectOutsideRange: () -> Unit,
+    onRequestSelectionDialog: () -> Unit,
     onRequestMoveSelection: () -> Unit,
+    onRequestGoToChapter: () -> Unit,
 ) {
     val selectedCount = selectedChapterIds.size
+    val toggleSelectionDescription = if (selectedCount == 0) {
+        "Select all chapters"
+    } else {
+        "Unselect all chapters"
+    }
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        OutlinedTextField(
-            value = query,
-            onValueChange = onQueryChange,
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Search chapters") },
-            singleLine = true,
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            enabled = !isSaving,
-        )
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                modifier = Modifier.weight(1f).testTag("edit-book-search"),
+                label = { Text("Search") },
+                placeholder = { Text("Title, href, or chapter #") },
+                singleLine = true,
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                enabled = !isSaving,
+            )
+            ChapterActionButton(
+                enabled = !isSaving && chapterItems.isNotEmpty(),
+                onClick = onRequestGoToChapter,
+                contentDescription = "Go to chapter",
+                testTag = "edit-book-action-go-to",
+                icon = { Icon(Icons.Default.ArrowDownward, contentDescription = null) },
+            )
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column {
-                Text("${chapterItems.size} total chapters", fontWeight = FontWeight.SemiBold)
-                Text("$selectedCount selected", style = MaterialTheme.typography.bodySmall)
-            }
-            if (importLoadInFlight) {
-                CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-            }
+            ChapterStatChip(
+                icon = Icons.Default.Checklist,
+                value = chapterItems.size.toString(),
+                label = "Total",
+                modifier = Modifier.weight(1f),
+            )
+            ChapterStatChip(
+                icon = Icons.Default.CheckCircle,
+                value = selectedCount.toString(),
+                label = "Selected",
+                modifier = Modifier.weight(1f),
+            )
         }
 
         ActionStrip {
-            FilledTonalButton(enabled = !isSaving, onClick = onRequestAddText) {
-                Icon(Icons.Default.Add, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text("Add Text")
+            ActionGroup {
+                ChapterActionButton(
+                    enabled = !isSaving,
+                    onClick = onRequestAddText,
+                    contentDescription = "Add or import chapter",
+                    testTag = "edit-book-action-add-text",
+                    icon = { Icon(Icons.Default.Add, contentDescription = null) },
+                )
             }
-            FilledTonalButton(enabled = !isSaving && !importLoadInFlight, onClick = onRequestImportHtml) {
-                Icon(Icons.Default.UploadFile, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text("Import HTML/XHTML")
-            }
-            FilledTonalButton(enabled = !isSaving && selectedCount == 1, onClick = onRequestRename) {
-                Icon(Icons.Default.Edit, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text("Rename")
-            }
-            FilledTonalButton(enabled = !isSaving && selectedCount > 0, onClick = onRequestMoveSelection) {
-                Text("Move To Position")
-            }
-            FilledTonalButton(enabled = !isSaving && selectedCount > 0, onClick = onRequestDelete) {
-                Icon(Icons.Default.Delete, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text("Delete")
-            }
-        }
-
-        ActionStrip {
-            FilledTonalButton(enabled = !isSaving, onClick = onRequestSelectRange) {
-                Text("Select X To X")
-            }
-            FilledTonalButton(enabled = !isSaving, onClick = onRequestSelectOutsideRange) {
-                Text("Select Outside X To X")
-            }
-            FilledTonalButton(enabled = !isSaving && selectedCount > 0, onClick = onClearSelection) {
-                Text("Clear Selection")
+            ActionGroup {
+                ChapterActionButton(
+                    enabled = !isSaving,
+                    onClick = onRequestSelectionDialog,
+                    contentDescription = "Selection tools",
+                    testTag = "edit-book-action-select",
+                    icon = { Icon(Icons.Default.Checklist, contentDescription = null) },
+                )
+                ChapterActionButton(
+                    enabled = !isSaving,
+                    onClick = onToggleAllSelection,
+                    contentDescription = toggleSelectionDescription,
+                    testTag = "edit-book-action-toggle-all",
+                    icon = {
+                        Icon(
+                            imageVector = if (selectedCount == 0) Icons.Default.SelectAll else Icons.Default.Deselect,
+                            contentDescription = null,
+                        )
+                    },
+                )
+                ChapterActionButton(
+                    enabled = !isSaving && selectedCount > 0,
+                    onClick = onRequestMoveSelection,
+                    contentDescription = "Move selected chapters",
+                    testTag = "edit-book-action-move",
+                    icon = { Icon(Icons.AutoMirrored.Filled.DriveFileMove, contentDescription = null) },
+                )
+                ChapterActionButton(
+                    enabled = !isSaving && selectedCount == 1,
+                    onClick = onRequestRename,
+                    contentDescription = "Rename selected chapter",
+                    testTag = "edit-book-action-rename",
+                    icon = { Icon(Icons.Default.Edit, contentDescription = null) },
+                )
+                ChapterActionButton(
+                    enabled = !isSaving && selectedCount > 0,
+                    onClick = onRequestDelete,
+                    contentDescription = "Delete selected chapters",
+                    testTag = "edit-book-action-delete",
+                    icon = { Icon(Icons.Default.Delete, contentDescription = null) },
+                )
             }
         }
 
@@ -694,14 +708,28 @@ private fun ChapterRow(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onToggleSelection),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(checked = selected, onCheckedChange = { onToggleSelection() })
-            Text(position.toString(), modifier = Modifier.width(32.dp), fontWeight = FontWeight.Bold)
             Column(Modifier.weight(1f)) {
-                Text(chapter.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "$position.",
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = chapter.title,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
                 Text(
                     when (chapter.source) {
                         EditableChapterSource.EXISTING -> chapter.href.orEmpty()
@@ -722,7 +750,12 @@ private fun ChapterRow(
 private fun SummaryRow(label: String, value: String, monospace: Boolean = false) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, fontFamily = if (monospace) FontFamily.Monospace else FontFamily.Default)
+        Text(
+            text = value,
+            fontFamily = if (monospace) FontFamily.Monospace else FontFamily.Default,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -737,40 +770,280 @@ private fun ActionStrip(content: @Composable RowScope.() -> Unit) {
 }
 
 @Composable
-private fun AddTextChapterDialog(
+private fun CoverPreviewPane(
+    coverModel: Any?,
+    isSaving: Boolean,
+    coverLoadInFlight: Boolean,
+    onToggleCoverAction: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(0.7f)
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (coverModel != null) {
+                AsyncImage(
+                    model = coverModel,
+                    contentDescription = "Cover preview",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                )
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(Icons.Default.Image, contentDescription = null, modifier = Modifier.size(32.dp))
+                    Text("No cover", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+
+        CoverActionButton(
+            enabled = !isSaving && !coverLoadInFlight,
+            onClick = onToggleCoverAction,
+            contentDescription = if (coverModel == null) "Pick cover" else "Remove cover",
+            testTag = "edit-book-cover-toggle",
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = 10.dp, y = (-10).dp),
+        ) {
+            if (coverLoadInFlight) {
+                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
+            } else {
+                Icon(
+                    imageVector = if (coverModel == null) Icons.Default.Image else Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = if (coverModel == null) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    },
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DetailsFieldColumn(
+    title: String,
+    author: String,
+    isSaving: Boolean,
+    onTitleChange: (String) -> Unit,
+    onAuthorChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        OutlinedTextField(
+            value = title,
+            onValueChange = onTitleChange,
+            modifier = Modifier.fillMaxWidth().testTag("edit-book-title"),
+            label = { Text("Title") },
+            singleLine = true,
+            enabled = !isSaving,
+        )
+        OutlinedTextField(
+            value = author,
+            onValueChange = onAuthorChange,
+            modifier = Modifier.fillMaxWidth().testTag("edit-book-author"),
+            label = { Text("Author") },
+            singleLine = true,
+            enabled = !isSaving,
+        )
+    }
+}
+
+@Composable
+private fun CoverActionButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+    contentDescription: String,
+    testTag: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .shadow(10.dp, CircleShape, clip = false)
+            .size(36.dp)
+            .testTag(testTag)
+            .clickable(enabled = enabled, onClick = onClick)
+            .semantics { this.contentDescription = contentDescription },
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun ChapterStatChip(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    value: String,
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = RoundedCornerShape(16.dp),
+        modifier = modifier,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
+            Text("$value $label", fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@Composable
+private fun ActionGroup(content: @Composable RowScope.() -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = RoundedCornerShape(18.dp),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = content,
+        )
+    }
+}
+
+@Composable
+private fun ChapterActionButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+    contentDescription: String,
+    testTag: String,
+    icon: @Composable () -> Unit,
+) {
+    IconButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier
+            .size(40.dp)
+            .testTag(testTag)
+            .semantics { this.contentDescription = contentDescription },
+    ) {
+        Box(contentAlignment = Alignment.Center) { icon() }
+    }
+}
+
+@Composable
+private fun AddTextOrImportChapterDialog(
     chapterCount: Int,
     defaultPosition: Int,
     onDismiss: () -> Unit,
-    onAddChapter: (String, String, Int) -> Unit,
+    onAddChapter: (EditableChapterItem, Int) -> Unit,
 ) {
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
     var title by rememberSaveable { mutableStateOf("") }
     var body by rememberSaveable { mutableStateOf("") }
     var position by rememberSaveable { mutableStateOf(defaultPosition.toString()) }
+    var importedMarkup by rememberSaveable { mutableStateOf<String?>(null) }
+    var importedFileName by rememberSaveable { mutableStateOf<String?>(null) }
+    var importLoadInFlight by remember { mutableStateOf(false) }
+    var importError by rememberSaveable { mutableStateOf<String?>(null) }
     val parsedPosition = position.toIntOrNull()?.coerceIn(1, chapterCount + 1)
-    val canAdd = title.trim().isNotBlank() && body.trim().isNotBlank() && parsedPosition != null
+    val isImportedMode = importedMarkup != null
+    val canAdd = title.trim().isNotBlank() &&
+        parsedPosition != null &&
+        (isImportedMode || body.trim().isNotBlank())
+
+    val importPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri ?: return@rememberLauncherForActivityResult
+        scope.launch {
+            importLoadInFlight = true
+            val importedChapter = withContext(Dispatchers.IO) { loadImportedChapterDraft(context, uri) }
+            importLoadInFlight = false
+            val htmlContent = importedChapter?.content as? com.epubreader.core.model.BookNewChapterContent.HtmlDocument
+            if (importedChapter != null && htmlContent != null) {
+                title = importedChapter.title
+                importedMarkup = htmlContent.markup
+                importedFileName = htmlContent.fileNameHint
+                body = ""
+                importError = null
+            } else {
+                importError = "Pick an HTML or XHTML file."
+            }
+        }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Text Chapter") },
+        properties = DialogProperties(dismissOnClickOutside = false),
+        title = { Text("Add Chapter") },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onTap = { focusManager.clearFocus(force = true) })
+                },
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Chapter title") },
+                    label = { Text("Title") },
                     singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    trailingIcon = {
+                        IconButton(
+                            enabled = !importLoadInFlight,
+                            onClick = { importPicker.launch(SupportedImportMimeTypes) },
+                            modifier = Modifier.testTag("edit-book-action-import-html"),
+                        ) {
+                            if (importLoadInFlight) {
+                                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
+                            } else {
+                                Icon(Icons.Default.Language, contentDescription = "Import HTML XHTML")
+                            }
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth().testTag("edit-book-add-title"),
                 )
                 OutlinedTextField(
                     value = body,
                     onValueChange = { body = it },
-                    label = { Text("Chapter text") },
+                    enabled = !isImportedMode,
+                    label = { Text("Text") },
+                    placeholder = {
+                        Text(
+                            if (isImportedMode) {
+                                "HTML/XHTML imported. Text is disabled."
+                            } else {
+                                "Write chapter text"
+                            },
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 160.dp).testTag("edit-book-add-body"),
                 )
+                importError?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
                 OutlinedTextField(
                     value = position,
                     onValueChange = { position = it.filter(Char::isDigit) },
-                    label = { Text("Insert at position") },
+                    label = { Text("Insert index") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth().testTag("edit-book-add-position"),
@@ -779,7 +1052,18 @@ private fun AddTextChapterDialog(
         },
         confirmButton = {
             TextButton(enabled = canAdd, onClick = {
-                parsedPosition?.let { onAddChapter(title, body, it) }
+                parsedPosition?.let { insertPosition ->
+                    val chapter = if (isImportedMode) {
+                        buildHtmlDraftChapter(
+                            title = title,
+                            markup = importedMarkup.orEmpty(),
+                            fileNameHint = importedFileName,
+                        )
+                    } else {
+                        buildTextDraftChapter(title, body)
+                    }
+                    onAddChapter(chapter, insertPosition)
+                }
             }) {
                 Text("Add")
             }
@@ -791,50 +1075,117 @@ private fun AddTextChapterDialog(
 }
 
 @Composable
-private fun RangeSelectionDialog(
-    title: String,
+private fun ChapterSelectionDialog(
     chapterCount: Int,
     onDismiss: () -> Unit,
-    onConfirm: (Int, Int) -> Unit,
+    onConfirm: (ChapterSelectionMode, Int, Int) -> Unit,
 ) {
-    var start by rememberSaveable { mutableStateOf("1") }
-    var end by rememberSaveable { mutableStateOf(if (chapterCount > 0) chapterCount.toString() else "1") }
-    val parsedStart = if (chapterCount > 0) start.toIntOrNull()?.coerceIn(1, chapterCount) else null
-    val parsedEnd = if (chapterCount > 0) end.toIntOrNull()?.coerceIn(1, chapterCount) else null
-    val canConfirm = chapterCount > 0 && parsedStart != null && parsedEnd != null
+    val focusManager = LocalFocusManager.current
+    var mode by rememberSaveable { mutableStateOf(ChapterSelectionMode.SPECIFIC) }
+    var first by rememberSaveable { mutableStateOf("1") }
+    var second by rememberSaveable { mutableStateOf(if (chapterCount > 0) chapterCount.toString() else "1") }
+    val parsedFirst = if (chapterCount > 0) first.toIntOrNull()?.coerceIn(1, chapterCount) else null
+    val parsedSecond = if (chapterCount > 0) second.toIntOrNull()?.coerceIn(1, chapterCount) else null
+    val needsSecondIndex = mode != ChapterSelectionMode.SPECIFIC
+    val canConfirm = chapterCount > 0 && parsedFirst != null && (!needsSecondIndex || parsedSecond != null)
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
+        properties = DialogProperties(dismissOnClickOutside = false),
+        title = { Text("Selection") },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = start,
-                    onValueChange = { start = it.filter(Char::isDigit) },
-                    label = { Text("Start position") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            Column(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onTap = { focusManager.clearFocus(force = true) })
+                },
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedTextField(
-                    value = end,
-                    onValueChange = { end = it.filter(Char::isDigit) },
-                    label = { Text("End position") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    SelectionModeCard(
+                        text = "●",
+                        selected = mode == ChapterSelectionMode.SPECIFIC,
+                        onClick = { mode = ChapterSelectionMode.SPECIFIC },
+                        modifier = Modifier.weight(1f),
+                    )
+                    SelectionModeCard(
+                        text = "●────●",
+                        selected = mode == ChapterSelectionMode.RANGE,
+                        onClick = { mode = ChapterSelectionMode.RANGE },
+                        modifier = Modifier.weight(1f),
+                    )
+                    SelectionModeCard(
+                        text = "─●  ●─",
+                        selected = mode == ChapterSelectionMode.OUTSIDE,
+                        onClick = { mode = ChapterSelectionMode.OUTSIDE },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                )
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    OutlinedTextField(
+                        value = first,
+                        onValueChange = { first = it.filter(Char::isDigit) },
+                        label = { Text("Index 1") },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.weight(1f),
+                    )
+                    if (needsSecondIndex) {
+                        OutlinedTextField(
+                            value = second,
+                            onValueChange = { second = it.filter(Char::isDigit) },
+                            label = { Text("Index 2") },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
             TextButton(enabled = canConfirm, onClick = {
-                if (parsedStart != null && parsedEnd != null) onConfirm(parsedStart, parsedEnd)
+                if (parsedFirst != null) {
+                    onConfirm(mode, parsedFirst, parsedSecond ?: parsedFirst)
+                }
             }) {
                 Text("Select")
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel Select") } },
     )
+}
+
+@Composable
+private fun SelectionModeCard(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = if (selected) 6.dp else 0.dp,
+        shadowElevation = if (selected) 10.dp else 0.dp,
+        modifier = modifier.clickable(onClick = onClick),
+    ) {
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                fontWeight = FontWeight.SemiBold,
+                color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
 }
 
 @Composable
@@ -843,25 +1194,34 @@ private fun PositionDialog(
     label: String,
     chapterCount: Int,
     defaultPosition: Int,
+    maxPosition: Int = chapterCount + 1,
     confirmLabel: String,
     onDismiss: () -> Unit,
     onConfirm: (Int) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
     var position by rememberSaveable { mutableStateOf(defaultPosition.toString()) }
-    val parsedPosition = position.toIntOrNull()?.coerceIn(1, chapterCount + 1)
+    val parsedPosition = position.toIntOrNull()?.coerceIn(1, maxPosition.coerceAtLeast(1))
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(dismissOnClickOutside = false),
         title = { Text(title) },
         text = {
-            OutlinedTextField(
-                value = position,
-                onValueChange = { position = it.filter(Char::isDigit) },
-                label = { Text(label) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Box(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onTap = { focusManager.clearFocus(force = true) })
+                },
+            ) {
+                OutlinedTextField(
+                    value = position,
+                    onValueChange = { position = it.filter(Char::isDigit) },
+                    label = { Text(label) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         },
         confirmButton = {
             TextButton(enabled = parsedPosition != null, onClick = {
@@ -880,18 +1240,26 @@ private fun RenameChapterDialog(
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
     var title by rememberSaveable(currentTitle) { mutableStateOf(currentTitle) }
     AlertDialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(dismissOnClickOutside = false),
         title = { Text("Rename Chapter") },
         text = {
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Chapter title") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Box(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onTap = { focusManager.clearFocus(force = true) })
+                },
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         },
         confirmButton = {
             TextButton(enabled = title.trim().isNotBlank(), onClick = { onConfirm(title) }) {
@@ -911,8 +1279,10 @@ private fun SimpleConfirmDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
     AlertDialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(dismissOnClickOutside = false),
         title = { Text(title) },
         text = { Text(message) },
         confirmButton = { TextButton(onClick = onConfirm) { Text(confirmLabel) } },
@@ -928,23 +1298,21 @@ private fun loadCoverUpdate(context: Context, uri: Uri): BookCoverUpdate? {
     return BookCoverUpdate(fileName = fileName, mimeType = mimeType, bytes = bytes)
 }
 
-private fun loadImportedChapterDrafts(context: Context, uris: List<Uri>): List<EditableChapterItem> {
-    return uris.mapNotNull { uri ->
-        val fileName = queryDisplayName(context, uri)
-        val mimeType = context.contentResolver.getType(uri)?.lowercase().orEmpty()
-        val extension = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
-        if (mimeType !in SupportedImportMimeTypes && extension !in SupportedImportExtensions) {
-            return@mapNotNull null
-        }
-        val markup = context.contentResolver.openInputStream(uri)?.use { input ->
-            input.readBytes().toString(Charsets.UTF_8)
-        } ?: return@mapNotNull null
-        buildHtmlDraftChapter(
-            title = inferImportedChapterTitle(fileName, markup),
-            markup = markup,
-            fileNameHint = fileName,
-        )
+private fun loadImportedChapterDraft(context: Context, uri: Uri): EditableChapterItem? {
+    val fileName = queryDisplayName(context, uri)
+    val mimeType = context.contentResolver.getType(uri)?.lowercase().orEmpty()
+    val extension = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
+    if (mimeType !in SupportedImportMimeTypes && extension !in SupportedImportExtensions) {
+        return null
     }
+    val markup = context.contentResolver.openInputStream(uri)?.use { input ->
+        input.readBytes().toString(Charsets.UTF_8)
+    } ?: return null
+    return buildHtmlDraftChapter(
+        title = inferImportedChapterTitle(fileName, markup),
+        markup = markup,
+        fileNameHint = fileName,
+    )
 }
 
 private fun queryDisplayName(context: Context, uri: Uri): String? {

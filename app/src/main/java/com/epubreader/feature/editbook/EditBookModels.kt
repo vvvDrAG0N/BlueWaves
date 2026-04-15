@@ -161,6 +161,37 @@ internal fun selectOutsideChapterRange(
         .mapTo(linkedSetOf(), EditableChapterItem::id)
 }
 
+internal fun selectSpecificChapter(
+    currentItems: List<EditableChapterItem>,
+    position: Int,
+): Set<String> {
+    if (currentItems.isEmpty()) {
+        return emptySet()
+    }
+
+    return currentItems
+        .getOrNull(position.coerceIn(1, currentItems.size) - 1)
+        ?.let { linkedSetOf(it.id) }
+        ?: emptySet()
+}
+
+internal fun matchesChapterSearch(
+    chapter: EditableChapterItem,
+    position: Int,
+    query: String,
+): Boolean {
+    val normalizedQuery = query.trim()
+    if (normalizedQuery.isBlank()) {
+        return true
+    }
+
+    val matchesText = chapter.title.contains(normalizedQuery, ignoreCase = true) ||
+        chapter.href.orEmpty().contains(normalizedQuery, ignoreCase = true)
+    val matchesIndex = normalizedQuery.all(Char::isDigit) && position.toString() == normalizedQuery
+
+    return matchesText || matchesIndex
+}
+
 internal fun inferImportedChapterTitle(
     fileNameHint: String?,
     markup: String,
