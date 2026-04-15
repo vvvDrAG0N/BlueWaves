@@ -9,12 +9,16 @@ package com.epubreader.app
 import android.content.Context
 import android.net.Uri
 import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.BookEditRequest
+import com.epubreader.core.model.BookProgress
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.EpubBook
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.first
 import org.json.JSONObject
 import java.security.MessageDigest
 
@@ -25,6 +29,11 @@ internal sealed interface ImportBookResult {
     data class Duplicate(val folderName: String) : ImportBookResult
     data class Imported(val book: EpubBook) : ImportBookResult
     data class Failed(val message: String) : ImportBookResult
+}
+
+internal sealed interface EditBookResult {
+    data class Updated(val book: EpubBook) : EditBookResult
+    data class Failed(val message: String) : EditBookResult
 }
 
 internal suspend fun scanLibrary(parser: EpubParser): List<EpubBook> {
@@ -115,6 +124,43 @@ internal suspend fun deleteSelectedBooks(
     idsToDelete.forEach { settingsManager.deleteBookData(it) }
 }
 
+internal suspend fun editBookInLibrary(
+    parser: EpubParser,
+    settingsManager: SettingsManager,
+    book: EpubBook,
+    request: BookEditRequest,
+): EditBookResult {
+    if (book.sourceFormat != BookFormat.EPUB) {
+        return EditBookResult.Failed("Only EPUB books can be edited right now.")
+    }
+
+    return try {
+        val existingProgress = settingsManager
+            .getBookProgress(book.id, BookRepresentation.EPUB)
+            .first()
+        val updatedBook = withContext(Dispatchers.IO) {
+            parser.editBook(book, request)
+        } ?: return EditBookResult.Failed("Couldn't save changes to this book.")
+
+        val repairedProgress = repairProgressAfterBookEdit(
+            previousProgress = existingProgress,
+            originalSpineHrefs = book.spineHrefs,
+            updatedSpineHrefs = updatedBook.spineHrefs,
+        )
+        settingsManager.saveBookProgress(
+            bookId = book.id,
+            progress = repairedProgress,
+            representation = BookRepresentation.EPUB,
+        )
+        EditBookResult.Updated(updatedBook)
+    } catch (error: Exception) {
+        if (error is CancellationException) {
+            throw error
+        }
+        EditBookResult.Failed("Couldn't save changes to this book.")
+    }
+}
+
 private fun findExistingBook(books: List<EpubBook>, context: Context, uri: Uri): EpubBook? {
     val fileSize = try {
         context.contentResolver.openFileDescriptor(uri, "r")?.use { it.statSize } ?: 0L
@@ -128,4 +174,57 @@ private fun findExistingBook(books: List<EpubBook>, context: Context, uri: Uri):
         .joinToString("") { "%02x".format(it) }
 
     return books.find { it.id == bookId }
+}
+
+internal fun repairProgressAfterBookEdit(
+    previousProgress: BookProgress,
+    originalSpineHrefs: List<String>,
+    updatedSpineHrefs: List<String>,
+): BookProgress {
+    val updatedHrefs = updatedSpineHrefs
+        .map(::normalizeProgressHref)
+        .filter(String::isNotBlank)
+    if (updatedHrefs.isEmpty()) {
+        return BookProgress()
+    }
+
+    val previousHref = normalizeProgressHref(previousProgress.lastChapterHref)
+    if (previousHref.isBlank()) {
+        return previousProgress
+    }
+
+    val existingMatch = updatedHrefs.firstOrNull { it == previousHref }
+    if (existingMatch != null) {
+        return previousProgress.copy(lastChapterHref = existingMatch)
+    }
+
+    val originalHrefs = originalSpineHrefs
+        .map(::normalizeProgressHref)
+        .filter(String::isNotBlank)
+    val originalIndex = originalHrefs.indexOf(previousHref)
+
+    if (originalIndex != -1) {
+        for (index in originalIndex until originalHrefs.size) {
+            val candidate = originalHrefs[index]
+            if (candidate in updatedHrefs) {
+                return BookProgress(lastChapterHref = candidate)
+            }
+        }
+        for (index in (originalIndex - 1) downTo 0) {
+            val candidate = originalHrefs[index]
+            if (candidate in updatedHrefs) {
+                return BookProgress(lastChapterHref = candidate)
+            }
+        }
+    }
+
+    return BookProgress(lastChapterHref = updatedHrefs.first())
+}
+
+private fun normalizeProgressHref(rawHref: String?): String {
+    return rawHref
+        .orEmpty()
+        .substringBefore("#")
+        .removePrefix("/")
+        .trim()
 }

@@ -92,6 +92,20 @@ Temporary product note:
 - Why:
   - Protects the parked PDF reflow artifact shape without reopening PDF in the shell
 
+### 4b. [done] `AppNavigationEditProgressTest`
+
+- Path:
+  - `app/src/test/java/com/epubreader/app/AppNavigationEditProgressTest.kt`
+- Target:
+  - `app/AppNavigationOperations.kt`
+- Cover:
+  - deleted saved chapter falls forward to the next surviving chapter
+  - deleted last chapter falls back to the previous surviving chapter
+  - unchanged saved href keeps the existing progress payload
+  - unknown saved href falls back to the first valid chapter
+- Why:
+  - Protects safe restore behavior after chapter deletion in the Edit Book flow
+
 ### 5. [done] `SettingsManagerContractsTest`
 
 - Path:
@@ -199,6 +213,20 @@ These local Android-aware tests are now configured and cover startup, app-shell 
   - saving and activating a custom theme persists through the public SettingsManager API
   - deleting the active custom theme falls back safely to the built-in light theme
 
+### 9b. [done] `EpubParserEditingTest`
+
+- Path:
+  - `app/src/test/java/com/epubreader/data/parser/EpubParserEditingTest.kt`
+- Target:
+  - `data/parser/EpubParserEditing.kt`
+- Cover:
+  - metadata edits rewrite the stored EPUB safely
+  - custom cover replacement persists through `rebuildBookMetadata()`
+  - delete chapter plus add chapter updates the spine/TOC without corrupting the archive
+  - deleting every chapter without replacement is rejected and leaves the source EPUB intact
+- Why:
+  - Gives focused coverage for the new EPUB mutation path behind Edit Book
+
 ## Priority 3: Instrumentation / Compose Tests
 
 These are slower and should focus on the most fragile runtime behavior.
@@ -280,6 +308,19 @@ These are slower and should focus on the most fragile runtime behavior.
 - Cover:
   - legacy PDF library entries show the temporary deprecation message instead of opening a reader surface
   - older representation-switch tests are parked with `@Ignore` until the planned PDF-safe-refactor redefines that flow
+
+### 17. [done] `AppNavigationEditBookFlowTest`
+
+- Path:
+  - `app/src/androidTest/java/com/epubreader/app/AppNavigationEditBookFlowTest.kt`
+- Target:
+  - `app/AppNavigation.kt`
+  - `feature/editbook/EditBookScreen.kt`
+  - `data/parser/EpubParser.kt`
+- Cover:
+  - open Edit Book from the library card
+  - update title/author and append a chapter
+  - save returns to the library and refreshed metadata reflects the edit
 
 ## Execution Pattern
 

@@ -24,6 +24,7 @@ import android.provider.OpenableColumns
 import com.epubreader.core.debug.AppLog
 import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.BookEditRequest
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
@@ -207,6 +208,16 @@ class EpubParser internal constructor(
      * SIDE EFFECTS: Re-writes "metadata.json" in the folder.
      */
     fun reparseBook(bookFolder: File): EpubBook? = rebuildBookMetadata(bookFolder)
+
+    fun editBook(
+        book: EpubBook,
+        request: BookEditRequest,
+    ): EpubBook? {
+        if (book.sourceFormat != BookFormat.EPUB) {
+            return null
+        }
+        return editStoredEpubBook(File(book.rootPath), request)
+    }
 
     fun scanBooks(): List<EpubBook> {
         return booksDir.listFiles()

@@ -61,7 +61,8 @@ class MainActivity : ComponentActivity() {
 enum class Screen {
     Library,
     Reader,
-    Settings
+    Settings,
+    EditBook,
 }
 
 internal fun appColorScheme(

@@ -16,7 +16,7 @@ Graph-first rule:
 
 - `com.epubreader.app.AppNavigation`
   - Owns top-level navigation and library-level transient UI state.
-  - Coordinates `SettingsManager`, `EpubParser`, `ReaderScreen`, and `SettingsScreen`.
+  - Coordinates `SettingsManager`, `EpubParser`, `ReaderScreen`, `SettingsScreen`, and `EditBookScreen`.
   - Temporarily blocks PDF-origin import/open flows while keeping legacy PDF entries visible in the library.
 
 ## Core Models
@@ -29,6 +29,11 @@ Graph-first rule:
 - `com.epubreader.core.model.SettingsModels`
   - `GlobalSettings`
   - `BookProgress`
+
+- `com.epubreader.core.model.BookEditingModels`
+  - `BookEditRequest`
+  - `BookCoverUpdate`
+  - `BookChapterAddition`
 
 These are shared contracts. Prefer evolving them here instead of reintroducing duplicate models in parser or settings files.
 
@@ -66,6 +71,9 @@ Keep these presentation-only. Do not move folder state or navigation side effect
   - Keeps `EpubParser` from depending directly on worker/viewer details.
 
 ## Feature UI
+
+- `com.epubreader.feature.editbook.EditBookScreen`
+  - EPUB-only book editing UI for metadata, custom cover selection, and add/delete chapter actions.
 
 - `com.epubreader.feature.reader.ReaderScreen`
   - Reader UI and scroll restoration logic.
@@ -132,7 +140,7 @@ Keep these presentation-only. Do not move folder state or navigation side effect
   - Load only for first-run/version behavior work.
 
 - `com.epubreader.app.AppNavigationOperations`
-  - Owns app-shell side-effect helpers for import, scan, last-read updates, and destructive mutations.
+  - Owns app-shell side-effect helpers for import, scan, last-read updates, edit-book saves, progress repair, and destructive mutations.
   - Load only for side-effect behavior work.
 
 - `com.epubreader.app.AppNavigationLibraryData`
@@ -175,6 +183,10 @@ Keep these presentation-only. Do not move folder state or navigation side effect
 - `com.epubreader.data.parser.EpubParserBooks`
   - Owns book rebuild, cover extraction, TOC reconstruction, metadata.json read/write, and book ID generation.
   - Load this file only for import/cache/metadata work.
+
+- `com.epubreader.data.parser.EpubParserEditing`
+  - Owns EPUB mutation for the Edit Book flow: title/author updates, custom cover replacement, and chapter add/delete writes.
+  - Load this file only for EPUB editing or mutation safety work.
 
 - `com.epubreader.data.parser.EpubParserChapter`
   - Owns chapter XML parsing, ZIP entry lookup, image resolution, and `normalizePath()`.

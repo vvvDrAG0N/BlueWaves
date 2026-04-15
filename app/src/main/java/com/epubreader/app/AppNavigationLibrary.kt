@@ -79,6 +79,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.epubreader.core.model.BookFormat
 import com.epubreader.core.ui.BookItem
 import com.epubreader.core.ui.RecentlyViewedStrip
 
@@ -529,7 +530,16 @@ private fun LibraryBookGrid(
                     },
                 ),
             ) {
-                BookItem(book = book, settingsManager = state.settingsManager, isSelected = isSelected)
+                BookItem(
+                    book = book,
+                    settingsManager = state.settingsManager,
+                    isSelected = isSelected,
+                    onEdit = if (!state.selection.isBookSelectionMode && book.sourceFormat == BookFormat.EPUB) {
+                        { actions.onEditBook(book) }
+                    } else {
+                        null
+                    },
+                )
             }
         }
     }

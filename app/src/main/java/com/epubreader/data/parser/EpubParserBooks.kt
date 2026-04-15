@@ -99,7 +99,9 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
             id = bookFolder.name,
             // [SELF-HEALING] Fallbacks for missing core metadata to prevent UI crashes.
             title = book.title ?: existingMetadata?.title ?: "Unknown Title",
-            author = book.metadata.authors.firstOrNull()?.let { "${it.firstname} ${it.lastname}" }
+            author = book.metadata.authors.firstOrNull()
+                ?.let { "${it.firstname} ${it.lastname}".trim() }
+                ?.takeIf { it.isNotBlank() }
                 ?: existingMetadata?.author
                 ?: "Unknown Author",
             coverPath = coverPath,

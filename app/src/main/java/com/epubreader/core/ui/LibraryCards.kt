@@ -9,10 +9,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -140,7 +142,8 @@ fun BookItem(
     book: EpubBook,
     settingsManager: SettingsManager,
     isCompact: Boolean = false,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    onEdit: (() -> Unit)? = null,
 ) {
     val progress by settingsManager
         .getBookProgress(book.id, book.activeRepresentation)
@@ -269,6 +272,28 @@ fun BookItem(
                         .size(24.dp)
                         .background(Color.Black.copy(alpha = 0.5f), CircleShape)
                 )
+            }
+
+            if (!isCompact && onEdit != null && !isSelected) {
+                Surface(
+                    color = Color.Black.copy(alpha = 0.55f),
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp),
+                ) {
+                    IconButton(
+                        onClick = onEdit,
+                        modifier = Modifier.size(32.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit ${book.title}",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                }
             }
         }
     }

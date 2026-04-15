@@ -51,6 +51,7 @@ import com.epubreader.data.parser.EPUB_MIME_TYPE
 import com.epubreader.data.parser.ZIP_COMPRESSED_MIME_TYPE
 import com.epubreader.data.parser.ZIP_MIME_TYPE
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.feature.editbook.EditBookScreen
 import com.epubreader.feature.reader.ReaderScreen
 import com.epubreader.feature.settings.SettingsScreen
 import kotlinx.coroutines.CancellationException
@@ -94,8 +95,11 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
 
     var books by remember { mutableStateOf(emptyList<EpubBook>()) }
     var selectedBook by remember { mutableStateOf<EpubBook?>(null) }
+    var editingBook by remember { mutableStateOf<EpubBook?>(null) }
     var currentScreen by remember { mutableStateOf(Screen.Library) }
     var asyncState by remember { mutableStateOf(LibraryAsyncUiState()) }
+    var editBookSaveInFlight by remember { mutableStateOf(false) }
+    var editBookErrorMessage by remember { mutableStateOf<String?>(null) }
     var selectedBookIds by remember { mutableStateOf(emptySet<String>()) }
     var isBookSelectionMode by remember { mutableStateOf(false) }
     var isMovingMode by remember { mutableStateOf(false) }
@@ -159,6 +163,13 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     fun clearFolderSelection() {
         isFolderSelectionMode = false
         foldersToDelete = emptySet()
+    }
+
+    fun exitEditBook() {
+        editingBook = null
+        editBookErrorMessage = null
+        editBookSaveInFlight = false
+        currentScreen = Screen.Library
     }
 
     fun applyUpdatedBook(updatedBook: EpubBook) {
@@ -522,6 +533,13 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         },
         onShowSortMenu = { showSortMenu = true },
         onOpenSettings = { currentScreen = Screen.Settings },
+        onEditBook = { book ->
+            if (book.sourceFormat == BookFormat.EPUB && !editBookSaveInFlight) {
+                editingBook = book
+                editBookErrorMessage = null
+                currentScreen = Screen.EditBook
+            }
+        },
         onSelectAllBooks = { selectedBookIds = libraryItems.map { it.id }.toSet() },
         onClearBookSelection = { clearBookSelection() },
         onOpenBook = openBook,
@@ -640,6 +658,40 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                     settingsManager = settingsManager,
                     onBack = { currentScreen = Screen.Library },
                 )
+                Screen.EditBook -> editingBook?.let { book ->
+                    EditBookScreen(
+                        book = book,
+                        isSaving = editBookSaveInFlight,
+                        errorMessage = editBookErrorMessage,
+                        onDismissError = { editBookErrorMessage = null },
+                        onBack = ::exitEditBook,
+                        onSave = { request ->
+                            if (!editBookSaveInFlight) {
+                                scope.launch {
+                                    editBookSaveInFlight = true
+                                    when (
+                                        val result = editBookInLibrary(
+                                            parser = parser,
+                                            settingsManager = settingsManager,
+                                            book = book,
+                                            request = request,
+                                        )
+                                    ) {
+                                        is EditBookResult.Updated -> {
+                                            editBookErrorMessage = null
+                                            applyUpdatedBook(result.book)
+                                            exitEditBook()
+                                        }
+                                        is EditBookResult.Failed -> {
+                                            editBookErrorMessage = result.message
+                                            editBookSaveInFlight = false
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    )
+                }
                 Screen.Reader -> selectedBook?.let { book ->
                     ReaderScreen(
                         book = book,
@@ -673,6 +725,11 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
             drawerState.isOpen -> closeDrawer()
             isBookSelectionMode -> clearBookSelection()
             isFolderSelectionMode -> clearFolderSelection()
+            currentScreen == Screen.EditBook -> {
+                if (!editBookSaveInFlight) {
+                    exitEditBook()
+                }
+            }
             else -> currentScreen = Screen.Library
         }
     }

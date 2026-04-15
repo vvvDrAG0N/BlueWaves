@@ -7,6 +7,7 @@ Use it before loading large groups of source files.
 ## Temporary Product Boundary
 
 - The active app shell currently imports and opens EPUBs only.
+- EPUB library entries can now route into a dedicated `Edit Book` flow for metadata, custom cover, and chapter mutation work.
 - PDF-origin books are still scanned as library metadata, but opening/importing them is blocked at the shell until the planned safe refactor lands.
 - Deprecated PDF runtime files remain in source, but they are outside the active user flow.
 
@@ -87,12 +88,14 @@ flowchart TD
     AppShell --> AppDialogs[app/AppNavigationDialogs]
     AppShell --> SettingsManager[data/settings/SettingsManager]
     AppShell --> EpubParser[data/parser/EpubParser]
+    AppShell --> EditBookScreen[feature/editbook/EditBookScreen]
     AppShell --> ReaderScreen[feature/reader/ReaderScreen]
 
     SettingsManager --> SettingsContracts[data/settings/SettingsManagerContracts]
     SettingsManager --> SettingsJson[data/settings/SettingsManagerJson]
 
     EpubParser --> ParserBooks[data/parser/EpubParserBooks]
+    EpubParser --> ParserEditing[data/parser/EpubParserEditing]
     EpubParser --> ParserChapter[data/parser/EpubParserChapter]
 
     ReaderScreen --> ReaderContracts[feature/reader/ReaderScreenContracts]
@@ -128,7 +131,7 @@ Deprecated runtime note:
 
 ### Parser
 
-- Query first if the bug crosses import, metadata cache, TOC, chapter parsing, or image resolution.
+- Query first if the bug crosses import, metadata cache, EPUB mutation, TOC, chapter parsing, or image resolution.
 - Then read `docs/epub_parsing.md`.
 - Start with `data/parser/EpubParser.kt`.
 

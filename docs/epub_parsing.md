@@ -9,7 +9,9 @@ This note is the low-context guide for the parser package after the safe split o
    - Start here for call sites, public methods, and high-level behavior.
 2. `data/parser/EpubParserBooks.kt`
    - Load only for import, cached metadata, TOC rebuild, cover extraction, or book ID questions.
-3. `data/parser/EpubParserChapter.kt`
+3. `data/parser/EpubParserEditing.kt`
+   - Load only for EPUB mutation work: title/author changes, custom cover replacement, or add/delete chapter writes.
+4. `data/parser/EpubParserChapter.kt`
    - Load only for chapter rendering, image resolution, malformed XHTML handling, or `normalizePath()` work.
 
 ## File Boundaries
@@ -25,6 +27,11 @@ This note is the low-context guide for the parser package after the safe split o
   - `saveBookMetadata(...)`
   - `loadBookMetadata(...)`
   - TOC and cover rebuild helpers
+
+- `EpubParserEditing.kt`
+  - `editStoredEpubBook(...)`
+  - EPUB mutation helpers for metadata, cover, and chapter changes
+  - Chapter-title cleanup and write-safe staged EPUB replacement
 
 - `EpubParserChapter.kt`
   - `parseBookChapter(...)`
@@ -45,6 +52,7 @@ The parser is designed to be resilient against corrupted or missing `metadata.js
 ### What triggers `rebuildBookMetadata`?
 - **Initial Import:** Always called during `parseAndExtract`.
 - **Manual Reparse:** Can be triggered via `EpubParser.reparseBook(folder)` (common in tests or if a user triggers a library refresh that detects a hash mismatch, though current logic primarily relies on `loadBookMetadata` during scans).
+- **Edit Book Save:** `EpubParser.editBook(...)` rewrites the stored EPUB and then reparses it so `metadata.json`, cover cache, TOC, and spine stay aligned with the edited file.
 - **Corrupt Cache:** If `loadBookMetadata` returns `null` during a scan, the book will not appear in the library until it is re-imported or manually repaired.
 
 ### Auto-fixed Fields & Resilience Logic
@@ -60,14 +68,16 @@ The parser is designed to be resilient against corrupted or missing `metadata.js
 
 - Book IDs must remain `MD5(uri + fileSize)`.
 - `ZipFile` and `InputStream` handling must stay wrapped in `.use {}`.
+- Edit-book writes must stay staged and atomic; never overwrite `book.epub` in-place.
 - `normalizePath()` behavior must remain stable for `../`, `OEBPS/`, and `OPS/` layouts.
 - `metadata.json` field names and shape must not drift during safe refactors.
 - Chapter parser error tolerance must remain in place for malformed EPUB XHTML.
 
 ## AI Hint
 
-Do not load all three parser files by default.
+Do not load all four parser files by default.
 
 - For duplicate/import/cache bugs: start with `EpubParser.kt`, then `EpubParserBooks.kt`.
+- For edit-book features or EPUB mutation bugs: start with `EpubParser.kt`, then `EpubParserEditing.kt`.
 - For broken chapter text or images: start with `EpubParser.kt`, then `EpubParserChapter.kt`.
 - For PDF-related tasks, assume the shell is intentionally blocking active PDF support and only load `data/parser/PdfLegacyBridge.kt` plus `data/pdf/legacy/*` if the task is explicitly about the parked runtime or the upcoming refactor.

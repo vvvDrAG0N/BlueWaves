@@ -8,6 +8,7 @@ Use this guide when the task is about library navigation, folder management, dia
 
 Temporary boundary:
 - The app shell is EPUB-only for active import/open flows.
+- EPUB library cards now expose an `Edit Book` flow for metadata, custom cover, and chapter mutation work.
 - PDF-origin books remain visible as deprecated library entries, but the shell blocks opening/importing them until the planned safe refactor.
 
 ## Fast Load Order
@@ -16,19 +17,20 @@ Temporary boundary:
 2. Read `app/AppNavigation.kt` for state ownership, startup effects, derived folder/book state, and screen routing.
 3. Read `app/AppNavigationStartup.kt` only if the task is about first-run logic, version checks, or changelog selection.
 4. Read `app/AppNavigationOperations.kt` only if the task is about import, delete, last-read updates, or folder/book mutations.
-5. Read `app/AppNavigationLibraryData.kt` only if the task is about folder derivation, sorting, or drag-preview behavior.
-6. Read `app/AppNavigationLibrary.kt` only if the task is about drawer UI, top bar UI, grid rendering, or selection bar layout.
-7. Read `app/AppNavigationDialogs.kt` only if the task is about sort-sheet behavior, confirm dialogs, or welcome/changelog dialogs.
-8. Read `app/AppNavigationPdfLegacy.kt` only if the task is about the parked PDF-disabled shell boundary or legacy conversion metadata freshness.
-9. Read `data/settings/SettingsManager.kt` if the task touches persisted folder/order/sort/favorite state.
-10. Read `data/parser/EpubParser.kt` only if the task touches import, scan, delete, or last-read persistence.
+5. Read `feature/editbook/EditBookScreen.kt` only if the task is about the EPUB edit flow UI or save validation.
+6. Read `app/AppNavigationLibraryData.kt` only if the task is about folder derivation, sorting, or drag-preview behavior.
+7. Read `app/AppNavigationLibrary.kt` only if the task is about drawer UI, top bar UI, grid rendering, or selection bar layout.
+8. Read `app/AppNavigationDialogs.kt` only if the task is about sort-sheet behavior, confirm dialogs, or welcome/changelog dialogs.
+9. Read `app/AppNavigationPdfLegacy.kt` only if the task is about the parked PDF-disabled shell boundary or legacy conversion metadata freshness.
+10. Read `data/settings/SettingsManager.kt` if the task touches persisted folder/order/sort/favorite state.
+11. Read `data/parser/EpubParser.kt` only if the task touches import, scan, delete, edit-book writes, or last-read persistence.
 
 ## Ownership Boundaries
 
 - `AppNavigation.kt`
   - Owns transient app-shell state.
   - Owns startup/version/changelog effects and screen routing.
-  - Owns action lambdas that coordinate UI state with `SettingsManager` and `EpubParser`.
+  - Owns action lambdas that coordinate library UI, edit-book save state, and parser/settings side effects.
   - Owns the temporary PDF deprecation guardrails at the import/open boundary.
 
 - `AppNavigationPdfLegacy.kt`
@@ -55,7 +57,7 @@ The 7-file split in `com.epubreader.app` is designed to reduce per-task context 
   - Does not write settings itself; `AppNavigation` still applies the results.
 
 - `AppNavigationOperations.kt`
-  - Owns app-shell helper operations for import, scan, last-read touches, and destructive library mutations.
+  - Owns app-shell helper operations for import, scan, last-read touches, edit-book saves, progress repair after chapter deletion, and destructive library mutations.
   - Delegates persistence to `SettingsManager` and file work to `EpubParser`.
 
 - `AppNavigationLibraryData.kt`
@@ -85,6 +87,9 @@ The 7-file split in `com.epubreader.app` is designed to reduce per-task context 
 
 - Change drawer visuals, grid visuals, or selection bar visuals:
   - Start in `app/AppNavigationLibrary.kt`.
+
+- Work on EPUB edit-book save behavior or deleted-chapter progress fallback:
+  - Start in `app/AppNavigationOperations.kt`, then inspect `feature/editbook/EditBookScreen.kt` and `data/parser/EpubParser.kt`.
 
 - Change sort-sheet options, confirmation copy, or welcome/changelog dialogs:
   - Start in `app/AppNavigationDialogs.kt`.

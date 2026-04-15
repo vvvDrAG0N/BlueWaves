@@ -5,6 +5,7 @@ This directory is the architectural memory for Blue Waves.
 ## Temporary Product Status
 
 - Active app-shell support is EPUB-only for now.
+- EPUB books now have an in-app `Edit Book` flow for title/author updates, custom covers, and safe add/delete chapter edits.
 - PDF-origin books may still exist in the cache/library as deprecated entries, but import/open flows are intentionally blocked while the PDF path is prepared for a larger safe refactor.
 - Deprecated PDF internals now live under `data/pdf/legacy` and `feature/pdf/legacy` for that refactor and are documented in `PDF_review.md`.
 
@@ -71,8 +72,8 @@ This directory is the architectural memory for Blue Waves.
 ## EPUB Parsing Note
 
 - `epub_parsing.md`
-  - Low-context guide for `EpubParser.kt`, `EpubParserBooks.kt`, and `EpubParserChapter.kt`.
-  - Use this first for import, metadata cache, TOC rebuild, chapter parsing, image resolution, and parser safety tasks.
+  - Low-context guide for `EpubParser.kt`, `EpubParserBooks.kt`, `EpubParserEditing.kt`, and `EpubParserChapter.kt`.
+  - Use this first for import, metadata cache, EPUB mutation, TOC rebuild, chapter parsing, image resolution, and parser safety tasks.
 
 ## Reader Screen Note
 

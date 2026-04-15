@@ -71,6 +71,7 @@ internal data class LibraryScreenActions(
     val onSetFavoriteFolder: () -> Unit,
     val onShowSortMenu: () -> Unit,
     val onOpenSettings: () -> Unit,
+    val onEditBook: (EpubBook) -> Unit,
     val onSelectAllBooks: () -> Unit,
     val onClearBookSelection: () -> Unit,
     val onOpenBook: (EpubBook) -> Unit,
