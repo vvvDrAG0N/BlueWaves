@@ -451,7 +451,11 @@ fun ReaderScreen(
         }
     }
 
-    BackHandler {
+    BackHandler(enabled = drawerState.isOpen) {
+        scope.launch { drawerState.close() }
+    }
+
+    BackHandler(enabled = !drawerState.isOpen) {
         scope.launch { saveAndBack() }
     }
 

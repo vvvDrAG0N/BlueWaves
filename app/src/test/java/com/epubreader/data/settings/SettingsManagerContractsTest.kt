@@ -26,6 +26,7 @@ class SettingsManagerContractsTest {
         assertEquals(0, settings.lastSeenVersionCode)
         assertEquals(false, settings.showScrubber)
         assertEquals(false, settings.showSystemBar)
+        assertEquals(false, settings.allowBlankCovers)
         assertTrue(settings.customThemes.isEmpty())
         assertEquals(DefaultLibrarySort, settings.librarySort)
         assertEquals(DefaultLibraryName, settings.favoriteLibrary)
@@ -111,9 +112,11 @@ class SettingsManagerContractsTest {
     fun toGlobalSettings_readsShowSystemBarWhenPresent() {
         val settings = preferencesOf(
             SettingsPreferenceKeys.showSystemBar to true,
+            SettingsPreferenceKeys.allowBlankCovers to true,
         ).toGlobalSettings()
 
         assertEquals(true, settings.showSystemBar)
+        assertEquals(true, settings.allowBlankCovers)
     }
 
     @Test

@@ -1,10 +1,10 @@
 # EpubParserEditing Cluster
 
-> 24 nodes · cohesion 0.08
+> 25 nodes · cohesion 0.08
 
 ## Key Concepts
 
-- **EpubParserEditing.kt** (23 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
+- **EpubParserEditing.kt** (24 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
 - **applyChapterEdits()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
 - **applyCoverEdit()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
 - **buildImportedHtmlBodyMarkup()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
@@ -21,6 +21,7 @@
 - **looksLikeCoverResource()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
 - **nextAddedChapterNumber()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
 - **normalized()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
+- **prepareMetadataSeedForBookEdit()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
 - **removeCover()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
 - **removeCustomCoverResources()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
 - **replaceCover()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParserEditing.kt`
@@ -39,7 +40,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 46 (100%)
+- EXTRACTED: 48 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

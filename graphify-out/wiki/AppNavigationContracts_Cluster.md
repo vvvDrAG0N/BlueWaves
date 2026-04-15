@@ -1,10 +1,10 @@
 # AppNavigationContracts Cluster
 
-> 11 nodes · cohesion 0.18
+> 12 nodes · cohesion 0.17
 
 ## Key Concepts
 
-- **AppNavigationContracts.kt** (10 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
+- **AppNavigationContracts.kt** (11 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
 - **BookSelectionActionBarActions** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
 - **BookSelectionActionBarState** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
 - **BookSelectionUiState** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
@@ -15,6 +15,7 @@
 - **LibraryDialogState** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
 - **LibraryScreenActions** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
 - **LibraryScreenState** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
+- **shouldUseShellBackHandler()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationContracts.kt`
 
 ## Relationships
 
@@ -26,7 +27,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 20 (100%)
+- EXTRACTED: 22 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -32,6 +32,11 @@ internal fun editStoredEpubBook(
     val normalizedRequest = request.normalized() ?: return null
     val stagedFile = File(bookFolder, "$EPUB_ARCHIVE_FILE_NAME.editing")
     stagedFile.delete()
+    val metadataSeed = prepareMetadataSeedForBookEdit(
+        existingMetadata = loadBookMetadata(bookFolder),
+        bookFolder = bookFolder,
+        coverAction = normalizedRequest.coverAction,
+    )
 
     return try {
         val book = sourceFile.inputStream().use { input ->
@@ -48,7 +53,7 @@ internal fun editStoredEpubBook(
             EpubWriter().write(book, output)
         }
         replaceFileAtomically(stagedFile, sourceFile)
-        rebuildBookMetadata(bookFolder)
+        rebuildBookMetadata(bookFolder, metadataSeed)
     } catch (_: Exception) {
         stagedFile.takeIf(File::exists)?.delete()
         null
@@ -143,18 +148,9 @@ private fun applyCoverEdit(
 }
 
 private fun removeCover(book: Book) {
-    val currentCover = book.coverImage
-    val fallbackCover = when {
-        currentCover != null && !isCustomCoverHref(currentCover.href) -> currentCover
-        else -> book.resources.getAll().firstOrNull { resource ->
-            val href = cleanHref(resource.href)
-            !isCustomCoverHref(href) && looksLikeCoverResource(resource)
-        }
-    }
-
     removeCustomCoverResources(book)
     clearCustomGuideReferences(book)
-    setBookCoverImageDirect(book, fallbackCover)
+    setBookCoverImageDirect(book, null)
 }
 
 private fun replaceCover(
@@ -438,6 +434,53 @@ private fun cleanHref(rawHref: String?): String {
 
 private fun isCustomCoverHref(rawHref: String): Boolean {
     return cleanHref(rawHref).startsWith(EditedBookCustomCoverPrefix)
+}
+
+private fun prepareMetadataSeedForBookEdit(
+    existingMetadata: com.epubreader.core.model.EpubBook?,
+    bookFolder: File,
+    coverAction: BookCoverAction,
+): com.epubreader.core.model.EpubBook? {
+    existingMetadata ?: return null
+
+    val originalCoverPath = existingMetadata.originalCoverPath
+        ?: existingMetadata.coverPath
+    val currentCoverPath = existingMetadata.currentCoverPath
+
+    return when (coverAction) {
+        BookCoverAction.Keep -> existingMetadata
+        BookCoverAction.Remove -> {
+            val promotedOriginalPath = originalCoverPath
+                ?: currentCoverPath?.let { currentPath ->
+                    val currentFile = File(currentPath)
+                    if (currentFile.exists()) {
+                        val originalFile = File(bookFolder, EPUB_ORIGINAL_COVER_FILE_NAME)
+                        if (currentFile.absolutePath != originalFile.absolutePath) {
+                            currentFile.inputStream().use { input ->
+                                originalFile.outputStream().use { output ->
+                                    input.copyTo(output)
+                                }
+                            }
+                        }
+                        originalFile.absolutePath
+                    } else {
+                        null
+                    }
+                }
+
+            existingMetadata.copy(
+                coverPath = promotedOriginalPath,
+                originalCoverPath = promotedOriginalPath,
+                currentCoverPath = null,
+            )
+        }
+
+        is BookCoverAction.Replace -> existingMetadata.copy(
+            coverPath = File(bookFolder, EPUB_CURRENT_COVER_FILE_NAME).absolutePath,
+            originalCoverPath = originalCoverPath ?: currentCoverPath ?: existingMetadata.coverPath,
+            currentCoverPath = File(bookFolder, EPUB_CURRENT_COVER_FILE_NAME).absolutePath,
+        )
+    }
 }
 
 private fun fallbackChapterTitle(

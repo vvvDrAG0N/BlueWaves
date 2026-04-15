@@ -525,6 +525,29 @@ private fun GeneralTab(
                 modifier = Modifier.testTag("selectable_text_switch")
             )
         }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Allow Blank Covers", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "When enabled, removing the current cover can leave the book blank instead of falling back to the stored original cover.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Switch(
+                checked = settings.allowBlankCovers,
+                onCheckedChange = { checked ->
+                    scope.launch {
+                        settingsManager.updateGlobalSettings { it.copy(allowBlankCovers = checked) }
+                    }
+                },
+                modifier = Modifier.testTag("allow_blank_covers_switch")
+            )
+        }
     }
 }
 

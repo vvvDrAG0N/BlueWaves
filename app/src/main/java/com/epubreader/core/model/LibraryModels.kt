@@ -69,6 +69,8 @@ data class EpubBook(
     val title: String,
     val author: String,
     val coverPath: String?,
+    val originalCoverPath: String? = coverPath,
+    val currentCoverPath: String? = coverPath,
     val rootPath: String,
     val format: BookFormat = BookFormat.EPUB,
     val sourceFormat: BookFormat = format,
@@ -135,4 +137,13 @@ data class EpubBook(
 
     val isPdf: Boolean
         get() = format == BookFormat.PDF
+
+    fun displayCoverPath(allowBlankCovers: Boolean): String? {
+        return when {
+            !currentCoverPath.isNullOrBlank() -> currentCoverPath
+            allowBlankCovers -> null
+            !originalCoverPath.isNullOrBlank() -> originalCoverPath
+            else -> coverPath
+        }
+    }
 }

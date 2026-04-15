@@ -112,6 +112,39 @@ class EpubParserBooksTest {
     }
 
     @Test
+    fun loadBookMetadata_preservesExplicitlyRemovedCurrentCover() {
+        val folder = createTempBookFolder()
+        try {
+            val originalCover = File(folder, "cover-original.png").apply { writeText("cover") }
+            writeMetadata(
+                folder,
+                """
+                {
+                  "id":"book-removed-current",
+                  "title":"Original Only",
+                  "author":"Author",
+                  "coverPath":"${escapeJson(originalCover.absolutePath)}",
+                  "originalCoverPath":"${escapeJson(originalCover.absolutePath)}",
+                  "currentCoverPath":null,
+                  "rootPath":"${escapeJson(folder.absolutePath)}",
+                  "toc":[{"title":"1. Chapter","href":"ch1.xhtml"}],
+                  "spineHrefs":["ch1.xhtml"]
+                }
+                """.trimIndent(),
+            )
+
+            val loaded = loadBookMetadata(folder)
+
+            assertNotNull(loaded)
+            assertEquals(originalCover.absolutePath, loaded?.originalCoverPath)
+            assertEquals(null, loaded?.currentCoverPath)
+            assertEquals(originalCover.absolutePath, loaded?.coverPath)
+        } finally {
+            folder.deleteRecursively()
+        }
+    }
+
+    @Test
     fun loadBookMetadata_returnsNullForMalformedMetadata() {
         val folder = createTempBookFolder()
         try {

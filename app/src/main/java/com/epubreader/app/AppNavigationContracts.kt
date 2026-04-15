@@ -1,6 +1,7 @@
 package com.epubreader.app
 
 import androidx.compose.material3.DrawerState
+import com.epubreader.Screen
 import androidx.compose.material3.SnackbarHostState
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
@@ -109,6 +110,20 @@ internal data class BookSelectionActionBarActions(
     val onMoveSelectedBooks: () -> Unit,
     val onEditSelectedBook: () -> Unit,
 )
+
+internal fun shouldUseShellBackHandler(
+    currentScreen: Screen,
+    isDrawerOpen: Boolean,
+    isFolderSelectionMode: Boolean,
+    isBookSelectionMode: Boolean,
+): Boolean {
+    return isDrawerOpen ||
+        isFolderSelectionMode ||
+        isBookSelectionMode ||
+        (currentScreen != Screen.Library &&
+            currentScreen != Screen.EditBook &&
+            currentScreen != Screen.Reader)
+}
 
 // Dialog host bundle. Dialog composables stay dumb and receive only visibility plus callbacks.
 internal data class LibraryDialogState(

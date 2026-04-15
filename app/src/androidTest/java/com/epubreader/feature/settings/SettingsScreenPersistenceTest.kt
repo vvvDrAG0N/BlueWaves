@@ -185,6 +185,22 @@ class SettingsScreenPersistenceTest {
         waitUntilSystemBarSwitchState(expected = true)
     }
 
+    @Test
+    fun allowBlankCovers_persistsAcrossScreenReopen() {
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        composeRule.onNodeWithText("Allow Blank Covers").performScrollTo()
+
+        composeRule.onNodeWithTag("allow_blank_covers_switch").performClick()
+        composeRule.waitUntil(10_000) {
+            runBlocking { settingsManager.globalSettings.first() }.allowBlankCovers
+        }
+
+        launchSettingsScreen()
+        composeRule.onNodeWithText("Allow Blank Covers").performScrollTo()
+        composeRule.onNodeWithTag("allow_blank_covers_switch").assertIsOn()
+    }
+
     private suspend fun resetSettings() {
         settingsManager.updateGlobalSettings(
             GlobalSettings(
@@ -195,6 +211,7 @@ class SettingsScreenPersistenceTest {
                 horizontalPadding = 16,
                 showScrubber = false,
                 showSystemBar = false,
+                allowBlankCovers = false,
             ),
         )
     }

@@ -74,6 +74,8 @@ class EpubParserEditingTest {
         assertTrue(updated.toc[0].title.endsWith("Renamed Two"))
         assertTrue(updated.toc[1].title.endsWith("Imported Bonus"))
         assertNotNull(updated.coverPath)
+        assertNotNull(updated.originalCoverPath)
+        assertNotNull(updated.currentCoverPath)
         assertTrue(File(updated.coverPath!!).exists())
 
         ZipFile(File(bookFolder, EPUB_ARCHIVE_FILE_NAME)).use { zip ->
@@ -91,7 +93,7 @@ class EpubParserEditingTest {
     }
 
     @Test
-    fun editStoredEpubBook_removeCoverClearsCustomCoverResourceAndCoverPath() {
+    fun editStoredEpubBook_removeCoverPromotesCurrentCoverToOriginalWhenNeeded() {
         val bookFolder = Files.createTempDirectory("edit-book-remove-cover").toFile()
         writeTestEpub(
             bookFolder = bookFolder,
@@ -133,7 +135,10 @@ class EpubParserEditingTest {
         )
 
         assertNotNull(removed)
-        assertNull(removed!!.coverPath)
+        assertNotNull(removed!!.coverPath)
+        assertNotNull(removed.originalCoverPath)
+        assertNull(removed.currentCoverPath)
+        assertTrue(File(removed.coverPath!!).exists())
         ZipFile(File(bookFolder, EPUB_ARCHIVE_FILE_NAME)).use { zip ->
             assertNull(zip.getEntry("OEBPS/bluewaves/custom-cover.png"))
         }

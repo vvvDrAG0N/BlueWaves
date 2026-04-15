@@ -40,7 +40,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MyLocation
-import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -234,7 +234,7 @@ private fun ReaderTocDrawerContent(
 
             IconButton(onClick = { showChapterInputInToc = !showChapterInputInToc }) {
                 Icon(
-                    imageVector = if (showChapterInputInToc) Icons.Default.Close else Icons.Default.Tag,
+                    imageVector = if (showChapterInputInToc) Icons.Default.Close else Icons.Default.Search,
                     contentDescription = "Go to Chapter",
                     tint = if (showChapterInputInToc) MaterialTheme.colorScheme.error else LocalContentColor.current
                 )

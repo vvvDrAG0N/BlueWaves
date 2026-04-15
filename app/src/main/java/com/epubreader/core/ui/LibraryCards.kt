@@ -36,6 +36,7 @@ import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.settings.SettingsManager
 import org.json.JSONObject
 import java.io.File
@@ -79,6 +80,9 @@ fun RecentlyViewedStrip(
             color = Color.Transparent,
             modifier = Modifier.fillMaxWidth()
         ) {
+            val displayCoverPath = remember(book, globalSettings.allowBlankCovers) {
+                book.displayCoverPath(globalSettings.allowBlankCovers)
+            }
             Row(
                 modifier = Modifier.padding(vertical = 4.dp).height(40.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -89,9 +93,9 @@ fun RecentlyViewedStrip(
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(4.dp))
                 ) {
-                    if (book.coverPath != null) {
+                    if (displayCoverPath != null) {
                         AsyncImage(
-                            model = File(book.coverPath),
+                            model = File(displayCoverPath),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
@@ -139,6 +143,7 @@ fun RecentlyViewedStrip(
 fun BookItem(
     book: EpubBook,
     settingsManager: SettingsManager,
+    globalSettings: GlobalSettings,
     isCompact: Boolean = false,
     isSelected: Boolean = false,
 ) {
@@ -146,6 +151,14 @@ fun BookItem(
         .getBookProgress(book.id, book.activeRepresentation)
         .collectAsState(initial = BookProgress())
     val progressLabel = remember(progress, book) { formatReadingProgress(book, progress) }
+    val displayCoverPath = remember(book, globalSettings.allowBlankCovers) {
+        book.displayCoverPath(globalSettings.allowBlankCovers)
+    }
+
+    val themePalette = remember(globalSettings.theme, globalSettings.customThemes) {
+        themePaletteSeed(globalSettings.theme, globalSettings.customThemes)
+    }
+    val readerForegroundColor = remember(themePalette) { Color(themePalette.readerForeground) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -154,9 +167,9 @@ fun BookItem(
         border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
     ) {
         Box(modifier = Modifier.fillMaxWidth().aspectRatio(0.7f)) {
-            if (book.coverPath != null) {
+            if (displayCoverPath != null) {
                 AsyncImage(
-                    model = File(book.coverPath),
+                    model = File(displayCoverPath),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -193,7 +206,7 @@ fun BookItem(
                         Text(
                             text = progressLabel,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = readerForegroundColor,
                             fontWeight = FontWeight.Bold,
                             fontSize = 10.sp
                         )
@@ -245,7 +258,7 @@ fun BookItem(
                         Text(
                             text = progressLabel,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = readerForegroundColor,
                             fontWeight = FontWeight.Bold,
                             fontSize = 10.sp
                         )
@@ -257,7 +270,7 @@ fun BookItem(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+                        .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f))
                 )
                 Icon(
                     Icons.Default.CheckCircle,

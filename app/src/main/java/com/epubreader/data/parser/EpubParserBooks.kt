@@ -36,9 +36,12 @@ internal const val LEGACY_PDF_DOCUMENT_FILE_NAME = "book.pdf"
 
 private const val EPUB_METADATA_FILE_NAME = "metadata.json"
 private const val EPUB_COVER_FILE_NAME = "cover_thumb.png"
+internal const val EPUB_ORIGINAL_COVER_FILE_NAME = "cover_original_thumb.png"
+internal const val EPUB_CURRENT_COVER_FILE_NAME = "cover_current_thumb.png"
 private const val PDF_DEFAULT_AUTHOR = "PDF Document"
 private const val PDF_FALLBACK_TITLE = "Untitled PDF"
 private const val PDF_COVER_WIDTH_PX = 320
+private const val EDITED_BOOK_CUSTOM_COVER_PREFIX = "bluewaves/custom-cover."
 
 internal fun buildBookId(uri: Uri, fileSize: Long): String {
     // Book ID must remain MD5(uri + fileSize) to preserve cached folders and reading progress keys.
@@ -48,8 +51,10 @@ internal fun buildBookId(uri: Uri, fileSize: Long): String {
         .joinToString("") { "%02x".format(it) }
 }
 
-internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
-    val existingMetadata = loadBookMetadata(bookFolder)
+internal fun rebuildBookMetadata(
+    bookFolder: File,
+    existingMetadata: EpubBook? = loadBookMetadata(bookFolder),
+): EpubBook? {
     val sourceFormat = existingMetadata?.sourceFormat ?: BookFormat.EPUB
     val bookFile = activeEpubFile(bookFolder, sourceFormat)
     if (!bookFile.exists()) return null
@@ -61,18 +66,11 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
             nl.siegmann.epublib.epub.EpubReader().readEpub(input)
         }
 
-        val coverPath = book.coverImage?.let { coverResource ->
-            val coverFile = File(bookFolder, EPUB_COVER_FILE_NAME)
-            coverResource.inputStream.use { input ->
-                FileOutputStream(coverFile).use { output ->
-                    input.copyTo(output)
-                }
-            }
-            coverFile.absolutePath
-        } ?: run {
-            File(bookFolder, EPUB_COVER_FILE_NAME).takeIf(File::exists)?.delete()
-            null
-        }
+        val coverFiles = reconcileStoredBookCoverFiles(
+            bookFolder = bookFolder,
+            book = book,
+            existingMetadata = existingMetadata,
+        )
 
         val spineHrefs = book.spine.spineReferences.map { it.resource.href }
         val toc = buildTableOfContents(book, spineHrefs)
@@ -107,7 +105,9 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
                 ?.takeIf { it.isNotBlank() }
                 ?: existingMetadata?.author
                 ?: "Unknown Author",
-            coverPath = coverPath,
+            coverPath = coverFiles.coverPath,
+            originalCoverPath = coverFiles.originalCoverPath,
+            currentCoverPath = coverFiles.currentCoverPath,
             rootPath = bookFolder.absolutePath,
             format = when (sourceFormat) {
                 BookFormat.PDF -> preferredPdfFormat
@@ -181,6 +181,8 @@ internal fun rebuildPdfMetadata(
         title = title,
         author = existingMetadata?.author?.takeIf { it.isNotBlank() } ?: PDF_DEFAULT_AUTHOR,
         coverPath = pdfInfo.coverPath,
+        originalCoverPath = pdfInfo.coverPath,
+        currentCoverPath = pdfInfo.coverPath,
         rootPath = bookFolder.absolutePath,
         format = preferredFormat,
         sourceFormat = BookFormat.PDF,
@@ -204,7 +206,9 @@ internal fun saveBookMetadata(folder: File, book: EpubBook) {
         put("id", book.id)
         put("title", book.title)
         put("author", book.author)
-        put("coverPath", book.coverPath)
+        put("coverPath", book.coverPath ?: JSONObject.NULL)
+        put("originalCoverPath", book.originalCoverPath ?: JSONObject.NULL)
+        put("currentCoverPath", book.currentCoverPath ?: JSONObject.NULL)
         put("rootPath", book.rootPath)
         put("format", book.format.name)
         put("sourceFormat", book.sourceFormat.name)
@@ -267,12 +271,26 @@ internal fun loadBookMetadata(folder: File): EpubBook? {
             BookFormat.valueOf(json.optString("sourceFormat", format.name))
         }.getOrDefault(format)
 
+        val legacyCoverPath = json.optCoverPath("coverPath")
+        val originalCoverPath = if (json.has("originalCoverPath")) {
+            json.optCoverPath("originalCoverPath")
+        } else {
+            legacyCoverPath
+        }
+        val currentCoverPath = if (json.has("currentCoverPath")) {
+            json.optCoverPath("currentCoverPath")
+        } else {
+            legacyCoverPath
+        }
+        val effectiveCoverPath = currentCoverPath ?: originalCoverPath ?: legacyCoverPath
+
         EpubBook(
             id = json.getString("id"),
             title = json.getString("title"),
             author = json.getString("author"),
-            // [SELF-HEALING] Resilience against null/empty cover paths.
-            coverPath = json.optString("coverPath").takeIf { it.isNotEmpty() && it != "null" },
+            coverPath = effectiveCoverPath,
+            originalCoverPath = originalCoverPath,
+            currentCoverPath = currentCoverPath,
             rootPath = json.getString("rootPath"),
             format = format,
             sourceFormat = sourceFormat,
@@ -293,6 +311,140 @@ internal fun loadBookMetadata(folder: File): EpubBook? {
         // [SELF-HEALING] If JSON is corrupt, return null so scanBooks can ignore it or 
         // the caller can trigger a re-import/re-parse.
         null
+    }
+}
+
+private data class ResolvedBookCoverFiles(
+    val coverPath: String?,
+    val originalCoverPath: String?,
+    val currentCoverPath: String?,
+)
+
+private fun reconcileStoredBookCoverFiles(
+    bookFolder: File,
+    book: Book,
+    existingMetadata: EpubBook?,
+): ResolvedBookCoverFiles {
+    val effectiveCoverFile = File(bookFolder, EPUB_COVER_FILE_NAME)
+    val originalCoverFile = File(bookFolder, EPUB_ORIGINAL_COVER_FILE_NAME)
+    val currentCoverFile = File(bookFolder, EPUB_CURRENT_COVER_FILE_NAME)
+
+    val previousOriginalFile = existingMetadata
+        ?.originalCoverPath
+        .toExistingCoverFile()
+        ?: existingMetadata?.coverPath.toExistingCoverFile()
+    val previousCurrentFile = existingMetadata
+        ?.currentCoverPath
+        .toExistingCoverFile()
+    val shouldKeepCurrentCopy = when {
+        existingMetadata == null -> true
+        existingMetadata.currentCoverPath != null -> true
+        else -> false
+    }
+
+    val coverImage = book.coverImage
+    val coverBytes = coverImage?.readBytesOrNull()
+    val isCustomCover = coverImage?.href?.let(::isEditedBookCustomCoverHref) == true
+
+    var resolvedOriginalFile = when {
+        coverBytes != null && !isCustomCover -> {
+            writeBytesToFile(coverBytes, originalCoverFile)
+            originalCoverFile
+        }
+
+        previousOriginalFile != null -> copyToCoverSlot(previousOriginalFile, originalCoverFile)
+        previousCurrentFile != null -> copyToCoverSlot(previousCurrentFile, originalCoverFile)
+        else -> {
+            originalCoverFile.takeIf(File::exists)?.delete()
+            null
+        }
+    }
+
+    val resolvedCurrentFile = when {
+        coverBytes != null && isCustomCover -> {
+            writeBytesToFile(coverBytes, currentCoverFile)
+            currentCoverFile
+        }
+
+        coverBytes != null && shouldKeepCurrentCopy -> {
+            val source = resolvedOriginalFile ?: currentCoverFile.takeIf(File::exists)
+            source?.let { copyToCoverSlot(it, currentCoverFile) }
+        }
+
+        previousCurrentFile != null && shouldKeepCurrentCopy -> copyToCoverSlot(previousCurrentFile, currentCoverFile)
+        shouldKeepCurrentCopy && resolvedOriginalFile != null -> copyToCoverSlot(resolvedOriginalFile, currentCoverFile)
+        else -> {
+            currentCoverFile.takeIf(File::exists)?.delete()
+            null
+        }
+    }
+
+    if (resolvedOriginalFile == null && resolvedCurrentFile != null) {
+        resolvedOriginalFile = copyToCoverSlot(resolvedCurrentFile, originalCoverFile)
+    }
+
+    val effectiveSource = resolvedCurrentFile ?: resolvedOriginalFile
+    val resolvedEffectiveFile = effectiveSource?.let { source ->
+        if (source.absolutePath == effectiveCoverFile.absolutePath) {
+            source
+        } else {
+            copyToCoverSlot(source, effectiveCoverFile)
+        }
+    } ?: run {
+        effectiveCoverFile.takeIf(File::exists)?.delete()
+        null
+    }
+
+    return ResolvedBookCoverFiles(
+        coverPath = resolvedEffectiveFile?.absolutePath,
+        originalCoverPath = resolvedOriginalFile?.absolutePath,
+        currentCoverPath = resolvedCurrentFile?.absolutePath,
+    )
+}
+
+private fun String?.toExistingCoverFile(): File? {
+    val path = this?.takeIf { it.isNotBlank() } ?: return null
+    return File(path).takeIf(File::exists)
+}
+
+private fun nl.siegmann.epublib.domain.Resource.readBytesOrNull(): ByteArray? {
+    return runCatching {
+        inputStream.use { input -> input.readBytes() }
+    }.getOrNull()
+}
+
+private fun copyToCoverSlot(source: File, target: File): File {
+    if (source.absolutePath == target.absolutePath) {
+        return source
+    }
+
+    source.inputStream().use { input ->
+        FileOutputStream(target).use { output ->
+            input.copyTo(output)
+        }
+    }
+    return target
+}
+
+private fun writeBytesToFile(bytes: ByteArray, target: File) {
+    FileOutputStream(target).use { output ->
+        output.write(bytes)
+    }
+}
+
+private fun isEditedBookCustomCoverHref(rawHref: String): Boolean {
+    return rawHref
+        .substringBefore("#")
+        .removePrefix("/")
+        .trim()
+        .startsWith(EDITED_BOOK_CUSTOM_COVER_PREFIX)
+}
+
+private fun JSONObject.optCoverPath(key: String): String? {
+    return when (val value = opt(key)) {
+        null,
+        JSONObject.NULL -> null
+        else -> value.toString().takeIf { it.isNotBlank() && it != "null" }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.epubreader.feature.editbook
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -41,6 +42,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Delete
@@ -48,11 +50,13 @@ import androidx.compose.material.icons.filled.Deselect
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
-import androidx.compose.material.icons.filled.UploadFile
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -83,8 +87,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -113,11 +117,13 @@ private val SupportedImportExtensions = setOf("html", "htm", "xhtml")
 
 private enum class EditBookTab { DETAILS, CHAPTERS }
 private enum class ChapterSelectionMode { SPECIFIC, RANGE, OUTSIDE }
+private enum class ChapterDisplaySort { ASCENDING, DESCENDING }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditBookScreen(
     book: EpubBook,
+    allowBlankCovers: Boolean,
     isSaving: Boolean,
     errorMessage: String?,
     onDismissError: () -> Unit,
@@ -132,6 +138,7 @@ fun EditBookScreen(
     var chapterItems by remember(book.id) { mutableStateOf(originalChapterItems) }
     var selectedChapterIds by remember(book.id) { mutableStateOf<Set<String>>(emptySet()) }
     var chapterQuery by rememberSaveable(book.id) { mutableStateOf("") }
+    var chapterDisplaySort by rememberSaveable(book.id) { mutableStateOf(ChapterDisplaySort.ASCENDING) }
     var showUnsavedChangesDialog by remember { mutableStateOf(false) }
     var showDeleteSelectionDialog by remember { mutableStateOf(false) }
     var showAddTextDialog by remember { mutableStateOf(false) }
@@ -157,6 +164,13 @@ fun EditBookScreen(
             }
         }
     }
+    val displayedChapterItems = remember(filteredChapterItems, chapterDisplaySort) {
+        if (chapterDisplaySort == ChapterDisplaySort.DESCENDING) {
+            filteredChapterItems.asReversed()
+        } else {
+            filteredChapterItems
+        }
+    }
     val selectedChapterItems = remember(chapterItems, selectedChapterIds) {
         chapterItems.filter { it.id in selectedChapterIds }
     }
@@ -166,9 +180,29 @@ fun EditBookScreen(
         chapterItems != originalChapterItems
     val canSave = title.trim().isNotBlank() && chapterItems.isNotEmpty() && !isSaving
     val hasPersistedSelection = selectedChapterItems.any(EditableChapterItem::isPersisted)
+    val storedCoverModel = remember(book, allowBlankCovers) {
+        book.displayCoverPath(allowBlankCovers)
+            ?.takeIf { File(it).exists() }
+            ?.let(::File)
+    }
+    val removedCoverFallbackModel = remember(book) {
+        sequenceOf(
+            book.originalCoverPath,
+            book.currentCoverPath,
+            book.coverPath,
+        )
+            .filterNotNull()
+            .firstOrNull { path -> File(path).exists() }
+            ?.let(::File)
+    }
+    val hasStoredCover = remember(book) {
+        sequenceOf(book.currentCoverPath, book.originalCoverPath, book.coverPath)
+            .filterNotNull()
+            .any { path -> File(path).exists() }
+    }
     val coverModel: Any? = when (val action = coverAction) {
-        BookCoverAction.Keep -> book.coverPath?.takeIf { File(it).exists() }?.let(::File)
-        BookCoverAction.Remove -> null
+        BookCoverAction.Keep -> storedCoverModel
+        BookCoverAction.Remove -> if (allowBlankCovers) null else removedCoverFallbackModel
         is BookCoverAction.Replace -> action.cover.bytes
     }
 
@@ -201,9 +235,14 @@ fun EditBookScreen(
         }
     }
 
-    LaunchedEffect(pendingGoToChapterIndex, chapterQuery) {
+    LaunchedEffect(pendingGoToChapterIndex, chapterQuery, displayedChapterItems) {
         if (pendingGoToChapterIndex > 0 && chapterQuery.isBlank()) {
-            chapterListState.animateScrollToItem(pendingGoToChapterIndex - 1)
+            val targetListIndex = displayedChapterItems.indexOfFirst { indexedItem ->
+                indexedItem.index == pendingGoToChapterIndex - 1
+            }
+            if (targetListIndex != -1) {
+                chapterListState.animateScrollToItem(targetListIndex)
+            }
             pendingGoToChapterIndex = 0
         }
     }
@@ -289,25 +328,22 @@ fun EditBookScreen(
                         title = title,
                         author = author,
                         coverModel = coverModel,
+                        canRemoveCover = !isSaving && (coverAction != BookCoverAction.Remove) && (hasStoredCover || coverModel != null),
                         chapterCount = chapterItems.size,
                         isSaving = isSaving,
                         coverLoadInFlight = coverLoadInFlight,
                         onTitleChange = { title = it },
                         onAuthorChange = { author = it },
-                        onToggleCoverAction = {
-                            if (coverModel == null) {
-                                coverPicker.launch(SupportedCoverMimeTypes)
-                            } else {
-                                coverAction = BookCoverAction.Remove
-                            }
-                        },
+                        onPickCover = { coverPicker.launch(SupportedCoverMimeTypes) },
+                        onRemoveCover = { coverAction = BookCoverAction.Remove },
                     )
 
                     EditBookTab.CHAPTERS -> EditBookChaptersTab(
                         chapterItems = chapterItems,
-                        filteredChapterItems = filteredChapterItems,
+                        filteredChapterItems = displayedChapterItems,
                         selectedChapterIds = selectedChapterIds,
                         query = chapterQuery,
+                        chapterDisplaySort = chapterDisplaySort,
                         isSaving = isSaving,
                         listState = chapterListState,
                         onQueryChange = { chapterQuery = it },
@@ -337,6 +373,13 @@ fun EditBookScreen(
                         onRequestSelectionDialog = { showSelectionDialog = true },
                         onRequestMoveSelection = { showMoveSelectionDialog = true },
                         onRequestGoToChapter = { showGoToChapterDialog = true },
+                        onToggleSort = {
+                            chapterDisplaySort = if (chapterDisplaySort == ChapterDisplaySort.ASCENDING) {
+                                ChapterDisplaySort.DESCENDING
+                            } else {
+                                ChapterDisplaySort.ASCENDING
+                            }
+                        },
                     )
                 }
             }
@@ -464,18 +507,21 @@ fun EditBookScreen(
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun EditBookDetailsTab(
     book: EpubBook,
     title: String,
     author: String,
     coverModel: Any?,
+    canRemoveCover: Boolean,
     chapterCount: Int,
     isSaving: Boolean,
     coverLoadInFlight: Boolean,
     onTitleChange: (String) -> Unit,
     onAuthorChange: (String) -> Unit,
-    onToggleCoverAction: () -> Unit,
+    onPickCover: () -> Unit,
+    onRemoveCover: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -492,9 +538,11 @@ private fun EditBookDetailsTab(
                         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                             CoverPreviewPane(
                                 coverModel = coverModel,
+                                canRemoveCover = canRemoveCover,
                                 isSaving = isSaving,
                                 coverLoadInFlight = coverLoadInFlight,
-                                onToggleCoverAction = onToggleCoverAction,
+                                onPickCover = onPickCover,
+                                onRemoveCover = onRemoveCover,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                             DetailsFieldColumn(
@@ -513,9 +561,11 @@ private fun EditBookDetailsTab(
                         ) {
                             CoverPreviewPane(
                                 coverModel = coverModel,
+                                canRemoveCover = canRemoveCover,
                                 isSaving = isSaving,
                                 coverLoadInFlight = coverLoadInFlight,
-                                onToggleCoverAction = onToggleCoverAction,
+                                onPickCover = onPickCover,
+                                onRemoveCover = onRemoveCover,
                                 modifier = Modifier.weight(0.34f),
                             )
                             DetailsFieldColumn(
@@ -546,6 +596,7 @@ private fun EditBookChaptersTab(
     filteredChapterItems: List<IndexedValue<EditableChapterItem>>,
     selectedChapterIds: Set<String>,
     query: String,
+    chapterDisplaySort: ChapterDisplaySort,
     isSaving: Boolean,
     listState: LazyListState,
     onQueryChange: (String) -> Unit,
@@ -557,6 +608,7 @@ private fun EditBookChaptersTab(
     onRequestSelectionDialog: () -> Unit,
     onRequestMoveSelection: () -> Unit,
     onRequestGoToChapter: () -> Unit,
+    onToggleSort: () -> Unit,
 ) {
     val selectedCount = selectedChapterIds.size
     val toggleSelectionDescription = if (selectedCount == 0) {
@@ -578,7 +630,7 @@ private fun EditBookChaptersTab(
                 onValueChange = onQueryChange,
                 modifier = Modifier.weight(1f).testTag("edit-book-search"),
                 label = { Text("Search") },
-                placeholder = { Text("Title, href, or chapter #") },
+                placeholder = { Text("Index, title, or href") },
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 enabled = !isSaving,
@@ -588,7 +640,7 @@ private fun EditBookChaptersTab(
                 onClick = onRequestGoToChapter,
                 contentDescription = "Go to chapter",
                 testTag = "edit-book-action-go-to",
-                icon = { Icon(Icons.Default.ArrowDownward, contentDescription = null) },
+                icon = { Icon(Icons.Default.MyLocation, contentDescription = null) },
             )
         }
 
@@ -662,6 +714,26 @@ private fun EditBookChaptersTab(
                     testTag = "edit-book-action-delete",
                     icon = { Icon(Icons.Default.Delete, contentDescription = null) },
                 )
+                ChapterActionButton(
+                    enabled = !isSaving && chapterItems.isNotEmpty(),
+                    onClick = onToggleSort,
+                    contentDescription = if (chapterDisplaySort == ChapterDisplaySort.ASCENDING) {
+                        "Sort chapters descending"
+                    } else {
+                        "Sort chapters ascending"
+                    },
+                    testTag = "edit-book-action-sort",
+                    icon = {
+                        Icon(
+                            imageVector = if (chapterDisplaySort == ChapterDisplaySort.ASCENDING) {
+                                Icons.Default.ArrowDownward
+                            } else {
+                                Icons.Default.ArrowUpward
+                            },
+                            contentDescription = null,
+                        )
+                    },
+                )
             }
         }
 
@@ -703,19 +775,29 @@ private fun ChapterRow(
     onToggleSelection: () -> Unit,
 ) {
     Surface(
+        onClick = onToggleSelection,
         shape = RoundedCornerShape(16.dp),
         color = if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface,
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onToggleSelection),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(checked = selected, onCheckedChange = { onToggleSelection() })
+            IconButton(
+                onClick = onToggleSelection,
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    imageVector = if (selected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                    contentDescription = if (selected) "Deselect" else "Select",
+                    tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                )
+            }
             Column(Modifier.weight(1f)) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
@@ -731,13 +813,13 @@ private fun ChapterRow(
                     )
                 }
                 Text(
-                    when (chapter.source) {
+                    text = when (chapter.source) {
                         EditableChapterSource.EXISTING -> chapter.href.orEmpty()
                         EditableChapterSource.NEW_TEXT -> "Draft text chapter"
                         EditableChapterSource.IMPORTED_HTML -> "Imported HTML/XHTML"
                     },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -772,9 +854,11 @@ private fun ActionStrip(content: @Composable RowScope.() -> Unit) {
 @Composable
 private fun CoverPreviewPane(
     coverModel: Any?,
+    canRemoveCover: Boolean,
     isSaving: Boolean,
     coverLoadInFlight: Boolean,
-    onToggleCoverAction: () -> Unit,
+    onPickCover: () -> Unit,
+    onRemoveCover: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -804,28 +888,43 @@ private fun CoverPreviewPane(
             }
         }
 
-        CoverActionButton(
-            enabled = !isSaving && !coverLoadInFlight,
-            onClick = onToggleCoverAction,
-            contentDescription = if (coverModel == null) "Pick cover" else "Remove cover",
-            testTag = "edit-book-cover-toggle",
+        Row(
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = 10.dp, y = (-10).dp),
+                .align(Alignment.BottomEnd)
+                .offset(x = (-10).dp, y = (-10).dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (coverLoadInFlight) {
-                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
-            } else {
+            CoverActionButton(
+                enabled = !isSaving && !coverLoadInFlight && canRemoveCover,
+                onClick = onRemoveCover,
+                contentDescription = "Remove current cover",
+                testTag = "edit-book-cover-remove",
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ) {
                 Icon(
-                    imageVector = if (coverModel == null) Icons.Default.Image else Icons.Default.Delete,
+                    imageVector = Icons.Default.Delete,
                     contentDescription = null,
-                    tint = if (coverModel == null) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.error
-                    },
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(18.dp),
                 )
+            }
+            CoverActionButton(
+                enabled = !isSaving && !coverLoadInFlight,
+                onClick = onPickCover,
+                contentDescription = "Replace current cover",
+                testTag = "edit-book-cover-pick",
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ) {
+                if (coverLoadInFlight) {
+                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Image,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
             }
         }
     }
@@ -869,19 +968,37 @@ private fun CoverActionButton(
     onClick: () -> Unit,
     contentDescription: String,
     testTag: String,
+    containerColor: androidx.compose.ui.graphics.Color,
+    contentColor: androidx.compose.ui.graphics.Color,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    Box(
+    Surface(
+        onClick = onClick,
+        enabled = enabled,
+        color = if (enabled) {
+            containerColor
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHighest
+        },
+        contentColor = if (enabled) {
+            contentColor
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+        },
+        shape = CircleShape,
+        shadowElevation = 8.dp,
         modifier = modifier
-            .shadow(10.dp, CircleShape, clip = false)
             .size(36.dp)
             .testTag(testTag)
-            .clickable(enabled = enabled, onClick = onClick)
             .semantics { this.contentDescription = contentDescription },
-        contentAlignment = Alignment.Center,
     ) {
-        content()
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            content()
+        }
     }
 }
 
@@ -931,15 +1048,27 @@ private fun ChapterActionButton(
     testTag: String,
     icon: @Composable () -> Unit,
 ) {
-    IconButton(
+    Surface(
         onClick = onClick,
         enabled = enabled,
+        shape = CircleShape,
+        color = Color.Transparent,
+        contentColor = if (enabled) {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+        },
         modifier = Modifier
             .size(40.dp)
             .testTag(testTag)
             .semantics { this.contentDescription = contentDescription },
     ) {
-        Box(contentAlignment = Alignment.Center) { icon() }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            icon()
+        }
     }
 }
 
@@ -1051,25 +1180,33 @@ private fun AddTextOrImportChapterDialog(
             }
         },
         confirmButton = {
-            TextButton(enabled = canAdd, onClick = {
-                parsedPosition?.let { insertPosition ->
-                    val chapter = if (isImportedMode) {
-                        buildHtmlDraftChapter(
-                            title = title,
-                            markup = importedMarkup.orEmpty(),
-                            fileNameHint = importedFileName,
-                        )
-                    } else {
-                        buildTextDraftChapter(title, body)
+            TextButton(
+                enabled = canAdd,
+                onClick = {
+                    parsedPosition?.let { insertPosition ->
+                        val chapter = if (isImportedMode) {
+                            buildHtmlDraftChapter(
+                                title = title,
+                                markup = importedMarkup.orEmpty(),
+                                fileNameHint = importedFileName,
+                            )
+                        } else {
+                            buildTextDraftChapter(title, body)
+                        }
+                        onAddChapter(chapter, insertPosition)
                     }
-                    onAddChapter(chapter, insertPosition)
-                }
-            }) {
+                },
+            ) {
                 Text("Add")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+            ) {
+                Text("Cancel")
+            }
         },
     )
 }
@@ -1149,15 +1286,25 @@ private fun ChapterSelectionDialog(
             }
         },
         confirmButton = {
-            TextButton(enabled = canConfirm, onClick = {
-                if (parsedFirst != null) {
-                    onConfirm(mode, parsedFirst, parsedSecond ?: parsedFirst)
-                }
-            }) {
+            TextButton(
+                enabled = canConfirm,
+                onClick = {
+                    if (parsedFirst != null) {
+                        onConfirm(mode, parsedFirst, parsedSecond ?: parsedFirst)
+                    }
+                },
+            ) {
                 Text("Select")
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel Select") } },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+            ) {
+                Text("Cancel Select")
+            }
+        },
     )
 }
 
@@ -1169,11 +1316,12 @@ private fun SelectionModeCard(
     modifier: Modifier = Modifier,
 ) {
     Surface(
+        onClick = onClick,
         color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(16.dp),
         tonalElevation = if (selected) 6.dp else 0.dp,
         shadowElevation = if (selected) 10.dp else 0.dp,
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier,
     ) {
         Box(
             modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp),
@@ -1224,13 +1372,23 @@ private fun PositionDialog(
             }
         },
         confirmButton = {
-            TextButton(enabled = parsedPosition != null, onClick = {
-                parsedPosition?.let(onConfirm)
-            }) {
+            TextButton(
+                enabled = parsedPosition != null,
+                onClick = {
+                    parsedPosition?.let(onConfirm)
+                },
+            ) {
                 Text(confirmLabel)
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+            ) {
+                Text("Cancel")
+            }
+        },
     )
 }
 
@@ -1262,11 +1420,21 @@ private fun RenameChapterDialog(
             }
         },
         confirmButton = {
-            TextButton(enabled = title.trim().isNotBlank(), onClick = { onConfirm(title) }) {
+            TextButton(
+                enabled = title.trim().isNotBlank(),
+                onClick = { onConfirm(title) },
+            ) {
                 Text("Rename")
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+            ) {
+                Text("Cancel")
+            }
+        },
     )
 }
 
@@ -1280,13 +1448,32 @@ private fun SimpleConfirmDialog(
     onConfirm: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
+    val isDestructive = confirmLabel == "Delete" || confirmLabel == "Discard"
     AlertDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(dismissOnClickOutside = false),
         title = { Text(title) },
         text = { Text(message) },
-        confirmButton = { TextButton(onClick = onConfirm) { Text(confirmLabel) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(dismissLabel) } },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                colors = if (isDestructive) {
+                    ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                } else {
+                    ButtonDefaults.textButtonColors()
+                },
+            ) {
+                Text(confirmLabel)
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+            ) {
+                Text(dismissLabel)
+            }
+        },
     )
 }
 

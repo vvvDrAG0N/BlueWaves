@@ -272,6 +272,7 @@ class SettingsManager(private val context: Context) {
             preferences[SettingsPreferenceKeys.showScrubber] = updated.showScrubber
             preferences[SettingsPreferenceKeys.showSystemBar] = updated.showSystemBar
             preferences[SettingsPreferenceKeys.selectableText] = updated.selectableText
+            preferences[SettingsPreferenceKeys.allowBlankCovers] = updated.allowBlankCovers
         }
     }
 

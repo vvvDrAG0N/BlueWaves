@@ -675,6 +675,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                 Screen.EditBook -> editingBook?.let { book ->
                     EditBookScreen(
                         book = book,
+                        allowBlankCovers = globalSettings.allowBlankCovers,
                         isSaving = editBookSaveInFlight,
                         errorMessage = editBookErrorMessage,
                         onDismissError = { editBookErrorMessage = null },
@@ -732,18 +733,18 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         )
     }
 
-    BackHandler(
-        enabled = currentScreen != Screen.Library || drawerState.isOpen || isFolderSelectionMode || isBookSelectionMode,
-    ) {
+    val shellBackEnabled = shouldUseShellBackHandler(
+        currentScreen = currentScreen,
+        isDrawerOpen = drawerState.isOpen,
+        isFolderSelectionMode = isFolderSelectionMode,
+        isBookSelectionMode = isBookSelectionMode,
+    )
+
+    BackHandler(enabled = shellBackEnabled) {
         when {
             drawerState.isOpen -> closeDrawer()
             isBookSelectionMode -> clearBookSelection()
             isFolderSelectionMode -> clearFolderSelection()
-            currentScreen == Screen.EditBook -> {
-                if (!editBookSaveInFlight) {
-                    exitEditBook()
-                }
-            }
             else -> currentScreen = Screen.Library
         }
     }

@@ -2,7 +2,6 @@ package com.epubreader.app
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
@@ -32,8 +31,6 @@ import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Close
@@ -50,7 +47,6 @@ import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -64,14 +60,13 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -515,24 +510,27 @@ private fun LibraryBookGrid(
         items(state.libraryItems, key = { it.id }) { book ->
             val isSelected = state.selection.selectedBookIds.contains(book.id)
             Box(
-                modifier = Modifier.combinedClickable(
-                    onClick = {
-                        if (state.selection.isBookSelectionMode) {
-                            actions.onToggleBookSelection(book)
-                        } else {
-                            actions.onOpenBook(book)
-                        }
-                    },
-                    onLongClick = {
-                        if (!state.selection.isBookSelectionMode) {
-                            actions.onStartBookSelection(book)
-                        }
-                    },
-                ),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .combinedClickable(
+                        onClick = {
+                            if (state.selection.isBookSelectionMode) {
+                                actions.onToggleBookSelection(book)
+                            } else {
+                                actions.onOpenBook(book)
+                            }
+                        },
+                        onLongClick = {
+                            if (!state.selection.isBookSelectionMode) {
+                                actions.onStartBookSelection(book)
+                            }
+                        },
+                    ),
             ) {
                 BookItem(
                     book = book,
                     settingsManager = state.settingsManager,
+                    globalSettings = state.globalSettings,
                     isSelected = isSelected,
                 )
             }
@@ -558,14 +556,17 @@ internal fun BoxScope.BookSelectionActionBar(
             .fillMaxWidth(),
     ) {
         Surface(
-            color = if (state.theme == "oled") Color.Black else MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp),
+            color = if (state.theme == "oled") Color.Black else MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(24.dp),
             tonalElevation = if (state.theme == "oled") 0.dp else 8.dp,
-            shadowElevation = 12.dp,
+            shadowElevation = 6.dp,
             border = if (state.theme == "oled") {
                 BorderStroke(1.dp, Color.White.copy(alpha = 0.15f))
             } else {
-                null
+                BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                )
             },
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -578,7 +579,8 @@ internal fun BoxScope.BookSelectionActionBar(
             ) {
                 Surface(
                     onClick = actions.onDeleteSelectedBooks,
-                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
+                    color = Color.Transparent,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
                     shape = CircleShape,
                     modifier = Modifier.size(56.dp),
                 ) {
@@ -586,7 +588,7 @@ internal fun BoxScope.BookSelectionActionBar(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete Selected Books",
-                            tint = MaterialTheme.colorScheme.error,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp),
                         )
                     }
@@ -594,7 +596,8 @@ internal fun BoxScope.BookSelectionActionBar(
 
                 Surface(
                     onClick = actions.onMoveSelectedBooks,
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                    color = Color.Transparent,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
                     shape = CircleShape,
                     modifier = Modifier.size(56.dp),
                 ) {
@@ -611,8 +614,7 @@ internal fun BoxScope.BookSelectionActionBar(
                 SelectionActionButton(
                     enabled = state.canEditSelection,
                     onClick = actions.onEditSelectedBook,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
-                    contentColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.primary,
                     contentDescription = "Edit Selected Book",
                     icon = Icons.Default.Edit,
                 )
@@ -625,22 +627,26 @@ internal fun BoxScope.BookSelectionActionBar(
 private fun SelectionActionButton(
     enabled: Boolean,
     onClick: () -> Unit,
-    containerColor: Color,
     contentColor: Color,
     contentDescription: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
 ) {
     Surface(
-        color = if (enabled) {
-            containerColor
-        } else {
-            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
-        },
+        onClick = onClick,
+        enabled = enabled,
+        color = Color.Transparent,
+        border = BorderStroke(
+            1.dp,
+            if (enabled) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            } else {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+            }
+        ),
         shape = CircleShape,
         modifier = Modifier
             .size(56.dp)
-            .semantics { this.contentDescription = contentDescription }
-            .clickable(enabled = enabled, onClick = onClick),
+            .semantics { this.contentDescription = contentDescription },
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -652,7 +658,7 @@ private fun SelectionActionButton(
                 tint = if (enabled) {
                     contentColor
                 } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                 },
                 modifier = Modifier.size(24.dp),
             )

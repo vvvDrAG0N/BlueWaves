@@ -1,14 +1,15 @@
 # EditBookScreen Cluster
 
-> 24 nodes · cohesion 0.08
+> 25 nodes · cohesion 0.08
 
 ## Key Concepts
 
-- **EditBookScreen.kt** (23 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
+- **EditBookScreen.kt** (24 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 - **ActionGroup()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 - **ActionStrip()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 - **AddTextOrImportChapterDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 - **ChapterActionButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
+- **ChapterDisplaySort** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 - **ChapterRow()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 - **ChapterSelectionDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 - **ChapterSelectionMode** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
@@ -39,7 +40,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 46 (100%)
+- EXTRACTED: 48 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
