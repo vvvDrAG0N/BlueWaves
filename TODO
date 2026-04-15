@@ -1,5 +1,5 @@
 TODO
-
+- Add System Foreground color, make sure to include it in the advanced Theme System.
 - Add a highlight for the selected theme in settings and reader bottom bar. make sure opening themes on the setting and reader side moves the user to show the current applied theme.
 - Update Selectable Text to include overlays app for Define or Translation using system installed applications like Google Translate or Google, or similar apps.
 - There is no visual identifier when importing large book, large book take some time so it appears as if stuck without visual change.
