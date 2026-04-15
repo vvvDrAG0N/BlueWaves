@@ -121,13 +121,15 @@ private fun readPendingChangelogEntries(context: Context, lastSeenVersion: Int):
     return try {
         val jsonString = context.assets.open("changelog.json").bufferedReader().use { it.readText() }
         val fullChangelog = JSONArray(jsonString)
-        buildList {
-            for (index in 0 until fullChangelog.length()) {
-                val entry = fullChangelog.getJSONObject(index)
-                if (entry.getInt("versionCode") > lastSeenVersion) {
-                    add(entry)
-                }
+        if (fullChangelog.length() > 0) {
+            val latestEntry = fullChangelog.getJSONObject(0)
+            if (latestEntry.getInt("versionCode") > lastSeenVersion) {
+                listOf(latestEntry)
+            } else {
+                emptyList()
             }
+        } else {
+            emptyList()
         }
     } catch (_: Exception) {
         emptyList()
