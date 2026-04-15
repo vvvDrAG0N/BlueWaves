@@ -27,6 +27,7 @@ import com.epubreader.core.model.BookFormat
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
+import com.epubreader.data.pdf.legacy.PdfLegacyRuntime
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -40,7 +41,7 @@ import kotlinx.coroutines.CancellationException
  */
 class EpubParser internal constructor(
     private val context: Context,
-    private val pdfToEpubConverter: PdfToEpubConverter = MlKitPdfToEpubConverter(context),
+    private val pdfLegacyBridge: PdfLegacyBridge = PdfLegacyRuntime(context),
 ) {
 
     private val booksDir = File(context.cacheDir, EPUB_BOOKS_DIR_NAME).apply {
@@ -297,16 +298,12 @@ class EpubParser internal constructor(
     fun prepareBookForReading(book: EpubBook): EpubBook {
         val bookFolder = File(book.rootPath)
         val current = loadBookMetadata(bookFolder) ?: book
+        val hasPdfFallback = ensureCanonicalSourcePdfFile(bookFolder) != null
         if (current.sourceFormat != BookFormat.PDF) {
             return current
         }
 
-        if (current.format != BookFormat.EPUB) {
-            return current.copy(hasPdfFallback = ensureCanonicalSourcePdfFile(bookFolder) != null)
-        }
-
-        val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
-        if (!generatedEpub.exists() || !validateGeneratedEpub(generatedEpub)) {
+        if (current.conversionStatus == ConversionStatus.READY && !isGeneratedEpubReadyForReading(bookFolder, current)) {
             AppLog.w(AppLog.PARSER) { "Generated EPUB fallback failed for ${current.id}; demoting to raw PDF" }
             return rebuildPdfMetadata(
                 bookFolder,
@@ -315,7 +312,15 @@ class EpubParser internal constructor(
                 preferredFormat = BookFormat.PDF,
                 conversionCompletedPages = current.conversionCompletedPages,
                 conversionTotalPages = current.conversionTotalPages,
-            ) ?: current
+            ) ?: current.copy(
+                format = BookFormat.PDF,
+                conversionStatus = ConversionStatus.FAILED,
+                hasPdfFallback = hasPdfFallback,
+            )
+        }
+
+        if (current.format != BookFormat.EPUB) {
+            return current.copy(hasPdfFallback = hasPdfFallback)
         }
 
         return current
@@ -333,8 +338,23 @@ class EpubParser internal constructor(
                     null
                 } else {
                     val updated = current.copy(format = BookFormat.EPUB)
-                    saveBookMetadata(bookFolder, updated)
-                    updated
+                    if (!isGeneratedEpubReadyForReading(bookFolder, updated)) {
+                        rebuildPdfMetadata(
+                            bookFolder = bookFolder,
+                            displayName = null,
+                            conversionStatus = ConversionStatus.FAILED,
+                            preferredFormat = BookFormat.PDF,
+                            conversionCompletedPages = current.conversionCompletedPages,
+                            conversionTotalPages = current.conversionTotalPages,
+                        ) ?: current.copy(
+                            format = BookFormat.PDF,
+                            conversionStatus = ConversionStatus.FAILED,
+                            hasPdfFallback = ensureCanonicalSourcePdfFile(bookFolder) != null,
+                        )
+                    } else {
+                        saveBookMetadata(bookFolder, updated)
+                        updated
+                    }
                 }
             }
 
@@ -364,12 +384,12 @@ class EpubParser internal constructor(
             conversionCompletedPages = current.conversionCompletedPages,
             conversionTotalPages = current.conversionTotalPages.takeIf { it > 0 } ?: current.pageCount,
         ) ?: return null
-        enqueuePdfConversionWork(context, queued.id)
+        pdfLegacyBridge.enqueue(queued.id)
         return queued
     }
 
     fun cancelPdfConversion(bookId: String) {
-        cancelPdfConversionWork(context, bookId)
+        pdfLegacyBridge.cancel(bookId)
     }
 
     internal suspend fun convertStoredPdfForBook(
@@ -394,11 +414,24 @@ class EpubParser internal constructor(
 
         val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
         if (generatedEpub.exists() && validateGeneratedEpub(generatedEpub)) {
-            return rebuildBookMetadata(bookFolder) ?: existing
+            val rebuiltBook = rebuildBookMetadata(bookFolder) ?: existing
+            return if (isGeneratedEpubReadyForReading(bookFolder, rebuiltBook)) {
+                rebuiltBook
+            } else {
+                generatedEpub.delete()
+                rebuildPdfMetadata(
+                    bookFolder = bookFolder,
+                    displayName = null,
+                    conversionStatus = ConversionStatus.FAILED,
+                    preferredFormat = BookFormat.PDF,
+                    conversionCompletedPages = existing.conversionCompletedPages,
+                    conversionTotalPages = existing.conversionTotalPages.takeIf { it > 0 } ?: existing.pageCount,
+                ) ?: existing
+            }
         }
 
         val sourcePdf = ensureCanonicalSourcePdfFile(bookFolder) ?: return null
-        val workspaceDir = File(bookFolder, PDF_CONVERSION_WORKSPACE_DIR_NAME)
+        val workspaceDir = File(bookFolder, pdfLegacyBridge.workspaceDirName)
         val stagedGeneratedEpub = File(bookFolder, "$GENERATED_EPUB_FILE_NAME.importing")
         stagedGeneratedEpub.delete()
         generatedEpub.takeIf { it.exists() && !validateGeneratedEpub(it) }?.delete()
@@ -419,7 +452,7 @@ class EpubParser internal constructor(
         )
 
         try {
-            val conversionResult = pdfToEpubConverter.convert(
+            val conversionResult = pdfLegacyBridge.convert(
                 pdfFile = sourcePdf,
                 workspaceDir = workspaceDir,
                 outputFile = stagedGeneratedEpub,
@@ -441,7 +474,19 @@ class EpubParser internal constructor(
             if (conversionResult.succeeded && stagedGeneratedEpub.exists() && validateGeneratedEpub(stagedGeneratedEpub)) {
                 replaceFileAtomically(stagedGeneratedEpub, generatedEpub)
                 workspaceDir.deleteRecursively()
-                return rebuildBookMetadata(bookFolder)
+                val rebuiltBook = rebuildBookMetadata(bookFolder)
+                if (rebuiltBook != null && isGeneratedEpubReadyForReading(bookFolder, rebuiltBook)) {
+                    return rebuiltBook
+                }
+                generatedEpub.takeIf(File::exists)?.delete()
+                return rebuildPdfMetadata(
+                    bookFolder = bookFolder,
+                    displayName = null,
+                    conversionStatus = ConversionStatus.FAILED,
+                    preferredFormat = BookFormat.PDF,
+                    conversionCompletedPages = conversionResult.completedPages,
+                    conversionTotalPages = conversionResult.totalPages.takeIf { it > 0 } ?: existing.pageCount,
+                )
             }
 
             stagedGeneratedEpub.takeIf(File::exists)?.delete()
@@ -633,16 +678,15 @@ class EpubParser internal constructor(
                 )
             }
 
-            book.format == BookFormat.EPUB && book.spineHrefs.isEmpty() -> {
-                rebuildBookMetadata(bookFolder)
-                    ?: rebuildPdfMetadata(
-                        bookFolder,
-                        displayName = null,
-                        conversionStatus = ConversionStatus.FAILED,
-                        preferredFormat = BookFormat.PDF,
-                        conversionCompletedPages = book.conversionCompletedPages,
-                        conversionTotalPages = book.conversionTotalPages,
-                    )
+            book.conversionStatus == ConversionStatus.READY && !isGeneratedEpubReadyForReading(bookFolder, book) -> {
+                rebuildPdfMetadata(
+                    bookFolder,
+                    displayName = null,
+                    conversionStatus = ConversionStatus.FAILED,
+                    preferredFormat = BookFormat.PDF,
+                    conversionCompletedPages = book.conversionCompletedPages,
+                    conversionTotalPages = book.conversionTotalPages,
+                )
             }
 
             else -> book.copy(
@@ -659,7 +703,7 @@ class EpubParser internal constructor(
             File(bookFolder, LEGACY_PDF_DOCUMENT_FILE_NAME),
             File(bookFolder, "$GENERATED_EPUB_FILE_NAME.importing"),
         ).filter(File::exists).forEach(File::delete)
-        File(bookFolder, PDF_CONVERSION_WORKSPACE_DIR_NAME)
+        File(bookFolder, pdfLegacyBridge.workspaceDirName)
             .takeIf(File::exists)
             ?.deleteRecursively()
     }
@@ -674,7 +718,7 @@ class EpubParser internal constructor(
         File(bookFolder, "$GENERATED_EPUB_FILE_NAME.importing")
             .takeIf(File::exists)
             ?.delete()
-        File(bookFolder, PDF_CONVERSION_WORKSPACE_DIR_NAME)
+        File(bookFolder, pdfLegacyBridge.workspaceDirName)
             .takeIf(File::exists)
             ?.deleteRecursively()
     }
@@ -706,5 +750,42 @@ class EpubParser internal constructor(
                 book.spine.spineReferences.isNotEmpty()
             }
         }.getOrDefault(false)
+    }
+
+    private fun isGeneratedEpubReadyForReading(
+        bookFolder: File,
+        book: EpubBook,
+    ): Boolean {
+        if (book.sourceFormat != BookFormat.PDF) {
+            return true
+        }
+
+        val generatedEpub = activeEpubFile(bookFolder, BookFormat.PDF)
+        if (!generatedEpub.exists() || !validateGeneratedEpub(generatedEpub)) {
+            return false
+        }
+
+        val spineHrefs = book.spineHrefs
+            .map { it.substringBefore("#").removePrefix("/") }
+            .filter(String::isNotBlank)
+        if (spineHrefs.isEmpty()) {
+            return false
+        }
+
+        val allSpineEntriesExist = runCatching {
+            ZipFile(generatedEpub).use { zip ->
+                spineHrefs.all { cleanHref ->
+                    zip.getEntry(cleanHref) != null ||
+                        zip.getEntry("OEBPS/$cleanHref") != null ||
+                        zip.getEntry("OPS/$cleanHref") != null ||
+                        zip.entries().asSequence().any { it.name.endsWith(cleanHref) }
+                }
+            }
+        }.getOrDefault(false)
+        if (!allSpineEntriesExist) {
+            return false
+        }
+
+        return parseBookChapter(bookFolder.absolutePath, book.spineHrefs.first()).isNotEmpty()
     }
 }

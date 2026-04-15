@@ -1,10 +1,10 @@
 # EpubParser Cluster
 
-> 33 nodes · cohesion 0.06
+> 34 nodes · cohesion 0.06
 
 ## Key Concepts
 
-- **EpubParser** (32 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
+- **EpubParser** (33 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **EpubParser.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.cancelPdfConversion()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.cleanupArtifactsForNativeEpub()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
@@ -20,6 +20,7 @@
 - **.importPdfSource()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.inspectImportSource()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.inspectZipSource()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
+- **.isGeneratedEpubReadyForReading()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.loadMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.parseAndExtract()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.parseChapter()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
@@ -28,8 +29,7 @@
 - **.queryFileSize()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.readHeaderBytes()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 - **.reparseBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
-- **.resolveStoredBookFile()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
-- *... and 8 more nodes in this community*
+- *... and 9 more nodes in this community*
 
 ## Relationships
 
@@ -41,7 +41,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 64 (100%)
+- EXTRACTED: 66 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

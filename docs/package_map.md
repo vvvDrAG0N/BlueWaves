@@ -17,6 +17,7 @@ Graph-first rule:
 - `com.epubreader.app.AppNavigation`
   - Owns top-level navigation and library-level transient UI state.
   - Coordinates `SettingsManager`, `EpubParser`, `ReaderScreen`, and `SettingsScreen`.
+  - Temporarily blocks PDF-origin import/open flows while keeping legacy PDF entries visible in the library.
 
 ## Core Models
 
@@ -58,6 +59,11 @@ Keep these presentation-only. Do not move folder state or navigation side effect
 
 - `com.epubreader.data.parser.EpubParser`
   - EPUB extraction, metadata caching, and chapter parsing.
+  - Also fronts the parser-side bridge used to keep deprecated PDF internals isolated during the safe refactor.
+
+- `com.epubreader.data.parser.PdfLegacyBridge`
+  - Small parser-owned seam for legacy PDF conversion work.
+  - Keeps `EpubParser` from depending directly on worker/viewer details.
 
 ## Feature UI
 
@@ -67,6 +73,20 @@ Keep these presentation-only. Do not move folder state or navigation side effect
 
 - `com.epubreader.feature.settings.SettingsScreen`
   - Settings UI for global reader preferences.
+
+## Deprecated PDF Runtime
+
+- `com.epubreader.feature.pdf.legacy.PdfReaderScreen`
+  - Retained in source, but no longer reachable from the active app shell.
+
+- `com.epubreader.data.pdf.legacy.PdfToEpubConverter`
+  - Retained for the upcoming safe refactor and legacy parser-level coverage.
+
+- `com.epubreader.data.pdf.legacy.PdfConversionWorker`
+  - Retained only for legacy queued work and refactor continuity; new app-shell imports do not enqueue it.
+
+- `com.epubreader.app.AppNavigationPdfLegacy`
+  - Small app-shell bridge for deprecated PDF snackbar copy and legacy conversion metadata observation.
 
 ## Reader Split
 

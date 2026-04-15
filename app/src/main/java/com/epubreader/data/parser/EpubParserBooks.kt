@@ -87,6 +87,13 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
             BookFormat.PDF -> conversionTotalPages
             BookFormat.EPUB -> 0
         }
+        val preferredPdfFormat = existingMetadata?.format?.takeIf {
+            it == BookFormat.EPUB || it == BookFormat.PDF
+        } ?: if (ensureCanonicalSourcePdfFile(bookFolder) != null) {
+            BookFormat.PDF
+        } else {
+            BookFormat.EPUB
+        }
 
         val epubBook = EpubBook(
             id = bookFolder.name,
@@ -97,7 +104,10 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
                 ?: "Unknown Author",
             coverPath = coverPath,
             rootPath = bookFolder.absolutePath,
-            format = BookFormat.EPUB,
+            format = when (sourceFormat) {
+                BookFormat.PDF -> preferredPdfFormat
+                BookFormat.EPUB -> BookFormat.EPUB
+            },
             sourceFormat = sourceFormat,
             conversionStatus = when (sourceFormat) {
                 BookFormat.PDF -> ConversionStatus.READY
@@ -128,12 +138,25 @@ internal fun rebuildPdfMetadata(
 ): EpubBook? {
     val bookFile = ensureCanonicalSourcePdfFile(bookFolder) ?: return null
     val existingMetadata = loadBookMetadata(bookFolder)
-
-    File(bookFolder, EPUB_COVER_FILE_NAME).takeIf(File::exists)?.delete()
-    val pdfInfo = readPdfDocumentInfo(bookFile, bookFolder) ?: PdfDocumentInfo(
-        pageCount = existingMetadata?.pageCount ?: 0,
-        coverPath = existingMetadata?.coverPath,
-    )
+    val reusableCoverPath = existingMetadata?.coverPath
+        ?.takeIf { it.isNotBlank() }
+        ?.takeIf { File(it).exists() }
+    val existingPageCount = existingMetadata?.pageCount ?: 0
+    val canReuseExistingPdfInfo = existingPageCount > 0 && reusableCoverPath != null
+    if (!canReuseExistingPdfInfo && reusableCoverPath == null) {
+        File(bookFolder, EPUB_COVER_FILE_NAME).takeIf(File::exists)?.delete()
+    }
+    val pdfInfo = if (canReuseExistingPdfInfo) {
+        PdfDocumentInfo(
+            pageCount = existingPageCount,
+            coverPath = reusableCoverPath,
+        )
+    } else {
+        readPdfDocumentInfo(bookFile, bookFolder) ?: PdfDocumentInfo(
+            pageCount = existingPageCount,
+            coverPath = reusableCoverPath,
+        )
+    }
     val title = when {
         !displayName.isNullOrBlank() -> deriveTitleFromName(displayName, existingMetadata?.title ?: PDF_FALLBACK_TITLE)
         !existingMetadata?.title.isNullOrBlank() -> existingMetadata!!.title

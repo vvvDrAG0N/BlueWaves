@@ -60,48 +60,49 @@ Verification:
 - Summarize behavior changes, docs updated, tradeoffs, and remaining risks
 ```
 
-## Format Support
+## PDF Safe Refactor
 
 ```text
 Read `AGENTS.md`, `docs/README.md`, `docs/project_graph.md`, `docs/package_map.md`, `docs/architecture.md`, and `docs/system_overview.md` first.
 If `graphify-out/GRAPH_REPORT.md` exists, read it before raw files.
-If the task crosses packages or the entry point is unclear, run `graphify query "What files own PDF support, ZIP import flows, format detection, import routing, and parser/reader entry points?" --budget 1200` before opening source files.
+If the task crosses packages or the entry point is unclear, run `graphify query "What files own the deprecated PDF runtime, import gating, parser fallback logic, and reader handoff boundaries?" --budget 1200` before opening source files.
 Then read only the docs directly relevant to this task.
 
 Also read `docs/app_shell_navigation.md`, `docs/epub_parsing.md`, `docs/quick_ref.md`, `docs/AI_DEBUG_GUIDE.md`, `docs/ai_mental_model.md`, and `docs/test_checklist.md` before editing.
 Read `docs/reader_screen.md`, `docs/reader_flow.md`, and `docs/known_risks.md` as well if the implementation changes any reader entry point or EPUB handoff behavior.
 Start with `app/src/main/java/com/epubreader/app/AppNavigationContracts.kt`, `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `app/src/main/java/com/epubreader/app/AppNavigationOperations.kt`, `app/src/main/java/com/epubreader/data/parser/EpubParser.kt`, `app/src/main/java/com/epubreader/data/parser/EpubParserBooks.kt`, and `app/src/main/java/com/epubreader/core/model/LibraryModels.kt`.
-Load `app/src/main/java/com/epubreader/data/parser/EpubParserChapter.kt` only if EPUB chapter/image behavior changes, and load `app/src/main/java/com/epubreader/feature/reader/*` only if EPUB/PDF reader routing or reader reuse requires it.
+Load `app/src/main/java/com/epubreader/data/parser/EpubParserChapter.kt` only if EPUB chapter/image behavior changes, and load `app/src/main/java/com/epubreader/feature/reader/*` only if the PDF-safe-refactor explicitly reintroduces a reader surface.
 
-Task: feature
-Goal: implement PDF support and ZIP-based import flows without regressing existing EPUB import or reading behavior
+Task: safe refactor
+Goal: redesign the deprecated PDF path without regressing EPUB import, reader restoration, or SettingsManager-backed state
 
 User flow:
-1. User imports a supported file from the library flow.
-2. The app detects the format and routes it to the correct import and cache path.
-3. The imported item opens through the correct reader entry point, and unsupported archive contents fail gracefully with a clear result.
+1. The current app shell remains EPUB-only while the refactor happens behind a safe boundary.
+2. The refactor clarifies whether PDF returns as a separate runtime surface, a validated EPUB fallback flow, or is removed entirely.
+3. Only after the end-to-end behavior is proven should the shell import/open gates be reconsidered.
 
 Acceptance criteria:
-- The import path can distinguish supported EPUB, PDF, and ZIP-based inputs before committing a library mutation.
 - Existing EPUB duplicate detection, cache layout, metadata loading, and reader behavior remain stable.
-- PDF items can be represented in the library and opened through an explicit, maintainable reader path.
-- ZIP-based imports handle unsupported, empty, or ambiguous archives deterministically instead of silently half-importing.
-- Ship unit tests for format detection, import routing, and parser/reader entry points.
+- The deprecated PDF runtime has a clearly documented ownership boundary and no half-enabled shell entry points.
+- If PDF is reintroduced, import, fallback, progress, and runtime memory behavior are validated together.
+- ZIP-based imports keep deterministic EPUB-only behavior unless the refactor intentionally broadens support again.
+- Ship the smallest useful tests for the chosen direction, and explicitly park or remove obsolete PDF tests.
 - Update relevant markdown docs under `docs/`.
 - Rebuild graphify artifacts after implementation.
 
 Scope:
-- Preferred files/packages: `app/src/main/java/com/epubreader/core/model/LibraryModels.kt`, `app/src/main/java/com/epubreader/app/*`, `app/src/main/java/com/epubreader/data/parser/*`, any new dedicated format-specific feature package if needed, and matching tests under `app/src/test/java/com/epubreader/**`.
-- Avoid: `SettingsManager` schema changes unless strictly necessary, and avoid destabilizing `feature/reader/ReaderScreen.kt` for EPUBs if a PDF-specific surface is the safer option.
+- Preferred files/packages: `app/src/main/java/com/epubreader/app/*`, `app/src/main/java/com/epubreader/data/parser/*`, `app/src/main/java/com/epubreader/feature/reader/*`, `app/src/main/java/com/epubreader/core/model/LibraryModels.kt`, and matching tests.
+- Avoid: `SettingsManager` schema changes unless strictly necessary, and avoid destabilizing `feature/reader/ReaderScreen.kt` for EPUBs if a separate PDF runtime remains the safer option.
 
 Constraints:
-- Keep existing behavior unchanged unless required for the feature.
+- Keep existing EPUB behavior unchanged unless the task explicitly targets it.
 - Keep state ownership aligned with current architecture.
 - Ask before DataStore/schema changes, new external dependencies, or major refactors.
-- Preserve reader restoration/parsing behavior unless this feature explicitly targets them.
+- Preserve reader restoration/parsing behavior unless the task explicitly targets them.
 - Keep `Screen`-based navigation; do not introduce Jetpack Navigation.
 - Keep file-system and archive work in the parser layer, app-shell orchestration in `AppNavigation`, and persistence ownership in `SettingsManager`.
 - Preserve EPUB invariants: existing EPUB book IDs, `metadata.json` behavior, `normalizePath()`, malformed-XHTML tolerance, and `.use {}` ZIP/InputStream handling.
+- Do not reopen shell-level PDF support until the entire revived flow is coherent.
 - If PDF support needs a dedicated runtime surface, isolate it from the sacred EPUB restoration logic instead of overloading `ReaderScreen.kt`.
 - Add the smallest appropriate automated tests; prefer JVM tests for routing/detection logic and only add instrumentation when runtime viewer behavior truly requires it.
 
@@ -110,7 +111,7 @@ Verification:
 - Run `.\gradlew.bat testDebugUnitTest`
 - If runtime reader/viewer behavior changes, run the smallest relevant filtered instrumentation coverage
 - Run `python3 -c "from graphify.watch import _rebuild_code; from pathlib import Path; _rebuild_code(Path('.'))"`
-- Summarize behavior changes, docs updated, tradeoffs, and remaining risks
+- Summarize behavior changes, docs updated, what stayed parked, tradeoffs, and remaining risks
 ```
 
 ## Edit Book

@@ -40,7 +40,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MyLocation
-import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -392,7 +391,6 @@ private fun ReaderContentSurface(
                 currentChapterIndex = state.currentChapterIndex,
                 themeColors = state.themeColors,
                 onSaveAndBack = callbacks.onSaveAndBack,
-                onOpenOriginalPdf = callbacks.onOpenOriginalPdf,
                 onOpenToc = callbacks.onOpenToc
             )
         }
@@ -431,7 +429,6 @@ private fun ReaderTopBar(
     currentChapterIndex: Int,
     themeColors: ReaderTheme,
     onSaveAndBack: () -> Unit,
-    onOpenOriginalPdf: (() -> Unit)?,
     onOpenToc: () -> Unit
 ) {
     TopAppBar(
@@ -450,11 +447,6 @@ private fun ReaderTopBar(
             }
         },
         actions = {
-            if (book.canOpenOriginalPdf && onOpenOriginalPdf != null) {
-                IconButton(onClick = onOpenOriginalPdf) {
-                    Icon(Icons.Default.PictureAsPdf, contentDescription = "Open original PDF")
-                }
-            }
             IconButton(onClick = onOpenToc) {
                 Icon(Icons.Default.Menu, contentDescription = "TOC")
             }

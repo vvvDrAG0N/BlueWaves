@@ -5,6 +5,7 @@ import com.epubreader.core.model.BookFormat
 import java.util.Locale
 
 internal const val EPUB_MIME_TYPE = "application/epub+zip"
+// Retained for deprecated PDF internals; the app shell no longer exposes PDF import.
 internal const val PDF_MIME_TYPE = "application/pdf"
 internal const val ZIP_MIME_TYPE = "application/zip"
 internal const val ZIP_COMPRESSED_MIME_TYPE = "application/x-zip-compressed"
@@ -24,9 +25,9 @@ internal sealed interface ImportInspectionResult {
 }
 
 internal enum class ImportFailureReason(val userMessage: String) {
-    UnsupportedFileType("This file type is not supported. Import an EPUB, PDF, or a ZIP archive containing one supported book."),
+    UnsupportedFileType("This file type is not supported. Import an EPUB or a ZIP archive containing one supported EPUB."),
     EmptyArchive("This ZIP archive is empty."),
-    UnsupportedArchive("This ZIP archive does not contain a supported EPUB or PDF."),
+    UnsupportedArchive("This ZIP archive does not contain a supported EPUB."),
     AmbiguousArchive("This ZIP archive contains multiple supported books. Import one book at a time."),
     ReadFailed("Couldn't read this file."),
 }

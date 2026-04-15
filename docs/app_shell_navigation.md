@@ -6,6 +6,10 @@ This file is a low-context map for AI agents working in the app shell after the 
 
 Use this guide when the task is about library navigation, folder management, dialogs, startup version checks, or screen switching.
 
+Temporary boundary:
+- The app shell is EPUB-only for active import/open flows.
+- PDF-origin books remain visible as deprecated library entries, but the shell blocks opening/importing them until the planned safe refactor.
+
 ## Fast Load Order
 
 1. Read `app/AppNavigationContracts.kt` if you only need the state/callback ownership map for the app shell.
@@ -15,8 +19,9 @@ Use this guide when the task is about library navigation, folder management, dia
 5. Read `app/AppNavigationLibraryData.kt` only if the task is about folder derivation, sorting, or drag-preview behavior.
 6. Read `app/AppNavigationLibrary.kt` only if the task is about drawer UI, top bar UI, grid rendering, or selection bar layout.
 7. Read `app/AppNavigationDialogs.kt` only if the task is about sort-sheet behavior, confirm dialogs, or welcome/changelog dialogs.
-8. Read `data/settings/SettingsManager.kt` if the task touches persisted folder/order/sort/favorite state.
-9. Read `data/parser/EpubParser.kt` only if the task touches import, scan, delete, or last-read persistence.
+8. Read `app/AppNavigationPdfLegacy.kt` only if the task is about the parked PDF-disabled shell boundary or legacy conversion metadata freshness.
+9. Read `data/settings/SettingsManager.kt` if the task touches persisted folder/order/sort/favorite state.
+10. Read `data/parser/EpubParser.kt` only if the task touches import, scan, delete, or last-read persistence.
 
 ## Ownership Boundaries
 
@@ -24,6 +29,11 @@ Use this guide when the task is about library navigation, folder management, dia
   - Owns transient app-shell state.
   - Owns startup/version/changelog effects and screen routing.
   - Owns action lambdas that coordinate UI state with `SettingsManager` and `EpubParser`.
+  - Owns the temporary PDF deprecation guardrails at the import/open boundary.
+
+- `AppNavigationPdfLegacy.kt`
+  - Owns the tiny shell-side bridge for deprecated PDF snackbar copy and parked conversion metadata observation.
+  - Keeps WorkManager and conversion-progress details out of the main shell file.
 
 - `AppNavigationContracts.kt`
   - Defines app-shell private constants plus state/action contracts for library rendering and dialogs.
@@ -84,6 +94,10 @@ The 7-file split in `com.epubreader.app` is designed to reduce per-task context 
 
 - Debug duplicate import, delete flow, or last-read update:
   - Start in `app/AppNavigationOperations.kt`, then inspect `app/AppNavigation.kt` and `data/parser/EpubParser.kt`.
+
+- Touch the deprecated PDF boundary:
+  - Start in `app/AppNavigation.kt`, `app/AppNavigationPdfLegacy.kt`, `app/AppNavigationOperations.kt`, and `core/ui/LibraryCards.kt`.
+  - Do not reopen `feature/pdf/legacy/PdfReaderScreen.kt` from the shell unless the task is explicitly the PDF-safe-refactor.
 
 ## Known Remaining Coupling
 

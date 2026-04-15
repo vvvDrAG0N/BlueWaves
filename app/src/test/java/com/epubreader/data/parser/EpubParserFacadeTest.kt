@@ -3,6 +3,7 @@ package com.epubreader.data.parser
 import android.net.Uri
 import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.TocItem
@@ -154,7 +155,7 @@ class EpubParserFacadeTest {
     fun convertStoredPdfForBook_publishesGeneratedEpubWhenValidationPasses() {
         val conversionParser = EpubParser(
             context = context,
-            pdfToEpubConverter = FakePdfToEpubConverter { _, _, outputFile, title, author, _ ->
+            pdfLegacyBridge = FakePdfLegacyBridge { _, _, outputFile, title, author, _ ->
                 createGeneratedPdfFallbackEpub(outputFile, title, author)
                 PdfConversionResult(
                     succeeded = true,
@@ -173,18 +174,116 @@ class EpubParserFacadeTest {
             kotlinx.coroutines.runBlocking { conversionParser.convertStoredPdfForBook(imported.id) },
         )
 
-        assertEquals(BookFormat.EPUB, converted.format)
+        assertEquals(BookFormat.PDF, converted.format)
         assertEquals(BookFormat.PDF, converted.sourceFormat)
         assertEquals(ConversionStatus.READY, converted.conversionStatus)
+        assertTrue(converted.canOpenGeneratedEpub)
         assertTrue(File(converted.rootPath, GENERATED_EPUB_FILE_NAME).exists())
         assertTrue(File(converted.rootPath, PDF_DOCUMENT_FILE_NAME).exists())
+    }
+
+    @Test
+    fun parseChapter_readsGeneratedEpubForConvertedPdf() {
+        val conversionParser = EpubParser(
+            context = context,
+            pdfLegacyBridge = FakePdfLegacyBridge { _, _, outputFile, title, author, _ ->
+                createGeneratedPdfFallbackEpub(outputFile, title, author)
+                PdfConversionResult(
+                    succeeded = true,
+                    completedPages = 1,
+                    totalPages = 1,
+                    directTextPages = 1,
+                    ocrPages = 0,
+                )
+            },
+        )
+        val pdfFile = copyFixturePdf("convert-parse.pdf")
+        val inspection = conversionParser.inspectImportSource(Uri.fromFile(pdfFile)) as ImportInspectionResult.Ready
+        val imported = requireNotNull(conversionParser.importBook(inspection.request))
+
+        val converted = requireNotNull(
+            kotlinx.coroutines.runBlocking { conversionParser.convertStoredPdfForBook(imported.id) },
+        )
+        val elements = conversionParser.parseChapter(converted.rootPath, converted.spineHrefs.first())
+
+        assertTrue(
+            elements
+                .filterIsInstance<ChapterElement.Text>()
+                .any { it.content.contains("Converted PDF text.") },
+        )
+    }
+
+    @Test
+    fun prepareBookForReading_demotesConvertedPdfWhenGeneratedEpubHasNoReadableSections() {
+        val folder = File(booksDir, "broken-generated-open").apply { mkdirs() }
+        val book = EpubBook(
+            id = "broken-generated-open",
+            title = "Broken Generated EPUB",
+            author = "Author",
+            coverPath = null,
+            rootPath = folder.absolutePath,
+            format = BookFormat.EPUB,
+            sourceFormat = BookFormat.PDF,
+            conversionStatus = ConversionStatus.READY,
+            hasPdfFallback = true,
+            toc = listOf(TocItem("1. Page 1", "sections/section-0001.xhtml")),
+            spineHrefs = listOf("sections/section-0001.xhtml"),
+            pageCount = 1,
+        )
+        saveBookMetadata(folder, book)
+        createUnreadableGeneratedPdfFallbackEpub(
+            outputFile = File(folder, GENERATED_EPUB_FILE_NAME),
+            title = book.title,
+            author = book.author,
+        )
+        copyFixturePdfTo(File(folder, PDF_DOCUMENT_FILE_NAME))
+
+        val prepared = parser.prepareBookForReading(book)
+
+        assertEquals(BookFormat.PDF, prepared.format)
+        assertEquals(ConversionStatus.FAILED, prepared.conversionStatus)
+        assertTrue(prepared.hasPdfFallback)
+    }
+
+    @Test
+    fun scanBooks_demotesConvertedPdfWhenGeneratedEpubHasNoReadableSections() {
+        val folder = File(booksDir, "broken-generated-scan").apply { mkdirs() }
+        saveBookMetadata(
+            folder,
+            EpubBook(
+                id = "broken-generated-scan",
+                title = "Broken Generated EPUB",
+                author = "Author",
+                coverPath = null,
+                rootPath = folder.absolutePath,
+                format = BookFormat.EPUB,
+                sourceFormat = BookFormat.PDF,
+                conversionStatus = ConversionStatus.READY,
+                hasPdfFallback = true,
+                toc = listOf(TocItem("1. Page 1", "sections/section-0001.xhtml")),
+                spineHrefs = listOf("sections/section-0001.xhtml"),
+                pageCount = 1,
+            ),
+        )
+        createUnreadableGeneratedPdfFallbackEpub(
+            outputFile = File(folder, GENERATED_EPUB_FILE_NAME),
+            title = "Broken Generated EPUB",
+            author = "Author",
+        )
+        copyFixturePdfTo(File(folder, PDF_DOCUMENT_FILE_NAME))
+
+        val scanned = parser.scanBooks().single()
+
+        assertEquals(BookFormat.PDF, scanned.format)
+        assertEquals(ConversionStatus.FAILED, scanned.conversionStatus)
+        assertTrue(scanned.hasPdfFallback)
     }
 
     @Test
     fun convertStoredPdfForBook_failedValidationKeepsRawPdfMode() {
         val conversionParser = EpubParser(
             context = context,
-            pdfToEpubConverter = FakePdfToEpubConverter { _, _, outputFile, _, _, _ ->
+            pdfLegacyBridge = FakePdfLegacyBridge { _, _, outputFile, _, _, _ ->
                 outputFile.writeText("not an epub")
                 PdfConversionResult(
                     succeeded = true,
@@ -221,8 +320,8 @@ class EpubParserFacadeTest {
             sourceFormat = BookFormat.PDF,
             conversionStatus = ConversionStatus.READY,
             hasPdfFallback = true,
-            toc = listOf(TocItem("1. Page 1", "pages/page-0001.xhtml")),
-            spineHrefs = listOf("pages/page-0001.xhtml"),
+            toc = listOf(TocItem("1. Page 1", "sections/section-0001.xhtml")),
+            spineHrefs = listOf("sections/section-0001.xhtml"),
             pageCount = 1,
         )
         File(folder, GENERATED_EPUB_FILE_NAME).writeBytes(byteArrayOf(1))
@@ -246,12 +345,16 @@ class EpubParserFacadeTest {
             sourceFormat = BookFormat.PDF,
             conversionStatus = ConversionStatus.READY,
             hasPdfFallback = true,
-            toc = listOf(TocItem("1. Page 1", "pages/page-0001.xhtml")),
-            spineHrefs = listOf("pages/page-0001.xhtml"),
+            toc = listOf(TocItem("1. Page 1", "sections/section-0001.xhtml")),
+            spineHrefs = listOf("sections/section-0001.xhtml"),
             pageCount = 1,
         )
         saveBookMetadata(folder, book)
-        File(folder, GENERATED_EPUB_FILE_NAME).writeBytes(byteArrayOf(1))
+        createGeneratedPdfFallbackEpub(
+            outputFile = File(folder, GENERATED_EPUB_FILE_NAME),
+            title = book.title,
+            author = book.author,
+        )
         File(folder, PDF_DOCUMENT_FILE_NAME).writeBytes("%PDF-1.4".toByteArray(StandardCharsets.UTF_8))
 
         val pdfMode = requireNotNull(parser.setBookRepresentation(book, BookRepresentation.PDF))
@@ -424,10 +527,10 @@ class EpubParserFacadeTest {
                   </metadata>
                   <manifest>
                     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
-                    <item id="page1" href="pages/page-0001.xhtml" media-type="application/xhtml+xml"/>
+                    <item id="section1" href="sections/section-0001.xhtml" media-type="application/xhtml+xml"/>
                   </manifest>
                   <spine toc="ncx">
-                    <itemref idref="page1"/>
+                    <itemref idref="section1"/>
                   </spine>
                 </package>
                 """.trimIndent(),
@@ -443,7 +546,7 @@ class EpubParserFacadeTest {
                   <navMap>
                     <navPoint id="navPoint-1" playOrder="1">
                       <navLabel><text>Page 1</text></navLabel>
-                      <content src="pages/page-0001.xhtml"/>
+                      <content src="sections/section-0001.xhtml#page-0001"/>
                     </navPoint>
                   </navMap>
                 </ncx>
@@ -451,21 +554,96 @@ class EpubParserFacadeTest {
             )
             addEntry(
                 zip,
-                "OEBPS/pages/page-0001.xhtml",
+                "OEBPS/sections/section-0001.xhtml",
                 """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <html xmlns="http://www.w3.org/1999/xhtml">
                   <head><title>Page 1</title></head>
-                  <body><p>Converted PDF text.</p></body>
+                  <body><section><div id="page-0001">Page 1</div><p>Converted PDF text.</p></section></body>
                 </html>
                 """.trimIndent(),
             )
         }
     }
 
-    private class FakePdfToEpubConverter(
+    private fun createUnreadableGeneratedPdfFallbackEpub(
+        outputFile: File,
+        title: String,
+        author: String,
+    ) {
+        outputFile.parentFile?.mkdirs()
+        ZipOutputStream(FileOutputStream(outputFile)).use { zip ->
+            addStoredEntry(zip, "mimetype", "application/epub+zip")
+            addEntry(
+                zip,
+                "META-INF/container.xml",
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+                  <rootfiles>
+                    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+                  </rootfiles>
+                </container>
+                """.trimIndent(),
+            )
+            addEntry(
+                zip,
+                "OEBPS/content.opf",
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
+                  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+                    <dc:title>$title</dc:title>
+                    <dc:creator>$author</dc:creator>
+                    <dc:identifier id="BookId">urn:uuid:broken-generated-book</dc:identifier>
+                    <dc:language>en</dc:language>
+                  </metadata>
+                  <manifest>
+                    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+                    <item id="section1" href="sections/section-0001.xhtml" media-type="application/xhtml+xml"/>
+                  </manifest>
+                  <spine toc="ncx">
+                    <itemref idref="section1"/>
+                  </spine>
+                </package>
+                """.trimIndent(),
+            )
+            addEntry(
+                zip,
+                "OEBPS/toc.ncx",
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+                  <head/>
+                  <docTitle><text>$title</text></docTitle>
+                  <navMap>
+                    <navPoint id="navPoint-1" playOrder="1">
+                      <navLabel><text>Page 1</text></navLabel>
+                      <content src="sections/section-0001.xhtml#page-0001"/>
+                    </navPoint>
+                  </navMap>
+                </ncx>
+                """.trimIndent(),
+            )
+            addEntry(
+                zip,
+                "OEBPS/sections/section-0001.xhtml",
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <html xmlns="http://www.w3.org/1999/xhtml">
+                  <head><title></title></head>
+                  <body><section id="page-0001"></section></body>
+                </html>
+                """.trimIndent(),
+            )
+        }
+    }
+
+    private class FakePdfLegacyBridge(
         private val block: suspend (File, File, File, String, String, PdfConversionProgressListener) -> PdfConversionResult,
-    ) : PdfToEpubConverter {
+    ) : PdfLegacyBridge {
+        override val workspaceDirName: String = "pdf_conversion_workspace"
+
         override suspend fun convert(
             pdfFile: File,
             workspaceDir: File,
@@ -476,6 +654,12 @@ class EpubParserFacadeTest {
         ): PdfConversionResult {
             return block(pdfFile, workspaceDir, outputFile, title, author, onProgress)
         }
+
+        override fun enqueue(bookId: String) = Unit
+
+        override fun cancel(bookId: String) = Unit
+
+        override fun uniqueWorkName(bookId: String): String = "test-$bookId"
     }
 
 }

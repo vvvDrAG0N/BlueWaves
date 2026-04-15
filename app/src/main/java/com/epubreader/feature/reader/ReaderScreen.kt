@@ -80,7 +80,6 @@ fun ReaderScreen(
     settingsManager: SettingsManager,
     parser: EpubParser,
     onBack: () -> Unit,
-    onOpenOriginalPdf: (() -> Unit)? = null,
 ) {
     // AI_STATE_OWNER: ReaderScreen composable
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -261,37 +260,43 @@ fun ReaderScreen(
         }
     }
 
-    suspend fun saveAndBack() {
-        if (currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
-            withContext(NonCancellable) {
-                val progress = when {
-                    isInitialScrollDone && !isRestoringPosition -> {
-                        BookProgress(
-                            scrollIndex = listState.firstVisibleItemIndex,
-                            scrollOffset = listState.firstVisibleItemScrollOffset,
-                            lastChapterHref = book.spineHrefs[currentChapterIndex]
-                        )
-                    }
+    suspend fun saveCurrentProgress() {
+        if (currentChapterIndex == -1 || currentChapterIndex >= book.spineHrefs.size) {
+            return
+        }
 
-                    isGestureNavigation || skipRestoration -> {
-                        BookProgress(
-                            scrollIndex = if (shouldScrollToBottom) Int.MAX_VALUE else 0,
-                            scrollOffset = 0,
-                            lastChapterHref = book.spineHrefs[currentChapterIndex]
-                        )
-                    }
-
-                    else -> null
-                }
-                progress?.let {
-                    settingsManager.saveBookProgress(
-                        book.id,
-                        it,
-                        representation = BookRepresentation.EPUB,
+        withContext(NonCancellable) {
+            val progress = when {
+                isInitialScrollDone && !isRestoringPosition -> {
+                    BookProgress(
+                        scrollIndex = listState.firstVisibleItemIndex,
+                        scrollOffset = listState.firstVisibleItemScrollOffset,
+                        lastChapterHref = book.spineHrefs[currentChapterIndex]
                     )
                 }
+
+                isGestureNavigation || skipRestoration -> {
+                    BookProgress(
+                        scrollIndex = if (shouldScrollToBottom) Int.MAX_VALUE else 0,
+                        scrollOffset = 0,
+                        lastChapterHref = book.spineHrefs[currentChapterIndex]
+                    )
+                }
+
+                else -> null
+            }
+            progress?.let {
+                settingsManager.saveBookProgress(
+                    book.id,
+                    it,
+                    representation = BookRepresentation.EPUB,
+                )
             }
         }
+    }
+
+    suspend fun saveAndBack() {
+        saveCurrentProgress()
         onBack()
     }
 
@@ -501,7 +506,7 @@ fun ReaderScreen(
         sortedToc = sortedToc,
         verticalOverscroll = verticalOverscroll,
         overscrollThreshold = overscrollThreshold,
-        nestedScrollConnection = nestedScrollConnection
+        nestedScrollConnection = nestedScrollConnection,
     )
     val chromeCallbacks = ReaderChromeCallbacks(
         onShowControlsChange = { showControls = it },
@@ -510,7 +515,6 @@ fun ReaderScreen(
         },
         onReleaseOverscroll = ::releaseOverscroll,
         onSaveAndBack = { scope.launch { saveAndBack() } },
-        onOpenOriginalPdf = onOpenOriginalPdf,
         onOpenToc = { scope.launch { drawerState.open() } },
         onCloseToc = { scope.launch { drawerState.close() } },
         onLocateCurrentChapterInToc = ::locateCurrentChapterInToc,

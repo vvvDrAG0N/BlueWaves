@@ -17,8 +17,7 @@ import java.util.zip.ZipFile
 
 internal fun parseBookChapter(bookFolderPath: String, href: String): List<ChapterElement> {
     val elements = mutableListOf<ChapterElement>()
-    val bookFile = File(bookFolderPath, EPUB_ARCHIVE_FILE_NAME)
-    if (!bookFile.exists()) return elements
+    val bookFile = resolveChapterArchiveFile(File(bookFolderPath)) ?: return elements
 
     try {
         ZipFile(bookFile).use { zip ->
@@ -118,6 +117,11 @@ internal fun parseBookChapter(bookFolderPath: String, href: String): List<Chapte
     }
 
     return elements
+}
+
+private fun resolveChapterArchiveFile(bookFolder: File): File? {
+    return File(bookFolder, EPUB_ARCHIVE_FILE_NAME).takeIf(File::exists)
+        ?: File(bookFolder, GENERATED_EPUB_FILE_NAME).takeIf(File::exists)
 }
 
 private fun resolveChapterEntry(zip: ZipFile, cleanHref: String): ZipEntry? {

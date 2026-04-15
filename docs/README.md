@@ -2,6 +2,12 @@
 
 This directory is the architectural memory for Blue Waves.
 
+## Temporary Product Status
+
+- Active app-shell support is EPUB-only for now.
+- PDF-origin books may still exist in the cache/library as deprecated entries, but import/open flows are intentionally blocked while the PDF path is prepared for a larger safe refactor.
+- Deprecated PDF internals now live under `data/pdf/legacy` and `feature/pdf/legacy` for that refactor and are documented in `PDF_review.md`.
+
 ## Start Here
 
 - `project_graph.md`
@@ -38,7 +44,7 @@ This directory is the architectural memory for Blue Waves.
 - `PROMPT_TEMPLATES.md`
   - Copy-paste starter prompts for bug fixes, features, reviews, and safe refactors.
 - `TODO_PROMPTS.md`
-  - Ready-to-use implementation prompts for the current top-level TODO features.
+  - Ready-to-use implementation prompts for the current top-level TODO features and the upcoming PDF-safe-refactor follow-up.
 
 ## Graphify Artifacts
 
@@ -81,4 +87,5 @@ This directory is the architectural memory for Blue Waves.
   - Use this to see what is already covered before planning new tests.
 - `PROMPT_TEMPLATES.md`
   - Includes `Unit Test` and `Instrumentation Test` starter prompts plus the feature test-selection rule.
-# Test change
+- `PDF_review.md`
+  - Archived context for the deprecated PDF path and the next safe-refactor pass.

@@ -80,7 +80,7 @@ class AppNavigationOperationsTest {
             bookGroups = JSONObject(),
         )
 
-        assertEquals(ImportBookResult.Imported, result)
+        assertEquals(ImportBookResult.Imported(newBook), result)
         coVerify { settingsManager.updateBookGroup("new-root", null) }
     }
 
@@ -111,20 +111,14 @@ class AppNavigationOperationsTest {
             bookGroups = JSONObject(),
         )
 
-        assertEquals(ImportBookResult.Imported, result)
+        assertEquals(ImportBookResult.Imported(newBook), result)
         coVerify { settingsManager.updateBookGroup("new-folder", "Sci-Fi") }
     }
 
     @Test
-    fun importBook_pdfQueuesBackgroundConversion() = runBlocking {
+    fun importBook_pdfIsRejectedWhileSupportIsDisabled() = runBlocking {
         val uri = Uri.parse("content://books/new-paper.pdf")
         val fileSize = 654L
-        val newBook = book(
-            id = "new-paper",
-            format = BookFormat.PDF,
-            sourceFormat = BookFormat.PDF,
-            conversionStatus = ConversionStatus.QUEUED,
-        )
         val (context, _, _, parser, settingsManager) = mockImportDeps(uri, fileSize)
         every { parser.inspectImportSource(uri) } returns ImportInspectionResult.Ready(
             ImportRequest(
@@ -134,9 +128,6 @@ class AppNavigationOperationsTest {
                 displayName = "new-paper.pdf",
             ),
         )
-        every { parser.importBook(any()) } returns newBook
-        every { parser.retryPdfConversion(newBook) } returns newBook
-        coEvery { settingsManager.updateBookGroup(any(), any()) } just runs
 
         val result = importBookIntoLibrary(
             books = emptyList(),
@@ -148,8 +139,13 @@ class AppNavigationOperationsTest {
             bookGroups = JSONObject(),
         )
 
-        assertEquals(ImportBookResult.Imported, result)
-        verify { parser.retryPdfConversion(newBook) }
+        assertEquals(
+            ImportBookResult.Failed("PDF support is temporarily disabled while we prepare a safer refactor."),
+            result,
+        )
+        verify(exactly = 0) { parser.importBook(any()) }
+        verify(exactly = 0) { parser.retryPdfConversion(any()) }
+        coVerify(exactly = 0) { settingsManager.updateBookGroup(any(), any()) }
     }
 
     @Test
@@ -172,7 +168,7 @@ class AppNavigationOperationsTest {
         )
 
         assertEquals(
-            ImportBookResult.Failed("This file type is not supported. Import an EPUB, PDF, or a ZIP archive containing one supported book."),
+            ImportBookResult.Failed("This file type is not supported. Import an EPUB or a ZIP archive containing one supported EPUB."),
             result,
         )
         verify(exactly = 0) { parser.importBook(any()) }

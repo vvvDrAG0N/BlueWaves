@@ -115,7 +115,8 @@ data class EpubBook(
 
     val progressUnitLabel: String
         get() = when {
-            sourceFormat == BookFormat.PDF -> "p"
+            activeRepresentation == BookRepresentation.PDF -> "p"
+            sourceFormat == BookFormat.PDF -> "sec"
             else -> "ch"
         }
 
@@ -127,7 +128,8 @@ data class EpubBook(
 
     val navigationUnitLabel: String
         get() = when {
-            sourceFormat == BookFormat.PDF -> "Page"
+            activeRepresentation == BookRepresentation.PDF -> "Page"
+            sourceFormat == BookFormat.PDF -> "Section"
             else -> "Chapter"
         }
 

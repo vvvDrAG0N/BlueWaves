@@ -18,9 +18,12 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.security.MessageDigest
 
+private const val PdfImportDisabledMessage =
+    "PDF support is temporarily disabled while we prepare a safer refactor."
+
 internal sealed interface ImportBookResult {
     data class Duplicate(val folderName: String) : ImportBookResult
-    data object Imported : ImportBookResult
+    data class Imported(val book: EpubBook) : ImportBookResult
     data class Failed(val message: String) : ImportBookResult
 }
 
@@ -65,6 +68,9 @@ internal suspend fun importBookIntoLibrary(
                 return ImportBookResult.Failed(inspection.reason.userMessage)
             }
         }
+        if (request.format == BookFormat.PDF) {
+            return ImportBookResult.Failed(PdfImportDisabledMessage)
+        }
 
         val newBook = withContext(Dispatchers.IO) {
             parser.importBook(request)
@@ -74,12 +80,7 @@ internal suspend fun importBookIntoLibrary(
             newBook.id,
             if (selectedFolderName == RootLibraryName) null else selectedFolderName,
         )
-        if (newBook.sourceFormat == BookFormat.PDF) {
-            withContext(Dispatchers.IO) {
-                parser.retryPdfConversion(newBook)
-            }
-        }
-        ImportBookResult.Imported
+        ImportBookResult.Imported(newBook)
     } catch (error: Exception) {
         if (error is CancellationException) {
             throw error

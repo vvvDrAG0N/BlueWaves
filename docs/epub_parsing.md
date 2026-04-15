@@ -17,6 +17,7 @@ This note is the low-context guide for the parser package after the safe split o
 - `EpubParser.kt`
   - Public API used by `AppNavigation` and `ReaderScreen`
   - Delegates import, metadata, and chapter details to package-local helpers
+  - Still fronts the parser-side bridge to deprecated PDF internals retained for the upcoming safe refactor
 
 - `EpubParserBooks.kt`
   - `buildBookId(uri, fileSize)`
@@ -69,3 +70,4 @@ Do not load all three parser files by default.
 
 - For duplicate/import/cache bugs: start with `EpubParser.kt`, then `EpubParserBooks.kt`.
 - For broken chapter text or images: start with `EpubParser.kt`, then `EpubParserChapter.kt`.
+- For PDF-related tasks, assume the shell is intentionally blocking active PDF support and only load `data/parser/PdfLegacyBridge.kt` plus `data/pdf/legacy/*` if the task is explicitly about the parked runtime or the upcoming refactor.

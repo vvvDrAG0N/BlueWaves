@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.ConversionStatus
 import com.epubreader.testing.PdfAndroidTestFixtures
 import org.junit.After
@@ -61,11 +62,18 @@ class PdfImportInstrumentationTest {
             },
         )
         val prepared = parser.prepareBookForReading(converted)
+        val generatedEpub = requireNotNull(
+            parser.setBookRepresentation(prepared, BookRepresentation.EPUB)
+                ?.let(parser::prepareBookForReading),
+        )
 
         assertEquals(BookFormat.PDF, prepared.sourceFormat)
-        assertEquals(BookFormat.EPUB, prepared.format)
+        assertEquals(BookFormat.PDF, prepared.format)
         assertEquals(ConversionStatus.READY, prepared.conversionStatus)
         assertTrue(prepared.hasPdfFallback)
+        assertTrue(prepared.canOpenGeneratedEpub)
+        assertEquals(BookFormat.EPUB, generatedEpub.format)
+        assertTrue(generatedEpub.spineHrefs.first().startsWith("sections/section-"))
         assertTrue(prepared.spineHrefs.isNotEmpty())
         assertNotNull(prepared.toc)
         assertTrue(File(prepared.rootPath, PDF_DOCUMENT_FILE_NAME).exists())

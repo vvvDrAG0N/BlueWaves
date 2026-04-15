@@ -34,12 +34,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.BookProgress
-import com.epubreader.core.model.ConversionStatus
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.settings.SettingsManager
 import org.json.JSONObject
 import java.io.File
+
+private const val PdfSupportDisabledLibraryLabel = "PDF support disabled"
 
 @Composable
 fun RecentlyViewedStrip(
@@ -275,20 +276,7 @@ fun BookItem(
 
 private fun formatReadingProgress(book: EpubBook, progress: BookProgress): String {
     if (book.sourceFormat == com.epubreader.core.model.BookFormat.PDF) {
-        when (book.conversionStatus) {
-            ConversionStatus.QUEUED -> return "Queued for EPUB"
-            ConversionStatus.RUNNING -> {
-                val totalPages = book.conversionTotalPages.takeIf { it > 0 } ?: book.pageCount
-                val completedPages = book.conversionCompletedPages.coerceIn(0, totalPages.coerceAtLeast(0))
-                return if (totalPages > 0) {
-                    "Converting $completedPages / $totalPages p"
-                } else {
-                    "Converting..."
-                }
-            }
-            ConversionStatus.FAILED -> return "Retry conversion"
-            else -> Unit
-        }
+        return PdfSupportDisabledLibraryLabel
     }
 
     val totalUnits = book.readingUnitCount

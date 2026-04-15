@@ -122,7 +122,7 @@ internal fun LibraryScreen(
             },
         ) { padding ->
             val pullRefreshState = rememberPullRefreshState(
-                refreshing = state.isLoading,
+                refreshing = state.asyncState.libraryRefresh,
                 onRefresh = actions.onRefreshLibrary,
             )
 
@@ -138,7 +138,7 @@ internal fun LibraryScreen(
                 )
 
                 PullRefreshIndicator(
-                    refreshing = state.isLoading,
+                    refreshing = state.asyncState.libraryRefresh,
                     state = pullRefreshState,
                     modifier = Modifier.align(Alignment.TopCenter),
                     backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -455,7 +455,7 @@ private fun LibraryBookGrid(
     // Keep grid rendering dumb: it receives filtered/sorted books and emits user intent upward.
     val hasAnyBooks = state.books.isNotEmpty()
 
-    if (!hasAnyBooks && !state.isLoading) {
+    if (!hasAnyBooks && !state.asyncState.libraryRefresh) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
@@ -494,7 +494,7 @@ private fun LibraryBookGrid(
             }
         }
 
-        if (state.libraryItems.isEmpty() && !state.isLoading) {
+        if (state.libraryItems.isEmpty() && !state.asyncState.libraryRefresh) {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Box(
                     modifier = Modifier

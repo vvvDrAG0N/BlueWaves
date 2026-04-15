@@ -4,6 +4,11 @@ This file tracks the baseline automated coverage for Blue Waves after the app-sh
 
 Use it to see what is already covered before planning new tests.
 
+Temporary product note:
+- Active app-shell PDF support is currently disabled.
+- Parser-level PDF tests remain as parked internal coverage under `data/pdf/legacy`.
+- App-shell PDF representation tests that exercised the old reader-switch flow are intentionally ignored until the safe refactor revives that surface.
+
 ## Current State
 
 - Plain JVM tests are supported and in use.
@@ -74,6 +79,18 @@ Use it to see what is already covered before planning new tests.
 - Why fourth:
   - Protects cached-library integrity
   - Still plain JVM if temp files are used
+
+### 4a. [done] `PdfToEpubConverterTest`
+
+- Path:
+  - `app/src/test/java/com/epubreader/data/parser/PdfToEpubConverterTest.kt`
+- Target:
+  - `data/pdf/legacy/PdfToEpubConverter.kt`
+- Cover:
+  - workspace pages are regrouped into bounded reflow sections
+  - generated EPUB output writes section-based spine and NCX entries
+- Why:
+  - Protects the parked PDF reflow artifact shape without reopening PDF in the shell
 
 ### 5. [done] `SettingsManagerContractsTest`
 
@@ -253,6 +270,16 @@ These are slower and should focus on the most fragile runtime behavior.
   - EPUB with `OEBPS/` layout
   - EPUB with `OPS/` layout
   - chapter with nested image paths like `../Images/...`
+
+### 16. [done] `AppNavigationPdfRepresentationFlowTest`
+
+- Path:
+  - `app/src/androidTest/java/com/epubreader/app/AppNavigationPdfRepresentationFlowTest.kt`
+- Target:
+  - `app/AppNavigation.kt`
+- Cover:
+  - legacy PDF library entries show the temporary deprecation message instead of opening a reader surface
+  - older representation-switch tests are parked with `@Ignore` until the planned PDF-safe-refactor redefines that flow
 
 ## Execution Pattern
 

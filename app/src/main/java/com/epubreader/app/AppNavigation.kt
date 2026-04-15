@@ -42,17 +42,15 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.epubreader.core.model.BookRepresentation
+import com.epubreader.core.model.BookFormat
 import com.epubreader.Screen
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.parser.EPUB_MIME_TYPE
-import com.epubreader.data.parser.PDF_MIME_TYPE
 import com.epubreader.data.parser.ZIP_COMPRESSED_MIME_TYPE
 import com.epubreader.data.parser.ZIP_MIME_TYPE
 import com.epubreader.data.settings.SettingsManager
-import com.epubreader.feature.reader.PdfReaderScreen
 import com.epubreader.feature.reader.ReaderScreen
 import com.epubreader.feature.settings.SettingsScreen
 import kotlinx.coroutines.CancellationException
@@ -97,7 +95,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     var books by remember { mutableStateOf(emptyList<EpubBook>()) }
     var selectedBook by remember { mutableStateOf<EpubBook?>(null) }
     var currentScreen by remember { mutableStateOf(Screen.Library) }
-    var isLoading by remember { mutableStateOf(false) }
+    var asyncState by remember { mutableStateOf(LibraryAsyncUiState()) }
     var selectedBookIds by remember { mutableStateOf(emptySet<String>()) }
     var isBookSelectionMode by remember { mutableStateOf(false) }
     var isMovingMode by remember { mutableStateOf(false) }
@@ -143,9 +141,12 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     // Shell-owned refresh. Keep scanning here so screen transitions and dialogs share one source.
     fun refreshLibrary() {
         scope.launch {
-            isLoading = true
-            books = scanLibrary(parser)
-            isLoading = false
+            asyncState = asyncState.copy(libraryRefresh = true)
+            try {
+                books = scanLibrary(parser)
+            } finally {
+                asyncState = asyncState.copy(libraryRefresh = false)
+            }
         }
     }
 
@@ -161,72 +162,43 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     }
 
     fun applyUpdatedBook(updatedBook: EpubBook) {
-        books = books.map { existing -> if (existing.id == updatedBook.id) updatedBook else existing }
+        var replaced = false
+        books = books.map { existing ->
+            if (existing.id == updatedBook.id) {
+                replaced = true
+                updatedBook
+            } else {
+                existing
+            }
+        }.let { currentBooks ->
+            if (replaced) currentBooks else currentBooks + updatedBook
+        }
         if (selectedBook?.id == updatedBook.id) {
             selectedBook = updatedBook
         }
     }
 
-    val openBook: (EpubBook) -> Unit = { book ->
-        scope.launch {
-            isLoading = true
-            try {
-                val preparedBook = withContext(Dispatchers.IO) {
-                    parser.prepareBookForReading(book)
-                }
-                selectedBook = preparedBook
-                currentScreen = Screen.Reader
-
-                val updated = touchBookLastRead(parser, preparedBook)
-                applyUpdatedBook(updated)
-            } finally {
-                isLoading = false
-            }
-        }
-    }
-
-    val switchSelectedBookRepresentation: (BookRepresentation) -> Unit = { representation ->
-        selectedBook?.let { currentBook ->
+    val openBook: (EpubBook) -> Unit = openBook@{ book ->
+        if (book.sourceFormat == BookFormat.PDF) {
             scope.launch {
-                isLoading = true
-                try {
-                    val updatedBook = withContext(Dispatchers.IO) {
-                        parser.setBookRepresentation(currentBook, representation)?.let(parser::prepareBookForReading)
-                    }
-                    if (updatedBook != null) {
-                        applyUpdatedBook(updatedBook)
-                    } else {
-                        snackbarHostState.showSnackbar("That reader mode isn't available for this book.")
-                    }
-                } finally {
-                    isLoading = false
-                }
+                snackbarHostState.showSnackbar(PdfSupportDisabledSnackbarMessage)
             }
+            return@openBook
         }
-    }
-
-    val retrySelectedPdfConversion: () -> Unit = {
-        selectedBook?.let { currentBook ->
+        if (asyncState.bookOpenInFlight != book.id) {
             scope.launch {
-                isLoading = true
+                asyncState = asyncState.copy(bookOpenInFlight = book.id)
                 try {
-                    val updatedBook = withContext(Dispatchers.IO) {
-                        parser.retryPdfConversion(currentBook)?.let(parser::prepareBookForReading)
+                    val preparedBook = withContext(Dispatchers.IO) {
+                        parser.prepareBookForReading(book)
                     }
-                    if (updatedBook != null) {
-                        applyUpdatedBook(updatedBook)
-                        val message = when (updatedBook.conversionStatus) {
-                            com.epubreader.core.model.ConversionStatus.READY -> "Generated EPUB is ready."
-                            com.epubreader.core.model.ConversionStatus.QUEUED,
-                            com.epubreader.core.model.ConversionStatus.RUNNING -> "PDF conversion queued in background."
-                            else -> "Staying in original PDF mode for this book."
-                        }
-                        snackbarHostState.showSnackbar(message)
-                    } else {
-                        snackbarHostState.showSnackbar("Couldn't retry PDF conversion.")
-                    }
+                    selectedBook = preparedBook
+                    currentScreen = Screen.Reader
+
+                    val updated = touchBookLastRead(parser, preparedBook)
+                    applyUpdatedBook(updated)
                 } finally {
-                    isLoading = false
+                    asyncState = asyncState.copy(bookOpenInFlight = null)
                 }
             }
         }
@@ -285,6 +257,16 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         }
     }
 
+    ObserveLegacyPdfConversionState(
+        context = context,
+        books = books,
+        selectedBook = selectedBook,
+        parser = parser,
+        lifecycleOwner = lifecycleOwner,
+        scope = scope,
+        onBookUpdated = ::applyUpdatedBook,
+    )
+
     // The derived models below are intentionally pure. They are the safest place to inspect
     // folder/sort bugs before touching rendering code.
     val bookGroups = remember(globalSettings.bookGroups) {
@@ -337,7 +319,9 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     }
 
     val lastOpenedBook = remember(books) {
-        books.filter { it.lastRead > 0 }.maxByOrNull { it.lastRead }
+        books
+            .filter { it.lastRead > 0 && it.sourceFormat != BookFormat.PDF }
+            .maxByOrNull { it.lastRead }
     }
 
     // Action lambdas remain here so persistence writes and transient shell state stay coordinated.
@@ -379,7 +363,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let { selectedUri ->
             scope.launch {
-                isLoading = true
+                asyncState = asyncState.copy(importInFlight = true)
                 try {
                     when (
                         val result = importBookIntoLibrary(
@@ -395,8 +379,8 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                         is ImportBookResult.Duplicate -> {
                             snackbarHostState.showSnackbar("This book is already in your library (${result.folderName}).")
                         }
-                        ImportBookResult.Imported -> {
-                            refreshLibrary()
+                        is ImportBookResult.Imported -> {
+                            applyUpdatedBook(result.book)
                         }
                         is ImportBookResult.Failed -> {
                             snackbarHostState.showSnackbar(result.message)
@@ -408,7 +392,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                     }
                     snackbarHostState.showSnackbar("Couldn't import this book.")
                 } finally {
-                    isLoading = false
+                    asyncState = asyncState.copy(importInFlight = false)
                 }
             }
         }
@@ -517,7 +501,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         libraryItems = libraryItems,
         lastOpenedBook = lastOpenedBook,
         selectedFolderName = selectedFolderName,
-        isLoading = isLoading,
+        asyncState = asyncState,
         selection = selectionState,
         folderDrawer = folderDrawerState,
     )
@@ -526,7 +510,6 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
             launcher.launch(
                 arrayOf(
                     EPUB_MIME_TYPE,
-                    PDF_MIME_TYPE,
                     ZIP_MIME_TYPE,
                     ZIP_COMPRESSED_MIME_TYPE,
                 ),
@@ -658,36 +641,12 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                     onBack = { currentScreen = Screen.Library },
                 )
                 Screen.Reader -> selectedBook?.let { book ->
-                    if (book.activeRepresentation == BookRepresentation.PDF) {
-                        PdfReaderScreen(
-                            book = book,
-                            settingsManager = settingsManager,
-                            parser = parser,
-                            onBack = { currentScreen = Screen.Library },
-                            onOpenGeneratedEpub = if (book.canOpenGeneratedEpub) {
-                                { switchSelectedBookRepresentation(BookRepresentation.EPUB) }
-                            } else {
-                                null
-                            },
-                            onRetryPdfConversion = if (book.canRetryPdfConversion) {
-                                retrySelectedPdfConversion
-                            } else {
-                                null
-                            },
-                        )
-                    } else {
-                        ReaderScreen(
-                            book = book,
-                            settingsManager = settingsManager,
-                            parser = parser,
-                            onBack = { currentScreen = Screen.Library },
-                            onOpenOriginalPdf = if (book.canOpenOriginalPdf) {
-                                { switchSelectedBookRepresentation(BookRepresentation.PDF) }
-                            } else {
-                                null
-                            },
-                        )
-                    }
+                    ReaderScreen(
+                        book = book,
+                        settingsManager = settingsManager,
+                        parser = parser,
+                        onBack = { currentScreen = Screen.Library },
+                    )
                 }
                 Screen.Library -> LibraryScreen(
                     state = libraryScreenState,

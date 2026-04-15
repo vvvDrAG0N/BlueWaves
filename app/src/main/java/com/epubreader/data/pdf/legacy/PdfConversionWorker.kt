@@ -1,4 +1,8 @@
-package com.epubreader.data.parser
+/**
+ * Deprecated background worker retained for legacy queued items and the upcoming safe refactor.
+ * The app shell no longer enqueues new PDF imports.
+ */
+package com.epubreader.data.pdf.legacy
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,6 +18,8 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.epubreader.R
 import com.epubreader.core.debug.AppLog
+import com.epubreader.data.parser.EpubParser
+import com.epubreader.data.parser.PdfConversionProgressListener
 import kotlinx.coroutines.CancellationException
 
 internal fun enqueuePdfConversionWork(

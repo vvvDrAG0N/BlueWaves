@@ -1,4 +1,8 @@
-package com.epubreader.feature.reader
+/**
+ * Deprecated runtime retained in place for the upcoming safe refactor.
+ * `AppNavigation` no longer routes user-facing flows into this screen.
+ */
+package com.epubreader.feature.pdf.legacy
 
 import android.app.Activity
 import android.graphics.Bitmap
@@ -82,6 +86,8 @@ import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.feature.reader.ReaderTheme
+import com.epubreader.feature.reader.getThemeColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -170,21 +176,32 @@ fun PdfReaderScreen(
         )
     }
 
-    suspend fun saveAndBack() {
-        if (totalPages > 0) {
-            withContext(NonCancellable) {
-                settingsManager.saveBookProgress(
-                    book.id,
-                    BookProgress(
-                        scrollIndex = listState.firstVisibleItemIndex.coerceIn(0, totalPages - 1),
-                        scrollOffset = listState.firstVisibleItemScrollOffset,
-                        lastChapterHref = null,
-                    ),
-                    representation = BookRepresentation.PDF,
-                )
-            }
+    suspend fun saveCurrentProgress() {
+        if (totalPages <= 0) {
+            return
         }
+
+        withContext(NonCancellable) {
+            settingsManager.saveBookProgress(
+                book.id,
+                BookProgress(
+                    scrollIndex = listState.firstVisibleItemIndex.coerceIn(0, totalPages - 1),
+                    scrollOffset = listState.firstVisibleItemScrollOffset,
+                    lastChapterHref = null,
+                ),
+                representation = BookRepresentation.PDF,
+            )
+        }
+    }
+
+    suspend fun saveAndBack() {
+        saveCurrentProgress()
         onBack()
+    }
+
+    suspend fun saveAndOpenGeneratedEpub() {
+        saveCurrentProgress()
+        onOpenGeneratedEpub?.invoke()
     }
 
     val currentPage by remember(totalPages, listState.firstVisibleItemIndex) {
@@ -313,7 +330,7 @@ fun PdfReaderScreen(
                     actions = {
                         when {
                             book.canOpenGeneratedEpub && onOpenGeneratedEpub != null -> {
-                                TextButton(onClick = onOpenGeneratedEpub) {
+                                TextButton(onClick = { scope.launch { saveAndOpenGeneratedEpub() } }) {
                                     Text(text = "EPUB", color = themeColors.foreground)
                                 }
                             }
@@ -402,6 +419,11 @@ private fun PdfPageItem(
         val renderedBitmap by produceState<Bitmap?>(initialValue = null, documentHandle, pageIndex, widthPx) {
             value = withContext(Dispatchers.IO) {
                 documentHandle.renderPage(pageIndex, widthPx)
+            }
+        }
+        DisposableEffect(renderedBitmap) {
+            onDispose {
+                renderedBitmap?.takeIf { !it.isRecycled }?.recycle()
             }
         }
 

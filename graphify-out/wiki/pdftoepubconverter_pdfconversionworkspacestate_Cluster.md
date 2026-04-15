@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **PdfConversionWorkspaceState** (8 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
-- **.completedPages()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
-- **.hasPage()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
-- **.qualifiesForGeneratedEpub()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
-- **.record()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
-- **.reset()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
-- **.toJson()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
-- **.toResult()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
+- **PdfConversionWorkspaceState** (8 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.completedPages()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.hasPage()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.qualifiesForGeneratedEpub()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.record()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.reset()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.toJson()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.toResult()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
 
 ## Relationships
 
@@ -19,7 +19,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfToEpubConverter.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
 
 ## Audit Trail
 

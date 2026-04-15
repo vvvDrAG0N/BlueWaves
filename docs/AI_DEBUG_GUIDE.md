@@ -17,6 +17,26 @@ Then open only the area doc and files pointed to by the graph.
 - Grep `AppLog.PARSER`, `AppLog.APP_SHELL`, `AppLog.READER`, and `AppLog.SETTINGS` first when looking for high-signal logs.
 - Keep debug/info logs for trace points and keep warn/error logs for real fallbacks or failures.
 
+## PDF Support Temporarily Disabled
+
+Primary files:
+- `app/AppNavigation.kt`
+- `app/AppNavigationPdfLegacy.kt`
+- `app/AppNavigationOperations.kt`
+- `core/ui/LibraryCards.kt`
+
+Debug steps:
+1. Confirm the file picker is still EPUB/ZIP-only.
+2. Confirm `importBookIntoLibrary(...)` rejects `BookFormat.PDF`.
+3. Confirm `openBook(...)` blocks `sourceFormat == PDF` entries with the deprecation snackbar instead of entering a reader screen.
+4. Confirm `AppNavigationPdfLegacy.kt` is the only shell-side owner of legacy PDF work observation.
+5. Treat `feature/pdf/legacy/PdfReaderScreen.kt` and `data/pdf/legacy/PdfToEpubConverter.kt` as parked internals unless the task is explicitly about the upcoming refactor.
+
+Common causes:
+- Re-enabling a PDF shell path in one place but not the others.
+- Library copy still implying conversion/open actions are active.
+- Tests or docs assuming PDF is part of the current product surface.
+
 ## Scroll Position Not Restored
 
 Primary files:

@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **PdfConversionWorker.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
-- **PdfConversionWorker** (4 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
-- **cancelPdfConversionWork()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
-- **enqueuePdfConversionWork()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
-- **.createForegroundInfo()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
-- **.doWork()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
-- **.ensureNotificationChannel()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
-- **uniquePdfConversionWorkName()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
+- **PdfConversionWorker.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
+- **PdfConversionWorker** (4 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
+- **cancelPdfConversionWork()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
+- **enqueuePdfConversionWork()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
+- **.createForegroundInfo()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
+- **.doWork()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
+- **.ensureNotificationChannel()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
+- **uniquePdfConversionWorkName()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
 
 ## Relationships
 
@@ -19,7 +19,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfConversionWorker.kt`
+- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfConversionWorker.kt`
 
 ## Audit Trail
 

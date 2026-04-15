@@ -22,6 +22,12 @@ internal val LibrarySortOptions = listOf(
     "recent" to "Recent",
 )
 
+internal data class LibraryAsyncUiState(
+    val libraryRefresh: Boolean = false,
+    val importInFlight: Boolean = false,
+    val bookOpenInFlight: String? = null,
+)
+
 // Screen-facing state bundles. These are derived in `AppNavigation.kt` and consumed by the
 // presentational app-shell files.
 internal data class LibraryScreenState(
@@ -33,7 +39,7 @@ internal data class LibraryScreenState(
     val libraryItems: List<EpubBook>,
     val lastOpenedBook: EpubBook?,
     val selectedFolderName: String,
-    val isLoading: Boolean,
+    val asyncState: LibraryAsyncUiState,
     val selection: BookSelectionUiState,
     val folderDrawer: FolderDrawerUiState,
 )

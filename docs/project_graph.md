@@ -4,6 +4,12 @@ This file is the low-token entry point for repo-wide tasks.
 
 Use it before loading large groups of source files.
 
+## Temporary Product Boundary
+
+- The active app shell currently imports and opens EPUBs only.
+- PDF-origin books are still scanned as library metadata, but opening/importing them is blocked at the shell until the planned safe refactor lands.
+- Deprecated PDF runtime files remain in source, but they are outside the active user flow.
+
 ## Why This Exists
 
 - `graphify-out/GRAPH_REPORT.md` gives the shortest whole-project structural summary.
@@ -102,6 +108,9 @@ flowchart TD
 
     CoreUi[core/ui/LibraryCards] --> AppLibrary
 ```
+
+Deprecated runtime note:
+- `feature/pdf/legacy/PdfReaderScreen.kt`, `data/pdf/legacy/PdfToEpubConverter.kt`, and `data/pdf/legacy/PdfConversionWorker.kt` remain parked for the future PDF-safe-refactor and are not part of the active shell flow above.
 
 ## Task Routing
 

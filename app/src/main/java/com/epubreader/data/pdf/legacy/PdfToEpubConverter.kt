@@ -1,4 +1,8 @@
-package com.epubreader.data.parser
+/**
+ * Deprecated PDF conversion internals retained for the upcoming safe refactor.
+ * The active app shell no longer imports or opens PDF-origin books.
+ */
+package com.epubreader.data.pdf.legacy
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -7,6 +11,11 @@ import android.graphics.Matrix
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import com.epubreader.core.debug.AppLog
+import com.epubreader.data.parser.EPUB_MIME_TYPE
+import com.epubreader.data.parser.PdfConversionProgress
+import com.epubreader.data.parser.PdfConversionProgressListener
+import com.epubreader.data.parser.PdfConversionResult
+import com.epubreader.data.parser.replaceFileAtomically
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -33,23 +42,6 @@ import kotlin.math.max
 import kotlinx.coroutines.CancellationException
 
 internal const val PDF_CONVERSION_WORKSPACE_DIR_NAME = "pdf_conversion_workspace"
-
-internal data class PdfConversionProgress(
-    val completedPages: Int,
-    val totalPages: Int,
-)
-
-internal data class PdfConversionResult(
-    val succeeded: Boolean,
-    val completedPages: Int,
-    val totalPages: Int,
-    val directTextPages: Int,
-    val ocrPages: Int,
-)
-
-internal fun interface PdfConversionProgressListener {
-    suspend fun onProgress(progress: PdfConversionProgress)
-}
 
 internal interface PdfToEpubConverter {
     suspend fun convert(
@@ -169,7 +161,6 @@ internal class MlKitPdfToEpubConverter(
                 writeWorkspacePage(
                     workspaceDir = workspaceDir,
                     pageNumber = pageNumber,
-                    bookTitle = title,
                     paragraphs = paragraphs,
                 )
                 workspaceState.record(
@@ -239,8 +230,46 @@ private data class WorkspacePageStat(
     val extractionMethod: PdfTextExtractionMethod,
 )
 
+internal data class PdfWorkspacePage(
+    val pageNumber: Int,
+    val paragraphs: List<String>,
+) {
+    fun toJson(): JSONObject {
+        val paragraphArray = JSONArray()
+        paragraphs.forEach(paragraphArray::put)
+        return JSONObject().apply {
+            put("pageNumber", pageNumber)
+            put("paragraphs", paragraphArray)
+        }
+    }
+}
+
+internal data class PdfReflowSection(
+    val index: Int,
+    val startPage: Int,
+    val endPage: Int,
+    val pages: List<PdfWorkspacePage>,
+) {
+    val title: String
+        get() = if (startPage == endPage) {
+            "Page $startPage"
+        } else {
+            "Pages $startPage-$endPage"
+        }
+
+    val fileName: String
+        get() = sectionFileName(index)
+
+    val href: String
+        get() = "sections/$fileName"
+
+    val anchorId: String
+        get() = pageAnchorId(startPage)
+}
+
 private class PdfConversionWorkspaceState(
     var totalPages: Int = 0,
+    val schemaVersion: Int = PDF_CONVERSION_WORKSPACE_SCHEMA_VERSION,
     private val pageStats: MutableMap<Int, WorkspacePageStat> = linkedMapOf(),
 ) {
     fun reset(totalPages: Int) {
@@ -295,6 +324,7 @@ private class PdfConversionWorkspaceState(
                 )
             }
         return JSONObject().apply {
+            put("schemaVersion", schemaVersion)
             put("totalPages", totalPages)
             put("pageStats", statsArray)
         }
@@ -398,10 +428,40 @@ private fun writeWorkspaceStylesheet(workspaceDir: File) {
     val stylesDir = File(workspaceDir, "styles").apply { mkdirs() }
     File(stylesDir, "book.css").writeText(
         """
-        body { margin: 0; padding: 0; }
-        section.page { margin: 0; }
-        h1.page-title { margin: 0 0 1rem; font-size: 1.15rem; text-align: center; }
-        p { margin: 0 0 1rem; text-indent: 0; }
+        body {
+            margin: 0 auto;
+            padding: 1.4rem 1.25rem 2rem;
+            max-width: 42rem;
+            line-height: 1.62;
+        }
+        section.reflow-section { margin: 0; }
+        h1.section-title {
+            margin: 0 0 1.25rem;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+        .page-marker {
+            margin: 1.5rem 0 0.75rem;
+            padding-top: 0.65rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.12);
+            font-size: 0.82rem;
+        }
+        .page-marker span {
+            display: inline-block;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.06);
+        }
+        p {
+            margin: 0 0 0.95rem;
+            text-indent: 0;
+        }
+        p.page-note {
+            font-style: italic;
+            opacity: 0.72;
+        }
         """.trimIndent(),
     )
 }
@@ -414,51 +474,91 @@ private fun clearWorkspacePages(workspaceDir: File) {
 private fun writeWorkspacePage(
     workspaceDir: File,
     pageNumber: Int,
-    bookTitle: String,
     paragraphs: List<String>,
 ) {
     val pagesDir = File(workspaceDir, "pages").apply { mkdirs() }
-    workspacePageFile(workspaceDir, pageNumber).writeText(
-        buildPageDocument(
+    val targetFile = workspacePageFile(workspaceDir, pageNumber)
+    val stagedFile = File(pagesDir, "${targetFile.name}.tmp")
+    stagedFile.writeText(
+        PdfWorkspacePage(
             pageNumber = pageNumber,
-            bookTitle = bookTitle,
             paragraphs = paragraphs,
-        ),
+        ).toJson().toString(),
     )
+    replaceFileAtomically(stagedFile, targetFile)
 }
 
 private fun workspacePageFile(workspaceDir: File, pageNumber: Int): File {
-    return File(workspaceDir, "pages/${pageFileName(pageNumber)}")
+    return File(workspaceDir, "pages/${workspacePageFileName(pageNumber)}")
 }
 
-private fun buildPageDocument(
+private fun loadWorkspacePage(
+    workspaceDir: File,
     pageNumber: Int,
-    bookTitle: String,
-    paragraphs: List<String>,
-): String {
-    val body = if (paragraphs.isEmpty()) {
-        "<p>This page could not be converted into reflowable text.</p>"
-    } else {
-        paragraphs.joinToString(separator = "\n") { paragraph ->
-            "<p>${paragraph.escapeForXhtml().replace("\n", "<br />")}</p>"
-        }
+): PdfWorkspacePage {
+    val pageFile = workspacePageFile(workspaceDir, pageNumber)
+    if (!pageFile.exists()) {
+        return PdfWorkspacePage(pageNumber = pageNumber, paragraphs = emptyList())
     }
 
-    return """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <html xmlns="http://www.w3.org/1999/xhtml">
-          <head>
-            <title>${"$bookTitle - Page $pageNumber".escapeForXhtml()}</title>
-            <link rel="stylesheet" type="text/css" href="../styles/book.css"/>
-          </head>
-          <body>
-            <section class="page">
-              <h1 class="page-title">Page $pageNumber</h1>
-              $body
-            </section>
-          </body>
-        </html>
-    """.trimIndent().trimStart()
+    return runCatching {
+        val json = JSONObject(pageFile.readText())
+        val paragraphArray = json.optJSONArray("paragraphs") ?: JSONArray()
+        val paragraphs = buildList {
+            for (index in 0 until paragraphArray.length()) {
+                add(paragraphArray.optString(index))
+            }
+        }
+        PdfWorkspacePage(
+            pageNumber = json.optInt("pageNumber", pageNumber).takeIf { it > 0 } ?: pageNumber,
+            paragraphs = paragraphs.filter(String::isNotBlank),
+        )
+    }.getOrElse {
+        PdfWorkspacePage(pageNumber = pageNumber, paragraphs = emptyList())
+    }
+}
+
+internal fun buildPdfReflowSections(
+    workspaceDir: File,
+    totalPages: Int,
+): List<PdfReflowSection> {
+    if (totalPages <= 0) {
+        return emptyList()
+    }
+
+    val sections = mutableListOf<PdfReflowSection>()
+    var currentPages = mutableListOf<PdfWorkspacePage>()
+    var currentCharacterCount = 0
+
+    fun flushSection() {
+        if (currentPages.isEmpty()) {
+            return
+        }
+        sections += PdfReflowSection(
+            index = sections.size + 1,
+            startPage = currentPages.first().pageNumber,
+            endPage = currentPages.last().pageNumber,
+            pages = currentPages.toList(),
+        )
+        currentPages = mutableListOf()
+        currentCharacterCount = 0
+    }
+
+    for (pageNumber in 1..totalPages) {
+        val page = loadWorkspacePage(workspaceDir, pageNumber)
+        val pageCharacterCount = page.paragraphs.characterCount()
+        val reachedPageLimit = currentPages.size >= PDF_REFLOW_SECTION_MAX_PAGES
+        val reachedCharacterLimit = currentPages.isNotEmpty() &&
+            currentCharacterCount + pageCharacterCount > PDF_REFLOW_SECTION_MAX_CHARACTERS
+        if (reachedPageLimit || reachedCharacterLimit) {
+            flushSection()
+        }
+        currentPages += page
+        currentCharacterCount += pageCharacterCount
+    }
+    flushSection()
+
+    return sections
 }
 
 private fun loadWorkspaceState(workspaceDir: File): PdfConversionWorkspaceState {
@@ -469,6 +569,10 @@ private fun loadWorkspaceState(workspaceDir: File): PdfConversionWorkspaceState 
 
     return runCatching {
         val json = JSONObject(stateFile.readText())
+        val schemaVersion = json.optInt("schemaVersion", 0)
+        if (schemaVersion != PDF_CONVERSION_WORKSPACE_SCHEMA_VERSION) {
+            return@runCatching PdfConversionWorkspaceState(totalPages = -1)
+        }
         val state = PdfConversionWorkspaceState(totalPages = json.optInt("totalPages", 0))
         val stats = json.optJSONArray("pageStats") ?: JSONArray()
         for (index in 0 until stats.length()) {
@@ -503,13 +607,16 @@ private fun saveWorkspaceState(
     replaceFileAtomically(stagedState, targetState)
 }
 
-private fun writeGeneratedEpub(
+internal fun writeGeneratedEpub(
     outputFile: File,
     workspaceDir: File,
     title: String,
     author: String,
     totalPages: Int,
 ) {
+    val sections = buildPdfReflowSections(workspaceDir, totalPages)
+    require(sections.isNotEmpty()) { "No reflow sections were generated for this PDF." }
+
     outputFile.parentFile?.mkdirs()
     ZipOutputStream(FileOutputStream(outputFile)).use { zip ->
         addStoredEntry(zip, "mimetype", EPUB_MIME_TYPE)
@@ -530,34 +637,39 @@ private fun writeGeneratedEpub(
             "OEBPS/styles/book.css",
             File(workspaceDir, "styles/book.css"),
         )
-        for (pageNumber in 1..totalPages) {
-            addFileEntry(
+        for (section in sections) {
+            addEntry(
                 zip,
-                "OEBPS/pages/${pageFileName(pageNumber)}",
-                workspacePageFile(workspaceDir, pageNumber),
+                "OEBPS/${section.href}",
+                buildSectionDocument(
+                    section = section,
+                    bookTitle = title,
+                ),
             )
         }
-        addEntry(zip, "OEBPS/content.opf", buildOpfDocument(title, author, totalPages))
-        addEntry(zip, "OEBPS/toc.ncx", buildNcxDocument(title, totalPages))
+        addEntry(zip, "OEBPS/content.opf", buildOpfDocument(title, author, sections))
+        addEntry(zip, "OEBPS/toc.ncx", buildNcxDocument(title, sections))
     }
 }
 
-private fun buildOpfDocument(
+internal fun buildOpfDocument(
     title: String,
     author: String,
-    totalPages: Int,
+    sections: List<PdfReflowSection>,
 ): String {
     val manifest = buildString {
         appendLine("""    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>""")
         appendLine("""    <item id="css" href="styles/book.css" media-type="text/css"/>""")
-        for (pageNumber in 1..totalPages) {
-            appendLine("""    <item id="page-$pageNumber" href="pages/${pageFileName(pageNumber)}" media-type="application/xhtml+xml"/>""")
+        for (section in sections) {
+            appendLine(
+                """    <item id="section-${section.index}" href="${section.href}" media-type="application/xhtml+xml"/>""",
+            )
         }
     }.trimEnd()
 
     val spine = buildString {
-        for (pageNumber in 1..totalPages) {
-            appendLine("""    <itemref idref="page-$pageNumber"/>""")
+        for (section in sections) {
+            appendLine("""    <itemref idref="section-${section.index}"/>""")
         }
     }.trimEnd()
 
@@ -580,14 +692,14 @@ private fun buildOpfDocument(
     """.trimIndent().trimStart()
 }
 
-private fun buildNcxDocument(title: String, totalPages: Int): String {
+internal fun buildNcxDocument(title: String, sections: List<PdfReflowSection>): String {
     val navPoints = buildString {
-        for (pageNumber in 1..totalPages) {
+        for (section in sections) {
             appendLine(
                 """
-                <navPoint id="page-$pageNumber" playOrder="$pageNumber">
-                  <navLabel><text>Page $pageNumber</text></navLabel>
-                  <content src="pages/${pageFileName(pageNumber)}"/>
+                <navPoint id="section-${section.index}" playOrder="${section.index}">
+                  <navLabel><text>${section.title.escapeForXhtml()}</text></navLabel>
+                  <content src="${section.href}#${section.anchorId}"/>
                 </navPoint>
                 """.trimIndent(),
             )
@@ -603,6 +715,41 @@ private fun buildNcxDocument(title: String, totalPages: Int): String {
         $navPoints
           </navMap>
         </ncx>
+    """.trimIndent().trimStart()
+}
+
+internal fun buildSectionDocument(
+    section: PdfReflowSection,
+    bookTitle: String,
+): String {
+    val body = section.pages.joinToString(separator = "\n") { page ->
+        val pageBody = if (page.paragraphs.isEmpty()) {
+            """<p class="page-note">This page did not yield extractable reflow text.</p>"""
+        } else {
+            page.paragraphs.joinToString(separator = "\n") { paragraph ->
+                "<p>${paragraph.escapeForXhtml().replace("\n", "<br />")}</p>"
+            }
+        }
+        """
+        <div class="page-marker" id="${pageAnchorId(page.pageNumber)}"><span>Page ${page.pageNumber}</span></div>
+        $pageBody
+        """.trimIndent()
+    }
+
+    return """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <html xmlns="http://www.w3.org/1999/xhtml">
+          <head>
+            <title>${"$bookTitle - ${section.title}".escapeForXhtml()}</title>
+            <link rel="stylesheet" type="text/css" href="../styles/book.css"/>
+          </head>
+          <body>
+            <section class="reflow-section">
+              <h1 class="section-title">${section.title.escapeForXhtml()}</h1>
+              $body
+            </section>
+          </body>
+        </html>
     """.trimIndent().trimStart()
 }
 
@@ -694,10 +841,17 @@ private fun String.escapeForXhtml(): String {
     }
 }
 
-private fun pageFileName(pageNumber: Int): String = "page-${pageNumber.toString().padStart(4, '0')}.xhtml"
+private fun workspacePageFileName(pageNumber: Int): String = "page-${pageNumber.toString().padStart(4, '0')}.json"
+
+private fun sectionFileName(sectionIndex: Int): String = "section-${sectionIndex.toString().padStart(4, '0')}.xhtml"
+
+private fun pageAnchorId(pageNumber: Int): String = "page-${pageNumber.toString().padStart(4, '0')}"
 
 private const val PDF_CONVERSION_RENDER_WIDTH_PX = 1080
 private const val PDF_PAGE_MIN_SIGNAL_CHARACTERS = 40
 private const val PDF_PARAGRAPH_JOIN_THRESHOLD = 100
 private const val PDF_CONVERSION_PROGRESS_CHUNK_SIZE = 8
+private const val PDF_REFLOW_SECTION_MAX_PAGES = 12
+private const val PDF_REFLOW_SECTION_MAX_CHARACTERS = 15_000
+private const val PDF_CONVERSION_WORKSPACE_SCHEMA_VERSION = 2
 private const val WORKSPACE_STATE_FILE_NAME = "workspace_state.json"

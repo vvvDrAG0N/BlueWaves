@@ -44,6 +44,7 @@ AI hint:
 - Then load `AppNavigation.kt` for behavior.
 - Open `AppNavigationStartup.kt`, `AppNavigationOperations.kt`, or `AppNavigationLibraryData.kt` only if the task is specific to that helper path.
 - Open `AppNavigationLibrary.kt` or `AppNavigationDialogs.kt` only if the task is rendering-specific.
+- PDF import/open behavior is currently disabled at this layer; if a task mentions PDF, start here before touching the parked runtime files.
 
 ## Reader
 
@@ -75,6 +76,7 @@ AI hint:
 - Treat the `chapterElements` restoration effect as load-bearing logic. Preserve sequencing.
 - Start with `docs/reader_screen.md`, then `ReaderScreen.kt`.
 - Open `ReaderScreenChrome.kt` only for drawer/overlay work and `ReaderScreenControls.kt` only for controls/rendering work.
+- The active reader path no longer carries PDF fallback UI; `PdfReaderScreen.kt` is deprecated runtime code and is not part of the active reader entry path right now.
 
 ## Settings
 
@@ -119,6 +121,19 @@ Data flow:
 
 AI hint:
 - Check `normalizePath()` and ZIP entry resolution first for broken image/chapter cases.
+- Deprecated PDF parsing/conversion internals now live under `data/pdf/legacy`, but the active app shell only imports/opens EPUBs for now.
+
+## Deprecated PDF Runtime
+
+Entry points:
+- `com.epubreader.feature.pdf.legacy.PdfReaderScreen`
+- `com.epubreader.data.pdf.legacy.PdfToEpubConverter`
+- `com.epubreader.data.pdf.legacy.PdfConversionWorker`
+- `com.epubreader.app.AppNavigationPdfLegacy`
+
+Current status:
+- Kept in source for the planned safe refactor.
+- Not part of the active import/open path in `AppNavigation`.
 
 ## Parser Split Note
 
