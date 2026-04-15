@@ -1,5 +1,15 @@
 [
   {
+    "versionCode": 12,
+    "versionName": "1.1.1",
+    "changes": [
+      "Fixed: Theme selection highlights are now correctly circular to match button shapes.",
+      "Improved: Theme Import/Export system with better icon mapping and duplicate palette detection.",
+      "Improved: Theme name collision handling - imported themes with existing names now get a counter suffix.",
+      "Refactored: Settings Screen code cleanup and performance optimizations for theme management."
+    ]
+  },
+  {
     "versionCode": 11,
     "versionName": "1.1.0",
     "changes": [
