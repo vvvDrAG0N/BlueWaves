@@ -1,36 +1,24 @@
 TODO
 
-- Theme System DONE
-  - Add user-defined custom themes and color palettes.
-  - Requirement: ship unit tests for theme model, persistence, and application paths.
-  - Requirement: update relevant markdown docs.
-  - Requirement: rebuild graphify artifacts after implementation.
-
-- Edit Book DONE
-  - Dense two-tab editor for `Book Details` and `Chapters`.
-  - Book details show source format, total chapters, and book ID.
-  - Allow replacing and removing covers.
-  - Allow editing author name and title.
-  - Allow renaming chapter TOC labels.
-  - Allow chapter range selection and outside-range selection.
-  - Allow moving chapters to a target position.
-  - Allow adding text chapters at any position.
-  - Allow importing `html/xhtml` chapter files at any position.
-  - Requirement: ship unit tests for metadata editing, chapter mutation paths, and editor helper logic.
-  - Requirement: update relevant markdown docs.
-  - Requirement: rebuild graphify artifacts after implementation.
-
-- Selectable Text NEXT
-  - Add the ability to select text in the reader for chapter text only.
-  - Form: add a toggle button similar to the `Show System Bar` toggle.
-  - UI position: `Appearance` bar and library's global settings.
-  - Requirement: ship unit tests for reader text-selection state, persistence, and UI toggle behavior.
-  - Requirement: update relevant markdown docs.
-  - Requirement: rebuild graphify artifacts after implementation if code structure changes.
-
 - PDF / Format Support LATER
   - Add support for PDF.
   - Revisit ZIP-based import flows only when the format/runtime story is coherent again.
   - Requirement: ship unit tests for format detection, import routing, and parser/reader entry points.
   - Requirement: update relevant markdown docs.
   - Requirement: rebuild graphify artifacts after implementation.
+
+
+- There is no visual identifier when importing large book, large book take some time so it appears as if stuck without visual change.
+
+- Chaper information on the book's cover uses reader foreground as color, if light themes is begin applied it takes black color, which is hard to read over some covers.
+
+- Size issues: the app size jumpes from 15.1MB to over 60MB, this needs to be investigated and fixed.
+
+- Performance issues when first opening the app, this extends to other area like settings, making it feels laggy and unsmooth experience. with system bar change on settings perhabs this cause an extra lag. we need a performance pass here.
+
+- Add support for bulk importing themes: by either a importing a .zip containing multiple theme files or picking multiple themes at once.
+
+- Add swipe gesture support for "settings" to swipe between tabs.
+
+- Performance issue: Saving a large book after editing take long time depending on it size, we need a another performance pass here.
+
