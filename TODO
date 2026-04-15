@@ -6,27 +6,31 @@ TODO
   - Requirement: update relevant markdown docs.
   - Requirement: rebuild graphify artifacts after implementation.
 
-- Format Support
-  - Add support for PDF.
-  - Add support for ZIP-based import flows.
-  - Requirement: ship unit tests for format detection, import routing, and parser/reader entry points.
+- Edit Book DONE
+  - Dense two-tab editor for `Book Details` and `Chapters`.
+  - Book details show source format, total chapters, and book ID.
+  - Allow replacing and removing covers.
+  - Allow editing author name and title.
+  - Allow renaming chapter TOC labels.
+  - Allow chapter range selection and outside-range selection.
+  - Allow moving chapters to a target position.
+  - Allow adding text chapters at any position.
+  - Allow importing `html/xhtml` chapter files at any position.
+  - Requirement: ship unit tests for metadata editing, chapter mutation paths, and editor helper logic.
   - Requirement: update relevant markdown docs.
   - Requirement: rebuild graphify artifacts after implementation.
 
-- Edit Book
-  - Allow setting a custom cover for books.
-  - Allow editing author name.
-  - Allow editing title.
-  - Allow deleting chapters.
-  - Allow adding chapters.
-  - Requirement: ship unit tests for metadata editing and chapter mutation paths.
-  - Requirement: update relevant markdown docs.
-  - Requirement: rebuild graphify artifacts after implementation.
-
-- Selectable Text
+- Selectable Text NEXT
   - Add the ability to select text in the reader for chapter text only.
   - Form: add a toggle button similar to the `Show System Bar` toggle.
   - UI position: `Appearance` bar and library's global settings.
   - Requirement: ship unit tests for reader text-selection state, persistence, and UI toggle behavior.
   - Requirement: update relevant markdown docs.
   - Requirement: rebuild graphify artifacts after implementation if code structure changes.
+
+- PDF / Format Support LATER
+  - Add support for PDF.
+  - Revisit ZIP-based import flows only when the format/runtime story is coherent again.
+  - Requirement: ship unit tests for format detection, import routing, and parser/reader entry points.
+  - Requirement: update relevant markdown docs.
+  - Requirement: rebuild graphify artifacts after implementation.

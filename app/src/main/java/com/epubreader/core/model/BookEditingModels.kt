@@ -7,10 +7,15 @@ package com.epubreader.core.model
 data class BookEditRequest(
     val title: String,
     val author: String,
-    val coverUpdate: BookCoverUpdate? = null,
-    val deletedChapterHrefs: Set<String> = emptySet(),
-    val addedChapters: List<BookChapterAddition> = emptyList(),
+    val coverAction: BookCoverAction = BookCoverAction.Keep,
+    val chapters: List<BookChapterEdit> = emptyList(),
 )
+
+sealed interface BookCoverAction {
+    data object Keep : BookCoverAction
+    data object Remove : BookCoverAction
+    data class Replace(val cover: BookCoverUpdate) : BookCoverAction
+}
 
 data class BookCoverUpdate(
     val fileName: String,
@@ -18,7 +23,22 @@ data class BookCoverUpdate(
     val bytes: ByteArray,
 )
 
-data class BookChapterAddition(
+data class BookChapterEdit(
+    val existingHref: String? = null,
     val title: String,
-    val body: String,
+    val newChapterContent: BookNewChapterContent? = null,
 )
+
+sealed interface BookNewChapterContent {
+    val fileNameHint: String?
+
+    data class PlainText(
+        val body: String,
+        override val fileNameHint: String? = null,
+    ) : BookNewChapterContent
+
+    data class HtmlDocument(
+        val markup: String,
+        override val fileNameHint: String? = null,
+    ) : BookNewChapterContent
+}

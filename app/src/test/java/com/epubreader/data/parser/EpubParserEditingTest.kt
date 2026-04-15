@@ -1,9 +1,12 @@
 package com.epubreader.data.parser
 
-import com.epubreader.core.model.BookChapterAddition
+import com.epubreader.core.model.BookChapterEdit
+import com.epubreader.core.model.BookCoverAction
 import com.epubreader.core.model.BookCoverUpdate
 import com.epubreader.core.model.BookEditRequest
+import com.epubreader.core.model.BookNewChapterContent
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -21,7 +24,7 @@ import java.util.zip.ZipOutputStream
 class EpubParserEditingTest {
 
     @Test
-    fun editStoredEpubBook_updatesMetadataCoverAndChapters() {
+    fun editStoredEpubBook_updatesMetadataReordersChaptersAndImportsHtml() {
         val bookFolder = Files.createTempDirectory("edit-book").toFile()
         writeTestEpub(
             bookFolder = bookFolder,
@@ -39,17 +42,23 @@ class EpubParserEditingTest {
             request = BookEditRequest(
                 title = "Edited Title",
                 author = "Edited Author",
-                coverUpdate = BookCoverUpdate(
-                    fileName = "cover.png",
-                    mimeType = "image/png",
-                    bytes = TinyPngBytes,
-                ),
-                deletedChapterHrefs = setOf("chapter1.xhtml"),
-                addedChapters = listOf(
-                    BookChapterAddition(
-                        title = "New Ending",
-                        body = "Fresh final chapter body.",
+                coverAction = BookCoverAction.Replace(
+                    BookCoverUpdate(
+                        fileName = "cover.png",
+                        mimeType = "image/png",
+                        bytes = TinyPngBytes,
                     ),
+                ),
+                chapters = listOf(
+                    BookChapterEdit(existingHref = "chapter2.xhtml", title = "Renamed Two"),
+                    BookChapterEdit(
+                        title = "Imported Bonus",
+                        newChapterContent = BookNewChapterContent.HtmlDocument(
+                            markup = """<html><head><title>Bonus File</title></head><body><section class="bonus"><p>Imported markup.</p></section></body></html>""",
+                            fileNameHint = "bonus.xhtml",
+                        ),
+                    ),
+                    BookChapterEdit(existingHref = "chapter1.xhtml", title = "Chapter One"),
                 ),
             ),
         )
@@ -59,28 +68,79 @@ class EpubParserEditingTest {
         assertEquals("Edited Title", updated.title)
         assertEquals("Edited Author", updated.author)
         assertEquals(
-            listOf("chapter2.xhtml", "bluewaves/added-chapter-0001.xhtml"),
+            listOf("chapter2.xhtml", "bluewaves/added-chapter-0001.xhtml", "chapter1.xhtml"),
             updated.spineHrefs,
         )
-        assertTrue(updated.toc.last().title.endsWith("New Ending"))
+        assertTrue(updated.toc[0].title.endsWith("Renamed Two"))
+        assertTrue(updated.toc[1].title.endsWith("Imported Bonus"))
         assertNotNull(updated.coverPath)
         assertTrue(File(updated.coverPath!!).exists())
 
         ZipFile(File(bookFolder, EPUB_ARCHIVE_FILE_NAME)).use { zip ->
             assertNotNull(zip.getEntry("OEBPS/bluewaves/custom-cover.png"))
-            assertNotNull(zip.getEntry("OEBPS/bluewaves/added-chapter-0001.xhtml"))
-        }
+            val importedEntry = requireNotNull(zip.getEntry("OEBPS/bluewaves/added-chapter-0001.xhtml"))
+            val importedXml = zip.getInputStream(importedEntry).bufferedReader().use { it.readText() }
+            assertTrue(importedXml.contains("""<section class="bonus"><p>Imported markup.</p></section>"""))
 
-        ZipFile(File(bookFolder, EPUB_ARCHIVE_FILE_NAME)).use { zip ->
-            val chapterXml = zip.getInputStream(
-                requireNotNull(zip.getEntry("OEBPS/bluewaves/added-chapter-0001.xhtml")),
-            ).bufferedReader().use { it.readText() }
-            assertTrue(chapterXml.contains("Fresh final chapter body."))
+            val chapterTwoXml = zip.getInputStream(requireNotNull(zip.getEntry("OEBPS/chapter2.xhtml")))
+                .bufferedReader()
+                .use { it.readText() }
+            assertTrue(chapterTwoXml.contains("<h1>Chapter Two</h1>"))
+            assertFalse(chapterTwoXml.contains("Renamed Two"))
         }
     }
 
     @Test
-    fun editStoredEpubBook_rejectsDeletingAllChaptersWithoutReplacement() {
+    fun editStoredEpubBook_removeCoverClearsCustomCoverResourceAndCoverPath() {
+        val bookFolder = Files.createTempDirectory("edit-book-remove-cover").toFile()
+        writeTestEpub(
+            bookFolder = bookFolder,
+            title = "Cover Test",
+            author = "Author",
+            chapters = listOf("chapter1.xhtml" to "Only Chapter"),
+        )
+
+        requireNotNull(
+            editStoredEpubBook(
+                bookFolder = bookFolder,
+                request = BookEditRequest(
+                    title = "Cover Test",
+                    author = "Author",
+                    coverAction = BookCoverAction.Replace(
+                        BookCoverUpdate(
+                            fileName = "cover.png",
+                            mimeType = "image/png",
+                            bytes = TinyPngBytes,
+                        ),
+                    ),
+                    chapters = listOf(
+                        BookChapterEdit(existingHref = "chapter1.xhtml", title = "Only Chapter"),
+                    ),
+                ),
+            ),
+        )
+
+        val removed = editStoredEpubBook(
+            bookFolder = bookFolder,
+            request = BookEditRequest(
+                title = "Cover Test",
+                author = "Author",
+                coverAction = BookCoverAction.Remove,
+                chapters = listOf(
+                    BookChapterEdit(existingHref = "chapter1.xhtml", title = "Only Chapter"),
+                ),
+            ),
+        )
+
+        assertNotNull(removed)
+        assertNull(removed!!.coverPath)
+        ZipFile(File(bookFolder, EPUB_ARCHIVE_FILE_NAME)).use { zip ->
+            assertNull(zip.getEntry("OEBPS/bluewaves/custom-cover.png"))
+        }
+    }
+
+    @Test
+    fun editStoredEpubBook_rejectsRemovingAllChapters() {
         val bookFolder = Files.createTempDirectory("edit-book-empty").toFile()
         writeTestEpub(
             bookFolder = bookFolder,
@@ -95,7 +155,7 @@ class EpubParserEditingTest {
             request = BookEditRequest(
                 title = "Single Chapter",
                 author = "Solo Author",
-                deletedChapterHrefs = setOf("chapter1.xhtml"),
+                chapters = emptyList(),
             ),
         )
 
@@ -130,11 +190,7 @@ class EpubParserEditingTest {
             addEntry(
                 zip,
                 "OEBPS/content.opf",
-                buildContentOpf(
-                    title = title,
-                    author = author,
-                    chapters = chapters,
-                ),
+                buildContentOpf(title = title, author = author, chapters = chapters),
             )
             addEntry(
                 zip,

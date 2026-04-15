@@ -69,7 +69,10 @@ internal fun rebuildBookMetadata(bookFolder: File): EpubBook? {
                 }
             }
             coverFile.absolutePath
-        } ?: existingMetadata?.coverPath
+        } ?: run {
+            File(bookFolder, EPUB_COVER_FILE_NAME).takeIf(File::exists)?.delete()
+            null
+        }
 
         val spineHrefs = book.spine.spineReferences.map { it.resource.href }
         val toc = buildTableOfContents(book, spineHrefs)

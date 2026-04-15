@@ -106,6 +106,20 @@ Temporary product note:
 - Why:
   - Protects safe restore behavior after chapter deletion in the Edit Book flow
 
+### 4c. [done] `EditBookModelsTest`
+
+- Path:
+  - `app/src/test/java/com/epubreader/feature/editbook/EditBookModelsTest.kt`
+- Target:
+  - `feature/editbook/EditBookModels.kt`
+- Cover:
+  - chapter range selection picks inclusive bounds
+  - outside-range selection inverts the chosen window
+  - move-to-position keeps selected chapter order stable
+  - imported html/xhtml title inference prefers document metadata over filenames
+- Why:
+  - Protects the dense Edit Book v2 chapter-list tools without needing Compose runtime coverage
+
 ### 5. [done] `SettingsManagerContractsTest`
 
 - Path:
@@ -221,8 +235,9 @@ These local Android-aware tests are now configured and cover startup, app-shell 
   - `data/parser/EpubParserEditing.kt`
 - Cover:
   - metadata edits rewrite the stored EPUB safely
-  - custom cover replacement persists through `rebuildBookMetadata()`
-  - delete chapter plus add chapter updates the spine/TOC without corrupting the archive
+  - custom cover replacement and removal persist through `rebuildBookMetadata()`
+  - chapter reorder plus html/xhtml import updates the spine/TOC without corrupting the archive
+  - TOC-only rename does not rewrite existing chapter body content
   - deleting every chapter without replacement is rejected and leaves the source EPUB intact
 - Why:
   - Gives focused coverage for the new EPUB mutation path behind Edit Book
@@ -319,7 +334,8 @@ These are slower and should focus on the most fragile runtime behavior.
   - `data/parser/EpubParser.kt`
 - Cover:
   - open Edit Book from the library card
-  - update title/author and append a chapter
+  - update title/author in the details tab
+  - switch to the chapters tab and add a text chapter
   - save returns to the library and refreshed metadata reflects the edit
 
 ## Execution Pattern

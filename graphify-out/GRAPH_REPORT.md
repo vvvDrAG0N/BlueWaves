@@ -1,34 +1,36 @@
 # Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-15)
 
 ## Corpus Check
-- 34 files · ~59,252 words
+- 35 files · ~66,230 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 387 nodes · 354 edges · 35 communities detected
+- 428 nodes · 394 edges · 36 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_PdfToEpubConverter Cluster|PdfToEpubConverter Cluster]]
 - [[_COMMUNITY_EpubParser Cluster|EpubParser Cluster]]
+- [[_COMMUNITY_EpubParserEditing Cluster|EpubParserEditing Cluster]]
 - [[_COMMUNITY_SettingsManager Cluster|SettingsManager Cluster]]
 - [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
+- [[_COMMUNITY_EditBookModels Cluster|EditBookModels Cluster]]
 - [[_COMMUNITY_SettingsScreen Cluster|SettingsScreen Cluster]]
 - [[_COMMUNITY_ImportRouting Cluster|ImportRouting Cluster]]
+- [[_COMMUNITY_EditBookScreen Cluster|EditBookScreen Cluster]]
 - [[_COMMUNITY_AppNavigationOperations Cluster|AppNavigationOperations Cluster]]
-- [[_COMMUNITY_EpubParserEditing Cluster|EpubParserEditing Cluster]]
 - [[_COMMUNITY_ReaderScreenControls Cluster|ReaderScreenControls Cluster]]
 - [[_COMMUNITY_EpubParserBooks Cluster|EpubParserBooks Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster|app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster]]
 - [[_COMMUNITY_AppNavigationContracts Cluster|AppNavigationContracts Cluster]]
+- [[_COMMUNITY_BookEditingModels Cluster|BookEditingModels Cluster]]
 - [[_COMMUNITY_LibraryModels Cluster|LibraryModels Cluster]]
 - [[_COMMUNITY_AppNavigationDialogs Cluster|AppNavigationDialogs Cluster]]
 - [[_COMMUNITY_EpubParserChapter Cluster|EpubParserChapter Cluster]]
 - [[_COMMUNITY_PdfLegacyBridge Cluster|PdfLegacyBridge Cluster]]
 - [[_COMMUNITY_MainActivity Cluster|MainActivity Cluster]]
 - [[_COMMUNITY_SettingsManagerContracts Cluster|SettingsManagerContracts Cluster]]
-- [[_COMMUNITY_EditBookScreen Cluster|EditBookScreen Cluster]]
 - [[_COMMUNITY_PdfConversionWorker Cluster|PdfConversionWorker Cluster]]
 - [[_COMMUNITY_pdftoepubconverter_pdfconversionworkspacestate Cluster|pdftoepubconverter_pdfconversionworkspacestate Cluster]]
 - [[_COMMUNITY_PdfReaderScreen Cluster|PdfReaderScreen Cluster]]
@@ -40,7 +42,6 @@
 - [[_COMMUNITY_ReaderScreenChrome Cluster|ReaderScreenChrome Cluster]]
 - [[_COMMUNITY_ReaderScreenContracts Cluster|ReaderScreenContracts Cluster]]
 - [[_COMMUNITY_AppNavigationPdfLegacy Cluster|AppNavigationPdfLegacy Cluster]]
-- [[_COMMUNITY_BookEditingModels Cluster|BookEditingModels Cluster]]
 - [[_COMMUNITY_LibraryCards Cluster|LibraryCards Cluster]]
 - [[_COMMUNITY_check_graph_staleness Cluster|check_graph_staleness Cluster]]
 - [[_COMMUNITY_AppNavigation Cluster|AppNavigation Cluster]]
@@ -71,140 +72,144 @@ Nodes (6): MlKitPdfToEpubConverter, PdfReflowSection, PdfTextExtractionMethod, P
 Cohesion: 0.06
 Nodes (1): EpubParser
 
-### Community 2 - "SettingsManager Cluster"
+### Community 2 - "EpubParserEditing Cluster"
+Cohesion: 0.08
+Nodes (0): 
+
+### Community 3 - "SettingsManager Cluster"
 Cohesion: 0.09
 Nodes (1): SettingsManager
 
-### Community 3 - "SettingsModels Cluster"
+### Community 4 - "SettingsModels Cluster"
 Cohesion: 0.11
 Nodes (5): BookProgress, CustomTheme, GlobalSettings, ThemeOption, ThemePalette
 
-### Community 4 - "SettingsScreen Cluster"
+### Community 5 - "EditBookModels Cluster"
+Cohesion: 0.11
+Nodes (2): EditableChapterItem, EditableChapterSource
+
+### Community 6 - "SettingsScreen Cluster"
 Cohesion: 0.11
 Nodes (4): HsvColor, SettingsTab, ThemeEditorDraft, ThemeEditorSession
 
-### Community 5 - "ImportRouting Cluster"
+### Community 7 - "ImportRouting Cluster"
 Cohesion: 0.12
 Nodes (9): ArchiveImportCandidate, ArchiveInspectionResult, Candidate, DirectEpubContainer, ImportFailureReason, ImportInspectionResult, ImportRequest, Ready (+1 more)
 
-### Community 6 - "AppNavigationOperations Cluster"
+### Community 8 - "EditBookScreen Cluster"
+Cohesion: 0.12
+Nodes (2): EditBookTab, RangeSelectionRequest
+
+### Community 9 - "AppNavigationOperations Cluster"
 Cohesion: 0.12
 Nodes (6): Duplicate, EditBookResult, Failed, ImportBookResult, Imported, Updated
 
-### Community 7 - "EpubParserEditing Cluster"
-Cohesion: 0.12
-Nodes (0): 
-
-### Community 8 - "ReaderScreenControls Cluster"
+### Community 10 - "ReaderScreenControls Cluster"
 Cohesion: 0.12
 Nodes (1): ReaderControlsTab
 
-### Community 9 - "EpubParserBooks Cluster"
+### Community 11 - "EpubParserBooks Cluster"
 Cohesion: 0.14
 Nodes (1): PdfDocumentInfo
 
-### Community 10 - "app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster"
+### Community 12 - "app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster"
 Cohesion: 0.17
 Nodes (0): 
 
-### Community 11 - "AppNavigationContracts Cluster"
+### Community 13 - "AppNavigationContracts Cluster"
 Cohesion: 0.18
 Nodes (10): BookSelectionActionBarActions, BookSelectionActionBarState, BookSelectionUiState, FolderDrawerActions, FolderDrawerUiState, LibraryAsyncUiState, LibraryDialogActions, LibraryDialogState (+2 more)
 
-### Community 12 - "LibraryModels Cluster"
+### Community 14 - "BookEditingModels Cluster"
+Cohesion: 0.18
+Nodes (10): BookChapterEdit, BookCoverAction, BookCoverUpdate, BookEditRequest, BookNewChapterContent, HtmlDocument, Keep, PlainText (+2 more)
+
+### Community 15 - "LibraryModels Cluster"
 Cohesion: 0.18
 Nodes (8): BookFormat, BookRepresentation, ChapterElement, ConversionStatus, EpubBook, Image, Text, TocItem
 
-### Community 13 - "AppNavigationDialogs Cluster"
+### Community 16 - "AppNavigationDialogs Cluster"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 14 - "EpubParserChapter Cluster"
+### Community 17 - "EpubParserChapter Cluster"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 15 - "PdfLegacyBridge Cluster"
+### Community 18 - "PdfLegacyBridge Cluster"
 Cohesion: 0.2
 Nodes (4): PdfConversionProgress, PdfConversionProgressListener, PdfConversionResult, PdfLegacyBridge
 
-### Community 16 - "MainActivity Cluster"
+### Community 19 - "MainActivity Cluster"
 Cohesion: 0.22
 Nodes (2): MainActivity, Screen
 
-### Community 17 - "SettingsManagerContracts Cluster"
+### Community 20 - "SettingsManagerContracts Cluster"
 Cohesion: 0.22
 Nodes (2): BookProgressPreferenceKeys, SettingsPreferenceKeys
 
-### Community 18 - "EditBookScreen Cluster"
-Cohesion: 0.22
-Nodes (1): EditableChapterItem
-
-### Community 19 - "PdfConversionWorker Cluster"
+### Community 21 - "PdfConversionWorker Cluster"
 Cohesion: 0.25
 Nodes (1): PdfConversionWorker
 
-### Community 20 - "pdftoepubconverter_pdfconversionworkspacestate Cluster"
+### Community 22 - "pdftoepubconverter_pdfconversionworkspacestate Cluster"
 Cohesion: 0.25
 Nodes (1): PdfConversionWorkspaceState
 
-### Community 21 - "PdfReaderScreen Cluster"
+### Community 23 - "PdfReaderScreen Cluster"
 Cohesion: 0.25
 Nodes (1): PdfDocumentHandle
 
-### Community 22 - "AppNavigationLibraryData Cluster"
+### Community 24 - "AppNavigationLibraryData Cluster"
 Cohesion: 0.29
 Nodes (1): FolderDragPreviewUpdate
 
-### Community 23 - "AppNavigationLibrary Cluster"
+### Community 25 - "AppNavigationLibrary Cluster"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 24 - "AppNavigationStartup Cluster"
+### Community 26 - "AppNavigationStartup Cluster"
 Cohesion: 0.33
 Nodes (1): AppShellStartupDecision
 
-### Community 25 - "AppLog Cluster"
+### Community 27 - "AppLog Cluster"
 Cohesion: 0.33
 Nodes (1): AppLog
 
-### Community 26 - "PdfLegacyRuntime Cluster"
+### Community 28 - "PdfLegacyRuntime Cluster"
 Cohesion: 0.33
 Nodes (1): PdfLegacyRuntime
 
-### Community 27 - "ReaderScreenChrome Cluster"
+### Community 29 - "ReaderScreenChrome Cluster"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 28 - "ReaderScreenContracts Cluster"
+### Community 30 - "ReaderScreenContracts Cluster"
 Cohesion: 0.33
 Nodes (4): ReaderChromeCallbacks, ReaderChromeState, ReaderTheme, TocSort
 
-### Community 29 - "AppNavigationPdfLegacy Cluster"
+### Community 31 - "AppNavigationPdfLegacy Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 30 - "BookEditingModels Cluster"
-Cohesion: 0.5
-Nodes (3): BookChapterAddition, BookCoverUpdate, BookEditRequest
-
-### Community 31 - "LibraryCards Cluster"
+### Community 32 - "LibraryCards Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 32 - "check_graph_staleness Cluster"
+### Community 33 - "check_graph_staleness Cluster"
 Cohesion: 1.0
 Nodes (2): check_staleness(), get_last_modified()
 
-### Community 33 - "AppNavigation Cluster"
+### Community 34 - "AppNavigation Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 34 - "ReaderScreen Cluster"
+### Community 35 - "ReaderScreen Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
-- **59 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+54 more)
+- **69 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+64 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `AppNavigation Cluster`** (2 nodes): `AppNavigation()`, `AppNavigation.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -215,16 +220,16 @@ Nodes (0):
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `PdfConversionWorkspaceState` connect `pdftoepubconverter_pdfconversionworkspacestate Cluster` to `PdfToEpubConverter Cluster`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `Screen`, `LibraryAsyncUiState`, `LibraryScreenState` to the rest of the system?**
-  _59 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _69 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `PdfToEpubConverter Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `EpubParser Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
+- **Should `EpubParserEditing Cluster` be split into smaller, more focused modules?**
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Should `SettingsManager Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.09 - nodes in this community are weakly interconnected._
 - **Should `SettingsModels Cluster` be split into smaller, more focused modules?**
-  _Cohesion score 0.11 - nodes in this community are weakly interconnected._
-- **Should `SettingsScreen Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.11 - nodes in this community are weakly interconnected._

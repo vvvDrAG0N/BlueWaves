@@ -32,8 +32,10 @@ Graph-first rule:
 
 - `com.epubreader.core.model.BookEditingModels`
   - `BookEditRequest`
+  - `BookCoverAction`
   - `BookCoverUpdate`
-  - `BookChapterAddition`
+  - `BookChapterEdit`
+  - `BookNewChapterContent`
 
 These are shared contracts. Prefer evolving them here instead of reintroducing duplicate models in parser or settings files.
 
@@ -73,7 +75,10 @@ Keep these presentation-only. Do not move folder state or navigation side effect
 ## Feature UI
 
 - `com.epubreader.feature.editbook.EditBookScreen`
-  - EPUB-only book editing UI for metadata, custom cover selection, and add/delete chapter actions.
+  - EPUB-only two-tab editor for metadata, cover management, search/range selection, chapter move/rename, and text/html chapter insertion.
+
+- `com.epubreader.feature.editbook.EditBookModels`
+  - Pure helper/state layer for chapter-list selection, movement, insertion, and import-title inference.
 
 - `com.epubreader.feature.reader.ReaderScreen`
   - Reader UI and scroll restoration logic.
@@ -185,7 +190,7 @@ Keep these presentation-only. Do not move folder state or navigation side effect
   - Load this file only for import/cache/metadata work.
 
 - `com.epubreader.data.parser.EpubParserEditing`
-  - Owns EPUB mutation for the Edit Book flow: title/author updates, custom cover replacement, and chapter add/delete writes.
+  - Owns EPUB mutation for the Edit Book flow: title/author updates, custom cover replace/remove, ordered spine rewrites, TOC-only chapter rename, and text/html chapter insertion.
   - Load this file only for EPUB editing or mutation safety work.
 
 - `com.epubreader.data.parser.EpubParserChapter`

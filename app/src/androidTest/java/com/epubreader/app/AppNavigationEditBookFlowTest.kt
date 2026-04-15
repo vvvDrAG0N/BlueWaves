@@ -5,10 +5,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
@@ -76,13 +76,14 @@ class AppNavigationEditBookFlowTest {
         composeRule.onNodeWithContentDescription("Edit Flow Edit Book").performClick()
         waitUntilDisplayed("Edit Book")
 
-        composeRule.onAllNodes(hasSetTextAction())[0].performTextReplacement("Edited Flow Book")
-        composeRule.onAllNodes(hasSetTextAction())[1].performTextReplacement("Edited Flow Author")
-        composeRule.onNodeWithText("Add Chapter").performClick()
-        composeRule.onAllNodes(hasSetTextAction())[2].performTextReplacement("Bonus Chapter")
-        composeRule.onAllNodes(hasSetTextAction())[3].performTextReplacement("Bonus chapter body.")
+        composeRule.onNodeWithTag("edit-book-title").performTextReplacement("Edited Flow Book")
+        composeRule.onNodeWithTag("edit-book-author").performTextReplacement("Edited Flow Author")
+        composeRule.onNodeWithText("Chapters").performClick()
+        composeRule.onNodeWithText("Add Text").performClick()
+        composeRule.onNodeWithTag("edit-book-add-title").performTextReplacement("Bonus Chapter")
+        composeRule.onNodeWithTag("edit-book-add-body").performTextReplacement("Bonus chapter body.")
         composeRule.onNodeWithText("Add").performClick()
-        composeRule.onNodeWithContentDescription("Save").performClick()
+        composeRule.onNodeWithTag("edit-book-save").performClick()
 
         waitUntilDisplayed("Edited Flow Book")
         composeRule.waitUntil(timeoutMillis = 15_000) {

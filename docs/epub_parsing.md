@@ -10,7 +10,7 @@ This note is the low-context guide for the parser package after the safe split o
 2. `data/parser/EpubParserBooks.kt`
    - Load only for import, cached metadata, TOC rebuild, cover extraction, or book ID questions.
 3. `data/parser/EpubParserEditing.kt`
-   - Load only for EPUB mutation work: title/author changes, custom cover replacement, or add/delete chapter writes.
+   - Load only for EPUB mutation work: title/author changes, cover replace/remove, chapter reordering, TOC-only rename, or text/html chapter insertion.
 4. `data/parser/EpubParserChapter.kt`
    - Load only for chapter rendering, image resolution, malformed XHTML handling, or `normalizePath()` work.
 
@@ -30,8 +30,8 @@ This note is the low-context guide for the parser package after the safe split o
 
 - `EpubParserEditing.kt`
   - `editStoredEpubBook(...)`
-  - EPUB mutation helpers for metadata, cover, and chapter changes
-  - Chapter-title cleanup and write-safe staged EPUB replacement
+  - EPUB mutation helpers for metadata, cover, ordered chapter rewrites, and imported html/xhtml chapter content
+  - staged EPUB replacement plus cover-reset cleanup
 
 - `EpubParserChapter.kt`
   - `parseBookChapter(...)`
@@ -53,6 +53,7 @@ The parser is designed to be resilient against corrupted or missing `metadata.js
 - **Initial Import:** Always called during `parseAndExtract`.
 - **Manual Reparse:** Can be triggered via `EpubParser.reparseBook(folder)` (common in tests or if a user triggers a library refresh that detects a hash mismatch, though current logic primarily relies on `loadBookMetadata` during scans).
 - **Edit Book Save:** `EpubParser.editBook(...)` rewrites the stored EPUB and then reparses it so `metadata.json`, cover cache, TOC, and spine stay aligned with the edited file.
+- **Cover Removal:** if an edited EPUB no longer has an active cover image, the parser now clears the cached `cover_thumb.png` instead of keeping a stale thumbnail path.
 - **Corrupt Cache:** If `loadBookMetadata` returns `null` during a scan, the book will not appear in the library until it is re-imported or manually repaired.
 
 ### Auto-fixed Fields & Resilience Logic
@@ -69,6 +70,7 @@ The parser is designed to be resilient against corrupted or missing `metadata.js
 - Book IDs must remain `MD5(uri + fileSize)`.
 - `ZipFile` and `InputStream` handling must stay wrapped in `.use {}`.
 - Edit-book writes must stay staged and atomic; never overwrite `book.epub` in-place.
+- Existing chapter body files should remain untouched when the change is only a TOC/title rename.
 - `normalizePath()` behavior must remain stable for `../`, `OEBPS/`, and `OPS/` layouts.
 - `metadata.json` field names and shape must not drift during safe refactors.
 - Chapter parser error tolerance must remain in place for malformed EPUB XHTML.

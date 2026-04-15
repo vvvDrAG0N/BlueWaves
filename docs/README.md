@@ -5,9 +5,10 @@ This directory is the architectural memory for Blue Waves.
 ## Temporary Product Status
 
 - Active app-shell support is EPUB-only for now.
-- EPUB books now have an in-app `Edit Book` flow for title/author updates, custom covers, and safe add/delete chapter edits.
+- EPUB books now have an in-app `Edit Book` flow with a compact two-tab editor for title/author updates, cover replace/remove, TOC-only chapter rename, chapter reordering, range selection tools, and safe text/html chapter insertion.
 - PDF-origin books may still exist in the cache/library as deprecated entries, but import/open flows are intentionally blocked while the PDF path is prepared for a larger safe refactor.
 - Deprecated PDF internals now live under `data/pdf/legacy` and `feature/pdf/legacy` for that refactor and are documented in `PDF_review.md`.
+- Roadmap order is now: `Edit Book` complete, `Selectable Text` next, PDF work later. `TODO_PROMPTS.md` should be treated as a prompt library, not the execution order by itself.
 
 ## Start Here
 
@@ -45,7 +46,8 @@ This directory is the architectural memory for Blue Waves.
 - `PROMPT_TEMPLATES.md`
   - Copy-paste starter prompts for bug fixes, features, reviews, and safe refactors.
 - `TODO_PROMPTS.md`
-  - Ready-to-use implementation prompts for the current top-level TODO features and the upcoming PDF-safe-refactor follow-up.
+  - Ready-to-use implementation prompts for top-level TODO work.
+  - Prompt order is not the execution order; check the root `TODO` status first.
 
 ## Graphify Artifacts
 

@@ -7,7 +7,7 @@ Use it before loading large groups of source files.
 ## Temporary Product Boundary
 
 - The active app shell currently imports and opens EPUBs only.
-- EPUB library entries can now route into a dedicated `Edit Book` flow for metadata, custom cover, and chapter mutation work.
+- EPUB library entries can now route into a dedicated `Edit Book` flow for metadata, cover management, chapter reordering, and chapter mutation work.
 - PDF-origin books are still scanned as library metadata, but opening/importing them is blocked at the shell until the planned safe refactor lands.
 - Deprecated PDF runtime files remain in source, but they are outside the active user flow.
 

@@ -2,6 +2,10 @@
 
 These prompts are derived from the current top-level tasks in [`TODO`](../TODO) and the feature-oriented guidance in [`docs/PROMPT_TEMPLATES.md`](./PROMPT_TEMPLATES.md).
 
+Execution-order note:
+- This file is a prompt library, not the authoritative task order.
+- Check the root [`TODO`](../TODO) first for the current sequence and done/next/later status.
+
 Use one prompt per implementation task.
 
 ## Theme System
@@ -127,24 +131,25 @@ Start with `app/src/main/java/com/epubreader/app/AppNavigationContracts.kt`, `ap
 Load `app/src/main/java/com/epubreader/data/parser/EpubParserChapter.kt` if chapter/spine mutations affect parser entry resolution, `app/src/main/java/com/epubreader/data/settings/SettingsManager.kt` if progress fallback behavior changes, and `app/src/main/java/com/epubreader/feature/reader/ReaderScreen.kt` only if reader handoff or deleted-chapter recovery requires it.
 
 Task: feature
-Goal: implement in-app book editing for custom cover, editable title/author metadata, and chapter add/delete operations
+Goal: implement or extend the in-app EPUB editor as a compact two-tab power-user flow for metadata, cover management, chapter rename/reorder, and chapter insertion/deletion
 
 User flow:
-1. User opens an edit-book flow for an imported book.
-2. User updates the cover, title, or author, and can add or delete chapters.
+1. User opens an edit-book flow for an imported book and sees `Book Details` plus `Chapters` tabs.
+2. User updates the cover, title, or author, sees source format / total chapters / book ID, and manages chapters through search, range-selection tools, reorder/move, rename, add text, delete, or html/xhtml import.
 3. The library and reader reflect the changes, and the edited book remains stable after reopen, rescan, and reading-progress restoration.
 
 Acceptance criteria:
-- Users can set a custom cover and edit title/author from the app without corrupting cached metadata.
+- Users can set or remove a custom cover and edit title/author from the app without corrupting cached metadata.
 - Library surfaces and reader-facing metadata reflect the edited values consistently.
-- Chapter add/delete operations update spine/TOC/book metadata in a way the parser and reader can reopen safely.
+- Chapter rename/reorder/add/delete/import operations update spine/TOC/book metadata in a way the parser and reader can reopen safely.
+- The chapters tab supports large books with lazy rendering, search/filtering, and explicit range-selection tools such as `Select from X to X` and `Select Outside X to X`.
 - If a saved chapter/progress target disappears because of edits, fallback behavior is explicit and safe instead of crashing or restoring to an invalid location.
-- Ship unit tests for metadata editing and chapter mutation paths.
+- Ship unit tests for metadata editing, chapter mutation, and editor helper paths.
 - Update relevant markdown docs under `docs/`.
 - Rebuild graphify artifacts after implementation.
 
 Scope:
-- Preferred files/packages: `app/src/main/java/com/epubreader/app/*`, `app/src/main/java/com/epubreader/data/parser/*`, `app/src/main/java/com/epubreader/core/model/LibraryModels.kt`, any small UI files needed for the edit surface, and matching tests under `app/src/test/java/com/epubreader/**`.
+- Preferred files/packages: `app/src/main/java/com/epubreader/app/*`, `app/src/main/java/com/epubreader/data/parser/*`, `app/src/main/java/com/epubreader/core/model/*Editing*.kt`, `app/src/main/java/com/epubreader/feature/editbook/*`, and matching tests under `app/src/test/java/com/epubreader/**`.
 - Avoid: changing book ID generation, changing DataStore key names/defaults, or refactoring `ReaderScreen.kt` restoration behavior unless the implementation proves that change is necessary and safe.
 
 Constraints:
@@ -153,6 +158,8 @@ Constraints:
 - Ask before DataStore/schema changes or major refactors.
 - Preserve reader restoration/parsing behavior unless this feature explicitly targets them.
 - Keep EPUB file operations and metadata/chapter mutation logic in the parser layer, not in UI or `SettingsManager`.
+- Treat chapter-title changes for existing chapters as TOC/navigation-label edits unless the task explicitly widens scope into full body editing.
+- Support import of standalone `html/xhtml` chapter files without turning this pass into a full asset-pack importer.
 - Preserve EPUB invariants: cache folder layout, `metadata.json` integrity, `.use {}` stream safety, `normalizePath()`, malformed-XHTML tolerance, and cover thumbnail consistency.
 - Treat `BookProgress.lastChapterHref` and chapter restoration as compatibility-sensitive; if chapter edits invalidate old hrefs, add a safe fallback path instead of letting progress restoration fail.
 - Do not change `isInitialScrollDone`, `isRestoringPosition`, the `delay(100)` restoration settle step, or overscroll behavior unless there is explicit validation proving reader safety.

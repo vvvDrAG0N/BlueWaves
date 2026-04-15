@@ -9,7 +9,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_mainactivity_kt",
-      "community": 16
+      "community": 19
     },
     {
       "label": "MainActivity",
@@ -17,7 +17,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L35",
       "id": "mainactivity_mainactivity",
-      "community": 16
+      "community": 19
     },
     {
       "label": ".onCreate()",
@@ -25,7 +25,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L36",
       "id": "mainactivity_mainactivity_oncreate",
-      "community": 16
+      "community": 19
     },
     {
       "label": "Screen",
@@ -33,7 +33,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L61",
       "id": "mainactivity_screen",
-      "community": 16
+      "community": 19
     },
     {
       "label": "appColorScheme()",
@@ -41,7 +41,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L68",
       "id": "mainactivity_appcolorscheme",
-      "community": 16
+      "community": 19
     },
     {
       "label": "customAppColorScheme()",
@@ -49,7 +49,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L131",
       "id": "mainactivity_customappcolorscheme",
-      "community": 16
+      "community": 19
     },
     {
       "label": "contentColorFor()",
@@ -57,7 +57,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L206",
       "id": "mainactivity_contentcolorfor",
-      "community": 16
+      "community": 19
     },
     {
       "label": "themedContainer()",
@@ -65,7 +65,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L210",
       "id": "mainactivity_themedcontainer",
-      "community": 16
+      "community": 19
     },
     {
       "label": "averageLuminance()",
@@ -73,7 +73,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\MainActivity.kt",
       "source_location": "L214",
       "id": "mainactivity_averageluminance",
-      "community": 16
+      "community": 19
     },
     {
       "label": "AppNavigation.kt",
@@ -81,7 +81,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigation.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_app_appnavigation_kt",
-      "community": 33
+      "community": 34
     },
     {
       "label": "AppNavigation()",
@@ -89,7 +89,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigation.kt",
       "source_location": "L88",
       "id": "appnavigation_appnavigation",
-      "community": 33
+      "community": 34
     },
     {
       "label": "AppNavigationContracts.kt",
@@ -97,7 +97,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_app_appnavigationcontracts_kt",
-      "community": 11
+      "community": 13
     },
     {
       "label": "LibraryAsyncUiState",
@@ -105,7 +105,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L25",
       "id": "appnavigationcontracts_libraryasyncuistate",
-      "community": 11
+      "community": 13
     },
     {
       "label": "LibraryScreenState",
@@ -113,7 +113,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L33",
       "id": "appnavigationcontracts_libraryscreenstate",
-      "community": 11
+      "community": 13
     },
     {
       "label": "BookSelectionUiState",
@@ -121,7 +121,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L47",
       "id": "appnavigationcontracts_bookselectionuistate",
-      "community": 11
+      "community": 13
     },
     {
       "label": "FolderDrawerUiState",
@@ -129,7 +129,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L55",
       "id": "appnavigationcontracts_folderdraweruistate",
-      "community": 11
+      "community": 13
     },
     {
       "label": "LibraryScreenActions",
@@ -137,7 +137,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L67",
       "id": "appnavigationcontracts_libraryscreenactions",
-      "community": 11
+      "community": 13
     },
     {
       "label": "FolderDrawerActions",
@@ -145,7 +145,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L83",
       "id": "appnavigationcontracts_folderdraweractions",
-      "community": 11
+      "community": 13
     },
     {
       "label": "BookSelectionActionBarState",
@@ -153,7 +153,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L102",
       "id": "appnavigationcontracts_bookselectionactionbarstate",
-      "community": 11
+      "community": 13
     },
     {
       "label": "BookSelectionActionBarActions",
@@ -161,7 +161,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L107",
       "id": "appnavigationcontracts_bookselectionactionbaractions",
-      "community": 11
+      "community": 13
     },
     {
       "label": "LibraryDialogState",
@@ -169,7 +169,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L113",
       "id": "appnavigationcontracts_librarydialogstate",
-      "community": 11
+      "community": 13
     },
     {
       "label": "LibraryDialogActions",
@@ -177,7 +177,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationContracts.kt",
       "source_location": "L128",
       "id": "appnavigationcontracts_librarydialogactions",
-      "community": 11
+      "community": 13
     },
     {
       "label": "AppNavigationDialogs.kt",
@@ -185,7 +185,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_app_appnavigationdialogs_kt",
-      "community": 13
+      "community": 16
     },
     {
       "label": "LibraryDialogHost()",
@@ -193,7 +193,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L40",
       "id": "appnavigationdialogs_librarydialoghost",
-      "community": 13
+      "community": 16
     },
     {
       "label": "LibrarySortSheet()",
@@ -201,7 +201,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L97",
       "id": "appnavigationdialogs_librarysortsheet",
-      "community": 13
+      "community": 16
     },
     {
       "label": "CreateFolderDialog()",
@@ -209,7 +209,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L166",
       "id": "appnavigationdialogs_createfolderdialog",
-      "community": 13
+      "community": 16
     },
     {
       "label": "RenameFolderDialog()",
@@ -217,7 +217,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L210",
       "id": "appnavigationdialogs_renamefolderdialog",
-      "community": 13
+      "community": 16
     },
     {
       "label": "DeleteFolderDialog()",
@@ -225,7 +225,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L257",
       "id": "appnavigationdialogs_deletefolderdialog",
-      "community": 13
+      "community": 16
     },
     {
       "label": "DeleteBooksDialog()",
@@ -233,7 +233,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L287",
       "id": "appnavigationdialogs_deletebooksdialog",
-      "community": 13
+      "community": 16
     },
     {
       "label": "DeleteFoldersDialog()",
@@ -241,7 +241,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L320",
       "id": "appnavigationdialogs_deletefoldersdialog",
-      "community": 13
+      "community": 16
     },
     {
       "label": "WelcomeDialog()",
@@ -249,7 +249,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L353",
       "id": "appnavigationdialogs_welcomedialog",
-      "community": 13
+      "community": 16
     },
     {
       "label": "ChangelogDialog()",
@@ -257,7 +257,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDialogs.kt",
       "source_location": "L374",
       "id": "appnavigationdialogs_changelogdialog",
-      "community": 13
+      "community": 16
     },
     {
       "label": "AppNavigationLibrary.kt",
@@ -265,7 +265,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_app_appnavigationlibrary_kt",
-      "community": 23
+      "community": 25
     },
     {
       "label": "LibraryScreen()",
@@ -273,7 +273,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L92",
       "id": "appnavigationlibrary_libraryscreen",
-      "community": 23
+      "community": 25
     },
     {
       "label": "LibraryDrawerContent()",
@@ -281,7 +281,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L153",
       "id": "appnavigationlibrary_librarydrawercontent",
-      "community": 23
+      "community": 25
     },
     {
       "label": "LibraryTopBar()",
@@ -289,7 +289,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L388",
       "id": "appnavigationlibrary_librarytopbar",
-      "community": 23
+      "community": 25
     },
     {
       "label": "LibraryBookGrid()",
@@ -297,7 +297,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L450",
       "id": "appnavigationlibrary_librarybookgrid",
-      "community": 23
+      "community": 25
     },
     {
       "label": "BookSelectionActionBar()",
@@ -305,7 +305,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibrary.kt",
       "source_location": "L548",
       "id": "appnavigationlibrary_bookselectionactionbar",
-      "community": 23
+      "community": 25
     },
     {
       "label": "AppNavigationLibraryData.kt",
@@ -313,7 +313,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_app_appnavigationlibrarydata_kt",
-      "community": 22
+      "community": 24
     },
     {
       "label": "FolderDragPreviewUpdate",
@@ -321,7 +321,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L13",
       "id": "appnavigationlibrarydata_folderdragpreviewupdate",
-      "community": 22
+      "community": 24
     },
     {
       "label": "parseJsonObject()",
@@ -329,7 +329,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L19",
       "id": "appnavigationlibrarydata_parsejsonobject",
-      "community": 22
+      "community": 24
     },
     {
       "label": "parseFolderOrder()",
@@ -337,7 +337,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L27",
       "id": "appnavigationlibrarydata_parsefolderorder",
-      "community": 22
+      "community": 24
     },
     {
       "label": "buildFolders()",
@@ -345,7 +345,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L42",
       "id": "appnavigationlibrarydata_buildfolders",
-      "community": 22
+      "community": 24
     },
     {
       "label": "buildLibraryItems()",
@@ -353,7 +353,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L77",
       "id": "appnavigationlibrarydata_buildlibraryitems",
-      "community": 22
+      "community": 24
     },
     {
       "label": "updateFolderDragPreview()",
@@ -361,7 +361,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationLibraryData.kt",
       "source_location": "L106",
       "id": "appnavigationlibrarydata_updatefolderdragpreview",
-      "community": 22
+      "community": 24
     },
     {
       "label": "AppNavigationOperations.kt",
@@ -369,7 +369,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_app_appnavigationoperations_kt",
-      "community": 6
+      "community": 9
     },
     {
       "label": "ImportBookResult",
@@ -377,7 +377,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L28",
       "id": "appnavigationoperations_importbookresult",
-      "community": 6
+      "community": 9
     },
     {
       "label": "Duplicate",
@@ -385,7 +385,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L29",
       "id": "appnavigationoperations_duplicate",
-      "community": 6
+      "community": 9
     },
     {
       "label": "Imported",
@@ -393,7 +393,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L30",
       "id": "appnavigationoperations_imported",
-      "community": 6
+      "community": 9
     },
     {
       "label": "Failed",
@@ -401,7 +401,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L31",
       "id": "appnavigationoperations_failed",
-      "community": 6
+      "community": 9
     },
     {
       "label": "EditBookResult",
@@ -409,7 +409,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L34",
       "id": "appnavigationoperations_editbookresult",
-      "community": 6
+      "community": 9
     },
     {
       "label": "Updated",
@@ -417,7 +417,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L35",
       "id": "appnavigationoperations_updated",
-      "community": 6
+      "community": 9
     },
     {
       "label": "scanLibrary()",
@@ -425,7 +425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L39",
       "id": "appnavigationoperations_scanlibrary",
-      "community": 6
+      "community": 9
     },
     {
       "label": "touchBookLastRead()",
@@ -433,7 +433,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L45",
       "id": "appnavigationoperations_touchbooklastread",
-      "community": 6
+      "community": 9
     },
     {
       "label": "importBookIntoLibrary()",
@@ -441,7 +441,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L56",
       "id": "appnavigationoperations_importbookintolibrary",
-      "community": 6
+      "community": 9
     },
     {
       "label": "moveBooksToFolder()",
@@ -449,7 +449,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L101",
       "id": "appnavigationoperations_movebookstofolder",
-      "community": 6
+      "community": 9
     },
     {
       "label": "deleteSelectedBooks()",
@@ -457,7 +457,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L111",
       "id": "appnavigationoperations_deleteselectedbooks",
-      "community": 6
+      "community": 9
     },
     {
       "label": "editBookInLibrary()",
@@ -465,7 +465,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L127",
       "id": "appnavigationoperations_editbookinlibrary",
-      "community": 6
+      "community": 9
     },
     {
       "label": "findExistingBook()",
@@ -473,7 +473,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L164",
       "id": "appnavigationoperations_findexistingbook",
-      "community": 6
+      "community": 9
     },
     {
       "label": "repairProgressAfterBookEdit()",
@@ -481,7 +481,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L179",
       "id": "appnavigationoperations_repairprogressafterbookedit",
-      "community": 6
+      "community": 9
     },
     {
       "label": "normalizeProgressHref()",
@@ -489,7 +489,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationOperations.kt",
       "source_location": "L224",
       "id": "appnavigationoperations_normalizeprogresshref",
-      "community": 6
+      "community": 9
     },
     {
       "label": "AppNavigationPdfLegacy.kt",
@@ -497,7 +497,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationPdfLegacy.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_app_appnavigationpdflegacy_kt",
-      "community": 29
+      "community": 31
     },
     {
       "label": "observeLegacyPdfWorkIds()",
@@ -505,7 +505,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationPdfLegacy.kt",
       "source_location": "L31",
       "id": "appnavigationpdflegacy_observelegacypdfworkids",
-      "community": 29
+      "community": 31
     },
     {
       "label": "refreshPdfBookFromMetadata()",
@@ -513,7 +513,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationPdfLegacy.kt",
       "source_location": "L39",
       "id": "appnavigationpdflegacy_refreshpdfbookfrommetadata",
-      "community": 29
+      "community": 31
     },
     {
       "label": "refreshPdfBookFromWork()",
@@ -521,7 +521,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationPdfLegacy.kt",
       "source_location": "L63",
       "id": "appnavigationpdflegacy_refreshpdfbookfromwork",
-      "community": 29
+      "community": 31
     },
     {
       "label": "ObserveLegacyPdfConversionState()",
@@ -529,7 +529,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationPdfLegacy.kt",
       "source_location": "L118",
       "id": "appnavigationpdflegacy_observelegacypdfconversionstate",
-      "community": 29
+      "community": 31
     },
     {
       "label": "AppNavigationStartup.kt",
@@ -537,7 +537,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_app_appnavigationstartup_kt",
-      "community": 24
+      "community": 26
     },
     {
       "label": "AppShellStartupDecision",
@@ -545,7 +545,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L17",
       "id": "appnavigationstartup_appshellstartupdecision",
-      "community": 24
+      "community": 26
     },
     {
       "label": "evaluateAppShellStartup()",
@@ -553,7 +553,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L35",
       "id": "appnavigationstartup_evaluateappshellstartup",
-      "community": 24
+      "community": 26
     },
     {
       "label": "readCurrentVersionCode()",
@@ -561,7 +561,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L101",
       "id": "appnavigationstartup_readcurrentversioncode",
-      "community": 24
+      "community": 26
     },
     {
       "label": "hasExistingLibraryData()",
@@ -569,7 +569,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L115",
       "id": "appnavigationstartup_hasexistinglibrarydata",
-      "community": 24
+      "community": 26
     },
     {
       "label": "readPendingChangelogEntries()",
@@ -577,7 +577,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartup.kt",
       "source_location": "L120",
       "id": "appnavigationstartup_readpendingchangelogentries",
-      "community": 24
+      "community": 26
     },
     {
       "label": "AppLog.kt",
@@ -585,7 +585,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_debug_applog_kt",
-      "community": 25
+      "community": 27
     },
     {
       "label": "AppLog",
@@ -593,7 +593,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L11",
       "id": "applog_applog",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".d()",
@@ -601,7 +601,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L25",
       "id": "applog_applog_d",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".i()",
@@ -609,7 +609,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L31",
       "id": "applog_applog_i",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".w()",
@@ -617,7 +617,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L37",
       "id": "applog_applog_w",
-      "community": 25
+      "community": 27
     },
     {
       "label": ".e()",
@@ -625,7 +625,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\debug\\AppLog.kt",
       "source_location": "L45",
       "id": "applog_applog_e",
-      "community": 25
+      "community": 27
     },
     {
       "label": "BookEditingModels.kt",
@@ -633,7 +633,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
-      "community": 30
+      "community": 14
     },
     {
       "label": "BookEditRequest",
@@ -641,23 +641,79 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
       "source_location": "L7",
       "id": "bookeditingmodels_bookeditrequest",
-      "community": 30
+      "community": 14
+    },
+    {
+      "label": "BookCoverAction",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L14",
+      "id": "bookeditingmodels_bookcoveraction",
+      "community": 14
+    },
+    {
+      "label": "Keep",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L15",
+      "id": "bookeditingmodels_keep",
+      "community": 14
+    },
+    {
+      "label": "Remove",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L16",
+      "id": "bookeditingmodels_remove",
+      "community": 14
+    },
+    {
+      "label": "Replace",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L17",
+      "id": "bookeditingmodels_replace",
+      "community": 14
     },
     {
       "label": "BookCoverUpdate",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
-      "source_location": "L15",
+      "source_location": "L20",
       "id": "bookeditingmodels_bookcoverupdate",
-      "community": 30
+      "community": 14
     },
     {
-      "label": "BookChapterAddition",
+      "label": "BookChapterEdit",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
-      "source_location": "L21",
-      "id": "bookeditingmodels_bookchapteraddition",
-      "community": 30
+      "source_location": "L26",
+      "id": "bookeditingmodels_bookchapteredit",
+      "community": 14
+    },
+    {
+      "label": "BookNewChapterContent",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L32",
+      "id": "bookeditingmodels_booknewchaptercontent",
+      "community": 14
+    },
+    {
+      "label": "PlainText",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L35",
+      "id": "bookeditingmodels_plaintext",
+      "community": 14
+    },
+    {
+      "label": "HtmlDocument",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L40",
+      "id": "bookeditingmodels_htmldocument",
+      "community": 14
     },
     {
       "label": "LibraryModels.kt",
@@ -665,7 +721,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_librarymodels_kt",
-      "community": 12
+      "community": 15
     },
     {
       "label": "BookFormat",
@@ -673,7 +729,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L5",
       "id": "librarymodels_bookformat",
-      "community": 12
+      "community": 15
     },
     {
       "label": "ConversionStatus",
@@ -681,7 +737,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L10",
       "id": "librarymodels_conversionstatus",
-      "community": 12
+      "community": 15
     },
     {
       "label": "BookRepresentation",
@@ -689,7 +745,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L18",
       "id": "librarymodels_bookrepresentation",
-      "community": 12
+      "community": 15
     },
     {
       "label": "TocItem",
@@ -697,7 +753,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L27",
       "id": "librarymodels_tocitem",
-      "community": 12
+      "community": 15
     },
     {
       "label": "ChapterElement",
@@ -705,7 +761,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L36",
       "id": "librarymodels_chapterelement",
-      "community": 12
+      "community": 15
     },
     {
       "label": "Text",
@@ -713,7 +769,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L39",
       "id": "librarymodels_text",
-      "community": 12
+      "community": 15
     },
     {
       "label": "Image",
@@ -721,7 +777,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L45",
       "id": "librarymodels_image",
-      "community": 12
+      "community": 15
     },
     {
       "label": ".equals()",
@@ -729,7 +785,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L49",
       "id": "librarymodels_image_equals",
-      "community": 12
+      "community": 15
     },
     {
       "label": ".hashCode()",
@@ -737,7 +793,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L55",
       "id": "librarymodels_image_hashcode",
-      "community": 12
+      "community": 15
     },
     {
       "label": "EpubBook",
@@ -745,7 +801,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\LibraryModels.kt",
       "source_location": "L67",
       "id": "librarymodels_epubbook",
-      "community": 12
+      "community": 15
     },
     {
       "label": "SettingsModels.kt",
@@ -753,7 +809,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_settingsmodels_kt",
-      "community": 3
+      "community": 4
     },
     {
       "label": "ThemePalette",
@@ -761,7 +817,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L15",
       "id": "settingsmodels_themepalette",
-      "community": 3
+      "community": 4
     },
     {
       "label": "CustomTheme",
@@ -769,7 +825,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L26",
       "id": "settingsmodels_customtheme",
-      "community": 3
+      "community": 4
     },
     {
       "label": "ThemeOption",
@@ -777,7 +833,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L33",
       "id": "settingsmodels_themeoption",
-      "community": 3
+      "community": 4
     },
     {
       "label": "isBuiltInTheme()",
@@ -785,7 +841,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L103",
       "id": "settingsmodels_isbuiltintheme",
-      "community": 3
+      "community": 4
     },
     {
       "label": "availableThemeOptions()",
@@ -793,7 +849,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L107",
       "id": "settingsmodels_availablethemeoptions",
-      "community": 3
+      "community": 4
     },
     {
       "label": "findThemeOption()",
@@ -801,7 +857,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L118",
       "id": "settingsmodels_findthemeoption",
-      "community": 3
+      "community": 4
     },
     {
       "label": "normalizeThemeSelection()",
@@ -809,7 +865,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L122",
       "id": "settingsmodels_normalizethemeselection",
-      "community": 3
+      "community": 4
     },
     {
       "label": "themePaletteSeed()",
@@ -817,7 +873,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L127",
       "id": "settingsmodels_themepaletteseed",
-      "community": 3
+      "community": 4
     },
     {
       "label": "parseThemeColorOrNull()",
@@ -825,7 +881,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L131",
       "id": "settingsmodels_parsethemecolorornull",
-      "community": 3
+      "community": 4
     },
     {
       "label": "calculateLuminance()",
@@ -833,7 +889,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L144",
       "id": "settingsmodels_calculateluminance",
-      "community": 3
+      "community": 4
     },
     {
       "label": "lerpColor()",
@@ -841,7 +897,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L154",
       "id": "settingsmodels_lerpcolor",
-      "community": 3
+      "community": 4
     },
     {
       "label": "contrastColor()",
@@ -849,7 +905,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L173",
       "id": "settingsmodels_contrastcolor",
-      "community": 3
+      "community": 4
     },
     {
       "label": "generatePaletteFromBase()",
@@ -857,7 +913,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L177",
       "id": "settingsmodels_generatepalettefrombase",
-      "community": 3
+      "community": 4
     },
     {
       "label": "formatThemeColor()",
@@ -865,7 +921,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L212",
       "id": "settingsmodels_formatthemecolor",
-      "community": 3
+      "community": 4
     },
     {
       "label": "themeButtonLabel()",
@@ -873,7 +929,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L216",
       "id": "settingsmodels_themebuttonlabel",
-      "community": 3
+      "community": 4
     },
     {
       "label": "GlobalSettings",
@@ -881,7 +937,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L244",
       "id": "settingsmodels_globalsettings",
-      "community": 3
+      "community": 4
     },
     {
       "label": "BookProgress",
@@ -889,7 +945,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\SettingsModels.kt",
       "source_location": "L267",
       "id": "settingsmodels_bookprogress",
-      "community": 3
+      "community": 4
     },
     {
       "label": "LibraryCards.kt",
@@ -897,7 +953,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_ui_librarycards_kt",
-      "community": 31
+      "community": 32
     },
     {
       "label": "RecentlyViewedStrip()",
@@ -905,7 +961,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
       "source_location": "L47",
       "id": "librarycards_recentlyviewedstrip",
-      "community": 31
+      "community": 32
     },
     {
       "label": "BookItem()",
@@ -913,7 +969,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
       "source_location": "L140",
       "id": "librarycards_bookitem",
-      "community": 31
+      "community": 32
     },
     {
       "label": "formatReadingProgress()",
@@ -921,7 +977,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCards.kt",
       "source_location": "L302",
       "id": "librarycards_formatreadingprogress",
-      "community": 31
+      "community": 32
     },
     {
       "label": "EpubParser.kt",
@@ -1209,7 +1265,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
-      "community": 9
+      "community": 11
     },
     {
       "label": "buildBookId()",
@@ -1217,7 +1273,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
       "source_location": "L43",
       "id": "epubparserbooks_buildbookid",
-      "community": 9
+      "community": 11
     },
     {
       "label": "rebuildBookMetadata()",
@@ -1225,95 +1281,95 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
       "source_location": "L51",
       "id": "epubparserbooks_rebuildbookmetadata",
-      "community": 9
+      "community": 11
     },
     {
       "label": "rebuildPdfMetadata()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L133",
+      "source_location": "L136",
       "id": "epubparserbooks_rebuildpdfmetadata",
-      "community": 9
+      "community": 11
     },
     {
       "label": "saveBookMetadata()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L199",
+      "source_location": "L202",
       "id": "epubparserbooks_savebookmetadata",
-      "community": 9
+      "community": 11
     },
     {
       "label": "loadBookMetadata()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L239",
+      "source_location": "L242",
       "id": "epubparserbooks_loadbookmetadata",
-      "community": 9
+      "community": 11
     },
     {
       "label": "buildTableOfContents()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L296",
+      "source_location": "L299",
       "id": "epubparserbooks_buildtableofcontents",
-      "community": 9
+      "community": 11
     },
     {
       "label": "addTocReferences()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L315",
+      "source_location": "L318",
       "id": "epubparserbooks_addtocreferences",
-      "community": 9
+      "community": 11
     },
     {
       "label": "activeEpubFile()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L336",
+      "source_location": "L339",
       "id": "epubparserbooks_activeepubfile",
-      "community": 9
+      "community": 11
     },
     {
       "label": "ensureCanonicalSourcePdfFile()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L343",
+      "source_location": "L346",
       "id": "epubparserbooks_ensurecanonicalsourcepdffile",
-      "community": 9
+      "community": 11
     },
     {
       "label": "replaceFileAtomically()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L362",
+      "source_location": "L365",
       "id": "epubparserbooks_replacefileatomically",
-      "community": 9
+      "community": 11
     },
     {
       "label": "PdfDocumentInfo",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L379",
+      "source_location": "L382",
       "id": "epubparserbooks_pdfdocumentinfo",
-      "community": 9
+      "community": 11
     },
     {
       "label": "readPdfDocumentInfo()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L384",
+      "source_location": "L387",
       "id": "epubparserbooks_readpdfdocumentinfo",
-      "community": 9
+      "community": 11
     },
     {
       "label": "renderPdfCoverThumbnail()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L401",
+      "source_location": "L404",
       "id": "epubparserbooks_renderpdfcoverthumbnail",
-      "community": 9
+      "community": 11
     },
     {
       "label": "EpubParserChapter.kt",
@@ -1321,7 +1377,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserchapter_kt",
-      "community": 14
+      "community": 17
     },
     {
       "label": "parseBookChapter()",
@@ -1329,7 +1385,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L18",
       "id": "epubparserchapter_parsebookchapter",
-      "community": 14
+      "community": 17
     },
     {
       "label": "resolveChapterArchiveFile()",
@@ -1337,7 +1393,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L122",
       "id": "epubparserchapter_resolvechapterarchivefile",
-      "community": 14
+      "community": 17
     },
     {
       "label": "resolveChapterEntry()",
@@ -1345,7 +1401,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L127",
       "id": "epubparserchapter_resolvechapterentry",
-      "community": 14
+      "community": 17
     },
     {
       "label": "resolveImageEntry()",
@@ -1353,7 +1409,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L134",
       "id": "epubparserchapter_resolveimageentry",
-      "community": 14
+      "community": 17
     },
     {
       "label": "preProcessXml()",
@@ -1361,7 +1417,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L143",
       "id": "epubparserchapter_preprocessxml",
-      "community": 14
+      "community": 17
     },
     {
       "label": "flushText()",
@@ -1369,7 +1425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L160",
       "id": "epubparserchapter_flushtext",
-      "community": 14
+      "community": 17
     },
     {
       "label": "isBlockTag()",
@@ -1377,7 +1433,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L173",
       "id": "epubparserchapter_isblocktag",
-      "community": 14
+      "community": 17
     },
     {
       "label": "unescapeHtml()",
@@ -1385,7 +1441,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L177",
       "id": "epubparserchapter_unescapehtml",
-      "community": 14
+      "community": 17
     },
     {
       "label": "normalizePath()",
@@ -1393,7 +1449,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserChapter.kt",
       "source_location": "L190",
       "id": "epubparserchapter_normalizepath",
-      "community": 14
+      "community": 17
     },
     {
       "label": "EpubParserEditing.kt",
@@ -1401,127 +1457,191 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "community": 7
+      "community": 2
     },
     {
       "label": "editStoredEpubBook()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L19",
+      "source_location": "L23",
       "id": "epubparserediting_editstoredepubbook",
-      "community": 7
+      "community": 2
     },
     {
       "label": "updateBookMetadata()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L54",
+      "source_location": "L58",
       "id": "epubparserediting_updatebookmetadata",
-      "community": 7
+      "community": 2
     },
     {
       "label": "applyChapterEdits()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L62",
+      "source_location": "L66",
       "id": "epubparserediting_applychapteredits",
-      "community": 7
+      "community": 2
     },
     {
       "label": "applyCoverEdit()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L116",
+      "source_location": "L134",
       "id": "epubparserediting_applycoveredit",
-      "community": 7
+      "community": 2
     },
     {
-      "label": "buildChapterTitleMap()",
+      "label": "removeCover()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L142",
-      "id": "epubparserediting_buildchaptertitlemap",
-      "community": 7
+      "source_location": "L145",
+      "id": "epubparserediting_removecover",
+      "community": 2
     },
     {
-      "label": "collectTocTitles()",
+      "label": "replaceCover()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L154",
-      "id": "epubparserediting_collecttoctitles",
-      "community": 7
+      "source_location": "L160",
+      "id": "epubparserediting_replacecover",
+      "community": 2
     },
     {
-      "label": "nextAddedChapterNumber()",
+      "label": "removeCustomCoverResources()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L174",
-      "id": "epubparserediting_nextaddedchapternumber",
-      "community": 7
+      "source_location": "L177",
+      "id": "epubparserediting_removecustomcoverresources",
+      "community": 2
     },
     {
-      "label": "buildAddedChapterDocument()",
+      "label": "clearCustomGuideReferences()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L188",
-      "id": "epubparserediting_buildaddedchapterdocument",
-      "community": 7
+      "source_location": "L184",
+      "id": "epubparserediting_clearcustomguidereferences",
+      "community": 2
+    },
+    {
+      "label": "setBookCoverImageDirect()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L193",
+      "id": "epubparserediting_setbookcoverimagedirect",
+      "community": 2
+    },
+    {
+      "label": "looksLikeCoverResource()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L202",
+      "id": "epubparserediting_lookslikecoverresource",
+      "community": 2
+    },
+    {
+      "label": "buildNewChapterDocument()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L214",
+      "id": "epubparserediting_buildnewchapterdocument",
+      "community": 2
+    },
+    {
+      "label": "buildPlainTextBodyMarkup()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L235",
+      "id": "epubparserediting_buildplaintextbodymarkup",
+      "community": 2
+    },
+    {
+      "label": "buildImportedHtmlBodyMarkup()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L267",
+      "id": "epubparserediting_buildimportedhtmlbodymarkup",
+      "community": 2
     },
     {
       "label": "normalized()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L231",
+      "source_location": "L298",
       "id": "epubparserediting_normalized",
-      "community": 7
+      "community": 2
+    },
+    {
+      "label": "inferNewChapterTitle()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L368",
+      "id": "epubparserediting_infernewchaptertitle",
+      "community": 2
     },
     {
       "label": "extensionOrNull()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L258",
+      "source_location": "L400",
       "id": "epubparserediting_extensionornull",
-      "community": 7
+      "community": 2
     },
     {
       "label": "toEpubAuthor()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L275",
+      "source_location": "L417",
       "id": "epubparserediting_toepubauthor",
-      "community": 7
+      "community": 2
     },
     {
       "label": "cleanHref()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L289",
+      "source_location": "L431",
       "id": "epubparserediting_cleanhref",
-      "community": 7
+      "community": 2
     },
     {
-      "label": "stripTocNumbering()",
+      "label": "isCustomCoverHref()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L297",
-      "id": "epubparserediting_striptocnumbering",
-      "community": 7
+      "source_location": "L439",
+      "id": "epubparserediting_iscustomcoverhref",
+      "community": 2
     },
     {
       "label": "fallbackChapterTitle()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L304",
+      "source_location": "L443",
       "id": "epubparserediting_fallbackchaptertitle",
-      "community": 7
+      "community": 2
+    },
+    {
+      "label": "nextAddedChapterNumber()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L457",
+      "id": "epubparserediting_nextaddedchapternumber",
+      "community": 2
+    },
+    {
+      "label": "stripMarkup()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L471",
+      "id": "epubparserediting_stripmarkup",
+      "community": 2
     },
     {
       "label": "escapeXml()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L318",
+      "source_location": "L483",
       "id": "epubparserediting_escapexml",
-      "community": 7
+      "community": 2
     },
     {
       "label": "ImportRouting.kt",
@@ -1529,7 +1649,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_importrouting_kt",
-      "community": 5
+      "community": 7
     },
     {
       "label": "ImportRequest",
@@ -1537,7 +1657,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L14",
       "id": "importrouting_importrequest",
-      "community": 5
+      "community": 7
     },
     {
       "label": "ImportInspectionResult",
@@ -1545,7 +1665,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L22",
       "id": "importrouting_importinspectionresult",
-      "community": 5
+      "community": 7
     },
     {
       "label": "Ready",
@@ -1553,7 +1673,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L23",
       "id": "importrouting_ready",
-      "community": 5
+      "community": 7
     },
     {
       "label": "Rejected",
@@ -1561,7 +1681,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L24",
       "id": "importrouting_rejected",
-      "community": 5
+      "community": 7
     },
     {
       "label": "ImportFailureReason",
@@ -1569,7 +1689,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L27",
       "id": "importrouting_importfailurereason",
-      "community": 5
+      "community": 7
     },
     {
       "label": "ArchiveImportCandidate",
@@ -1577,7 +1697,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L35",
       "id": "importrouting_archiveimportcandidate",
-      "community": 5
+      "community": 7
     },
     {
       "label": "ArchiveInspectionResult",
@@ -1585,7 +1705,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L40",
       "id": "importrouting_archiveinspectionresult",
-      "community": 5
+      "community": 7
     },
     {
       "label": "DirectEpubContainer",
@@ -1593,7 +1713,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L41",
       "id": "importrouting_directepubcontainer",
-      "community": 5
+      "community": 7
     },
     {
       "label": "Candidate",
@@ -1601,7 +1721,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L42",
       "id": "importrouting_candidate",
-      "community": 5
+      "community": 7
     },
     {
       "label": "inspectArchiveEntries()",
@@ -1609,7 +1729,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L46",
       "id": "importrouting_inspectarchiveentries",
-      "community": 5
+      "community": 7
     },
     {
       "label": "inferDirectImportFormat()",
@@ -1617,7 +1737,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L67",
       "id": "importrouting_inferdirectimportformat",
-      "community": 5
+      "community": 7
     },
     {
       "label": "deriveTitleFromName()",
@@ -1625,7 +1745,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L91",
       "id": "importrouting_derivetitlefromname",
-      "community": 5
+      "community": 7
     },
     {
       "label": "isZipSignature()",
@@ -1633,7 +1753,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L113",
       "id": "importrouting_iszipsignature",
-      "community": 5
+      "community": 7
     },
     {
       "label": "isPdfSignature()",
@@ -1641,7 +1761,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L119",
       "id": "importrouting_ispdfsignature",
-      "community": 5
+      "community": 7
     },
     {
       "label": "archiveCandidateFor()",
@@ -1649,7 +1769,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L127",
       "id": "importrouting_archivecandidatefor",
-      "community": 5
+      "community": 7
     },
     {
       "label": "isIgnorableArchiveEntry()",
@@ -1657,7 +1777,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\ImportRouting.kt",
       "source_location": "L136",
       "id": "importrouting_isignorablearchiveentry",
-      "community": 5
+      "community": 7
     },
     {
       "label": "PdfLegacyBridge.kt",
@@ -1665,7 +1785,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_pdflegacybridge_kt",
-      "community": 15
+      "community": 18
     },
     {
       "label": "PdfConversionProgress",
@@ -1673,7 +1793,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L9",
       "id": "pdflegacybridge_pdfconversionprogress",
-      "community": 15
+      "community": 18
     },
     {
       "label": "PdfConversionResult",
@@ -1681,7 +1801,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L14",
       "id": "pdflegacybridge_pdfconversionresult",
-      "community": 15
+      "community": 18
     },
     {
       "label": "PdfConversionProgressListener",
@@ -1689,7 +1809,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L22",
       "id": "pdflegacybridge_pdfconversionprogresslistener",
-      "community": 15
+      "community": 18
     },
     {
       "label": ".onProgress()",
@@ -1697,7 +1817,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L23",
       "id": "pdflegacybridge_pdfconversionprogresslistener_onprogress",
-      "community": 15
+      "community": 18
     },
     {
       "label": "PdfLegacyBridge",
@@ -1705,7 +1825,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L26",
       "id": "pdflegacybridge_pdflegacybridge",
-      "community": 15
+      "community": 18
     },
     {
       "label": ".convert()",
@@ -1713,7 +1833,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L29",
       "id": "pdflegacybridge_pdflegacybridge_convert",
-      "community": 15
+      "community": 18
     },
     {
       "label": ".enqueue()",
@@ -1721,7 +1841,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L38",
       "id": "pdflegacybridge_pdflegacybridge_enqueue",
-      "community": 15
+      "community": 18
     },
     {
       "label": ".cancel()",
@@ -1729,7 +1849,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L40",
       "id": "pdflegacybridge_pdflegacybridge_cancel",
-      "community": 15
+      "community": 18
     },
     {
       "label": ".uniqueWorkName()",
@@ -1737,7 +1857,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\PdfLegacyBridge.kt",
       "source_location": "L42",
       "id": "pdflegacybridge_pdflegacybridge_uniqueworkname",
-      "community": 15
+      "community": 18
     },
     {
       "label": "PdfConversionWorker.kt",
@@ -1745,7 +1865,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_pdf_legacy_pdfconversionworker_kt",
-      "community": 19
+      "community": 21
     },
     {
       "label": "enqueuePdfConversionWork()",
@@ -1753,7 +1873,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L25",
       "id": "pdfconversionworker_enqueuepdfconversionwork",
-      "community": 19
+      "community": 21
     },
     {
       "label": "cancelPdfConversionWork()",
@@ -1761,7 +1881,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L43",
       "id": "pdfconversionworker_cancelpdfconversionwork",
-      "community": 19
+      "community": 21
     },
     {
       "label": "uniquePdfConversionWorkName()",
@@ -1769,7 +1889,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L50",
       "id": "pdfconversionworker_uniquepdfconversionworkname",
-      "community": 19
+      "community": 21
     },
     {
       "label": "PdfConversionWorker",
@@ -1777,7 +1897,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L52",
       "id": "pdfconversionworker_pdfconversionworker",
-      "community": 19
+      "community": 21
     },
     {
       "label": ".doWork()",
@@ -1785,7 +1905,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L57",
       "id": "pdfconversionworker_pdfconversionworker_dowork",
-      "community": 19
+      "community": 21
     },
     {
       "label": ".createForegroundInfo()",
@@ -1793,7 +1913,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L100",
       "id": "pdfconversionworker_pdfconversionworker_createforegroundinfo",
-      "community": 19
+      "community": 21
     },
     {
       "label": ".ensureNotificationChannel()",
@@ -1801,7 +1921,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L125",
       "id": "pdfconversionworker_pdfconversionworker_ensurenotificationchannel",
-      "community": 19
+      "community": 21
     },
     {
       "label": "PdfLegacyRuntime.kt",
@@ -1809,7 +1929,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfLegacyRuntime.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_pdf_legacy_pdflegacyruntime_kt",
-      "community": 26
+      "community": 28
     },
     {
       "label": "PdfLegacyRuntime",
@@ -1817,7 +1937,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfLegacyRuntime.kt",
       "source_location": "L13",
       "id": "pdflegacyruntime_pdflegacyruntime",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".convert()",
@@ -1825,7 +1945,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfLegacyRuntime.kt",
       "source_location": "L21",
       "id": "pdflegacyruntime_pdflegacyruntime_convert",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".enqueue()",
@@ -1833,7 +1953,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfLegacyRuntime.kt",
       "source_location": "L39",
       "id": "pdflegacyruntime_pdflegacyruntime_enqueue",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".cancel()",
@@ -1841,7 +1961,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfLegacyRuntime.kt",
       "source_location": "L43",
       "id": "pdflegacyruntime_pdflegacyruntime_cancel",
-      "community": 26
+      "community": 28
     },
     {
       "label": ".uniqueWorkName()",
@@ -1849,7 +1969,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfLegacyRuntime.kt",
       "source_location": "L47",
       "id": "pdflegacyruntime_pdflegacyruntime_uniqueworkname",
-      "community": 26
+      "community": 28
     },
     {
       "label": "PdfToEpubConverter.kt",
@@ -1937,7 +2057,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfToEpubConverter.kt",
       "source_location": "L270",
       "id": "pdftoepubconverter_pdfconversionworkspacestate",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".reset()",
@@ -1945,7 +2065,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfToEpubConverter.kt",
       "source_location": "L275",
       "id": "pdftoepubconverter_pdfconversionworkspacestate_reset",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".hasPage()",
@@ -1953,7 +2073,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfToEpubConverter.kt",
       "source_location": "L280",
       "id": "pdftoepubconverter_pdfconversionworkspacestate_haspage",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".record()",
@@ -1961,7 +2081,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfToEpubConverter.kt",
       "source_location": "L282",
       "id": "pdftoepubconverter_pdfconversionworkspacestate_record",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".completedPages()",
@@ -1969,7 +2089,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfToEpubConverter.kt",
       "source_location": "L294",
       "id": "pdftoepubconverter_pdfconversionworkspacestate_completedpages",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".qualifiesForGeneratedEpub()",
@@ -1977,7 +2097,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfToEpubConverter.kt",
       "source_location": "L298",
       "id": "pdftoepubconverter_pdfconversionworkspacestate_qualifiesforgeneratedepub",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".toJson()",
@@ -1985,7 +2105,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfToEpubConverter.kt",
       "source_location": "L313",
       "id": "pdftoepubconverter_pdfconversionworkspacestate_tojson",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".toResult()",
@@ -1993,7 +2113,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfToEpubConverter.kt",
       "source_location": "L333",
       "id": "pdftoepubconverter_pdfconversionworkspacestate_toresult",
-      "community": 20
+      "community": 22
     },
     {
       "label": "extractDirectTextParagraphs()",
@@ -2217,7 +2337,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_settings_settingsmanager_kt",
-      "community": 2
+      "community": 3
     },
     {
       "label": "SettingsManager",
@@ -2225,7 +2345,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L43",
       "id": "settingsmanager_settingsmanager",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".updateFolderOrder()",
@@ -2233,7 +2353,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L60",
       "id": "settingsmanager_settingsmanager_updatefolderorder",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".createFolder()",
@@ -2241,7 +2361,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L73",
       "id": "settingsmanager_settingsmanager_createfolder",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".setLibrarySort()",
@@ -2249,7 +2369,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L98",
       "id": "settingsmanager_settingsmanager_setlibrarysort",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".setFavoriteLibrary()",
@@ -2257,7 +2377,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L111",
       "id": "settingsmanager_settingsmanager_setfavoritelibrary",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".updateBookGroup()",
@@ -2265,7 +2385,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L126",
       "id": "settingsmanager_settingsmanager_updatebookgroup",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".renameFolder()",
@@ -2273,7 +2393,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L148",
       "id": "settingsmanager_settingsmanager_renamefolder",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".deleteFolder()",
@@ -2281,7 +2401,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L218",
       "id": "settingsmanager_settingsmanager_deletefolder",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".setFirstTime()",
@@ -2289,7 +2409,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L243",
       "id": "settingsmanager_settingsmanager_setfirsttime",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".getLastSeenVersionCode()",
@@ -2297,7 +2417,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L249",
       "id": "settingsmanager_settingsmanager_getlastseenversioncode",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".setLastSeenVersionCode()",
@@ -2305,7 +2425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L253",
       "id": "settingsmanager_settingsmanager_setlastseenversioncode",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".updateGlobalSettings()",
@@ -2313,7 +2433,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L260",
       "id": "settingsmanager_settingsmanager_updateglobalsettings",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".setActiveTheme()",
@@ -2321,7 +2441,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L282",
       "id": "settingsmanager_settingsmanager_setactivetheme",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".saveCustomTheme()",
@@ -2329,7 +2449,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L289",
       "id": "settingsmanager_settingsmanager_savecustomtheme",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".deleteCustomTheme()",
@@ -2337,7 +2457,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L314",
       "id": "settingsmanager_settingsmanager_deletecustomtheme",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".toggleTheme()",
@@ -2345,7 +2465,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L329",
       "id": "settingsmanager_settingsmanager_toggletheme",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".toggleShowSystemBar()",
@@ -2353,7 +2473,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L341",
       "id": "settingsmanager_settingsmanager_toggleshowsystembar",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".toggleSelectableText()",
@@ -2361,7 +2481,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L348",
       "id": "settingsmanager_settingsmanager_toggleselectabletext",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".getBookProgress()",
@@ -2369,7 +2489,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L362",
       "id": "settingsmanager_settingsmanager_getbookprogress",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".saveBookProgress()",
@@ -2377,7 +2497,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L377",
       "id": "settingsmanager_settingsmanager_savebookprogress",
-      "community": 2
+      "community": 3
     },
     {
       "label": ".deleteBookData()",
@@ -2385,7 +2505,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManager.kt",
       "source_location": "L406",
       "id": "settingsmanager_settingsmanager_deletebookdata",
-      "community": 2
+      "community": 3
     },
     {
       "label": "SettingsManagerContracts.kt",
@@ -2393,7 +2513,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_settings_settingsmanagercontracts_kt",
-      "community": 17
+      "community": 20
     },
     {
       "label": "SettingsPreferenceKeys",
@@ -2401,7 +2521,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L36",
       "id": "settingsmanagercontracts_settingspreferencekeys",
-      "community": 17
+      "community": 20
     },
     {
       "label": "BookProgressPreferenceKeys",
@@ -2409,7 +2529,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L61",
       "id": "settingsmanagercontracts_bookprogresspreferencekeys",
-      "community": 17
+      "community": 20
     },
     {
       "label": "bookProgressKeyPrefix()",
@@ -2417,7 +2537,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L67",
       "id": "settingsmanagercontracts_bookprogresskeyprefix",
-      "community": 17
+      "community": 20
     },
     {
       "label": "legacyBookProgressPreferenceKeys()",
@@ -2425,7 +2545,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L71",
       "id": "settingsmanagercontracts_legacybookprogresspreferencekeys",
-      "community": 17
+      "community": 20
     },
     {
       "label": "toGlobalSettings()",
@@ -2433,7 +2553,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L91",
       "id": "settingsmanagercontracts_toglobalsettings",
-      "community": 17
+      "community": 20
     },
     {
       "label": "parseCustomThemes()",
@@ -2441,7 +2561,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L133",
       "id": "settingsmanagercontracts_parsecustomthemes",
-      "community": 17
+      "community": 20
     },
     {
       "label": "toCustomThemesJson()",
@@ -2449,7 +2569,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L188",
       "id": "settingsmanagercontracts_tocustomthemesjson",
-      "community": 17
+      "community": 20
     },
     {
       "label": "toBookProgress()",
@@ -2457,7 +2577,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L210",
       "id": "settingsmanagercontracts_tobookprogress",
-      "community": 17
+      "community": 20
     },
     {
       "label": "SettingsManagerJson.kt",
@@ -2465,7 +2585,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L1",
       "id": "app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt",
-      "community": 10
+      "community": 12
     },
     {
       "label": "safeJsonObject()",
@@ -2473,7 +2593,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L12",
       "id": "settingsmanagerjson_safejsonobject",
-      "community": 10
+      "community": 12
     },
     {
       "label": "safeJsonArray()",
@@ -2481,7 +2601,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L20",
       "id": "settingsmanagerjson_safejsonarray",
-      "community": 10
+      "community": 12
     },
     {
       "label": "strictJsonObject()",
@@ -2489,7 +2609,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L28",
       "id": "settingsmanagerjson_strictjsonobject",
-      "community": 10
+      "community": 12
     },
     {
       "label": "strictJsonArray()",
@@ -2497,7 +2617,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L32",
       "id": "settingsmanagerjson_strictjsonarray",
-      "community": 10
+      "community": 12
     },
     {
       "label": "toStringList()",
@@ -2505,7 +2625,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L36",
       "id": "settingsmanagerjson_tostringlist",
-      "community": 10
+      "community": 12
     },
     {
       "label": "toJsonArray()",
@@ -2513,7 +2633,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L44",
       "id": "settingsmanagerjson_tojsonarray",
-      "community": 10
+      "community": 12
     },
     {
       "label": "replacingEntry()",
@@ -2521,7 +2641,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L50",
       "id": "settingsmanagerjson_replacingentry",
-      "community": 10
+      "community": 12
     },
     {
       "label": "withoutEntry()",
@@ -2529,7 +2649,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L59",
       "id": "settingsmanagerjson_withoutentry",
-      "community": 10
+      "community": 12
     },
     {
       "label": "renameStringEntry()",
@@ -2537,7 +2657,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L70",
       "id": "settingsmanagerjson_renamestringentry",
-      "community": 10
+      "community": 12
     },
     {
       "label": "replaceStringValues()",
@@ -2545,7 +2665,7 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L80",
       "id": "settingsmanagerjson_replacestringvalues",
-      "community": 10
+      "community": 12
     },
     {
       "label": "removeEntriesWithStringValue()",
@@ -2553,7 +2673,151 @@
       "source_file": "app\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L90",
       "id": "settingsmanagerjson_removeentrieswithstringvalue",
-      "community": 10
+      "community": 12
+    },
+    {
+      "label": "EditBookModels.kt",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L1",
+      "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "community": 5
+    },
+    {
+      "label": "EditableChapterSource",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L9",
+      "id": "editbookmodels_editablechaptersource",
+      "community": 5
+    },
+    {
+      "label": "EditableChapterItem",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L15",
+      "id": "editbookmodels_editablechapteritem",
+      "community": 5
+    },
+    {
+      "label": "buildEditableChapterItems()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L24",
+      "id": "editbookmodels_buildeditablechapteritems",
+      "community": 5
+    },
+    {
+      "label": "buildTextDraftChapter()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L43",
+      "id": "editbookmodels_buildtextdraftchapter",
+      "community": 5
+    },
+    {
+      "label": "buildHtmlDraftChapter()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L57",
+      "id": "editbookmodels_buildhtmldraftchapter",
+      "community": 5
+    },
+    {
+      "label": "toChapterEdit()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L75",
+      "id": "editbookmodels_tochapteredit",
+      "community": 5
+    },
+    {
+      "label": "insertChapterItems()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L83",
+      "id": "editbookmodels_insertchapteritems",
+      "community": 5
+    },
+    {
+      "label": "moveSelectedChapterItems()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L100",
+      "id": "editbookmodels_moveselectedchapteritems",
+      "community": 5
+    },
+    {
+      "label": "selectChapterRange()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L123",
+      "id": "editbookmodels_selectchapterrange",
+      "community": 5
+    },
+    {
+      "label": "selectOutsideChapterRange()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L142",
+      "id": "editbookmodels_selectoutsidechapterrange",
+      "community": 5
+    },
+    {
+      "label": "inferImportedChapterTitle()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L164",
+      "id": "editbookmodels_inferimportedchaptertitle",
+      "community": 5
+    },
+    {
+      "label": "stripEditableTocNumbering()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L184",
+      "id": "editbookmodels_stripeditabletocnumbering",
+      "community": 5
+    },
+    {
+      "label": "fallbackEditableTitle()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L188",
+      "id": "editbookmodels_fallbackeditabletitle",
+      "community": 5
+    },
+    {
+      "label": "cleanEditableHref()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L202",
+      "id": "editbookmodels_cleaneditablehref",
+      "community": 5
+    },
+    {
+      "label": "findFirstTitleTag()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L206",
+      "id": "editbookmodels_findfirsttitletag",
+      "community": 5
+    },
+    {
+      "label": "findFirstHeading()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L211",
+      "id": "editbookmodels_findfirstheading",
+      "community": 5
+    },
+    {
+      "label": "stripMarkup()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L216",
+      "id": "editbookmodels_stripmarkup",
+      "community": 5
     },
     {
       "label": "EditBookScreen.kt",
@@ -2561,71 +2825,135 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "community": 18
+      "community": 8
+    },
+    {
+      "label": "EditBookTab",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L98",
+      "id": "editbookscreen_editbooktab",
+      "community": 8
+    },
+    {
+      "label": "RangeSelectionRequest",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L100",
+      "id": "editbookscreen_rangeselectionrequest",
+      "community": 8
     },
     {
       "label": "EditBookScreen()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L79",
+      "source_location": "L105",
       "id": "editbookscreen_editbookscreen",
-      "community": 18
+      "community": 8
     },
     {
-      "label": "AddChapterDialog()",
+      "label": "EditBookDetailsTab()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L406",
-      "id": "editbookscreen_addchapterdialog",
-      "community": 18
+      "source_location": "L456",
+      "id": "editbookscreen_editbookdetailstab",
+      "community": 8
     },
     {
-      "label": "EditableChapterItem",
+      "label": "EditBookChaptersTab()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L457",
-      "id": "editbookscreen_editablechapteritem",
-      "community": 18
+      "source_location": "L567",
+      "id": "editbookscreen_editbookchapterstab",
+      "community": 8
     },
     {
-      "label": "buildEditableChapterItems()",
+      "label": "ChapterRow()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L465",
-      "id": "editbookscreen_buildeditablechapteritems",
-      "community": 18
+      "source_location": "L684",
+      "id": "editbookscreen_chapterrow",
+      "community": 8
     },
     {
-      "label": "stripEditableTocNumbering()",
+      "label": "SummaryRow()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L483",
-      "id": "editbookscreen_stripeditabletocnumbering",
-      "community": 18
+      "source_location": "L721",
+      "id": "editbookscreen_summaryrow",
+      "community": 8
     },
     {
-      "label": "fallbackEditableTitle()",
+      "label": "ActionStrip()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L487",
-      "id": "editbookscreen_fallbackeditabletitle",
-      "community": 18
+      "source_location": "L729",
+      "id": "editbookscreen_actionstrip",
+      "community": 8
     },
     {
-      "label": "cleanEditableHref()",
+      "label": "AddTextChapterDialog()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L501",
-      "id": "editbookscreen_cleaneditablehref",
-      "community": 18
+      "source_location": "L739",
+      "id": "editbookscreen_addtextchapterdialog",
+      "community": 8
+    },
+    {
+      "label": "RangeSelectionDialog()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L793",
+      "id": "editbookscreen_rangeselectiondialog",
+      "community": 8
+    },
+    {
+      "label": "PositionDialog()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L840",
+      "id": "editbookscreen_positiondialog",
+      "community": 8
+    },
+    {
+      "label": "RenameChapterDialog()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L877",
+      "id": "editbookscreen_renamechapterdialog",
+      "community": 8
+    },
+    {
+      "label": "SimpleConfirmDialog()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L905",
+      "id": "editbookscreen_simpleconfirmdialog",
+      "community": 8
     },
     {
       "label": "loadCoverUpdate()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L505",
+      "source_location": "L923",
       "id": "editbookscreen_loadcoverupdate",
-      "community": 18
+      "community": 8
+    },
+    {
+      "label": "loadImportedChapterDrafts()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L931",
+      "id": "editbookscreen_loadimportedchapterdrafts",
+      "community": 8
+    },
+    {
+      "label": "queryDisplayName()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L950",
+      "id": "editbookscreen_querydisplayname",
+      "community": 8
     },
     {
       "label": "PdfReaderScreen.kt",
@@ -2633,7 +2961,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_pdf_legacy_pdfreaderscreen_kt",
-      "community": 21
+      "community": 23
     },
     {
       "label": "PdfReaderScreen()",
@@ -2641,7 +2969,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L101",
       "id": "pdfreaderscreen_pdfreaderscreen",
-      "community": 21
+      "community": 23
     },
     {
       "label": "PdfPageItem()",
@@ -2649,7 +2977,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L409",
       "id": "pdfreaderscreen_pdfpageitem",
-      "community": 21
+      "community": 23
     },
     {
       "label": "PdfReaderErrorState()",
@@ -2657,7 +2985,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L459",
       "id": "pdfreaderscreen_pdfreadererrorstate",
-      "community": 21
+      "community": 23
     },
     {
       "label": "PdfDocumentHandle",
@@ -2665,7 +2993,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L497",
       "id": "pdfreaderscreen_pdfdocumenthandle",
-      "community": 21
+      "community": 23
     },
     {
       "label": ".renderPage()",
@@ -2673,7 +3001,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L505",
       "id": "pdfreaderscreen_pdfdocumenthandle_renderpage",
-      "community": 21
+      "community": 23
     },
     {
       "label": ".close()",
@@ -2681,7 +3009,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L532",
       "id": "pdfreaderscreen_pdfdocumenthandle_close",
-      "community": 21
+      "community": 23
     },
     {
       "label": "open()",
@@ -2689,7 +3017,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L538",
       "id": "pdfreaderscreen_open",
-      "community": 21
+      "community": 23
     },
     {
       "label": "ReaderScreen.kt",
@@ -2697,7 +3025,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_reader_readerscreen_kt",
-      "community": 34
+      "community": 35
     },
     {
       "label": "ReaderScreen()",
@@ -2705,7 +3033,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreen.kt",
       "source_location": "L76",
       "id": "readerscreen_readerscreen",
-      "community": 34
+      "community": 35
     },
     {
       "label": "ReaderScreenChrome.kt",
@@ -2713,7 +3041,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt",
-      "community": 27
+      "community": 29
     },
     {
       "label": "ReaderScreenChrome()",
@@ -2721,7 +3049,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L88",
       "id": "readerscreenchrome_readerscreenchrome",
-      "community": 27
+      "community": 29
     },
     {
       "label": "ReaderTocDrawerContent()",
@@ -2729,7 +3057,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L111",
       "id": "readerscreenchrome_readertocdrawercontent",
-      "community": 27
+      "community": 29
     },
     {
       "label": "ReaderContentSurface()",
@@ -2737,7 +3065,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L293",
       "id": "readerscreenchrome_readercontentsurface",
-      "community": 27
+      "community": 29
     },
     {
       "label": "ReaderTopBar()",
@@ -2745,7 +3073,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L425",
       "id": "readerscreenchrome_readertopbar",
-      "community": 27
+      "community": 29
     },
     {
       "label": "ReaderScrollToTopFab()",
@@ -2753,7 +3081,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L461",
       "id": "readerscreenchrome_readerscrolltotopfab",
-      "community": 27
+      "community": 29
     },
     {
       "label": "ReaderScreenContracts.kt",
@@ -2761,7 +3089,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_reader_readerscreencontracts_kt",
-      "community": 28
+      "community": 30
     },
     {
       "label": "TocSort",
@@ -2769,7 +3097,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L29",
       "id": "readerscreencontracts_tocsort",
-      "community": 28
+      "community": 30
     },
     {
       "label": "ReaderTheme",
@@ -2777,7 +3105,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L31",
       "id": "readerscreencontracts_readertheme",
-      "community": 28
+      "community": 30
     },
     {
       "label": "getThemeColors()",
@@ -2785,7 +3113,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L35",
       "id": "readerscreencontracts_getthemecolors",
-      "community": 28
+      "community": 30
     },
     {
       "label": "ReaderChromeState",
@@ -2793,7 +3121,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L47",
       "id": "readerscreencontracts_readerchromestate",
-      "community": 28
+      "community": 30
     },
     {
       "label": "ReaderChromeCallbacks",
@@ -2801,7 +3129,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L65",
       "id": "readerscreencontracts_readerchromecallbacks",
-      "community": 28
+      "community": 30
     },
     {
       "label": "ReaderScreenControls.kt",
@@ -2809,7 +3137,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_reader_readerscreencontrols_kt",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderControlsTab",
@@ -2817,7 +3145,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L105",
       "id": "readerscreencontrols_readercontrolstab",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderChapterContent()",
@@ -2825,7 +3153,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L116",
       "id": "readerscreencontrols_readerchaptercontent",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderChapterImage()",
@@ -2833,7 +3161,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L242",
       "id": "readerscreencontrols_readerchapterimage",
-      "community": 8
+      "community": 10
     },
     {
       "label": "OverscrollIndicator()",
@@ -2841,7 +3169,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L267",
       "id": "readerscreencontrols_overscrollindicator",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderControls()",
@@ -2849,7 +3177,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L283",
       "id": "readerscreencontrols_readercontrols",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderChapterControlsTab()",
@@ -2857,7 +3185,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L356",
       "id": "readerscreencontrols_readerchaptercontrolstab",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderFontControlsTab()",
@@ -2865,7 +3193,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L468",
       "id": "readerscreencontrols_readerfontcontrolstab",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderThemeControlsTab()",
@@ -2873,7 +3201,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L545",
       "id": "readerscreencontrols_readerthemecontrolstab",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderGeneralControlsTab()",
@@ -2881,7 +3209,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L576",
       "id": "readerscreencontrols_readergeneralcontrolstab",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderGeneralToggleRow()",
@@ -2889,7 +3217,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L625",
       "id": "readerscreencontrols_readergeneraltogglerow",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderControlsTabRow()",
@@ -2897,7 +3225,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L643",
       "id": "readerscreencontrols_readercontrolstabrow",
-      "community": 8
+      "community": 10
     },
     {
       "label": "ReaderThemeButton()",
@@ -2905,7 +3233,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L684",
       "id": "readerscreencontrols_readerthemebutton",
-      "community": 8
+      "community": 10
     },
     {
       "label": "KeypadButton()",
@@ -2913,7 +3241,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L722",
       "id": "readerscreencontrols_keypadbutton",
-      "community": 8
+      "community": 10
     },
     {
       "label": "VerticalScrubber()",
@@ -2921,7 +3249,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L751",
       "id": "readerscreencontrols_verticalscrubber",
-      "community": 8
+      "community": 10
     },
     {
       "label": "readerFontFamily()",
@@ -2929,7 +3257,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L829",
       "id": "readerscreencontrols_readerfontfamily",
-      "community": 8
+      "community": 10
     },
     {
       "label": "SettingsScreen.kt",
@@ -2937,7 +3265,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_settings_settingsscreen_kt",
-      "community": 4
+      "community": 6
     },
     {
       "label": "SettingsTab",
@@ -2945,7 +3273,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L102",
       "id": "settingsscreen_settingstab",
-      "community": 4
+      "community": 6
     },
     {
       "label": "SettingsScreen()",
@@ -2953,7 +3281,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L113",
       "id": "settingsscreen_settingsscreen",
-      "community": 4
+      "community": 6
     },
     {
       "label": "FontsTab()",
@@ -2961,7 +3289,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L241",
       "id": "settingsscreen_fontstab",
-      "community": 4
+      "community": 6
     },
     {
       "label": "ThemesTab()",
@@ -2969,7 +3297,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L349",
       "id": "settingsscreen_themestab",
-      "community": 4
+      "community": 6
     },
     {
       "label": "GeneralTab()",
@@ -2977,7 +3305,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L447",
       "id": "settingsscreen_generaltab",
-      "community": 4
+      "community": 6
     },
     {
       "label": "ThemeButton()",
@@ -2985,7 +3313,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L531",
       "id": "settingsscreen_themebutton",
-      "community": 4
+      "community": 6
     },
     {
       "label": "CompactCustomThemeCard()",
@@ -2993,7 +3321,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L571",
       "id": "settingsscreen_compactcustomthemecard",
-      "community": 4
+      "community": 6
     },
     {
       "label": "CustomThemeEditorDialog()",
@@ -3001,7 +3329,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L630",
       "id": "settingsscreen_customthemeeditordialog",
-      "community": 4
+      "community": 6
     },
     {
       "label": "ThemeColorField()",
@@ -3009,7 +3337,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L783",
       "id": "settingsscreen_themecolorfield",
-      "community": 4
+      "community": 6
     },
     {
       "label": "HsvColor",
@@ -3017,7 +3345,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L948",
       "id": "settingsscreen_hsvcolor",
-      "community": 4
+      "community": 6
     },
     {
       "label": ".toColorLong()",
@@ -3025,7 +3353,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L953",
       "id": "settingsscreen_hsvcolor_tocolorlong",
-      "community": 4
+      "community": 6
     },
     {
       "label": "toHsvColor()",
@@ -3033,7 +3361,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L964",
       "id": "settingsscreen_tohsvcolor",
-      "community": 4
+      "community": 6
     },
     {
       "label": "ThemeEditorSession",
@@ -3041,7 +3369,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L974",
       "id": "settingsscreen_themeeditorsession",
-      "community": 4
+      "community": 6
     },
     {
       "label": "ThemeEditorDraft",
@@ -3049,7 +3377,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L980",
       "id": "settingsscreen_themeeditordraft",
-      "community": 4
+      "community": 6
     },
     {
       "label": ".toCustomTheme()",
@@ -3057,7 +3385,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L992",
       "id": "settingsscreen_themeeditordraft_tocustomtheme",
-      "community": 4
+      "community": 6
     },
     {
       "label": "fromTheme()",
@@ -3065,7 +3393,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L1024",
       "id": "settingsscreen_fromtheme",
-      "community": 4
+      "community": 6
     },
     {
       "label": "fromPalette()",
@@ -3073,7 +3401,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L1032",
       "id": "settingsscreen_frompalette",
-      "community": 4
+      "community": 6
     },
     {
       "label": "check_graph_staleness.py",
@@ -3081,7 +3409,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\scripts\\check_graph_staleness.py",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_epub_reader_v2_scripts_check_graph_staleness_py",
-      "community": 32
+      "community": 33
     },
     {
       "label": "get_last_modified()",
@@ -3089,7 +3417,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\scripts\\check_graph_staleness.py",
       "source_location": "L5",
       "id": "check_graph_staleness_get_last_modified",
-      "community": 32
+      "community": 33
     },
     {
       "label": "check_staleness()",
@@ -3097,7 +3425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\scripts\\check_graph_staleness.py",
       "source_location": "L17",
       "id": "check_graph_staleness_check_staleness",
-      "community": 32
+      "community": 33
     }
   ],
   "links": [
@@ -3933,7 +4261,55 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "_tgt": "bookeditingmodels_bookcoveraction",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "target": "bookeditingmodels_bookcoveraction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
       "source_location": "L15",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "_tgt": "bookeditingmodels_keep",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "target": "bookeditingmodels_keep",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "_tgt": "bookeditingmodels_remove",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "target": "bookeditingmodels_remove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "_tgt": "bookeditingmodels_replace",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "target": "bookeditingmodels_replace",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L20",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
       "_tgt": "bookeditingmodels_bookcoverupdate",
@@ -3945,12 +4321,48 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
-      "source_location": "L21",
+      "source_location": "L26",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
-      "_tgt": "bookeditingmodels_bookchapteraddition",
+      "_tgt": "bookeditingmodels_bookchapteredit",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
-      "target": "bookeditingmodels_bookchapteraddition",
+      "target": "bookeditingmodels_bookchapteredit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "_tgt": "bookeditingmodels_booknewchaptercontent",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "target": "bookeditingmodels_booknewchaptercontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "_tgt": "bookeditingmodels_plaintext",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "target": "bookeditingmodels_plaintext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\core\\model\\BookEditingModels.kt",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "_tgt": "bookeditingmodels_htmldocument",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_core_model_bookeditingmodels_kt",
+      "target": "bookeditingmodels_htmldocument",
       "confidence_score": 1.0
     },
     {
@@ -4749,7 +5161,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L133",
+      "source_location": "L136",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_rebuildpdfmetadata",
@@ -4761,7 +5173,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L199",
+      "source_location": "L202",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_savebookmetadata",
@@ -4773,7 +5185,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L239",
+      "source_location": "L242",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_loadbookmetadata",
@@ -4785,7 +5197,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L296",
+      "source_location": "L299",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_buildtableofcontents",
@@ -4797,7 +5209,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L315",
+      "source_location": "L318",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_addtocreferences",
@@ -4809,7 +5221,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L336",
+      "source_location": "L339",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_activeepubfile",
@@ -4821,7 +5233,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L343",
+      "source_location": "L346",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_ensurecanonicalsourcepdffile",
@@ -4833,7 +5245,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L362",
+      "source_location": "L365",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_replacefileatomically",
@@ -4845,7 +5257,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L379",
+      "source_location": "L382",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_pdfdocumentinfo",
@@ -4857,7 +5269,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L384",
+      "source_location": "L387",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_readpdfdocumentinfo",
@@ -4869,7 +5281,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserBooks.kt",
-      "source_location": "L401",
+      "source_location": "L404",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt",
       "_tgt": "epubparserbooks_renderpdfcoverthumbnail",
@@ -4989,7 +5401,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L19",
+      "source_location": "L23",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_editstoredepubbook",
@@ -5001,7 +5413,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L54",
+      "source_location": "L58",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_updatebookmetadata",
@@ -5013,7 +5425,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L62",
+      "source_location": "L66",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_applychapteredits",
@@ -5025,7 +5437,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L116",
+      "source_location": "L134",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_applycoveredit",
@@ -5037,55 +5449,115 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L142",
+      "source_location": "L145",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "_tgt": "epubparserediting_buildchaptertitlemap",
+      "_tgt": "epubparserediting_removecover",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "target": "epubparserediting_buildchaptertitlemap",
+      "target": "epubparserediting_removecover",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L154",
+      "source_location": "L160",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "_tgt": "epubparserediting_collecttoctitles",
+      "_tgt": "epubparserediting_replacecover",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "target": "epubparserediting_collecttoctitles",
+      "target": "epubparserediting_replacecover",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L174",
+      "source_location": "L177",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "_tgt": "epubparserediting_nextaddedchapternumber",
+      "_tgt": "epubparserediting_removecustomcoverresources",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "target": "epubparserediting_nextaddedchapternumber",
+      "target": "epubparserediting_removecustomcoverresources",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L188",
+      "source_location": "L184",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "_tgt": "epubparserediting_buildaddedchapterdocument",
+      "_tgt": "epubparserediting_clearcustomguidereferences",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "target": "epubparserediting_buildaddedchapterdocument",
+      "target": "epubparserediting_clearcustomguidereferences",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L231",
+      "source_location": "L193",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "_tgt": "epubparserediting_setbookcoverimagedirect",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "target": "epubparserediting_setbookcoverimagedirect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L202",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "_tgt": "epubparserediting_lookslikecoverresource",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "target": "epubparserediting_lookslikecoverresource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L214",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "_tgt": "epubparserediting_buildnewchapterdocument",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "target": "epubparserediting_buildnewchapterdocument",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L235",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "_tgt": "epubparserediting_buildplaintextbodymarkup",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "target": "epubparserediting_buildplaintextbodymarkup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L267",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "_tgt": "epubparserediting_buildimportedhtmlbodymarkup",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "target": "epubparserediting_buildimportedhtmlbodymarkup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L347",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_normalized",
@@ -5097,7 +5569,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L258",
+      "source_location": "L368",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "_tgt": "epubparserediting_infernewchaptertitle",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "target": "epubparserediting_infernewchaptertitle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L400",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_extensionornull",
@@ -5109,7 +5593,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L275",
+      "source_location": "L417",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_toepubauthor",
@@ -5121,7 +5605,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L289",
+      "source_location": "L431",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_cleanhref",
@@ -5133,19 +5617,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L297",
+      "source_location": "L439",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "_tgt": "epubparserediting_striptocnumbering",
+      "_tgt": "epubparserediting_iscustomcoverhref",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
-      "target": "epubparserediting_striptocnumbering",
+      "target": "epubparserediting_iscustomcoverhref",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L304",
+      "source_location": "L443",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_fallbackchaptertitle",
@@ -5157,7 +5641,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
-      "source_location": "L318",
+      "source_location": "L457",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "_tgt": "epubparserediting_nextaddedchapternumber",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "target": "epubparserediting_nextaddedchapternumber",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L471",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "_tgt": "epubparserediting_stripmarkup",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
+      "target": "epubparserediting_stripmarkup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserEditing.kt",
+      "source_location": "L483",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt",
       "_tgt": "epubparserediting_escapexml",
@@ -6620,8 +7128,236 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_editablechaptersource",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_editablechaptersource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_editablechapteritem",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_editablechapteritem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_buildeditablechapteritems",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_buildeditablechapteritems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_buildtextdraftchapter",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_buildtextdraftchapter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_buildhtmldraftchapter",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_buildhtmldraftchapter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_tochapteredit",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_tochapteredit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_insertchapteritems",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_insertchapteritems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_moveselectedchapteritems",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_moveselectedchapteritems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L123",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_selectchapterrange",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_selectchapterrange",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_selectoutsidechapterrange",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_selectoutsidechapterrange",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L164",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_inferimportedchaptertitle",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_inferimportedchaptertitle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L184",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_stripeditabletocnumbering",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_stripeditabletocnumbering",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L188",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_fallbackeditabletitle",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_fallbackeditabletitle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L202",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_cleaneditablehref",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_cleaneditablehref",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L206",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_findfirsttitletag",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_findfirsttitletag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L211",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_findfirstheading",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_findfirstheading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookModels.kt",
+      "source_location": "L216",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "_tgt": "editbookmodels_stripmarkup",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookmodels_kt",
+      "target": "editbookmodels_stripmarkup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L79",
+      "source_location": "L98",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "_tgt": "editbookscreen_editbooktab",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "target": "editbookscreen_editbooktab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "_tgt": "editbookscreen_rangeselectionrequest",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "target": "editbookscreen_rangeselectionrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L105",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
       "_tgt": "editbookscreen_editbookscreen",
@@ -6633,84 +7369,156 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L406",
+      "source_location": "L456",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "_tgt": "editbookscreen_addchapterdialog",
+      "_tgt": "editbookscreen_editbookdetailstab",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "target": "editbookscreen_addchapterdialog",
+      "target": "editbookscreen_editbookdetailstab",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L457",
+      "source_location": "L567",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "_tgt": "editbookscreen_editablechapteritem",
+      "_tgt": "editbookscreen_editbookchapterstab",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "target": "editbookscreen_editablechapteritem",
+      "target": "editbookscreen_editbookchapterstab",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L465",
+      "source_location": "L684",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "_tgt": "editbookscreen_buildeditablechapteritems",
+      "_tgt": "editbookscreen_chapterrow",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "target": "editbookscreen_buildeditablechapteritems",
+      "target": "editbookscreen_chapterrow",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L483",
+      "source_location": "L721",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "_tgt": "editbookscreen_stripeditabletocnumbering",
+      "_tgt": "editbookscreen_summaryrow",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "target": "editbookscreen_stripeditabletocnumbering",
+      "target": "editbookscreen_summaryrow",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L487",
+      "source_location": "L729",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "_tgt": "editbookscreen_fallbackeditabletitle",
+      "_tgt": "editbookscreen_actionstrip",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "target": "editbookscreen_fallbackeditabletitle",
+      "target": "editbookscreen_actionstrip",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L501",
+      "source_location": "L739",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "_tgt": "editbookscreen_cleaneditablehref",
+      "_tgt": "editbookscreen_addtextchapterdialog",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "target": "editbookscreen_cleaneditablehref",
+      "target": "editbookscreen_addtextchapterdialog",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
-      "source_location": "L505",
+      "source_location": "L793",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "_tgt": "editbookscreen_rangeselectiondialog",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "target": "editbookscreen_rangeselectiondialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L840",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "_tgt": "editbookscreen_positiondialog",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "target": "editbookscreen_positiondialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L877",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "_tgt": "editbookscreen_renamechapterdialog",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "target": "editbookscreen_renamechapterdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L905",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "_tgt": "editbookscreen_simpleconfirmdialog",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "target": "editbookscreen_simpleconfirmdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L923",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
       "_tgt": "editbookscreen_loadcoverupdate",
       "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
       "target": "editbookscreen_loadcoverupdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L931",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "_tgt": "editbookscreen_loadimportedchapterdrafts",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "target": "editbookscreen_loadimportedchapterdrafts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\Epub_Reader_v2\\app\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
+      "source_location": "L950",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "_tgt": "editbookscreen_querydisplayname",
+      "source": "c_users_amon_desktop_projects_epub_reader_v2_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
+      "target": "editbookscreen_querydisplayname",
       "confidence_score": 1.0
     },
     {

@@ -1,10 +1,13 @@
 package com.epubreader.data.parser
 
-import com.epubreader.core.model.BookChapterAddition
+import com.epubreader.core.model.BookChapterEdit
+import com.epubreader.core.model.BookCoverAction
 import com.epubreader.core.model.BookCoverUpdate
 import com.epubreader.core.model.BookEditRequest
+import com.epubreader.core.model.BookNewChapterContent
 import nl.siegmann.epublib.domain.Author
 import nl.siegmann.epublib.domain.Book
+import nl.siegmann.epublib.domain.GuideReference
 import nl.siegmann.epublib.domain.Resource
 import nl.siegmann.epublib.domain.SpineReference
 import nl.siegmann.epublib.domain.TOCReference
@@ -15,6 +18,7 @@ import java.util.Locale
 
 private const val EditedBookAssetDir = "bluewaves"
 private const val EditedBookChapterPrefix = "$EditedBookAssetDir/added-chapter-"
+private const val EditedBookCustomCoverPrefix = "$EditedBookAssetDir/custom-cover."
 
 internal fun editStoredEpubBook(
     bookFolder: File,
@@ -35,10 +39,10 @@ internal fun editStoredEpubBook(
         }
 
         updateBookMetadata(book, normalizedRequest)
-        if (!applyChapterEdits(book, normalizedRequest)) {
+        if (!applyChapterEdits(book, normalizedRequest.chapters)) {
             return null
         }
-        applyCoverEdit(book, normalizedRequest.coverUpdate)
+        applyCoverEdit(book, normalizedRequest.coverAction)
 
         stagedFile.outputStream().use { output ->
             EpubWriter().write(book, output)
@@ -61,76 +65,107 @@ private fun updateBookMetadata(
 
 private fun applyChapterEdits(
     book: Book,
-    request: BookEditRequest,
+    chapters: List<BookChapterEdit>,
 ): Boolean {
-    val deletedChapterHrefs = request.deletedChapterHrefs
-        .map(::cleanHref)
-        .filter(String::isNotBlank)
-        .toSet()
-    val chapterTitlesByHref = buildChapterTitleMap(book)
-    val keptSpineReferences = book.spine.spineReferences
-        .filter { reference ->
-            val href = cleanHref(reference.resource?.href)
-            href.isNotBlank() && href !in deletedChapterHrefs
-        }
-        .toMutableList()
-
-    deletedChapterHrefs.forEach { href ->
-        book.resources.remove(href)
-        chapterTitlesByHref.remove(href)
+    if (chapters.isEmpty()) {
+        return false
     }
 
-    val nextChapterNumber = nextAddedChapterNumber(book)
-    val addedSpineReferences = request.addedChapters.mapIndexed { index, chapter ->
-        val href = "$EditedBookChapterPrefix${(nextChapterNumber + index).toString().padStart(4, '0')}.xhtml"
-        val resource = Resource(
-            buildAddedChapterDocument(
-                title = chapter.title,
-                body = chapter.body,
-            ),
-            href,
-        ).apply {
-            title = chapter.title
+    val originalSpineResourcesByHref = linkedMapOf<String, Resource>()
+    book.spine.spineReferences.forEach { reference ->
+        val resource = reference.resource ?: return@forEach
+        val href = cleanHref(resource.href)
+        if (href.isNotBlank()) {
+            originalSpineResourcesByHref[href] = resource
         }
-        book.resources.add(resource)
-        chapterTitlesByHref[href] = chapter.title
-        SpineReference(resource)
     }
 
-    val finalSpineReferences = keptSpineReferences + addedSpineReferences
+    val finalSpineReferences = mutableListOf<SpineReference>()
+    val finalTocReferences = mutableListOf<TOCReference>()
+    val retainedExistingHrefs = linkedSetOf<String>()
+    var nextChapterNumber = nextAddedChapterNumber(book)
+
+    chapters.forEachIndexed { index, chapter ->
+        val title = chapter.title.trim().ifBlank {
+            chapter.existingHref
+                ?.let(::cleanHref)
+                ?.takeIf(String::isNotBlank)
+                ?.let { href -> fallbackChapterTitle(href, index) }
+                ?: "Chapter ${index + 1}"
+        }
+        val resource = when (val existingHref = chapter.existingHref?.let(::cleanHref)) {
+            null, "" -> {
+                val content = chapter.newChapterContent ?: return false
+                val href = "$EditedBookChapterPrefix${nextChapterNumber.toString().padStart(4, '0')}.xhtml"
+                nextChapterNumber++
+                Resource(
+                    buildNewChapterDocument(title, content),
+                    href,
+                ).apply {
+                    this.title = title
+                }.also(book.resources::add)
+            }
+
+            else -> {
+                val existingResource = originalSpineResourcesByHref[existingHref]
+                    ?: book.resources.getByHref(existingHref)
+                    ?: return false
+                retainedExistingHrefs += existingHref
+                existingResource
+            }
+        }
+
+        finalSpineReferences += SpineReference(resource)
+        finalTocReferences += TOCReference(title, resource)
+    }
+
     if (finalSpineReferences.isEmpty()) {
         return false
     }
 
+    val removedHrefs = originalSpineResourcesByHref.keys - retainedExistingHrefs
+    removedHrefs.forEach(book.resources::remove)
+
     book.spine.spineReferences = finalSpineReferences
-    book.tableOfContents.tocReferences = finalSpineReferences.mapIndexed { index, reference ->
-        val href = cleanHref(reference.resource?.href)
-        val title = chapterTitlesByHref[href]
-            ?.takeIf { it.isNotBlank() }
-            ?: fallbackChapterTitle(href, index)
-        TOCReference(title, reference.resource)
-    }
+    book.tableOfContents.tocReferences = finalTocReferences
     return true
 }
 
 private fun applyCoverEdit(
     book: Book,
-    coverUpdate: BookCoverUpdate?,
+    coverAction: BookCoverAction,
 ) {
-    if (coverUpdate == null) {
-        return
+    when (coverAction) {
+        BookCoverAction.Keep -> Unit
+        BookCoverAction.Remove -> removeCover(book)
+        is BookCoverAction.Replace -> replaceCover(book, coverAction.cover)
+    }
+}
+
+private fun removeCover(book: Book) {
+    val currentCover = book.coverImage
+    val fallbackCover = when {
+        currentCover != null && !isCustomCoverHref(currentCover.href) -> currentCover
+        else -> book.resources.getAll().firstOrNull { resource ->
+            val href = cleanHref(resource.href)
+            !isCustomCoverHref(href) && looksLikeCoverResource(resource)
+        }
     }
 
+    removeCustomCoverResources(book)
+    clearCustomGuideReferences(book)
+    setBookCoverImageDirect(book, fallbackCover)
+}
+
+private fun replaceCover(
+    book: Book,
+    coverUpdate: BookCoverUpdate,
+) {
     val extension = coverUpdate.extensionOrNull()
         ?: throw IllegalArgumentException("Unsupported cover format")
-    val coverHref = "$EditedBookAssetDir/custom-cover.$extension"
+    val coverHref = "$EditedBookCustomCoverPrefix$extension"
 
-    book.resources.allHrefs
-        .filter { href ->
-            href.startsWith("$EditedBookAssetDir/custom-cover.")
-        }
-        .toList()
-        .forEach(book.resources::remove)
+    removeCustomCoverResources(book)
 
     val coverImage = Resource(coverUpdate.bytes, coverHref).apply {
         title = "Cover"
@@ -139,56 +174,68 @@ private fun applyCoverEdit(
     book.setCoverImage(coverImage)
 }
 
-private fun buildChapterTitleMap(book: Book): LinkedHashMap<String, String> {
-    val titlesByHref = linkedMapOf<String, String>()
-    collectTocTitles(book.tableOfContents.tocReferences, titlesByHref)
-    book.spine.spineReferences.forEachIndexed { index, reference ->
-        val href = cleanHref(reference.resource?.href)
-        if (href.isNotBlank()) {
-            titlesByHref.putIfAbsent(href, fallbackChapterTitle(href, index))
-        }
-    }
-    return titlesByHref
+private fun removeCustomCoverResources(book: Book) {
+    book.resources.allHrefs
+        .filter(::isCustomCoverHref)
+        .toList()
+        .forEach(book.resources::remove)
 }
 
-private fun collectTocTitles(
-    references: List<TOCReference>,
-    titlesByHref: MutableMap<String, String>,
+private fun clearCustomGuideReferences(book: Book) {
+    val remainingReferences = book.guide.references.filterNot { reference ->
+        isCustomCoverHref(reference.resource?.href.orEmpty()) ||
+            reference.type.equals(GuideReference.COVER, ignoreCase = true) &&
+            isCustomCoverHref(reference.completeHref.orEmpty())
+    }
+    book.guide.references = remainingReferences
+}
+
+private fun setBookCoverImageDirect(
+    book: Book,
+    resource: Resource?,
 ) {
-    references.forEach { reference ->
-        val href = cleanHref(reference.completeHref ?: reference.resource?.href)
-        if (href.isNotBlank()) {
-            titlesByHref.putIfAbsent(
-                href,
-                stripTocNumbering(reference.title).ifBlank {
-                    fallbackChapterTitle(href, titlesByHref.size)
-                },
-            )
-        }
-        if (reference.children.isNotEmpty()) {
-            collectTocTitles(reference.children, titlesByHref)
-        }
+    val field = Book::class.java.getDeclaredField("coverImage")
+    field.isAccessible = true
+    field.set(book, resource)
+}
+
+private fun looksLikeCoverResource(resource: Resource): Boolean {
+    val mediaTypeName = resource.mediaType?.name.orEmpty()
+    if (!mediaTypeName.startsWith("image/", ignoreCase = true)) {
+        return false
     }
+
+    val normalizedHref = cleanHref(resource.href)
+    val normalizedTitle = resource.title.orEmpty()
+    return normalizedHref.contains("cover", ignoreCase = true) ||
+        normalizedTitle.contains("cover", ignoreCase = true)
 }
 
-private fun nextAddedChapterNumber(book: Book): Int {
-    val pattern = Regex("""^$EditedBookChapterPrefix(\d{4})\.xhtml$""")
-    val currentMax = book.resources.allHrefs
-        .mapNotNull { href ->
-            pattern.matchEntire(cleanHref(href))
-                ?.groupValues
-                ?.getOrNull(1)
-                ?.toIntOrNull()
-        }
-        .maxOrNull()
-        ?: 0
-    return currentMax + 1
+private fun buildNewChapterDocument(
+    title: String,
+    content: BookNewChapterContent,
+): ByteArray {
+    val bodyMarkup = when (content) {
+        is BookNewChapterContent.PlainText -> buildPlainTextBodyMarkup(title, content.body)
+        is BookNewChapterContent.HtmlDocument -> buildImportedHtmlBodyMarkup(content.markup)
+    }
+
+    return """<?xml version="1.0" encoding="UTF-8"?>
+        <html xmlns="http://www.w3.org/1999/xhtml">
+          <head>
+            <title>${escapeXml(title)}</title>
+          </head>
+          <body>
+            $bodyMarkup
+          </body>
+        </html>
+    """.trimIndent().toByteArray(Charsets.UTF_8)
 }
 
-private fun buildAddedChapterDocument(
+private fun buildPlainTextBodyMarkup(
     title: String,
     body: String,
-): ByteArray {
+): String {
     val escapedTitle = escapeXml(title)
     val paragraphs = body
         .replace("\r\n", "\n")
@@ -205,7 +252,7 @@ private fun buildAddedChapterDocument(
             }
         }
 
-    val bodyContent = buildString {
+    return buildString {
         append("<h1>$escapedTitle</h1>")
         if (paragraphs.isEmpty()) {
             append("<p>$escapedTitle</p>")
@@ -215,44 +262,139 @@ private fun buildAddedChapterDocument(
             }
         }
     }
+}
 
-    return """<?xml version="1.0" encoding="UTF-8"?>
-        <html xmlns="http://www.w3.org/1999/xhtml">
-          <head>
-            <title>$escapedTitle</title>
-          </head>
-          <body>
-            $bodyContent
-          </body>
-        </html>
-    """.trimIndent().toByteArray(Charsets.UTF_8)
+private fun buildImportedHtmlBodyMarkup(markup: String): String {
+    var normalizedMarkup = markup
+        .removePrefix("\uFEFF")
+        .replace(Regex("""(?is)<script\b.*?</script>"""), "")
+        .trim()
+
+    val bodyMatch = Regex("""(?is)<body\b[^>]*>(.*?)</body>""").find(normalizedMarkup)
+    normalizedMarkup = if (bodyMatch != null) {
+        bodyMatch.groupValues[1].trim()
+    } else if (Regex("""(?is)<html\b""").containsMatchIn(normalizedMarkup)) {
+        normalizedMarkup
+            .replace(Regex("""(?is)<\?xml.*?\?>"""), "")
+            .replace(Regex("""(?is)<!DOCTYPE.*?>"""), "")
+            .replace(Regex("""(?is)<head\b.*?</head>"""), "")
+            .replace(Regex("""(?is)</?html\b[^>]*>"""), "")
+            .replace(Regex("""(?is)</?body\b[^>]*>"""), "")
+            .trim()
+    } else {
+        normalizedMarkup
+    }
+
+    if (!Regex("""(?is)<[a-z][^>]*>""").containsMatchIn(normalizedMarkup)) {
+        return buildPlainTextBodyMarkup(
+            title = "Imported Chapter",
+            body = normalizedMarkup,
+        )
+    }
+
+    return normalizedMarkup
 }
 
 private fun BookEditRequest.normalized(): BookEditRequest? {
     val normalizedTitle = title.trim().ifBlank { return null }
     val normalizedAuthor = author.trim().ifBlank { "Unknown Author" }
-    val normalizedDeletedHrefs = deletedChapterHrefs
-        .map(::cleanHref)
-        .filter(String::isNotBlank)
-        .toSet()
-    val normalizedAddedChapters = addedChapters.mapNotNull { chapter ->
-        val normalizedChapterTitle = chapter.title.trim()
-        if (normalizedChapterTitle.isBlank()) {
-            null
-        } else {
-            BookChapterAddition(
-                title = normalizedChapterTitle,
-                body = chapter.body.trim().ifBlank { normalizedChapterTitle },
-            )
+    val normalizedChapters = chapters.mapIndexedNotNull { index, chapter ->
+        val existingHref = chapter.existingHref
+            ?.let(::cleanHref)
+            ?.takeIf(String::isNotBlank)
+        val normalizedContent = chapter.newChapterContent?.normalized()
+        if (existingHref == null && normalizedContent == null) {
+            return@mapIndexedNotNull null
+        }
+
+        val chapterTitle = chapter.title.trim().ifBlank {
+            when {
+                existingHref != null -> fallbackChapterTitle(existingHref, index)
+                normalizedContent != null -> inferNewChapterTitle(normalizedContent, index)
+                else -> "Chapter ${index + 1}"
+            }
+        }
+
+        BookChapterEdit(
+            existingHref = existingHref,
+            title = chapterTitle,
+            newChapterContent = normalizedContent,
+        )
+    }
+    if (normalizedChapters.isEmpty()) {
+        return null
+    }
+
+    val normalizedCoverAction = when (val action = coverAction) {
+        BookCoverAction.Keep -> BookCoverAction.Keep
+        BookCoverAction.Remove -> BookCoverAction.Remove
+        is BookCoverAction.Replace -> {
+            if (action.cover.extensionOrNull() == null) {
+                return null
+            }
+            action
         }
     }
 
     return copy(
         title = normalizedTitle,
         author = normalizedAuthor,
-        deletedChapterHrefs = normalizedDeletedHrefs,
-        addedChapters = normalizedAddedChapters,
+        coverAction = normalizedCoverAction,
+        chapters = normalizedChapters,
     )
+}
+
+private fun BookNewChapterContent.normalized(): BookNewChapterContent? {
+    return when (this) {
+        is BookNewChapterContent.PlainText -> copy(
+            body = body.trim(),
+            fileNameHint = fileNameHint?.trim()?.takeIf(String::isNotBlank),
+        )
+
+        is BookNewChapterContent.HtmlDocument -> {
+            val normalizedMarkup = markup.removePrefix("\uFEFF").trim()
+            if (normalizedMarkup.isBlank()) {
+                null
+            } else {
+                copy(
+                    markup = normalizedMarkup,
+                    fileNameHint = fileNameHint?.trim()?.takeIf(String::isNotBlank),
+                )
+            }
+        }
+    }
+}
+
+private fun inferNewChapterTitle(
+    content: BookNewChapterContent,
+    index: Int,
+): String {
+    val candidate = when (content) {
+        is BookNewChapterContent.PlainText -> content.fileNameHint
+        is BookNewChapterContent.HtmlDocument -> {
+            Regex("""(?is)<title\b[^>]*>(.*?)</title>""")
+                .find(content.markup)
+                ?.groupValues
+                ?.getOrNull(1)
+                ?.let(::stripMarkup)
+                ?: Regex("""(?is)<h[1-6]\b[^>]*>(.*?)</h[1-6]>""")
+                    .find(content.markup)
+                    ?.groupValues
+                    ?.getOrNull(1)
+                    ?.let(::stripMarkup)
+                ?: content.fileNameHint
+        }
+    }
+
+    return candidate
+        ?.substringAfterLast('/')
+        ?.substringBeforeLast('.')
+        ?.replace('_', ' ')
+        ?.replace('-', ' ')
+        ?.replace(Regex("""\s+"""), " ")
+        ?.trim()
+        ?.takeIf(String::isNotBlank)
+        ?: "Chapter ${index + 1}"
 }
 
 private fun BookCoverUpdate.extensionOrNull(): String? {
@@ -294,11 +436,8 @@ private fun cleanHref(rawHref: String?): String {
         .trim()
 }
 
-private fun stripTocNumbering(title: String?): String {
-    return title
-        .orEmpty()
-        .replace(Regex("""^\s*\d+(?:\.\d+)*\.\s*"""), "")
-        .trim()
+private fun isCustomCoverHref(rawHref: String): Boolean {
+    return cleanHref(rawHref).startsWith(EditedBookCustomCoverPrefix)
 }
 
 private fun fallbackChapterTitle(
@@ -313,6 +452,32 @@ private fun fallbackChapterTitle(
             if (character.isLowerCase()) character.titlecase(Locale.US) else character.toString()
         }
         .ifBlank { "Chapter ${index + 1}" }
+}
+
+private fun nextAddedChapterNumber(book: Book): Int {
+    val pattern = Regex("""^${Regex.escape(EditedBookChapterPrefix)}(\d{4})\.xhtml$""")
+    val currentMax = book.resources.allHrefs
+        .mapNotNull { href ->
+            pattern.matchEntire(cleanHref(href))
+                ?.groupValues
+                ?.getOrNull(1)
+                ?.toIntOrNull()
+        }
+        .maxOrNull()
+        ?: 0
+    return currentMax + 1
+}
+
+private fun stripMarkup(raw: String): String {
+    return raw
+        .replace(Regex("""(?is)<[^>]+>"""), " ")
+        .replace("&nbsp;", " ")
+        .replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&#39;", "'")
+        .trim()
 }
 
 private fun escapeXml(raw: String): String {

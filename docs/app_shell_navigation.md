@@ -8,7 +8,7 @@ Use this guide when the task is about library navigation, folder management, dia
 
 Temporary boundary:
 - The app shell is EPUB-only for active import/open flows.
-- EPUB library cards now expose an `Edit Book` flow for metadata, custom cover, and chapter mutation work.
+- EPUB library cards now expose an `Edit Book` flow for metadata, cover management, and chapter mutation work through a dense two-tab editor.
 - PDF-origin books remain visible as deprecated library entries, but the shell blocks opening/importing them until the planned safe refactor.
 
 ## Fast Load Order
