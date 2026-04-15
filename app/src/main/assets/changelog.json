@@ -1,5 +1,17 @@
 [
   {
+    "versionCode": 11,
+    "versionName": "1.1.0",
+    "changes": [
+      "New: Custom Themes system - fully personalize reader background and text colors.",
+      "New: Selectable Text - long-press reader content to copy or highlight.",
+      "New: Edit Book System - update titles, authors, and manage cover display settings.",
+      "Refactored: Settings Screen - completely redesigned for better clarity and organization.",
+      "Refactored: Reading Bar - polished visual hierarchy with theme-aware dynamic borders.",
+      "Refactored: System Bar Controls - improved visibility management for immersive reading."
+    ]
+  },
+  {
     "versionCode": 10,
     "versionName": "1.0.10",
     "changes": [
