@@ -82,3 +82,18 @@ app/src/main/java/com/epubreader
   - Expected delivery requirement: add unit coverage for persistence, state, and toggle behavior.
 
 All roadmap items should also update the relevant markdown docs and rebuild `graphify-out/` when implemented.
+
+## AI Agent Workflow
+
+- `AGENTS.md`
+  - Primary repo rules for all agents.
+- `GEMINI.md`
+  - Companion guide for planning, scoping, and review-oriented Gemini passes.
+- `CODEX.md`
+  - Companion guide for implementation, debugging, and verification-oriented Codex passes.
+- `docs/ask_mode_prompt_rules.md`
+  - Rulebook for generated implementation prompts and handoffs.
+- `docs/TODO_PROMPTS.md`
+  - Prompt library for the current top-level TODO tracks.
+- `docs/agent_memory/README.md`
+  - Shared durable memory for agent collaboration, handoffs, decisions, and debug lessons.

@@ -103,3 +103,56 @@ For low-token work in this repo:
 - If scope is unclear, run `graphify query "<question>" --budget 800-1500` to narrow the file set.
 - After the graph narrows the area, read only the relevant area doc and then only the files named by the graph.
 - Use `python scripts/rebuild_graphify.py` when `graphify-out/` is missing, stale, or after structural code changes.
+
+## AI Agent Workflow Addendum
+
+This section extends the base rules above for repo agents and model handoffs.
+
+### Model Routing
+- `Codex` is the primary implementation and verification agent for this repo. Treat it as the default owner for difficult code changes, build/test execution, focused debugging, and final validation.
+- `Gemini` is a secondary planning/review agent. Use it for repo-wide scoping, backlog decomposition, prompt authoring, design comparison, and optional second-pass review, but not as the default owner of difficult implementation work unless the user explicitly asks for that split.
+- When both are used on the same task, keep one active owner. The planning/review agent should frame the work, but the implementation agent must still verify everything against the current code and docs.
+- Do not treat model-specific docs as a second source of truth over `AGENTS.md`; they are companion guides, not replacements.
+- Multi-agent coordination through Microsoft Agent Framework is a future optimization layer. Do not introduce framework-specific repo changes unless the task explicitly asks for that integration.
+
+### Persistent Memory
+- Durable repo knowledge belongs in `docs/`, `AGENTS.md`, or the root `TODO`, not only in transient chat history.
+- When a task reveals stale AI guidance, repair the repo memory close to the affected workflow. Example: add the missing doc, update the index, or append the new rule to the relevant guide.
+- Append new knowledge; do not silently rewrite existing architectural memory.
+- Keep prompt libraries aligned with the current root `TODO` ordering so future agents do not optimize the wrong backlog item first.
+
+### Shared Memory
+- Shared durable memory for agent collaboration lives in `docs/agent_memory/`.
+- Treat `docs/agent_memory/README.md` as the entry point, then update the focused memory file (`decision_log.md`, `handoffs.md`, `debug_lessons.md`, `open_questions.md`) instead of scattering one-off notes.
+- Microsoft Agent Framework runtime state is coordination state, not the long-term project memory source of truth.
+- Obsidian is the human browsing layer for repo markdown and `graphify-out/wiki/`; do not keep critical project memory only in Obsidian config, plugin state, or private local notes.
+- When a new decision becomes stable and architectural, promote it from agent memory into the canonical docs.
+
+### Token Efficiency
+- Stay graph-first. Prefer `docs/project_graph.md`, `graphify-out/GRAPH_REPORT.md`, `graphify-out/wiki/index.md`, and the low-context area docs before raw source files.
+- Do not load every split file in a package by default. Use the area docs to choose the smallest relevant surface.
+- Prefer contract-map files (`AppNavigationContracts`, `SettingsManagerContracts`, `ReaderScreenContracts`) when they answer the question without opening the full implementation.
+- If a task is broad, first narrow it into a file list, owner list, or execution order before opening more code.
+
+### Task Handling
+- Start each non-trivial task by restating the goal, the likely owner files, and the verification path.
+- Prefer minimal, surgical edits over broad rewrites.
+- Treat prompt quality as part of the implementation quality: the next agent should be able to continue from the repo state without reconstructing the entire context.
+- For cross-model or cross-agent handoffs, spell out:
+  - the exact goal
+  - allowed files
+  - files to avoid
+  - risk areas
+  - required verification
+- If a task changes behavior, update the relevant docs in the same pass when practical.
+
+### Debug Handling
+- Start debugging from `docs/AI_DEBUG_GUIDE.md`, then the focused area doc, then the smallest set of implementation files.
+- Prefer high-signal instrumentation through `core/debug/AppLog.kt` instead of ad-hoc logging.
+- Capture repro steps and expected behavior before changing logic.
+- Remove temporary debug noise before finishing unless the retained log materially helps future debugging.
+
+### Prompt Workflow
+- `docs/PROMPT_TEMPLATES.md` is the quick-start library for common task types.
+- `docs/ask_mode_prompt_rules.md` is the rulebook for generated or delegated implementation prompts.
+- `docs/TODO_PROMPTS.md` is the prompt library for top-level backlog items and should track the current root `TODO`.

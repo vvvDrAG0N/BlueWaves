@@ -92,3 +92,27 @@ This directory is the architectural memory for Blue Waves.
   - Includes `Unit Test` and `Instrumentation Test` starter prompts plus the feature test-selection rule.
 - `PDF_review.md`
   - Archived context for the deprecated PDF path and the next safe-refactor pass.
+
+## AI Workflow Note
+
+- `ask_mode_prompt_rules.md`
+  - Rulebook for generated implementation and handoff prompts.
+  - Use this when creating prompts for another agent or for a later execution pass.
+- `TODO_PROMPTS.md`
+  - Ready-to-use prompts for the current top-level TODO tracks.
+  - Keep this aligned with the root `TODO` execution order.
+- `agent_memory/README.md`
+  - Shared-memory entry point for multi-agent collaboration.
+  - Use this when the task needs durable decisions, handoffs, reusable debug lessons, or open-question tracking across sessions.
+- `agent_memory/decision_log.md`
+  - Append-only record of stable workflow and architecture decisions discovered by agents.
+- `agent_memory/handoffs.md`
+  - Shared work ledger for active and recently completed handoffs.
+- `agent_memory/debug_lessons.md`
+  - Reusable debugging lessons, command gotchas, and high-signal fixes.
+- `agent_memory/open_questions.md`
+  - Unresolved decisions that should not be silently guessed by later agents.
+- `../GEMINI.md`
+  - Repo-specific Gemini companion guide for planning, scoping, and review work.
+- `../CODEX.md`
+  - Repo-specific Codex companion guide for implementation, debugging, and verification work.
