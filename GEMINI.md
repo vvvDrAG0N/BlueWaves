@@ -1,3 +1,6 @@
+## Foundation
+- **Mandatory**: Before performing any task or analysis, read `AGENTS.md`. It defines the core philosophy, context priority, and critical safety rules for this project.
+
 ## graphify
 
 This project has a graphify knowledge graph at graphify-out/.

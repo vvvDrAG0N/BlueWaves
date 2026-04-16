@@ -1,6 +1,6 @@
 # EpubParser
 
-> God node · 34 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
+> God node ï¿½ 34 connections ï¿½ `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 
 ## Connections by Relation
 

@@ -80,6 +80,10 @@ AI agents must treat AGENT.md and docs/ as stable architectural memory.
 Do not refactor or summarize these files unless explicitly instructed.
 New knowledge must be appended, never replaced.
 
+## browser-use
+
+this project has web browser through browser-use.md.
+
 ## graphify
 
 This project has a graphify knowledge graph at graphify-out/.
