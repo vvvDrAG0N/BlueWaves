@@ -11,6 +11,268 @@ TODO
 - Add swipe gesture support for "settings" to swipe between tabs.
 - Performance issue: Saving a large book after editing take long time depending on it size, we need a another performance pass here. Importing large book may cause performance issues, A pass here too.
 
+- Infinite Scroll Reader Mode -
+
+1. Feature Overview
+
+- Add a new Reading Mode: Infinite Scroll
+- Available in:
+  - Reader Settings → General
+  - Global Settings → General
+- Allows continuous vertical scrolling across chapters instead of manual chapter switching
+
+---
+
+2. Core System Design
+
+2.1 Chapter Window Model
+
+- Maintain a sliding window of exactly 3 chapters:
+  - "[Previous, Current, Next]"
+- “Current” = chapter whose center is closest to viewport center
+
+---
+
+2.2 Initial Load
+
+- When opening book at chapter "N":
+  - Load "[N-1, N, N+1]"
+  - Scroll directly to chapter "N"
+- Handle edges:
+  - If "N == 0" → no previous
+  - If last chapter → no next
+
+---
+
+2.3 Scroll-Based Loading
+
+Scrolling Down:
+
+- When current chapter becomes "N+1":
+  - Load "N+2"
+  - Unload "N-1"
+
+Result:
+
+Before: [N-1, N, N+1]
+After:  [N, N+1, N+2]
+
+---
+
+Scrolling Up:
+
+- When current chapter becomes "N-1":
+  - Load "N-2"
+  - Unload "N+1"
+
+Result:
+
+Before: [N-1, N, N+1]
+After:  [N-2, N-1, N]
+
+---
+
+2.4 Preloading
+
+- Trigger loading early (not at boundary):
+  - At ~70–80% scroll toward next/previous chapter
+- Ensure next/previous chapter is ready before entering view
+
+---
+
+2.5 Chapter Structure
+
+- Each chapter must be a separate view/block
+- Do NOT merge chapters into one text
+- Allows:
+  - independent loading/unloading
+  - better performance
+  - cleaner state tracking
+
+---
+
+3. State Management
+
+3.1 Current Chapter Detection
+
+- Determine current chapter by:
+  - chapter whose center is closest to viewport center
+
+---
+
+3.2 Reading Progress
+
+- Track progress as:
+  - "chapter_index"
+  - "offset_inside_chapter" (percentage or pixel)
+- Do NOT rely on global scroll Y
+
+---
+
+3.3 Restore Position
+
+- On reopen:
+  - Load "[N-1, N, N+1]"
+  - Scroll to saved offset in chapter "N"
+
+---
+
+4. Integration & UX
+
+4.1 Settings Integration
+
+- Add toggle:
+  - Reading Mode:
+    - Paginated (default)
+    - Infinite Scroll
+
+---
+
+4.2 Mode Switching
+
+- Switching modes should:
+  - preserve reading position
+  - convert position correctly:
+    - paginated → scroll offset
+    - scroll → page/chapter position
+
+---
+
+4.3 Visual UX
+
+- Optional:
+  - chapter divider (title or spacing)
+- Ensure:
+  - smooth transitions between chapters
+  - no visual jump on load
+
+---
+
+4.4 Theme Compatibility
+
+- Infinite scroll must respect:
+  - theme colors
+  - fonts
+  - spacing
+  - line height
+- Apply dynamically to all loaded chapters
+
+---
+
+5. Performance Constraints
+
+- Never keep more than 3 chapters loaded
+- Load only 1 chapter at a time
+- Use async loading
+- Avoid blocking UI thread
+
+---
+
+6. Edge Cases & Stability Rules
+
+6.1 Fast Scrolling (Up / Down)
+
+- Do NOT assume sequential scrolling
+- On fast scroll:
+  - detect current chapter instantly
+  - rebuild correct window "[Current-1, Current, Current+1]"
+- Skip intermediate loads if necessary
+
+---
+
+6.2 Scroll Direction Changes
+
+- Rapid up/down scrolling must NOT:
+  - trigger duplicate loads
+  - reload same chapter repeatedly
+- Add debounce / load lock:
+  - prevent repeated triggers in short time
+
+---
+
+6.3 Boundary Flickering
+
+- Prevent rapid switching near chapter edges
+- Add hysteresis:
+  - chapter becomes “current” only after crossing ~55% of screen
+
+---
+
+6.4 Load Safety
+
+- Do NOT load if:
+  - chapter already loaded
+  - chapter currently loading
+- Maintain loading state per chapter
+
+---
+
+6.5 Unloading Safety
+
+- Only unload after new chapter successfully loaded
+- Never unload:
+  - current chapter
+  - visible adjacent chapter
+
+---
+
+6.6 Recovery Logic
+
+- If system becomes inconsistent:
+  - (missing chapter OR >3 loaded)
+- Reset:
+  - keep current chapter
+  - reload "[Current-1, Current, Current+1]"
+
+---
+
+6.7 Boundary Conditions
+
+- First chapter:
+  - no previous load
+- Last chapter:
+  - no next load
+- Prevent invalid index access
+
+---
+
+6.8 Load Cancellation
+
+- If user scrolls far away:
+  - cancel outdated loading tasks
+- Only keep relevant loads active
+
+---
+
+7. Failure Prevention Rules
+
+- Do NOT:
+  - merge entire book into one view
+  - load all chapters at once
+  - rely only on scroll position without chapter tracking
+
+---
+
+8. Future Optimization (Optional)
+
+- Increase window size dynamically for high-end devices (3 → 5)
+- Add caching for previously loaded chapters
+- Preload images/assets separately
+
+---
+
+9. Implementation Order (Important)
+
+1. Core window system (3 chapters)
+2. Scroll detection + current chapter logic
+3. Load/unload logic
+4. Progress tracking + restore
+5. Settings toggle + mode switching
+6. Edge cases & stability rules
+7. Performance optimization
+
+---
+
 - PDF / Format Support LATER
   - Add support for PDF.
   - Revisit ZIP-based import flows only when the format/runtime story is coherent again.
