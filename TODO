@@ -9,7 +9,7 @@ TODO
 - Performance issues when first opening the app, this extends to other area like settings, making it feels laggy and unsmooth experience. with system bar change on settings perhabs this cause an extra lag. we need a performance pass here.
 - Add support for bulk importing themes: by either a importing a .zip containing multiple theme files or picking multiple themes at once.
 - Add swipe gesture support for "settings" to swipe between tabs.
-- Performance issue: Saving a large book after editing take long time depending on it size, we need a another performance pass here.
+- Performance issue: Saving a large book after editing take long time depending on it size, we need a another performance pass here. Importing large book may cause performance issues, A pass here too.
 
 - PDF / Format Support LATER
   - Add support for PDF.
