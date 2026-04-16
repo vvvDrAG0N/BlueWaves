@@ -1,5 +1,7 @@
 TODO
-- Improve AGENT, Areas: Performance, Intelligence, Persistent Memeory, Token Efficiency, Task Handling, Debug Handling.
+- Improve AGENT, Areas: Performance, Intelligence, Persistent Memeory, Token Efficiency, Task Handling, Debug Handling. Multi Agents support through compatibility layer.
+- Create custom rules for codex to properly disturbe work load to local agent for token efficiency.
+- Create Compatibility Layer for CodeX Agent to interact with local agents.
 - Add System Foreground color, make sure to include it in the advanced Theme System.
 - Add a highlight for the selected theme in settings and reader bottom bar. make sure opening themes on the setting and reader side moves the user to show the current applied theme.
 - Adjust all dialogs to use Primary color for confirmation, and system fg color for cancelation.
