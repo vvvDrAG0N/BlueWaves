@@ -8,7 +8,7 @@ TODO
 - Size issues: the app size jumpes from 15.1MB to over 60MB, this needs to be investigated and fixed.
 - Performance issues when first opening the app, this extends to other area like settings, making it feels laggy and unsmooth experience. with system bar change on settings perhabs this cause an extra lag. we need a performance pass here.
 - Add support for bulk importing themes: by either a importing a .zip containing multiple theme files or picking multiple themes at once.
-- Redesign "Global Settings" from a tabed UI to a List based, with General, Fonts, Themes, Network. will move the each current tab into a standalone view, we will display each when user open it counter part from the list.
+- Redesign "Global Settings" from a tabed UI to a List based, with General, Fonts, Themes, Network(framework for future). will move the each current tab into a standalone view, we will display each when user open it counter part from the list.
 - Performance issue: Saving a large book after editing take long time depending on it size, we need a another performance pass here. Importing large book may cause performance issues, A pass here too.
 
 - Infinite Scroll Reader Mode -
