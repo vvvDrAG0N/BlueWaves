@@ -206,7 +206,7 @@ fun BookItem(
                         Text(
                             text = progressLabel,
                             style = MaterialTheme.typography.labelSmall,
-                            color = readerForegroundColor,
+                            color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 10.sp
                         )
@@ -258,7 +258,7 @@ fun BookItem(
                         Text(
                             text = progressLabel,
                             style = MaterialTheme.typography.labelSmall,
-                            color = readerForegroundColor,
+                            color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 10.sp
                         )

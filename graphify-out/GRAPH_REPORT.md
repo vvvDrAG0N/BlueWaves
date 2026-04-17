@@ -1,24 +1,24 @@
-# Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-16)
+# Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-17)
 
 ## Corpus Check
-- 35 files · ~78,956 words
+- 35 files · ~79,777 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 453 nodes · 421 edges · 36 communities detected
+- 455 nodes · 423 edges · 36 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_PdfToEpubConverter Cluster|PdfToEpubConverter Cluster]]
 - [[_COMMUNITY_EpubParser Cluster|EpubParser Cluster]]
-- [[_COMMUNITY_app_src_main_java_com_epubreader_data_parser_epubparserediting_kt Cluster|app_src_main_java_com_epubreader_data_parser_epubparserediting_kt Cluster]]
-- [[_COMMUNITY_app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt Cluster|app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt Cluster]]
+- [[_COMMUNITY_EpubParserEditing Cluster|EpubParserEditing Cluster]]
+- [[_COMMUNITY_EditBookScreen Cluster|EditBookScreen Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster|app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster]]
-- [[_COMMUNITY_settingsmanager_settingsmanager Cluster|settingsmanager_settingsmanager Cluster]]
+- [[_COMMUNITY_SettingsManager Cluster|SettingsManager Cluster]]
 - [[_COMMUNITY_EditBookModels Cluster|EditBookModels Cluster]]
-- [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
 - [[_COMMUNITY_SettingsScreen Cluster|SettingsScreen Cluster]]
+- [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
 - [[_COMMUNITY_ImportRouting Cluster|ImportRouting Cluster]]
 - [[_COMMUNITY_AppNavigationOperations Cluster|AppNavigationOperations Cluster]]
 - [[_COMMUNITY_ReaderScreenControls Cluster|ReaderScreenControls Cluster]]
@@ -30,11 +30,11 @@
 - [[_COMMUNITY_EpubParserChapter Cluster|EpubParserChapter Cluster]]
 - [[_COMMUNITY_PdfLegacyBridge Cluster|PdfLegacyBridge Cluster]]
 - [[_COMMUNITY_MainActivity Cluster|MainActivity Cluster]]
-- [[_COMMUNITY_app_src_main_java_com_epubreader_data_settings_settingsmanagercontracts_kt Cluster|app_src_main_java_com_epubreader_data_settings_settingsmanagercontracts_kt Cluster]]
+- [[_COMMUNITY_SettingsManagerContracts Cluster|SettingsManagerContracts Cluster]]
 - [[_COMMUNITY_PdfConversionWorker Cluster|PdfConversionWorker Cluster]]
 - [[_COMMUNITY_pdftoepubconverter_pdfconversionworkspacestate Cluster|pdftoepubconverter_pdfconversionworkspacestate Cluster]]
 - [[_COMMUNITY_PdfReaderScreen Cluster|PdfReaderScreen Cluster]]
-- [[_COMMUNITY_app_src_main_java_com_epubreader_app_appnavigationlibrary_kt Cluster|app_src_main_java_com_epubreader_app_appnavigationlibrary_kt Cluster]]
+- [[_COMMUNITY_AppNavigationLibrary Cluster|AppNavigationLibrary Cluster]]
 - [[_COMMUNITY_AppNavigationLibraryData Cluster|AppNavigationLibraryData Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster|app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster]]
 - [[_COMMUNITY_AppLog Cluster|AppLog Cluster]]
@@ -43,7 +43,7 @@
 - [[_COMMUNITY_ReaderScreenContracts Cluster|ReaderScreenContracts Cluster]]
 - [[_COMMUNITY_check_graph_staleness Cluster|check_graph_staleness Cluster]]
 - [[_COMMUNITY_AppNavigationPdfLegacy Cluster|AppNavigationPdfLegacy Cluster]]
-- [[_COMMUNITY_app_src_main_java_com_epubreader_core_ui_librarycards_kt Cluster|app_src_main_java_com_epubreader_core_ui_librarycards_kt Cluster]]
+- [[_COMMUNITY_LibraryCards Cluster|LibraryCards Cluster]]
 - [[_COMMUNITY_AppNavigation Cluster|AppNavigation Cluster]]
 - [[_COMMUNITY_ReaderScreen Cluster|ReaderScreen Cluster]]
 
@@ -72,11 +72,11 @@ Nodes (6): MlKitPdfToEpubConverter, PdfReflowSection, PdfTextExtractionMethod, P
 Cohesion: 0.06
 Nodes (1): EpubParser
 
-### Community 2 - "app_src_main_java_com_epubreader_data_parser_epubparserediting_kt Cluster"
+### Community 2 - "EpubParserEditing Cluster"
 Cohesion: 0.08
 Nodes (0): 
 
-### Community 3 - "app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt Cluster"
+### Community 3 - "EditBookScreen Cluster"
 Cohesion: 0.08
 Nodes (3): ChapterDisplaySort, ChapterSelectionMode, EditBookTab
 
@@ -84,7 +84,7 @@ Nodes (3): ChapterDisplaySort, ChapterSelectionMode, EditBookTab
 Cohesion: 0.09
 Nodes (2): PdfDocumentInfo, ResolvedBookCoverFiles
 
-### Community 5 - "settingsmanager_settingsmanager Cluster"
+### Community 5 - "SettingsManager Cluster"
 Cohesion: 0.09
 Nodes (1): SettingsManager
 
@@ -92,13 +92,13 @@ Nodes (1): SettingsManager
 Cohesion: 0.1
 Nodes (2): EditableChapterItem, EditableChapterSource
 
-### Community 7 - "SettingsModels Cluster"
+### Community 7 - "SettingsScreen Cluster"
+Cohesion: 0.1
+Nodes (4): HsvColor, SettingsSection, ThemeEditorDraft, ThemeEditorSession
+
+### Community 8 - "SettingsModels Cluster"
 Cohesion: 0.11
 Nodes (5): BookProgress, CustomTheme, GlobalSettings, ThemeOption, ThemePalette
-
-### Community 8 - "SettingsScreen Cluster"
-Cohesion: 0.11
-Nodes (4): HsvColor, SettingsTab, ThemeEditorDraft, ThemeEditorSession
 
 ### Community 9 - "ImportRouting Cluster"
 Cohesion: 0.12
@@ -144,7 +144,7 @@ Nodes (4): PdfConversionProgress, PdfConversionProgressListener, PdfConversionRe
 Cohesion: 0.22
 Nodes (2): MainActivity, Screen
 
-### Community 20 - "app_src_main_java_com_epubreader_data_settings_settingsmanagercontracts_kt Cluster"
+### Community 20 - "SettingsManagerContracts Cluster"
 Cohesion: 0.22
 Nodes (2): BookProgressPreferenceKeys, SettingsPreferenceKeys
 
@@ -160,7 +160,7 @@ Nodes (1): PdfConversionWorkspaceState
 Cohesion: 0.25
 Nodes (1): PdfDocumentHandle
 
-### Community 24 - "app_src_main_java_com_epubreader_app_appnavigationlibrary_kt Cluster"
+### Community 24 - "AppNavigationLibrary Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
@@ -196,7 +196,7 @@ Nodes (5): check_staleness(), get_last_modified(), infer_python_from_graphify_bi
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 33 - "app_src_main_java_com_epubreader_core_ui_librarycards_kt Cluster"
+### Community 33 - "LibraryCards Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
@@ -227,9 +227,9 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `EpubParser Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
-- **Should `app_src_main_java_com_epubreader_data_parser_epubparserediting_kt Cluster` be split into smaller, more focused modules?**
+- **Should `EpubParserEditing Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._
-- **Should `app_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt Cluster` be split into smaller, more focused modules?**
+- **Should `EditBookScreen Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Should `app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.09 - nodes in this community are weakly interconnected._

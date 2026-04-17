@@ -33,6 +33,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.shape.CircleShape
@@ -551,14 +554,24 @@ private fun ReaderThemeControlsTab(
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Row(
+        val themeOptions = availableThemeOptions(settings.customThemes)
+        val listState = rememberLazyListState()
+        
+        LaunchedEffect(settings.theme) {
+            val index = themeOptions.indexOfFirst { it.id == settings.theme }
+            if (index != -1) {
+                listState.animateScrollToItem(index)
+            }
+        }
+        
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
                 .testTag("reader_theme_row"),
+            state = listState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            availableThemeOptions(settings.customThemes).forEach { option ->
+            itemsIndexed(themeOptions) { _, option ->
                 ReaderThemeButton(
                     name = option.name,
                     bg = Color(option.palette.readerBackground),

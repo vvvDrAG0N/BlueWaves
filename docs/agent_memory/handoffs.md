@@ -13,6 +13,26 @@ Template:
 
 ## Current State
 
+- Date: 2026-04-17
+- Status: completed
+- Task: feature/bulk-theme-import + Settings list-based redesign
+- Owner: Claude Sonnet (Thinking)
+- Scope: `feature/settings/SettingsScreen.kt`
+- Next step: Manual UI verification of list navigation + bulk import. Optionally add a test for `importSingleThemeJson`.
+- Verification: `.\gradlew.bat assembleDebug` — BUILD SUCCESSFUL (7s).
+
+## Previous State
+
+- Date: 2026-04-17
+- Status: completed
+- Task: feature/polish pass
+- Owner: Antigravity
+- Scope: `core/model/SettingsModels.kt`, `data/settings/SettingsManagerContracts.kt`, `feature/settings/SettingsScreen.kt`, `MainActivity.kt`, `feature/reader/ReaderScreenControls.kt`, `app/AppNavigationDialogs.kt`, `feature/editbook/EditBookScreen.kt`, `core/ui/LibraryCards.kt`
+- Next step: N/A.
+- Verification: `.\gradlew.bat assembleDebug` executed and passed.
+
+## Previous State
+
 - Date: 2026-04-16
 - Status: completed
 - Task: AI workflow and shared-memory scaffolding

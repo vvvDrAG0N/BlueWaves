@@ -42,22 +42,32 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.outlined.FormatSize
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.WifiOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -82,6 +92,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
@@ -102,20 +113,26 @@ import com.epubreader.core.model.themeButtonLabel
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.settings.SettingsManager
 import java.util.UUID
+import java.util.zip.ZipInputStream
 import org.json.JSONObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-private enum class SettingsTab(val title: String) {
-    Fonts("Fonts"),
+/** Which top-level section the user has drilled into. Null = top-level list. */
+private enum class SettingsSection(val title: String) {
+    General("General"),
+    Fonts("Fonts & Reading"),
     Themes("Themes"),
-    General("General")
+    Network("Network"), // future placeholder
 }
 
 /**
  * Global application settings screen.
  * [AI_NOTE] This screen primarily modifies the GlobalSettings object in SettingsManager.
+ *
+ * Structure: top-level list → focused subview per section.
+ * Tab-style content (Fonts, Themes, General) is preserved inside each subview.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,7 +142,7 @@ fun SettingsScreen(
 ) {
     val settings by settingsManager.globalSettings.collectAsState(initial = GlobalSettings())
     val scope = rememberCoroutineScope()
-    var selectedTab by remember { mutableStateOf(SettingsTab.General) }
+    var activeSection by remember { mutableStateOf<SettingsSection?>(null) }
     var editorSession by remember { mutableStateOf<ThemeEditorSession?>(null) }
     var themeToDelete by remember { mutableStateOf<CustomTheme?>(null) }
 
@@ -153,52 +170,54 @@ fun SettingsScreen(
         )
     }
 
+    val currentSection = activeSection
+
     Scaffold(
         topBar = {
-            Column {
-                TopAppBar(
-                    title = { Text("Settings") },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            TopAppBar(
+                title = { Text(currentSection?.title ?: "Settings") },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        if (currentSection != null) {
+                            activeSection = null
+                        } else {
+                            onBack()
                         }
-                    },
-                )
-                TabRow(selectedTabIndex = selectedTab.ordinal) {
-                    SettingsTab.entries.forEach { tab ->
-                        Tab(
-                            selected = selectedTab == tab,
-                            onClick = { selectedTab = tab },
-                            text = { Text(tab.title) }
-                        )
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }
-            }
+                },
+            )
         },
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
-            when (selectedTab) {
-                SettingsTab.Fonts -> FontsTab(
+            when (currentSection) {
+                null -> SettingsMenuList(
+                    settings = settings,
+                    onNavigate = { activeSection = it },
+                )
+                SettingsSection.General -> GeneralTab(
                     settings = settings,
                     scope = scope,
                     settingsManager = settingsManager,
-                    scrollState = fontsScrollState
+                    scrollState = generalScrollState,
                 )
-                SettingsTab.Themes -> ThemesTab(
+                SettingsSection.Fonts -> FontsTab(
+                    settings = settings,
+                    scope = scope,
+                    settingsManager = settingsManager,
+                    scrollState = fontsScrollState,
+                )
+                SettingsSection.Themes -> ThemesTab(
                     settings = settings,
                     scope = scope,
                     settingsManager = settingsManager,
                     onOpenCreateThemeEditor = ::openCreateThemeEditor,
                     onOpenEditThemeEditor = ::openEditThemeEditor,
                     onDeleteTheme = { themeToDelete = it },
-                    scrollState = themesScrollState
+                    scrollState = themesScrollState,
                 )
-                SettingsTab.General -> GeneralTab(
-                    settings = settings,
-                    scope = scope,
-                    settingsManager = settingsManager,
-                    scrollState = generalScrollState
-                )
+                SettingsSection.Network -> NetworkPlaceholderTab()
             }
         }
     }
@@ -239,12 +258,100 @@ fun SettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { themeToDelete = null }) {
-                    Text("Cancel")
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
                 }
             },
         )
     }
 }
+
+/** Top-level settings menu showing available sections as tappable list items. */
+@Composable
+private fun SettingsMenuList(
+    settings: GlobalSettings,
+    onNavigate: (SettingsSection) -> Unit,
+) {
+    data class SectionEntry(
+        val section: SettingsSection,
+        val icon: ImageVector,
+        val subtitle: String?,
+    )
+
+    val activeThemeName = remember(settings.theme, settings.customThemes) {
+        (BuiltInThemeOptions.firstOrNull { it.id == settings.theme }?.name)
+            ?: settings.customThemes.firstOrNull { it.id == settings.theme }?.name
+            ?: "Unknown"
+    }
+
+    val entries = listOf(
+        SectionEntry(SettingsSection.General, Icons.Outlined.Settings, null),
+        SectionEntry(SettingsSection.Fonts, Icons.Outlined.FormatSize, "${settings.fontSize}sp · ${settings.fontType}"),
+        SectionEntry(SettingsSection.Themes, Icons.Outlined.Palette, activeThemeName),
+        SectionEntry(SettingsSection.Network, Icons.Outlined.WifiOff, "Coming soon"),
+    )
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        entries.forEachIndexed { index, entry ->
+            ListItem(
+                headlineContent = { Text(entry.section.title) },
+                supportingContent = entry.subtitle?.let { sub -> { Text(sub, color = MaterialTheme.colorScheme.onSurfaceVariant) } },
+                leadingContent = {
+                    Icon(
+                        entry.icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                },
+                trailingContent = {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForwardIos,
+                        contentDescription = "Open ${entry.section.title}",
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        enabled = entry.section != SettingsSection.Network,
+                        onClick = { onNavigate(entry.section) },
+                    )
+                    .testTag("settings_section_${entry.section.name.lowercase()}"),
+            )
+            if (index < entries.lastIndex) {
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            }
+        }
+    }
+}
+
+/** Placeholder for the future Network section. */
+@Composable
+private fun NetworkPlaceholderTab() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(
+                Icons.Outlined.WifiOff,
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                "Network settings coming soon.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+
 
 @Composable
 private fun FontsTab(
@@ -367,77 +474,109 @@ private fun ThemesTab(
     val context = LocalContext.current
     var themeToExport by remember { mutableStateOf<CustomTheme?>(null) }
 
-    val importLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let { selectedUri ->
-            scope.launch {
+    // Shared helper: import one parsed JSONObject as a custom theme.
+    // seenPalettes / seenNames track within-batch state to avoid intra-batch duplicates.
+    // Returns the imported theme name on success, null on skip (duplicate/invalid).
+    suspend fun importSingleThemeJson(
+        json: JSONObject,
+        seenPalettes: MutableSet<ThemePalette>,
+        seenNames: MutableSet<String>,
+    ): String? {
+        val keys = listOf("primary", "secondary", "background", "surface", "surfaceVariant", "outline", "readerBackground", "readerText")
+        if (keys.none { json.has(it) }) return null // silently skip non-theme JSON entries in ZIPs
+
+        val palette = ThemePalette(
+            primary = parseThemeColorOrNull(json.optString("primary")) ?: 0xFF6200EE,
+            secondary = parseThemeColorOrNull(json.optString("secondary")) ?: 0xFF03DAC6,
+            background = parseThemeColorOrNull(json.optString("background")) ?: 0xFFFFFFFF,
+            surface = parseThemeColorOrNull(json.optString("surface")) ?: 0xFFFFFFFF,
+            surfaceVariant = parseThemeColorOrNull(json.optString("surfaceVariant")) ?: 0xFFEEEEEE,
+            outline = parseThemeColorOrNull(json.optString("outline")) ?: 0xFF757575,
+            readerBackground = parseThemeColorOrNull(json.optString("readerBackground")) ?: 0xFFFFFFFF,
+            readerForeground = parseThemeColorOrNull(json.optString("readerText")) ?: 0xFF000000,
+            systemForeground = parseThemeColorOrNull(json.optString("systemForeground")) ?: 0xFF000000,
+        )
+
+        // Skip exact palette duplicates (both persisted and already-imported-this-batch)
+        if (seenPalettes.contains(palette)) return null
+
+        val baseName = json.optString("name", "Imported Theme")
+        var finalName = baseName
+        if (seenNames.contains(finalName.lowercase().trim())) {
+            var counter = 1
+            while (seenNames.contains("${baseName.lowercase().trim()} ($counter)")) counter++
+            finalName = "$baseName ($counter)"
+        }
+
+        val themeId = "${CustomThemeIdPrefix}${UUID.randomUUID()}"
+        val newTheme = CustomTheme(id = themeId, name = finalName, palette = palette, isAdvanced = true)
+        settingsManager.saveCustomTheme(newTheme, activate = false)
+
+        seenPalettes.add(palette)
+        seenNames.add(finalName.lowercase().trim())
+        return finalName
+    }
+
+    val bulkImportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        if (uris.isEmpty()) return@rememberLauncherForActivityResult
+        scope.launch {
+            var imported = 0
+            var skipped = 0
+            var failed = 0
+            // Seed the seen-sets from current persisted themes so we detect inter-session duplicates.
+            val seenPalettes: MutableSet<ThemePalette> = settings.customThemes.map { it.palette }.toMutableSet()
+            val seenNames: MutableSet<String> = settings.customThemes.map { it.name.lowercase().trim() }.toMutableSet()
+
+            for (uri in uris) {
                 try {
-                    val content = context.contentResolver.openInputStream(selectedUri)?.bufferedReader()?.use { it.readText() }
-                    if (content.isNullOrBlank()) {
-                        Toast.makeText(context, "File is empty", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
-
-                    val json = try {
-                        JSONObject(content)
-                    } catch (_: Exception) {
-                        Toast.makeText(context, "Invalid JSON format", Toast.LENGTH_SHORT).show()
-                        null
-                    } ?: return@launch
-
-                    val keys = listOf("primary", "secondary", "background", "surface", "surfaceVariant", "outline", "readerBackground", "readerText")
-                    if (keys.none { json.has(it) }) {
-                        Toast.makeText(context, "Not a valid theme file", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
-
-                    val palette = ThemePalette(
-                        primary = parseThemeColorOrNull(json.optString("primary")) ?: 0xFF6200EE,
-                        secondary = parseThemeColorOrNull(json.optString("secondary")) ?: 0xFF03DAC6,
-                        background = parseThemeColorOrNull(json.optString("background")) ?: 0xFFFFFFFF,
-                        surface = parseThemeColorOrNull(json.optString("surface")) ?: 0xFFFFFFFF,
-                        surfaceVariant = parseThemeColorOrNull(json.optString("surfaceVariant")) ?: 0xFFEEEEEE,
-                        outline = parseThemeColorOrNull(json.optString("outline")) ?: 0xFF757575,
-                        readerBackground = parseThemeColorOrNull(json.optString("readerBackground")) ?: 0xFFFFFFFF,
-                        readerForeground = parseThemeColorOrNull(json.optString("readerText")) ?: 0xFF000000
-                    )
-
-                    // Check for exact palette duplicate
-                    val existingDuplicate = settings.customThemes.find { it.palette == palette }
-                    if (existingDuplicate != null) {
-                        settingsManager.setActiveTheme(existingDuplicate.id)
-                        Toast.makeText(context, "Theme already exists: ${existingDuplicate.name}", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
-
-                    val themeName = json.optString("name", "Imported Theme")
-                    
-                    // Handle duplicates
-                    var finalName = themeName
-                    val existingNames = settings.customThemes.map { it.name.lowercase().trim() }.toSet()
-                    if (existingNames.contains(finalName.lowercase().trim())) {
-                        var counter = 1
-                        while (existingNames.contains("${finalName.lowercase().trim()} ($counter)")) {
-                            counter++
+                    val mimeType = context.contentResolver.getType(uri) ?: ""
+                    val isZip = mimeType.contains("zip") || uri.toString().endsWith(".zip", ignoreCase = true)
+                    if (isZip) {
+                        context.contentResolver.openInputStream(uri)?.use { raw ->
+                            ZipInputStream(raw).use { zip ->
+                                var entry = zip.nextEntry
+                                while (entry != null) {
+                                    if (!entry.isDirectory && entry.name.endsWith(".json", ignoreCase = true)) {
+                                        try {
+                                            val content = zip.bufferedReader(Charsets.UTF_8).readText()
+                                            if (content.isNotBlank()) {
+                                                val json = try { JSONObject(content) } catch (_: Exception) { null }
+                                                if (json != null) {
+                                                    val name = importSingleThemeJson(json, seenPalettes, seenNames)
+                                                    if (name != null) imported++ else skipped++
+                                                } else {
+                                                    failed++
+                                                }
+                                            }
+                                        } catch (_: Exception) {
+                                            failed++
+                                        }
+                                        zip.closeEntry()
+                                    }
+                                    entry = zip.nextEntry
+                                }
+                            }
                         }
-                        finalName = "$finalName ($counter)"
+                    } else {
+                        val content = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+                        if (content.isNullOrBlank()) { failed++; continue }
+                        val json = try { JSONObject(content) } catch (_: Exception) { null }
+                        if (json == null) { failed++; continue }
+                        val name = importSingleThemeJson(json, seenPalettes, seenNames)
+                        if (name != null) imported++ else skipped++
                     }
-
-                    val themeId = "${CustomThemeIdPrefix}${UUID.randomUUID()}"
-                    val newTheme = CustomTheme(
-                        id = themeId,
-                        name = finalName,
-                        palette = palette,
-                        isAdvanced = true
-                    )
-                    settingsManager.saveCustomTheme(newTheme, true)
-                    settingsManager.setActiveTheme(themeId)
-                    Toast.makeText(context, "Imported: $finalName", Toast.LENGTH_SHORT).show()
                 } catch (_: Exception) {
-                    Toast.makeText(context, "Failed to import theme", Toast.LENGTH_SHORT).show()
+                    failed++
                 }
             }
+            val msg = buildString {
+                if (imported > 0) append("Imported $imported theme${if (imported > 1) "s" else ""}. ")
+                if (skipped > 0) append("$skipped duplicate${if (skipped > 1) "s" else ""} skipped. ")
+                if (failed > 0) append("$failed failed.")
+            }.trim()
+            Toast.makeText(context, msg.ifEmpty { "Nothing imported." }, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -458,6 +597,7 @@ private fun ThemesTab(
                         put("outline", formatThemeColor(theme.palette.outline))
                         put("readerBackground", formatThemeColor(theme.palette.readerBackground))
                         put("readerText", formatThemeColor(theme.palette.readerForeground))
+                        put("systemForeground", formatThemeColor(theme.palette.systemForeground))
                     }
                     context.contentResolver.openOutputStream(exportUri)?.use { out ->
                         out.write(json.toString(4).toByteArray())
@@ -482,13 +622,19 @@ private fun ThemesTab(
         Column {
             Text("Built-in Themes", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
+            val builtInListState = rememberLazyListState()
+            LaunchedEffect(settings.theme) {
+                val index = BuiltInThemeOptions.indexOfFirst { it.id == settings.theme }
+                if (index != -1) {
+                    builtInListState.animateScrollToItem(index)
+                }
+            }
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                state = builtInListState,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                BuiltInThemeOptions.forEach { option ->
+                itemsIndexed(BuiltInThemeOptions) { _, option ->
                     ThemeButton(
                         name = option.name,
                         bgColor = Color(option.palette.readerBackground),
@@ -514,10 +660,10 @@ private fun ThemesTab(
                 Text("Custom Themes", style = MaterialTheme.typography.titleMedium)
                 Row {
                     IconButton(
-                        onClick = { importLauncher.launch("application/json") },
+                        onClick = { bulkImportLauncher.launch("*/*") },
                         modifier = Modifier.testTag("import_custom_theme_button")
                     ) {
-                        Icon(Icons.Default.FileDownload, contentDescription = "Import Theme")
+                        Icon(Icons.Default.FileDownload, contentDescription = "Import Themes (JSON or ZIP)")
                     }
                     IconButton(
                         onClick = onOpenCreateThemeEditor,
@@ -543,13 +689,19 @@ private fun ThemesTab(
                     )
                 }
             } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
+                val customListState = rememberLazyListState()
+                LaunchedEffect(settings.theme, settings.customThemes) {
+                    val index = settings.customThemes.indexOfFirst { it.id == settings.theme }
+                    if (index != -1) {
+                        customListState.animateScrollToItem(index)
+                    }
+                }
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = customListState,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    settings.customThemes.forEach { theme ->
+                    itemsIndexed(settings.customThemes) { _, theme ->
                         CompactCustomThemeCard(
                             theme = theme,
                             isSelected = settings.theme == theme.id,
@@ -811,6 +963,7 @@ private fun CustomThemeEditorDialog(
                     outline = formatThemeColor(generated.outline),
                     readerBackground = formatThemeColor(generated.readerBackground),
                     readerForeground = formatThemeColor(generated.readerForeground),
+                    systemForeground = formatThemeColor(generated.systemForeground),
                 )
             }
         }
@@ -919,6 +1072,12 @@ private fun CustomThemeEditorDialog(
                         onValueChange = { draft = draft.copy(readerForeground = it) },
                         testTag = "custom_theme_reader_foreground",
                     )
+                    ThemeColorField(
+                        label = "System Text",
+                        value = draft.systemForeground,
+                        onValueChange = { draft = draft.copy(systemForeground = it) },
+                        testTag = "custom_theme_system_foreground",
+                    )
                 }
             }
         },
@@ -934,7 +1093,7 @@ private fun CustomThemeEditorDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
             }
         },
     )
@@ -1147,6 +1306,7 @@ private data class ThemeEditorDraft(
     val outline: String,
     val readerBackground: String,
     val readerForeground: String,
+    val systemForeground: String,
     val isAdvanced: Boolean = true,
 ) {
     fun toCustomTheme(themeId: String): CustomTheme? {
@@ -1158,6 +1318,7 @@ private data class ThemeEditorDraft(
         val parsedOutline = parseThemeColorOrNull(outline) ?: return null
         val parsedReaderBackground = parseThemeColorOrNull(readerBackground) ?: return null
         val parsedReaderForeground = parseThemeColorOrNull(readerForeground) ?: return null
+        val parsedSystemForeground = parseThemeColorOrNull(systemForeground) ?: return null
         val trimmedName = name.trim()
         if (trimmedName.isEmpty()) {
             return null
@@ -1175,6 +1336,7 @@ private data class ThemeEditorDraft(
                 outline = parsedOutline,
                 readerBackground = parsedReaderBackground,
                 readerForeground = parsedReaderForeground,
+                systemForeground = parsedSystemForeground,
             ),
             isAdvanced = isAdvanced,
         )
@@ -1204,6 +1366,7 @@ private data class ThemeEditorDraft(
                 outline = formatThemeColor(palette.outline),
                 readerBackground = formatThemeColor(palette.readerBackground),
                 readerForeground = formatThemeColor(palette.readerForeground),
+                systemForeground = formatThemeColor(palette.systemForeground),
                 isAdvanced = isAdvanced,
             )
         }

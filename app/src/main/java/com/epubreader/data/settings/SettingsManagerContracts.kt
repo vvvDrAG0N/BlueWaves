@@ -17,6 +17,7 @@ import com.epubreader.core.model.ThemePalette
 import com.epubreader.core.model.formatThemeColor
 import com.epubreader.core.model.normalizeThemeSelection
 import com.epubreader.core.model.parseThemeColorOrNull
+import com.epubreader.core.model.contrastColor
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -157,6 +158,10 @@ internal fun parseCustomThemes(raw: String?): List<CustomTheme> {
             val outline = item.optString("outline").let(::parseThemeColorOrNull) ?: continue
             val readerBackground = item.optString("readerBackground").let(::parseThemeColorOrNull) ?: continue
             val readerForeground = item.optString("readerForeground").let(::parseThemeColorOrNull) ?: continue
+            
+            // Fallback to contrastColor(surface) for older themes
+            val systemForeground = item.optString("systemForeground").let(::parseThemeColorOrNull) ?: contrastColor(surface)
+            
             val isAdvanced = item.optBoolean("isAdvanced", true)
 
             parsedThemes += CustomTheme(
@@ -171,6 +176,7 @@ internal fun parseCustomThemes(raw: String?): List<CustomTheme> {
                     outline = outline,
                     readerBackground = readerBackground,
                     readerForeground = readerForeground,
+                    systemForeground = systemForeground,
                 ),
                 isAdvanced = isAdvanced,
             )
@@ -202,6 +208,7 @@ internal fun List<CustomTheme>.toCustomThemesJson(): String {
                     put("outline", formatThemeColor(theme.palette.outline))
                     put("readerBackground", formatThemeColor(theme.palette.readerBackground))
                     put("readerForeground", formatThemeColor(theme.palette.readerForeground))
+                    put("systemForeground", formatThemeColor(theme.palette.systemForeground))
                     put("isAdvanced", theme.isAdvanced)
                 }
             )

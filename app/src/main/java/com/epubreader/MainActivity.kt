@@ -136,6 +136,7 @@ private fun customAppColorScheme(theme: CustomTheme): ColorScheme {
     val surface = Color(palette.surface)
     val surfaceVariant = Color(palette.surfaceVariant)
     val outline = Color(palette.outline)
+    val systemForeground = Color(palette.systemForeground)
     val isDarkPalette = averageLuminance(
         background = background,
         surface = surface,
@@ -161,11 +162,11 @@ private fun customAppColorScheme(theme: CustomTheme): ColorScheme {
             tertiaryContainer = tertiaryContainer,
             onTertiaryContainer = contentColorFor(tertiaryContainer),
             background = background,
-            onBackground = contentColorFor(background),
+            onBackground = systemForeground,
             surface = surface,
-            onSurface = contentColorFor(surface),
+            onSurface = systemForeground,
             surfaceVariant = surfaceVariant,
-            onSurfaceVariant = contentColorFor(surfaceVariant),
+            onSurfaceVariant = systemForeground,
             outline = outline,
             outlineVariant = lerp(surfaceVariant, outline, 0.35f),
         )
@@ -184,11 +185,11 @@ private fun customAppColorScheme(theme: CustomTheme): ColorScheme {
             tertiaryContainer = tertiaryContainer,
             onTertiaryContainer = contentColorFor(tertiaryContainer),
             background = background,
-            onBackground = contentColorFor(background),
+            onBackground = systemForeground,
             surface = surface,
-            onSurface = contentColorFor(surface),
+            onSurface = systemForeground,
             surfaceVariant = surfaceVariant,
-            onSurfaceVariant = contentColorFor(surfaceVariant),
+            onSurfaceVariant = systemForeground,
             outline = outline,
             outlineVariant = lerp(surfaceVariant, outline, 0.35f),
         )

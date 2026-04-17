@@ -21,6 +21,7 @@ data class ThemePalette(
     val outline: Long,
     val readerBackground: Long,
     val readerForeground: Long,
+    val systemForeground: Long,
 )
 
 data class CustomTheme(
@@ -50,6 +51,7 @@ val BuiltInThemeOptions = listOf(
             outline = 0xFF79747E,
             readerBackground = 0xFFFFFFFF,
             readerForeground = 0xFF000000,
+            systemForeground = 0xFF000000,
         ),
         isCustom = false,
     ),
@@ -65,6 +67,7 @@ val BuiltInThemeOptions = listOf(
             outline = 0xFF8F7C6C,
             readerBackground = 0xFFF4ECD8,
             readerForeground = 0xFF5B4636,
+            systemForeground = 0xFF5B4636,
         ),
         isCustom = false,
     ),
@@ -80,6 +83,7 @@ val BuiltInThemeOptions = listOf(
             outline = 0xFF938F99,
             readerBackground = 0xFF121212,
             readerForeground = 0xFFFFFFFF,
+            systemForeground = 0xFFFFFFFF,
         ),
         isCustom = false,
     ),
@@ -95,6 +99,7 @@ val BuiltInThemeOptions = listOf(
             outline = 0xFF333333,
             readerBackground = 0xFF000000,
             readerForeground = 0xFFFFFFFF,
+            systemForeground = 0xFFFFFFFF,
         ),
         isCustom = false,
     ),
@@ -196,6 +201,7 @@ fun generatePaletteFromBase(
     
     val readerBackground = background
     val readerForeground = contrastColor(readerBackground)
+    val systemForeground = contrastColor(surface)
     
     return ThemePalette(
         primary = primary,
@@ -206,6 +212,7 @@ fun generatePaletteFromBase(
         outline = outline,
         readerBackground = readerBackground,
         readerForeground = readerForeground,
+        systemForeground = systemForeground,
     )
 }
 

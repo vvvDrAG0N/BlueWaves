@@ -29,6 +29,7 @@ import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.isBuiltInTheme
 import com.epubreader.core.model.normalizeThemeSelection
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 /**
@@ -45,7 +46,7 @@ class SettingsManager(private val context: Context) {
     // AI_STATE_OWNER: GlobalSettings (Collected in UI for reactive updates)
     val globalSettings: Flow<GlobalSettings> = context.settingsDataStore.data.map { preferences ->
         preferences.toGlobalSettings()
-    }
+    }.distinctUntilChanged()
 
     // Folder and library organization.
 
