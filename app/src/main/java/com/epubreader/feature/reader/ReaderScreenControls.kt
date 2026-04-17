@@ -8,6 +8,12 @@ package com.epubreader.feature.reader
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,8 +45,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.GTranslate
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
@@ -76,12 +85,15 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.TextToolbar
@@ -134,12 +146,21 @@ internal fun ReaderChapterContent(
         return
     }
 
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     val platformTextToolbar = LocalTextToolbar.current
     val selectionActiveChangeState = rememberUpdatedState(onSelectionActiveChange)
+
+    // Selection menu rect tracking for floating action bar positioning
+    var selectionMenuRect by remember { mutableStateOf<Rect?>(null) }
+    var lastCopyAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+
+    // The tracking toolbar intercepts showMenu/hide to track selection state
+    // and suppresses the native toolbar so our custom floating bar is used instead.
     val trackingTextToolbar = remember(platformTextToolbar) {
         object : TextToolbar {
             override val status: TextToolbarStatus
-                get() = platformTextToolbar.status
+                get() = if (selectionMenuRect != null) TextToolbarStatus.Shown else TextToolbarStatus.Hidden
 
             override fun showMenu(
                 rect: Rect,
@@ -148,19 +169,17 @@ internal fun ReaderChapterContent(
                 onCutRequested: (() -> Unit)?,
                 onSelectAllRequested: (() -> Unit)?
             ) {
+                selectionMenuRect = rect
+                lastCopyAction = onCopyRequested
                 selectionActiveChangeState.value(true)
-                platformTextToolbar.showMenu(
-                    rect = rect,
-                    onCopyRequested = onCopyRequested,
-                    onPasteRequested = onPasteRequested,
-                    onCutRequested = onCutRequested,
-                    onSelectAllRequested = onSelectAllRequested
-                )
+                // Intentionally do NOT delegate to platformTextToolbar.showMenu();
+                // we render our own floating bar with Define/Translate actions instead.
             }
 
             override fun hide() {
+                selectionMenuRect = null
+                lastCopyAction = null
                 selectionActiveChangeState.value(false)
-                platformTextToolbar.hide()
             }
         }
     }
@@ -224,17 +243,58 @@ internal fun ReaderChapterContent(
 
     LaunchedEffect(selectionResetToken, settings.selectableText) {
         if (settings.selectableText && selectionResetToken > 0) {
+            selectionMenuRect = null
+            lastCopyAction = null
             selectionActiveChangeState.value(false)
-            platformTextToolbar.hide()
         }
     }
 
     if (settings.selectableText) {
-        key(selectionResetToken) {
-            CompositionLocalProvider(LocalTextToolbar provides trackingTextToolbar) {
-                SelectionContainer {
-                    content()
+        Box(modifier = Modifier.fillMaxSize()) {
+            key(selectionResetToken) {
+                CompositionLocalProvider(LocalTextToolbar provides trackingTextToolbar) {
+                    SelectionContainer {
+                        content()
+                    }
                 }
+            }
+
+            // Floating action bar for text selection with Define/Translate
+            val showBar = selectionMenuRect != null
+            AnimatedVisibility(
+                visible = showBar,
+                enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp)
+                    .navigationBarsPadding()
+            ) {
+                TextSelectionActionBar(
+                    themeColors = themeColors,
+                    onCopy = {
+                        lastCopyAction?.invoke()
+                        Toast.makeText(context, "Copied", Toast.LENGTH_SHORT).show()
+                    },
+                    onDefine = {
+                        // Copy text to clipboard first, then read it for the intent.
+                        // SelectionContainer copy puts text on the system clipboard.
+                        lastCopyAction?.invoke()
+                        val clip = clipboardManager.getText()?.text.orEmpty()
+                        if (clip.isNotBlank()) {
+                            launchDefineAction(context, clip)
+                        }
+                    },
+                    onTranslate = {
+                        lastCopyAction?.invoke()
+                        val clip = clipboardManager.getText()?.text.orEmpty()
+                        if (clip.isNotBlank()) {
+                            launchTranslateAction(context, clip)
+                        }
+                    },
+                    hasDefine = remember(context) { canDefineText(context) },
+                    hasTranslate = true, // Always show; falls back to web
+                )
             }
         }
     } else {
@@ -263,6 +323,95 @@ private fun ReaderChapterImage(
             contentDescription = null,
             modifier = modifier,
             contentScale = ContentScale.Fit,
+        )
+    }
+}
+
+/**
+ * Floating action bar shown at the bottom of the reader when text is selected.
+ * Provides Copy, Define, and Translate actions.
+ * Define is hidden when no dictionary app is installed.
+ * Translate always shows (falls back to Google Translate web).
+ */
+@Composable
+private fun TextSelectionActionBar(
+    themeColors: ReaderTheme,
+    onCopy: () -> Unit,
+    onDefine: () -> Unit,
+    onTranslate: () -> Unit,
+    hasDefine: Boolean,
+    hasTranslate: Boolean,
+) {
+    Surface(
+        modifier = Modifier
+            .testTag("text_selection_action_bar")
+            .shadow(8.dp, RoundedCornerShape(28.dp)),
+        color = themeColors.background.copy(alpha = 0.97f),
+        shape = RoundedCornerShape(28.dp),
+        tonalElevation = 6.dp,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Copy
+            TextSelectionActionButton(
+                icon = Icons.Default.ContentCopy,
+                label = "Copy",
+                themeColors = themeColors,
+                onClick = onCopy,
+            )
+
+            // Define (hidden if no dictionary app installed)
+            if (hasDefine) {
+                TextSelectionActionButton(
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
+                    label = "Define",
+                    themeColors = themeColors,
+                    onClick = onDefine,
+                )
+            }
+
+            // Translate (always available; web fallback)
+            if (hasTranslate) {
+                TextSelectionActionButton(
+                    icon = Icons.Default.GTranslate,
+                    label = "Translate",
+                    themeColors = themeColors,
+                    onClick = onTranslate,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TextSelectionActionButton(
+    icon: ImageVector,
+    label: String,
+    themeColors: ReaderTheme,
+    onClick: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = themeColors.foreground,
+            modifier = Modifier.size(22.dp),
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = themeColors.foreground.copy(alpha = 0.8f),
+            maxLines = 1,
         )
     }
 }

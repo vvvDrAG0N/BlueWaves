@@ -381,7 +381,7 @@ private fun ReaderContentSurface(
         }
 
         AnimatedVisibility(
-            visible = state.showControls,
+            visible = state.showControls && !hasActiveTextSelection,
             enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
             exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
             modifier = Modifier.align(Alignment.TopCenter)
@@ -396,7 +396,7 @@ private fun ReaderContentSurface(
         }
 
         AnimatedVisibility(
-            visible = state.showControls,
+            visible = state.showControls && !hasActiveTextSelection,
             enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
             exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
             modifier = Modifier.align(Alignment.BottomCenter)
