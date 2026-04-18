@@ -65,6 +65,7 @@ internal object SettingsPreferenceKeys {
     val readerStatusShowBattery = booleanPreferencesKey("reader_status_show_battery")
     val readerStatusShowChapterProgress = booleanPreferencesKey("reader_status_show_chapter_progress")
     val readerStatusShowChapterNumber = booleanPreferencesKey("reader_status_show_chapter_number")
+    val showScrollToTop = booleanPreferencesKey("show_scroll_to_top")
 }
 
 internal data class BookProgressPreferenceKeys(
@@ -119,6 +120,7 @@ internal fun Preferences.toGlobalSettings(): GlobalSettings {
         folderSorts = this[SettingsPreferenceKeys.folderSorts] ?: EmptyJsonObject,
         folderOrder = this[SettingsPreferenceKeys.folderOrder] ?: EmptyJsonArray,
         targetTranslationLanguage = this[SettingsPreferenceKeys.targetTranslationLanguage] ?: "ar",
+        showScrollToTop = this[SettingsPreferenceKeys.showScrollToTop] ?: true,
         readerStatusUi = com.epubreader.core.model.ReaderStatusUiState(
             isEnabled = this[SettingsPreferenceKeys.readerStatusEnabled] ?: true,
             showClock = this[SettingsPreferenceKeys.readerStatusShowClock] ?: true,

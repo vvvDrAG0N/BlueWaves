@@ -282,6 +282,7 @@ data class GlobalSettings(
     val folderSorts: String = "{}",
     val folderOrder: String = "[]",
     val targetTranslationLanguage: String = "ar",
+    val showScrollToTop: Boolean = true,
     val readerStatusUi: ReaderStatusUiState = ReaderStatusUiState()
 )
 

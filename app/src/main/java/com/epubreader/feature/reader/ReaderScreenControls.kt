@@ -886,6 +886,14 @@ private fun ReaderGeneralControlsTab(
         )
 
         ReaderGeneralToggleRow(
+            label = "Show Scroll-to-Top",
+            checked = settings.showScrollToTop,
+            onCheckedChange = { show ->
+                onSettingsChange { it.copy(showScrollToTop = show) }
+            }
+        )
+
+        ReaderGeneralToggleRow(
             label = "Selectable Text",
             checked = settings.selectableText,
             onCheckedChange = { selectableText ->

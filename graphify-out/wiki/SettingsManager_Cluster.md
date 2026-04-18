@@ -1,10 +1,10 @@
 # SettingsManager Cluster
 
-> 22 nodes · cohesion 0.09
+> 28 nodes · cohesion 0.07
 
 ## Key Concepts
 
-- **SettingsManager** (21 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
+- **SettingsManager** (27 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
 - **SettingsManager.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
 - **.createFolder()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
 - **.deleteBookData()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
@@ -26,6 +26,10 @@
 - **.updateBookGroup()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
 - **.updateFolderOrder()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
 - **.updateGlobalSettings()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
+- **.updateReaderStatusEnabled()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
+- **.updateReaderStatusShowBattery()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
+- **.updateReaderStatusShowChapterNumber()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
+- *... and 3 more nodes in this community*
 
 ## Relationships
 
@@ -37,7 +41,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 42 (100%)
+- EXTRACTED: 54 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

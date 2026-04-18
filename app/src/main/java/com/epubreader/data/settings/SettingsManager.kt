@@ -276,6 +276,7 @@ class SettingsManager(private val context: Context) {
             preferences[SettingsPreferenceKeys.hapticFeedback] = updated.hapticFeedback
             preferences[SettingsPreferenceKeys.allowBlankCovers] = updated.allowBlankCovers
             preferences[SettingsPreferenceKeys.targetTranslationLanguage] = updated.targetTranslationLanguage
+            preferences[SettingsPreferenceKeys.showScrollToTop] = updated.showScrollToTop
             preferences[SettingsPreferenceKeys.readerStatusEnabled] = updated.readerStatusUi.isEnabled
             preferences[SettingsPreferenceKeys.readerStatusShowClock] = updated.readerStatusUi.showClock
             preferences[SettingsPreferenceKeys.readerStatusShowBattery] = updated.readerStatusUi.showBattery

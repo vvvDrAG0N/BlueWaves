@@ -808,6 +808,29 @@ private fun GeneralTab(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
+                Text("Show Scroll-to-Top Button", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Display a button to quickly scroll to the top of the chapter.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Switch(
+                checked = settings.showScrollToTop,
+                onCheckedChange = { checked ->
+                    scope.launch {
+                        settingsManager.updateGlobalSettings { it.copy(showScrollToTop = checked) }
+                    }
+                },
+                modifier = Modifier.testTag("show_scroll_to_top_switch")
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text("Selectable Text", style = MaterialTheme.typography.titleMedium)
                 Text(
                     "Allow long-pressing to select text for copying or sharing. May conflict with some navigation gestures.",

@@ -1,6 +1,6 @@
 # SettingsManager
 
-> God node · 21 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
+> God node · 27 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
 
 ## Connections by Relation
 

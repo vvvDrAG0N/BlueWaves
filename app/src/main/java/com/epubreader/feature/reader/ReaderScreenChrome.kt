@@ -421,7 +421,8 @@ private fun ReaderContentSurface(
 
         ReaderScrollToTopFab(
             listState = state.listState,
-            showControls = state.showControls
+            showControls = state.showControls,
+            isSettingEnabled = state.settings.showScrollToTop
         )
 
         ReaderStatusOverlay(
@@ -475,7 +476,8 @@ private fun ReaderTopBar(
 @Composable
 private fun BoxScope.ReaderScrollToTopFab(
     listState: LazyListState,
-    showControls: Boolean
+    showControls: Boolean,
+    isSettingEnabled: Boolean,
 ) {
     val scope = rememberCoroutineScope()
     var isScrollingUp by remember { mutableStateOf(false) }
@@ -504,7 +506,7 @@ private fun BoxScope.ReaderScrollToTopFab(
     }
 
     AnimatedVisibility(
-        visible = showScrollToTop && !showControls,
+        visible = showScrollToTop && !showControls && isSettingEnabled,
         enter = fadeIn() + scaleIn(),
         exit = fadeOut() + scaleOut(),
         modifier = Modifier
