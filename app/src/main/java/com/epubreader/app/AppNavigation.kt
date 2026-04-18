@@ -185,7 +185,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     }
 
     fun exitEditBook() {
-        editingBook = null
+        // Do not clear editingBook here; AnimatedContent needs it to render the outgoing exit transition.
         editBookErrorMessage = null
         editBookSaveInFlight = false
         currentScreen = Screen.Library
