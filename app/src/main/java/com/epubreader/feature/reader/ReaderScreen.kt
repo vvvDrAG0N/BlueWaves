@@ -59,10 +59,13 @@ import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * The main reader view. Handles chapter rendering, scroll position persistence,
@@ -237,27 +240,26 @@ fun ReaderScreen(
         }
     }
 
-    // Save Progress: Throttled (500ms) to avoid over-writing DataStore during active scrolling.
+    // Save Progress: Debounced to prevent coroutine thrashing during active scroll.
     // [AI_WARNING] Only saves if isInitialScrollDone is true AND we aren't currently restoring position.
-    LaunchedEffect(
-        currentChapterIndex,
-        listState.firstVisibleItemIndex,
-        listState.firstVisibleItemScrollOffset,
-        isInitialScrollDone,
-        isRestoringPosition
-    ) {
-        if (isInitialScrollDone && chapterElements.isNotEmpty() && !isRestoringPosition && currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
-            delay(500)
-            settingsManager.saveBookProgress(
-                book.id,
-                BookProgress(
-                    scrollIndex = listState.firstVisibleItemIndex,
-                    scrollOffset = listState.firstVisibleItemScrollOffset,
-                    lastChapterHref = book.spineHrefs[currentChapterIndex]
-                ),
-                representation = BookRepresentation.EPUB,
-            )
+    LaunchedEffect(book.id) {
+        snapshotFlow {
+            Triple(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset, currentChapterIndex)
         }
+            .debounce(500.milliseconds)
+            .collectLatest { (index, offset, chapterIndex) ->
+                if (isInitialScrollDone && chapterElements.isNotEmpty() && !isRestoringPosition && chapterIndex != -1 && chapterIndex < book.spineHrefs.size) {
+                    settingsManager.saveBookProgress(
+                        book.id,
+                        BookProgress(
+                            scrollIndex = index,
+                            scrollOffset = offset,
+                            lastChapterHref = book.spineHrefs[chapterIndex]
+                        ),
+                        representation = BookRepresentation.EPUB,
+                    )
+                }
+            }
     }
 
     suspend fun saveCurrentProgress() {

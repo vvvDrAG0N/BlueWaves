@@ -1,11 +1,11 @@
-# Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-17)
+# Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-18)
 
 ## Corpus Check
-- 35 files · ~79,777 words
+- 36 files · ~81,458 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 455 nodes · 423 edges · 36 communities detected
+- 464 nodes · 431 edges · 37 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -16,12 +16,12 @@
 - [[_COMMUNITY_EditBookScreen Cluster|EditBookScreen Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster|app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster]]
 - [[_COMMUNITY_SettingsManager Cluster|SettingsManager Cluster]]
+- [[_COMMUNITY_ReaderScreenControls Cluster|ReaderScreenControls Cluster]]
 - [[_COMMUNITY_EditBookModels Cluster|EditBookModels Cluster]]
 - [[_COMMUNITY_SettingsScreen Cluster|SettingsScreen Cluster]]
 - [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
 - [[_COMMUNITY_ImportRouting Cluster|ImportRouting Cluster]]
 - [[_COMMUNITY_AppNavigationOperations Cluster|AppNavigationOperations Cluster]]
-- [[_COMMUNITY_ReaderScreenControls Cluster|ReaderScreenControls Cluster]]
 - [[_COMMUNITY_AppNavigationContracts Cluster|AppNavigationContracts Cluster]]
 - [[_COMMUNITY_LibraryModels Cluster|LibraryModels Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster|app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster]]
@@ -39,11 +39,12 @@
 - [[_COMMUNITY_app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster|app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster]]
 - [[_COMMUNITY_AppLog Cluster|AppLog Cluster]]
 - [[_COMMUNITY_PdfLegacyRuntime Cluster|PdfLegacyRuntime Cluster]]
-- [[_COMMUNITY_app_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt Cluster|app_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt Cluster]]
+- [[_COMMUNITY_ReaderScreenChrome Cluster|ReaderScreenChrome Cluster]]
 - [[_COMMUNITY_ReaderScreenContracts Cluster|ReaderScreenContracts Cluster]]
 - [[_COMMUNITY_check_graph_staleness Cluster|check_graph_staleness Cluster]]
 - [[_COMMUNITY_AppNavigationPdfLegacy Cluster|AppNavigationPdfLegacy Cluster]]
 - [[_COMMUNITY_LibraryCards Cluster|LibraryCards Cluster]]
+- [[_COMMUNITY_ReaderTextActions Cluster|ReaderTextActions Cluster]]
 - [[_COMMUNITY_AppNavigation Cluster|AppNavigation Cluster]]
 - [[_COMMUNITY_ReaderScreen Cluster|ReaderScreen Cluster]]
 
@@ -88,29 +89,29 @@ Nodes (2): PdfDocumentInfo, ResolvedBookCoverFiles
 Cohesion: 0.09
 Nodes (1): SettingsManager
 
-### Community 6 - "EditBookModels Cluster"
+### Community 6 - "ReaderScreenControls Cluster"
+Cohesion: 0.1
+Nodes (2): NestedScrollWebView, ReaderControlsTab
+
+### Community 7 - "EditBookModels Cluster"
 Cohesion: 0.1
 Nodes (2): EditableChapterItem, EditableChapterSource
 
-### Community 7 - "SettingsScreen Cluster"
+### Community 8 - "SettingsScreen Cluster"
 Cohesion: 0.1
 Nodes (4): HsvColor, SettingsSection, ThemeEditorDraft, ThemeEditorSession
 
-### Community 8 - "SettingsModels Cluster"
+### Community 9 - "SettingsModels Cluster"
 Cohesion: 0.11
 Nodes (5): BookProgress, CustomTheme, GlobalSettings, ThemeOption, ThemePalette
 
-### Community 9 - "ImportRouting Cluster"
+### Community 10 - "ImportRouting Cluster"
 Cohesion: 0.12
 Nodes (9): ArchiveImportCandidate, ArchiveInspectionResult, Candidate, DirectEpubContainer, ImportFailureReason, ImportInspectionResult, ImportRequest, Ready (+1 more)
 
-### Community 10 - "AppNavigationOperations Cluster"
+### Community 11 - "AppNavigationOperations Cluster"
 Cohesion: 0.12
 Nodes (6): Duplicate, EditBookResult, Failed, ImportBookResult, Imported, Updated
-
-### Community 11 - "ReaderScreenControls Cluster"
-Cohesion: 0.12
-Nodes (1): ReaderControlsTab
 
 ### Community 12 - "AppNavigationContracts Cluster"
 Cohesion: 0.17
@@ -180,7 +181,7 @@ Nodes (1): AppLog
 Cohesion: 0.33
 Nodes (1): PdfLegacyRuntime
 
-### Community 29 - "app_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt Cluster"
+### Community 29 - "ReaderScreenChrome Cluster"
 Cohesion: 0.33
 Nodes (0): 
 
@@ -200,16 +201,20 @@ Nodes (0):
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 34 - "AppNavigation Cluster"
+### Community 34 - "ReaderTextActions Cluster"
+Cohesion: 0.5
+Nodes (3): Define, Translate, WebLookupAction
+
+### Community 35 - "AppNavigation Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 35 - "ReaderScreen Cluster"
+### Community 36 - "ReaderScreen Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
-- **70 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+65 more)
+- **73 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+68 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `AppNavigation Cluster`** (2 nodes): `AppNavigation()`, `AppNavigation.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -222,7 +227,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `PdfConversionWorkspaceState` connect `pdftoepubconverter_pdfconversionworkspacestate Cluster` to `PdfToEpubConverter Cluster`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `Screen`, `LibraryAsyncUiState`, `LibraryScreenState` to the rest of the system?**
-  _70 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _73 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `PdfToEpubConverter Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `EpubParser Cluster` be split into smaller, more focused modules?**

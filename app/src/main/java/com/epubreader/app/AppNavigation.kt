@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -31,10 +32,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -152,7 +155,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         scope.launch {
             asyncState = asyncState.copy(libraryRefresh = true)
             try {
-                books = scanLibrary(parser)
+                books = withContext(Dispatchers.IO) { scanLibrary(parser) }
             } finally {
                 asyncState = asyncState.copy(libraryRefresh = false)
             }
@@ -240,9 +243,17 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         }
     }
 
-    LaunchedEffect(currentScreen, globalSettings.showSystemBar, resumeTrigger) {
+    val isLightAppTheme = MaterialTheme.colorScheme.background.luminance() > 0.5f
+    LaunchedEffect(currentScreen, globalSettings.showSystemBar, resumeTrigger, isLightAppTheme) {
         val window = (view.context as? Activity)?.window ?: return@LaunchedEffect
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+
+        // Update appearance based on app theme (Library/Settings/EditBook)
+        // Reader handles its own appearance in ReaderScreen.kt to support independent reader themes.
+        if (currentScreen != Screen.Reader) {
+            windowInsetsController.isAppearanceLightStatusBars = isLightAppTheme
+            windowInsetsController.isAppearanceLightNavigationBars = isLightAppTheme
+        }
 
         if (globalSettings.showSystemBar) {
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
@@ -295,23 +306,34 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
 
     // The derived models below are intentionally pure. They are the safest place to inspect
     // folder/sort bugs before touching rendering code.
-    val bookGroups = remember(globalSettings.bookGroups) {
-        parseJsonObject(globalSettings.bookGroups)
+    val bookGroups by produceState(initialValue = JSONObject(), globalSettings.bookGroups) {
+        value = withContext(Dispatchers.Default) {
+            parseJsonObject(globalSettings.bookGroups)
+        }
     }
-    val folderSorts = remember(globalSettings.folderSorts) {
-        parseJsonObject(globalSettings.folderSorts)
+    val folderSorts by produceState(initialValue = JSONObject(), globalSettings.folderSorts) {
+        value = withContext(Dispatchers.Default) {
+            parseJsonObject(globalSettings.folderSorts)
+        }
     }
-    val folderOrder = remember(globalSettings.folderOrder) {
-        parseFolderOrder(globalSettings.folderOrder)
+    val folderOrder by produceState(initialValue = emptyList<String>(), globalSettings.folderOrder) {
+        value = withContext(Dispatchers.Default) {
+            parseFolderOrder(globalSettings.folderOrder)
+        }
     }
 
-    val folders = remember(books, globalSettings.bookGroups, globalSettings.folderSorts, folderOrder) {
-        buildFolders(
-            books = books,
-            bookGroups = bookGroups,
-            folderSorts = folderSorts,
-            folderOrder = folderOrder,
-        )
+    val folders by produceState(
+        initialValue = emptyList<String>(),
+        books, globalSettings.bookGroups, globalSettings.folderSorts, folderOrder
+    ) {
+        value = withContext(Dispatchers.Default) {
+            buildFolders(
+                books = books,
+                bookGroups = bookGroups,
+                folderSorts = folderSorts,
+                folderOrder = folderOrder,
+            )
+        }
     }
 
     LaunchedEffect(folders, draggedFolderName, pendingFolderOrder) {
@@ -335,13 +357,18 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         }
     }
 
-    val libraryItems = remember(books, globalSettings.bookGroups, currentSort, selectedFolderName) {
-        buildLibraryItems(
-            books = books,
-            bookGroups = bookGroups,
-            currentSort = currentSort,
-            selectedFolderName = selectedFolderName,
-        )
+    val libraryItems by produceState(
+        initialValue = emptyList(),
+        books, globalSettings.bookGroups, currentSort, selectedFolderName
+    ) {
+        value = withContext(Dispatchers.Default) {
+            buildLibraryItems(
+                books = books,
+                bookGroups = bookGroups,
+                currentSort = currentSort,
+                selectedFolderName = selectedFolderName,
+            )
+        }
     }
 
     val lastOpenedBook = remember(books) {

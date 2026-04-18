@@ -19,7 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -63,11 +66,17 @@ fun RecentlyViewedStrip(
             )
         }
 
-        val bookFolder = remember(book.id, globalSettings.bookGroups) {
-            try {
-                JSONObject(globalSettings.bookGroups).optString(book.id, "My Library")
-            } catch (e: Exception) {
-                "My Library"
+        val bookFolder by produceState(
+            initialValue = "My Library",
+            key1 = book.id,
+            key2 = globalSettings.bookGroups
+        ) {
+            value = withContext(Dispatchers.Default) {
+                try {
+                    JSONObject(globalSettings.bookGroups).optString(book.id, "My Library")
+                } catch (e: Exception) {
+                    "My Library"
+                }
             }
         }
         val progress by settingsManager
