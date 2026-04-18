@@ -44,6 +44,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -856,6 +857,40 @@ private fun GeneralTab(
                 },
                 modifier = Modifier.testTag("haptic_feedback_switch")
             )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text("Translate To", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Target language for text selection translations",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            val languages = listOf(
+                "ar" to "العربية",
+                "en" to "English",
+                "es" to "Español",
+                "fr" to "Français",
+                "ja" to "日本語"
+            )
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(languages) { (code, name) ->
+                    FilterChip(
+                        selected = settings.targetTranslationLanguage == code,
+                        onClick = {
+                            scope.launch {
+                                settingsManager.updateGlobalSettings { it.copy(targetTranslationLanguage = code) }
+                            }
+                        },
+                        label = { Text(name) }
+                    )
+                }
+            }
         }
     }
 }

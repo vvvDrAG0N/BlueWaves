@@ -314,7 +314,7 @@ internal fun ReaderChapterContent(
                         lastCopyAction?.invoke() // Copies to internalClipboard
                         val text = internalClipboard.getText()?.text.orEmpty()
                         if (text.isNotBlank()) {
-                            pendingWebLookup = WebLookupAction.Translate(text)
+                            pendingWebLookup = WebLookupAction.Translate(text, settings.targetTranslationLanguage)
                         }
                     },
                 )
@@ -905,6 +905,29 @@ private fun ReaderGeneralControlsTab(
             }
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+        Text("Translate To", style = MaterialTheme.typography.titleMedium)
+        val languages = listOf(
+            "ar" to "العربية",
+            "en" to "English",
+            "es" to "Español",
+            "fr" to "Français",
+            "ja" to "日本語"
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(languages) { (code, name) ->
+                FilterChip(
+                    selected = settings.targetTranslationLanguage == code,
+                    onClick = {
+                        onSettingsChange { it.copy(targetTranslationLanguage = code) }
+                    },
+                    label = { Text(name) }
+                )
+            }
+        }
     }
 }
 

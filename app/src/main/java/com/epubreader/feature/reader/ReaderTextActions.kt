@@ -22,8 +22,8 @@ internal sealed class WebLookupAction(val title: String, val url: String) {
         url = "https://www.google.com/search?q=define+${Uri.encode(text)}"
     )
 
-    class Translate(text: String) : WebLookupAction(
+    class Translate(text: String, targetLanguage: String = "ar") : WebLookupAction(
         title = "Translate",
-        url = "https://translate.google.com/?sl=auto&tl=en&text=${Uri.encode(text)}"
+        url = "https://translate.google.com/?sl=auto&tl=${targetLanguage}&text=${Uri.encode(text)}"
     )
 }

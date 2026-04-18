@@ -59,6 +59,7 @@ internal object SettingsPreferenceKeys {
     val bookGroups = stringPreferencesKey("book_groups")
     val folderSorts = stringPreferencesKey("folder_sorts")
     val folderOrder = stringPreferencesKey("folder_order")
+    val targetTranslationLanguage = stringPreferencesKey("target_translation_language")
 }
 
 internal data class BookProgressPreferenceKeys(
@@ -112,6 +113,7 @@ internal fun Preferences.toGlobalSettings(): GlobalSettings {
         bookGroups = this[SettingsPreferenceKeys.bookGroups] ?: EmptyJsonObject,
         folderSorts = this[SettingsPreferenceKeys.folderSorts] ?: EmptyJsonObject,
         folderOrder = this[SettingsPreferenceKeys.folderOrder] ?: EmptyJsonArray,
+        targetTranslationLanguage = this[SettingsPreferenceKeys.targetTranslationLanguage] ?: "ar",
     )
 }
 

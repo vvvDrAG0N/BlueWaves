@@ -275,6 +275,7 @@ class SettingsManager(private val context: Context) {
             preferences[SettingsPreferenceKeys.selectableText] = updated.selectableText
             preferences[SettingsPreferenceKeys.hapticFeedback] = updated.hapticFeedback
             preferences[SettingsPreferenceKeys.allowBlankCovers] = updated.allowBlankCovers
+            preferences[SettingsPreferenceKeys.targetTranslationLanguage] = updated.targetTranslationLanguage
         }
     }
 

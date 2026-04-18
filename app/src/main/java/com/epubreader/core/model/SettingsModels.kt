@@ -266,7 +266,8 @@ data class GlobalSettings(
     val favoriteLibrary: String = "My Library",
     val bookGroups: String = "{}",
     val folderSorts: String = "{}",
-    val folderOrder: String = "[]"
+    val folderOrder: String = "[]",
+    val targetTranslationLanguage: String = "ar"
 )
 
 /**
