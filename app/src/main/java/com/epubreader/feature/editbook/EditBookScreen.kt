@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -106,6 +107,7 @@ import com.epubreader.core.model.BookCoverAction
 import com.epubreader.core.model.BookCoverUpdate
 import com.epubreader.core.model.BookEditRequest
 import com.epubreader.core.model.EpubBook
+import com.epubreader.core.ui.getStaticWindowInsets
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -264,9 +266,11 @@ fun EditBookScreen(
     BackHandler(enabled = true, onBack = ::requestExit)
 
     Scaffold(
+        contentWindowInsets = getStaticWindowInsets(),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
+                windowInsets = getStaticWindowInsets(),
                 title = { Text("Edit Book") },
                 navigationIcon = {
                     IconButton(enabled = !isSaving, onClick = ::requestExit) {

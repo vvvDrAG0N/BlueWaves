@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -114,6 +115,7 @@ import com.epubreader.core.model.parseThemeColorOrNull
 import com.epubreader.core.model.themeButtonLabel
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.core.ui.getStaticWindowInsets
 import java.util.UUID
 import java.util.zip.ZipInputStream
 import org.json.JSONObject
@@ -175,8 +177,10 @@ fun SettingsScreen(
     val currentSection = activeSection
 
     Scaffold(
+        contentWindowInsets = getStaticWindowInsets(),
         topBar = {
             TopAppBar(
+                windowInsets = getStaticWindowInsets(),
                 title = { Text(currentSection?.title ?: "Settings") },
                 navigationIcon = {
                     IconButton(onClick = {

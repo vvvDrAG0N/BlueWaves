@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -78,6 +79,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.epubreader.core.ui.BookItem
 import com.epubreader.core.ui.RecentlyViewedStrip
+import com.epubreader.core.ui.getStaticWindowInsets
 
 /**
  * AI_LOAD_STRATEGY
@@ -103,6 +105,7 @@ internal fun LibraryScreen(
         },
     ) {
         Scaffold(
+            contentWindowInsets = getStaticWindowInsets(),
             snackbarHost = { SnackbarHost(state.snackbarHostState) },
             floatingActionButton = {
                 if (!state.selection.isBookSelectionMode) {
@@ -159,7 +162,7 @@ private fun LibraryDrawerContent(
     actions: FolderDrawerActions,
 ) {
     // Drawer concerns stay isolated here so agents can debug folder UI without loading screen routing.
-    ModalDrawerSheet {
+    ModalDrawerSheet(windowInsets = getStaticWindowInsets()) {
         val allSelectableFolders = state.folderDrawer.folders.filter { it != RootLibraryName }
         Row(
             modifier = Modifier
@@ -396,6 +399,7 @@ private fun LibraryTopBar(
     // Selection mode and normal mode share the same app-shell callbacks but render differently.
     if (state.selection.isBookSelectionMode) {
         TopAppBar(
+            windowInsets = getStaticWindowInsets(),
             title = {
                 Text(
                     text = if (state.selection.selectedBookIds.isEmpty()) {
@@ -423,6 +427,7 @@ private fun LibraryTopBar(
         )
     } else {
         TopAppBar(
+            windowInsets = getStaticWindowInsets(),
             title = { Text(text = state.selectedFolderName) },
             navigationIcon = {
                 IconButton(onClick = actions.onOpenDrawer) {

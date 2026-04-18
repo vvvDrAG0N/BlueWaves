@@ -1,11 +1,11 @@
 # Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-18)
 
 ## Corpus Check
-- 36 files · ~81,580 words
+- 37 files · ~81,708 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 464 nodes · 431 edges · 37 communities detected
+- 466 nodes · 432 edges · 38 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -46,6 +46,7 @@
 - [[_COMMUNITY_LibraryCards Cluster|LibraryCards Cluster]]
 - [[_COMMUNITY_ReaderTextActions Cluster|ReaderTextActions Cluster]]
 - [[_COMMUNITY_AppNavigation Cluster|AppNavigation Cluster]]
+- [[_COMMUNITY_WindowInsetsUtils Cluster|WindowInsetsUtils Cluster]]
 - [[_COMMUNITY_ReaderScreen Cluster|ReaderScreen Cluster]]
 
 ## God Nodes (most connected - your core abstractions)
@@ -209,7 +210,11 @@ Nodes (3): Define, Translate, WebLookupAction
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 36 - "ReaderScreen Cluster"
+### Community 36 - "WindowInsetsUtils Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 37 - "ReaderScreen Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
@@ -217,6 +222,8 @@ Nodes (0):
 - **73 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+68 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `AppNavigation Cluster`** (2 nodes): `AppNavigation()`, `AppNavigation.kt`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `WindowInsetsUtils Cluster`** (2 nodes): `WindowInsetsUtils.kt`, `getStaticWindowInsets()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `ReaderScreen Cluster`** (2 nodes): `ReaderScreen.kt`, `ReaderScreen()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
