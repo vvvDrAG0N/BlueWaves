@@ -254,19 +254,18 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         if (currentScreen != Screen.Reader) {
             windowInsetsController.isAppearanceLightStatusBars = isLightAppTheme
             windowInsetsController.isAppearanceLightNavigationBars = isLightAppTheme
-        }
 
-        if (globalSettings.showSystemBar) {
-            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
-        } else if (currentScreen == Screen.Reader || currentScreen == Screen.Library) {
-            // Hide for immersive reading and library browsing if configured.
-            // ReaderScreen also has its own local LaunchedEffect to show/hide based on controls.
-            windowInsetsController.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
-        } else {
-            // Always show system bars in Settings for better accessibility and status visibility.
-            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+            if (globalSettings.showSystemBar) {
+                windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+            } else if (currentScreen == Screen.Library) {
+                // Hide for immersive library browsing if configured.
+                windowInsetsController.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+            } else {
+                // Always show system bars in Settings for better accessibility and status visibility.
+                windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+            }
         }
     }
 

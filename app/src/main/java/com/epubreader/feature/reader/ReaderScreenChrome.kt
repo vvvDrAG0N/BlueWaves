@@ -13,6 +13,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -383,7 +384,7 @@ private fun ReaderContentSurface(
         AnimatedVisibility(
             visible = state.showControls && !hasActiveTextSelection,
             enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
+            exit = slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(400, delayMillis = 100)) + fadeOut(animationSpec = tween(400, delayMillis = 50)),
             modifier = Modifier.align(Alignment.TopCenter)
         ) {
             ReaderTopBar(
@@ -398,7 +399,7 @@ private fun ReaderContentSurface(
         AnimatedVisibility(
             visible = state.showControls && !hasActiveTextSelection,
             enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+            exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400, delayMillis = 100)) + fadeOut(animationSpec = tween(400, delayMillis = 50)),
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             ReaderControls(

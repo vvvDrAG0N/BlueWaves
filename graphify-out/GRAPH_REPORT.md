@@ -1,7 +1,7 @@
 # Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-18)
 
 ## Corpus Check
-- 37 files · ~81,708 words
+- 37 files · ~81,841 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
