@@ -9,6 +9,18 @@ const val DarkThemeId = "dark"
 const val OledThemeId = "oled"
 const val CustomThemeIdPrefix = "custom-"
 
+enum class StatusOverlayPosition { TOP, BOTTOM }
+
+@Immutable
+data class ReaderStatusUiState(
+    val isEnabled: Boolean = true,
+    val position: StatusOverlayPosition = StatusOverlayPosition.BOTTOM,
+    val showClock: Boolean = true,
+    val showBattery: Boolean = true,
+    val showChapterProgress: Boolean = false,
+    val showChapterTitle: Boolean = false,
+)
+
 /**
  * Shared color seed used to derive app-wide Material colors and explicit reader colors.
  * The reader colors stay explicit so content contrast does not depend on generic Material tokens.
@@ -272,7 +284,8 @@ data class GlobalSettings(
     val bookGroups: String = "{}",
     val folderSorts: String = "{}",
     val folderOrder: String = "[]",
-    val targetTranslationLanguage: String = "ar"
+    val targetTranslationLanguage: String = "ar",
+    val readerStatusUi: ReaderStatusUiState = ReaderStatusUiState()
 )
 
 /**

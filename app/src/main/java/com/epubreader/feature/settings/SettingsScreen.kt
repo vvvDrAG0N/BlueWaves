@@ -863,6 +863,73 @@ private fun GeneralTab(
             )
         }
 
+        HorizontalDivider()
+
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text("Reading Info", style = MaterialTheme.typography.titleLarge)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Status Overlay", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "Show a minimal overlay with reading information.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(
+                    checked = settings.readerStatusUi.isEnabled,
+                    onCheckedChange = { checked ->
+                        scope.launch { settingsManager.updateReaderStatusEnabled(checked) }
+                    }
+                )
+            }
+
+            if (settings.readerStatusUi.isEnabled) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Overlay Position", style = MaterialTheme.typography.bodyMedium)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        com.epubreader.core.model.StatusOverlayPosition.entries.forEach { position ->
+                            FilterChip(
+                                selected = settings.readerStatusUi.position == position,
+                                onClick = {
+                                    scope.launch { settingsManager.updateReaderStatusPosition(position) }
+                                },
+                                label = { Text(position.name.lowercase().replaceFirstChar { it.uppercase() }) }
+                            )
+                        }
+                    }
+                }
+
+                @Composable
+                fun StatusSwitch(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                        Switch(checked = checked, onCheckedChange = onCheckedChange)
+                    }
+                }
+
+                StatusSwitch("Show Clock", settings.readerStatusUi.showClock) {
+                    scope.launch { settingsManager.updateReaderStatusShowClock(it) }
+                }
+                StatusSwitch("Show Battery", settings.readerStatusUi.showBattery) {
+                    scope.launch { settingsManager.updateReaderStatusShowBattery(it) }
+                }
+                StatusSwitch("Show Chapter Title", settings.readerStatusUi.showChapterTitle) {
+                    scope.launch { settingsManager.updateReaderStatusShowChapterTitle(it) }
+                }
+                StatusSwitch("Show Chapter Progress", settings.readerStatusUi.showChapterProgress) {
+                    scope.launch { settingsManager.updateReaderStatusShowChapterProgress(it) }
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         Column(modifier = Modifier.fillMaxWidth()) {
             Text("Translate To", style = MaterialTheme.typography.titleMedium)

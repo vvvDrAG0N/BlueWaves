@@ -420,6 +420,19 @@ private fun ReaderContentSurface(
             listState = state.listState,
             showControls = state.showControls
         )
+
+        ReaderStatusOverlay(
+            uiState = state.settings.readerStatusUi,
+            themeColors = state.themeColors,
+            chapterTitle = state.chapterTitle,
+            progressPercentage = state.progressPercentage,
+            modifier = Modifier.align(
+                if (state.settings.readerStatusUi.position == com.epubreader.core.model.StatusOverlayPosition.TOP)
+                    Alignment.TopCenter
+                else
+                    Alignment.BottomCenter
+            )
+        )
     }
 }
 
@@ -504,6 +517,105 @@ private fun BoxScope.ReaderScrollToTopFab(
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ) {
             Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Scroll to top")
+        }
+    }
+}
+@Composable
+internal fun ReaderStatusOverlay(
+    uiState: com.epubreader.core.model.ReaderStatusUiState,
+    themeColors: ReaderTheme,
+    chapterTitle: String?,
+    progressPercentage: Float?,
+    modifier: Modifier = Modifier
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var timeText by remember { mutableStateOf("") }
+    var batteryText by remember { mutableStateOf("") }
+
+    if (uiState.showClock) {
+        LaunchedEffect(Unit) {
+            while (true) {
+                val now = java.util.Calendar.getInstance()
+                timeText = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(now.time)
+                kotlinx.coroutines.delay(1000 * 30) // Update every 30 seconds
+            }
+        }
+    }
+
+    if (uiState.showBattery) {
+        val batteryStatus = remember(context) {
+            context.registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
+        }
+        val level = batteryStatus?.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val scale = batteryStatus?.getIntExtra(android.os.BatteryManager.EXTRA_SCALE, -1) ?: -1
+        batteryText = if (level != -1 && scale != -1) {
+            "${(level * 100 / scale.toFloat()).toInt()}%"
+        } else ""
+    }
+
+    AnimatedVisibility(
+        visible = uiState.isEnabled,
+        enter = slideInVertically(initialOffsetY = { if (uiState.position == com.epubreader.core.model.StatusOverlayPosition.TOP) -it else it }) + fadeIn(),
+        exit = slideOutVertically(targetOffsetY = { if (uiState.position == com.epubreader.core.model.StatusOverlayPosition.TOP) -it else it }) + fadeOut(),
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Left Group: Chapter Title, Progress
+            Row(
+                modifier = Modifier.weight(1f, fill = false),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (uiState.showChapterTitle && !chapterTitle.isNullOrBlank()) {
+                    Text(
+                        text = chapterTitle,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = themeColors.foreground.copy(alpha = 0.5f)
+                        ),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
+                }
+                if (uiState.showChapterProgress && progressPercentage != null) {
+                    if (uiState.showChapterTitle && !chapterTitle.isNullOrBlank()) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text(
+                        text = "${(progressPercentage * 100).toInt()}%",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = themeColors.foreground.copy(alpha = 0.5f)
+                        )
+                    )
+                }
+            }
+
+            // Right Group: Clock, Battery
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (uiState.showClock) {
+                    Text(
+                        text = timeText,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = themeColors.foreground.copy(alpha = 0.5f)
+                        )
+                    )
+                }
+                if (uiState.showBattery) {
+                    if (uiState.showClock) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text(
+                        text = batteryText,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = themeColors.foreground.copy(alpha = 0.5f)
+                        )
+                    )
+                }
+            }
         }
     }
 }

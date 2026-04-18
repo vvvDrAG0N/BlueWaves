@@ -276,6 +276,12 @@ class SettingsManager(private val context: Context) {
             preferences[SettingsPreferenceKeys.hapticFeedback] = updated.hapticFeedback
             preferences[SettingsPreferenceKeys.allowBlankCovers] = updated.allowBlankCovers
             preferences[SettingsPreferenceKeys.targetTranslationLanguage] = updated.targetTranslationLanguage
+            preferences[SettingsPreferenceKeys.readerStatusEnabled] = updated.readerStatusUi.isEnabled
+            preferences[SettingsPreferenceKeys.readerStatusPosition] = updated.readerStatusUi.position.name
+            preferences[SettingsPreferenceKeys.readerStatusShowClock] = updated.readerStatusUi.showClock
+            preferences[SettingsPreferenceKeys.readerStatusShowBattery] = updated.readerStatusUi.showBattery
+            preferences[SettingsPreferenceKeys.readerStatusShowChapterProgress] = updated.readerStatusUi.showChapterProgress
+            preferences[SettingsPreferenceKeys.readerStatusShowChapterTitle] = updated.readerStatusUi.showChapterTitle
         }
     }
 
@@ -424,5 +430,28 @@ class SettingsManager(private val context: Context) {
             bookGroupsJson.remove(bookId)
             preferences[SettingsPreferenceKeys.bookGroups] = bookGroupsJson.toString()
         }
+    }
+    suspend fun updateReaderStatusEnabled(isEnabled: Boolean) {
+        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusEnabled] = isEnabled }
+    }
+
+    suspend fun updateReaderStatusPosition(position: com.epubreader.core.model.StatusOverlayPosition) {
+        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusPosition] = position.name }
+    }
+
+    suspend fun updateReaderStatusShowClock(show: Boolean) {
+        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowClock] = show }
+    }
+
+    suspend fun updateReaderStatusShowBattery(show: Boolean) {
+        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowBattery] = show }
+    }
+
+    suspend fun updateReaderStatusShowChapterProgress(show: Boolean) {
+        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowChapterProgress] = show }
+    }
+
+    suspend fun updateReaderStatusShowChapterTitle(show: Boolean) {
+        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowChapterTitle] = show }
     }
 }

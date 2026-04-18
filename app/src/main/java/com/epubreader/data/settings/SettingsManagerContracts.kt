@@ -60,6 +60,12 @@ internal object SettingsPreferenceKeys {
     val folderSorts = stringPreferencesKey("folder_sorts")
     val folderOrder = stringPreferencesKey("folder_order")
     val targetTranslationLanguage = stringPreferencesKey("target_translation_language")
+    val readerStatusEnabled = booleanPreferencesKey("reader_status_enabled")
+    val readerStatusPosition = stringPreferencesKey("reader_status_position")
+    val readerStatusShowClock = booleanPreferencesKey("reader_status_show_clock")
+    val readerStatusShowBattery = booleanPreferencesKey("reader_status_show_battery")
+    val readerStatusShowChapterProgress = booleanPreferencesKey("reader_status_show_chapter_progress")
+    val readerStatusShowChapterTitle = booleanPreferencesKey("reader_status_show_chapter_title")
 }
 
 internal data class BookProgressPreferenceKeys(
@@ -114,6 +120,20 @@ internal fun Preferences.toGlobalSettings(): GlobalSettings {
         folderSorts = this[SettingsPreferenceKeys.folderSorts] ?: EmptyJsonObject,
         folderOrder = this[SettingsPreferenceKeys.folderOrder] ?: EmptyJsonArray,
         targetTranslationLanguage = this[SettingsPreferenceKeys.targetTranslationLanguage] ?: "ar",
+        readerStatusUi = com.epubreader.core.model.ReaderStatusUiState(
+            isEnabled = this[SettingsPreferenceKeys.readerStatusEnabled] ?: true,
+            position = try {
+                com.epubreader.core.model.StatusOverlayPosition.valueOf(
+                    this[SettingsPreferenceKeys.readerStatusPosition] ?: com.epubreader.core.model.StatusOverlayPosition.BOTTOM.name
+                )
+            } catch (_: Exception) {
+                com.epubreader.core.model.StatusOverlayPosition.BOTTOM
+            },
+            showClock = this[SettingsPreferenceKeys.readerStatusShowClock] ?: true,
+            showBattery = this[SettingsPreferenceKeys.readerStatusShowBattery] ?: true,
+            showChapterProgress = this[SettingsPreferenceKeys.readerStatusShowChapterProgress] ?: false,
+            showChapterTitle = this[SettingsPreferenceKeys.readerStatusShowChapterTitle] ?: false,
+        ),
     )
 }
 

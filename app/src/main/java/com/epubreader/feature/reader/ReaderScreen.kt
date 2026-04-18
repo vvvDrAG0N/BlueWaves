@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -111,6 +112,28 @@ fun ReaderScreen(
         when (tocSort) {
             TocSort.Ascending -> book.toc
             TocSort.Descending -> book.toc.reversed()
+        }
+    }
+
+    val currentChapterTitle = remember(currentChapterIndex, book.toc) {
+        if (currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
+            val href = book.spineHrefs[currentChapterIndex]
+            book.toc.find { it.href.substringBefore("#") == href }?.title
+        } else null
+    }
+
+    val progressPercentage by remember {
+        derivedStateOf {
+            if (chapterElements.isEmpty()) 0f
+            else {
+                val layoutInfo = listState.layoutInfo
+                val total = layoutInfo.totalItemsCount
+                if (total == 0) 0f
+                else {
+                    val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                    (lastVisible + 1).toFloat() / total.toFloat()
+                }
+            }
         }
     }
 
@@ -516,6 +539,8 @@ fun ReaderScreen(
         verticalOverscroll = verticalOverscroll,
         overscrollThreshold = overscrollThreshold,
         nestedScrollConnection = nestedScrollConnection,
+        chapterTitle = currentChapterTitle,
+        progressPercentage = progressPercentage,
     )
     val chromeCallbacks = ReaderChromeCallbacks(
         onShowControlsChange = { showControls = it },
