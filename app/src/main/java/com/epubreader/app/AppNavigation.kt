@@ -98,6 +98,11 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     var editingBook by remember { mutableStateOf<EpubBook?>(null) }
     var currentScreen by remember { mutableStateOf(Screen.Library) }
     var asyncState by remember { mutableStateOf(LibraryAsyncUiState()) }
+
+    // Disable view-level haptics specifically for the navigation shell view.
+    LaunchedEffect(globalSettings.hapticFeedback) {
+        view.isHapticFeedbackEnabled = globalSettings.hapticFeedback
+    }
     var editBookSaveInFlight by remember { mutableStateOf(false) }
     var editBookErrorMessage by remember { mutableStateOf<String?>(null) }
     var selectedBookIds by remember { mutableStateOf(emptySet<String>()) }
@@ -356,7 +361,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     val startFolderDrag: (String) -> Unit = { folderName ->
         draggedFolderName = folderName
         dragOffset = 0f
-        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (globalSettings.hapticFeedback) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
     }
     val dragFolderBy: (Float, Float) -> Unit = dragFolder@{ dragAmountY, itemHeightPx ->
         val dragUpdate = updateFolderDragPreview(
@@ -369,7 +374,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         dragPreviewFolders = dragUpdate.previewFolders
         dragOffset = dragUpdate.dragOffset
         if (dragUpdate.didReorder) {
-            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            if (globalSettings.hapticFeedback) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         }
     }
     val completeFolderDrag: () -> Unit = {
@@ -567,7 +572,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         },
         onStartBookSelection = { book ->
             if (!isBookSelectionMode) {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                if (globalSettings.hapticFeedback) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                 isBookSelectionMode = true
                 selectedBookIds = setOf(book.id)
             }

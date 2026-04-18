@@ -7,7 +7,7 @@ Rules:
 - This file is a reusable prompt library, not the source of truth for priority by itself.
 - Start with the smallest prompt that gives the next agent enough context to execute safely.
 
-## 1. AI Agent Improvement Plan
+## 1. AI Agent Improvement Plan -- Ignored for now -- May not need all the prompts
 
 ```text
 Read `AGENTS.md`, `docs/README.md`, `docs/project_graph.md`, `docs/package_map.md`, `docs/PROMPT_TEMPLATES.md`, and `docs/ask_mode_prompt_rules.md` first.
@@ -38,7 +38,7 @@ Verification:
 - Summarize any residual gaps left for a later tooling pass
 ```
 
-## 2. Performance And Stability Pass
+## 2. Performance And Stability Pass -- Done
 
 ```text
 Read `AGENTS.md`, `docs/README.md`, `docs/project_graph.md`, `docs/package_map.md`, `docs/AI_ENTRY_POINTS.md`, `docs/AI_DEBUG_GUIDE.md`, and `docs/test_checklist.md` first.
@@ -65,7 +65,7 @@ Verification:
 - Summarize measurements, root causes, fixes, and remaining risks
 ```
 
-## 3. Reader And Theme UX Polish
+## 3. Reader And Theme UX Polish -- Done
 
 ```text
 Read `AGENTS.md`, `docs/README.md`, `docs/project_graph.md`, `docs/package_map.md`, `docs/reader_screen.md`, `docs/settings_persistence.md`, and `docs/ui_rules.md` first.
@@ -92,7 +92,7 @@ Verification:
 - Summarize behavior changes and manual verification steps
 ```
 
-## 4. Selectable Text Follow-Up
+## 4. Selectable Text Follow-Up - High risk, on old attempts it broke other things, sometime it didn't select more than one pragrapgh, sometimes it disturb the reader settings by selecting with a single tap. sometime it changed font or moved the whole page down a little.
 
 ```text
 Read `AGENTS.md`, `docs/README.md`, `docs/project_graph.md`, `docs/package_map.md`, `docs/reader_screen.md`, and `docs/ui_rules.md` first.
@@ -103,7 +103,7 @@ Task: feature
 Goal: extend selectable text so users can launch define/translate overlays through installed system apps
 
 Acceptance criteria:
-- Reader text selection can route into supported external define/translate apps
+- Reader text selection can route into supported external define/translate apps, define/translate should live in the same
 - The integration fails gracefully when no compatible app is installed
 - Existing reader selection behavior remains stable outside the new actions
 

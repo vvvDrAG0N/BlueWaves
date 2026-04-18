@@ -19,6 +19,7 @@ package com.epubreader.feature.settings
 
 import android.graphics.Color as AndroidColor
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -262,6 +263,11 @@ fun SettingsScreen(
                 }
             },
         )
+    }
+
+    // System back gesture should go up within settings sections, not exit entirely.
+    BackHandler(enabled = activeSection != null) {
+        activeSection = null
     }
 }
 
@@ -826,6 +832,29 @@ private fun GeneralTab(
                     }
                 },
                 modifier = Modifier.testTag("allow_blank_covers_switch")
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Haptic Feedback", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Enable vibration feedback for gestures and interactions.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Switch(
+                checked = settings.hapticFeedback,
+                onCheckedChange = { checked ->
+                    scope.launch {
+                        settingsManager.updateGlobalSettings { it.copy(hapticFeedback = checked) }
+                    }
+                },
+                modifier = Modifier.testTag("haptic_feedback_switch")
             )
         }
     }

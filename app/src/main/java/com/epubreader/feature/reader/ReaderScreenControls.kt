@@ -98,6 +98,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -108,6 +109,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -159,6 +161,16 @@ internal fun ReaderChapterContent(
     val clipboardManager = LocalClipboardManager.current
     val platformTextToolbar = LocalTextToolbar.current
     val selectionActiveChangeState = rememberUpdatedState(onSelectionActiveChange)
+    
+    // Internal clipboard to capture text without triggering system popups
+    val internalClipboard = remember {
+        object : ClipboardManager {
+            private var content: AnnotatedString? = null
+            override fun setText(annotatedString: AnnotatedString) { content = annotatedString }
+            override fun getText(): AnnotatedString? = content
+            override fun hasText(): Boolean = content != null
+        }
+    }
 
     // Stable selection tracking: isTextSelectionActive stays true throughout
     // the entire drag/resize process and only turns false on explicit hide().
@@ -265,7 +277,10 @@ internal fun ReaderChapterContent(
     if (settings.selectableText) {
         Box(modifier = Modifier.fillMaxSize()) {
             key(selectionResetToken) {
-                CompositionLocalProvider(LocalTextToolbar provides trackingTextToolbar) {
+                CompositionLocalProvider(
+                    LocalTextToolbar provides trackingTextToolbar,
+                    LocalClipboardManager provides internalClipboard
+                ) {
                     SelectionContainer {
                         content()
                     }
@@ -285,21 +300,21 @@ internal fun ReaderChapterContent(
                 TextSelectionActionBar(
                     themeColors = themeColors,
                     onCopy = {
-                        lastCopyAction?.invoke()
-                        Toast.makeText(context, "Copied", Toast.LENGTH_SHORT).show()
+                        lastCopyAction?.invoke() // Copies to internalClipboard
+                        internalClipboard.getText()?.let { clipboardManager.setText(it) }
                     },
                     onDefine = {
-                        lastCopyAction?.invoke()
-                        val clip = clipboardManager.getText()?.text.orEmpty()
-                        if (clip.isNotBlank()) {
-                            pendingWebLookup = WebLookupAction.Define(clip)
+                        lastCopyAction?.invoke() // Copies to internalClipboard
+                        val text = internalClipboard.getText()?.text.orEmpty()
+                        if (text.isNotBlank()) {
+                            pendingWebLookup = WebLookupAction.Define(text)
                         }
                     },
                     onTranslate = {
-                        lastCopyAction?.invoke()
-                        val clip = clipboardManager.getText()?.text.orEmpty()
-                        if (clip.isNotBlank()) {
-                            pendingWebLookup = WebLookupAction.Translate(clip)
+                        lastCopyAction?.invoke() // Copies to internalClipboard
+                        val text = internalClipboard.getText()?.text.orEmpty()
+                        if (text.isNotBlank()) {
+                            pendingWebLookup = WebLookupAction.Translate(text)
                         }
                     },
                 )
@@ -310,9 +325,6 @@ internal fun ReaderChapterContent(
         pendingWebLookup?.let { action ->
             WebViewBottomSheet(
                 url = action.url,
-                title = action.title,
-                themeColors = themeColors,
-                forceDark = settings.forceDarkWebLookups,
                 onDismiss = { pendingWebLookup = null },
             )
         }
@@ -420,65 +432,110 @@ private fun TextSelectionActionButton(
 
 /**
  * In-app WebView bottom sheet for Define/Translate lookups.
- * Container theming respects reader theme; WebView content dark mode
- * is controlled by the [forceDark] setting.
+ *
+ * - Uses the default ModalBottomSheet drag handle (pill) — no custom header.
+ * - Nested scroll conflict is resolved by a custom WebView that calls
+ *   requestDisallowInterceptTouchEvent while the user is actively scrolling
+ *   web content. The sheet only consumes the drag when the WebView is at scrollY == 0.
+ * - The sheet container and WebView follow the device system theme (dark/light)
+ *   via MaterialTheme colors and WebView's algorithmic darkening, so the web
+ *   content and the sheet always match the user's phone-wide dark mode setting.
  */
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("SetJavaScriptEnabled")
+@SuppressLint("SetJavaScriptEnabled", "ClickableViewAccessibility")
 @Composable
 private fun WebViewBottomSheet(
     url: String,
-    title: String,
-    themeColors: ReaderTheme,
-    forceDark: Boolean,
     onDismiss: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    // Use Material3 system theme colors so the sheet matches the device dark/light mode.
+    val sheetBg = MaterialTheme.colorScheme.surface
+    val handleColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = themeColors.background,
+        containerColor = sheetBg,
         scrimColor = Color.Black.copy(alpha = 0.4f),
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        dragHandle = {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+                    .width(32.dp)
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(handleColor.copy(alpha = 0.4f))
+            )
+        },
     ) {
-        Column(
+        val bgArgb = sheetBg.toArgb()
+        AndroidView(
+            factory = { ctx ->
+                NestedScrollWebView(ctx).apply {
+                    setBackgroundColor(bgArgb)
+                    settings.javaScriptEnabled = true
+                    settings.domStorageEnabled = true
+
+                    // Always allow algorithmic darkening — this makes the WebView
+                    // respect the system's prefers-color-scheme media query, so
+                    // Google Search, Translate, etc. naturally follow phone dark mode.
+                    if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+                        WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true)
+                    }
+
+                    webViewClient = WebViewClient()
+                    loadUrl(url)
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.7f)
-        ) {
-            // Title bar
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = themeColors.foreground,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            )
-            HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.12f))
+                .fillMaxHeight(0.55f)
+                .testTag("web_lookup_webview"),
+        )
+    }
+}
 
-            // WebView
-            val bgArgb = themeColors.background.toArgb()
-            AndroidView(
-                factory = { ctx ->
-                    WebView(ctx).apply {
-                        setBackgroundColor(bgArgb)
-                        webViewClient = WebViewClient()
-                        settings.javaScriptEnabled = true
-                        settings.domStorageEnabled = true
+/**
+ * WebView subclass that cooperates with Compose ModalBottomSheet gesture handling.
+ *
+ * When the user touches and starts scrolling *down* inside the WebView (i.e. the page
+ * has content below the viewport), this view calls requestDisallowInterceptTouchEvent(true)
+ * so the BottomSheet does not steal the gesture and dismiss itself.
+ *
+ * When the WebView is at the very top (scrollY == 0) and the user swipes down,
+ * the touch is allowed to propagate so the BottomSheet can be dragged to dismiss.
+ */
+@SuppressLint("ClickableViewAccessibility")
+private class NestedScrollWebView(context: android.content.Context) : WebView(context) {
+    private var startY = 0f
 
-                        // Force dark theme for web content when user enables the setting
-                        if (forceDark && WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-                            WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true)
-                        }
-
-                        loadUrl(url)
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("web_lookup_webview"),
-            )
+    override fun onTouchEvent(event: android.view.MotionEvent): Boolean {
+        when (event.actionMasked) {
+            android.view.MotionEvent.ACTION_DOWN -> {
+                startY = event.y
+                // Optimistically claim the touch; we'll release if at top + swipe down.
+                parent?.requestDisallowInterceptTouchEvent(true)
+            }
+            android.view.MotionEvent.ACTION_MOVE -> {
+                val deltaY = event.y - startY
+                if (deltaY > 0 && scrollY == 0) {
+                    // User is swiping down and WebView is at the top — let sheet handle it.
+                    parent?.requestDisallowInterceptTouchEvent(false)
+                } else {
+                    // User is scrolling up (into more content) or WebView is scrolled —
+                    // keep the touch for the WebView.
+                    parent?.requestDisallowInterceptTouchEvent(true)
+                }
+            }
+            android.view.MotionEvent.ACTION_UP,
+            android.view.MotionEvent.ACTION_CANCEL -> {
+                parent?.requestDisallowInterceptTouchEvent(false)
+            }
         }
+        return super.onTouchEvent(event)
     }
 }
 
@@ -848,13 +905,6 @@ private fun ReaderGeneralControlsTab(
             }
         )
 
-        ReaderGeneralToggleRow(
-            label = "Force Dark Theme for Web Lookups",
-            checked = settings.forceDarkWebLookups,
-            onCheckedChange = { forceDark ->
-                onSettingsChange { current -> current.copy(forceDarkWebLookups = forceDark) }
-            }
-        )
     }
 }
 
