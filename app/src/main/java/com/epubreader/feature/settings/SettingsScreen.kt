@@ -123,6 +123,7 @@ import com.epubreader.core.model.parseThemeColorOrNull
 import com.epubreader.core.model.themeButtonLabel
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.feature.reader.ReaderStatusSettingsRow
 import com.epubreader.core.ui.getStaticWindowInsets
 import java.util.UUID
 import java.util.zip.ZipInputStream
@@ -873,122 +874,14 @@ private fun GeneralTab(
 
         HorizontalDivider()
 
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("Reading Info", style = MaterialTheme.typography.titleLarge)
+        ReaderStatusSettingsRow(
+            settings = settings,
+            onUpdateSettings = { transform ->
+                scope.launch { settingsManager.updateGlobalSettings(transform) }
+            },
+            isSystemBarVisible = settings.showSystemBar
+        )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Status Overlay", style = MaterialTheme.typography.titleMedium)
-                    Text(
-                        "Show a minimal overlay with reading information.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Switch(
-                    checked = settings.readerStatusUi.isEnabled,
-                    onCheckedChange = { checked ->
-                        scope.launch { settingsManager.updateReaderStatusEnabled(checked) }
-                    }
-                )
-            }
-
-            @Composable
-            fun StatusIconButton(
-                icon: ImageVector,
-                active: Boolean,
-                enabled: Boolean,
-                contentDescription: String,
-                onClick: () -> Unit
-            ) {
-                IconButton(onClick = onClick, enabled = enabled) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = contentDescription,
-                        tint = MaterialTheme.colorScheme.primary.copy(alpha = if (active) 1f else 0.3f),
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .alpha(if (settings.readerStatusUi.isEnabled) 1f else 0.3f),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                val enabled = settings.readerStatusUi.isEnabled
-
-                // Position Toggle
-                IconButton(
-                    onClick = {
-                        val newPos = if (settings.readerStatusUi.position == com.epubreader.core.model.StatusOverlayPosition.TOP)
-                            com.epubreader.core.model.StatusOverlayPosition.BOTTOM
-                        else
-                            com.epubreader.core.model.StatusOverlayPosition.TOP
-                        scope.launch { settingsManager.updateReaderStatusPosition(newPos) }
-                    },
-                    enabled = enabled
-                ) {
-                    Icon(
-                        imageVector = if (settings.readerStatusUi.position == com.epubreader.core.model.StatusOverlayPosition.TOP)
-                            Icons.Default.KeyboardArrowUp
-                        else
-                            Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Toggle Position",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                StatusIconButton(
-                    icon = Icons.Default.Schedule,
-                    active = settings.readerStatusUi.showClock,
-                    enabled = enabled,
-                    contentDescription = "Clock",
-                    onClick = { scope.launch { settingsManager.updateReaderStatusShowClock(!settings.readerStatusUi.showClock) } }
-                )
-
-                StatusIconButton(
-                    icon = Icons.Default.BatteryFull,
-                    active = settings.readerStatusUi.showBattery,
-                    enabled = enabled,
-                    contentDescription = "Battery",
-                    onClick = { scope.launch { settingsManager.updateReaderStatusShowBattery(!settings.readerStatusUi.showBattery) } }
-                )
-
-                StatusIconButton(
-                    icon = Icons.Default.Tag,
-                    active = settings.readerStatusUi.showChapterNumber,
-                    enabled = enabled,
-                    contentDescription = "Chapter Number",
-                    onClick = { scope.launch { settingsManager.updateReaderStatusShowChapterNumber(!settings.readerStatusUi.showChapterNumber) } }
-                )
-
-                StatusIconButton(
-                    icon = Icons.Default.List,
-                    active = settings.readerStatusUi.showMaxChapter,
-                    enabled = enabled,
-                    contentDescription = "Max Chapters",
-                    onClick = { scope.launch { settingsManager.updateReaderStatusShowMaxChapter(!settings.readerStatusUi.showMaxChapter) } }
-                )
-
-                StatusIconButton(
-                    icon = Icons.Default.DataUsage,
-                    active = settings.readerStatusUi.showChapterProgress,
-                    enabled = enabled,
-                    contentDescription = "Progress",
-                    onClick = { scope.launch { settingsManager.updateReaderStatusShowChapterProgress(!settings.readerStatusUi.showChapterProgress) } }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
         Column(modifier = Modifier.fillMaxWidth()) {
             Text("Translate To", style = MaterialTheme.typography.titleMedium)
             Text(

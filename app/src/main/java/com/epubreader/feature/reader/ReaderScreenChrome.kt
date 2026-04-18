@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -48,6 +49,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -413,6 +415,7 @@ private fun ReaderContentSurface(
                 currentChapterIndex = state.currentChapterIndex,
                 totalChapters = state.book.spineHrefs.size,
                 sectionLabel = state.book.navigationUnitLabel,
+                progressPercentage = state.progressPercentage ?: 0f,
             )
         }
 
@@ -423,16 +426,12 @@ private fun ReaderContentSurface(
 
         ReaderStatusOverlay(
             uiState = state.settings.readerStatusUi,
+            isVisible = !state.showControls && !state.settings.showSystemBar,
             themeColors = state.themeColors,
             chapterIndex = state.currentChapterIndex + 1,
             maxChapters = state.book.spineHrefs.size,
             progressPercentage = state.progressPercentage,
-            modifier = Modifier.align(
-                if (state.settings.readerStatusUi.position == com.epubreader.core.model.StatusOverlayPosition.TOP)
-                    Alignment.TopCenter
-                else
-                    Alignment.BottomCenter
-            )
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }
@@ -510,7 +509,7 @@ private fun BoxScope.ReaderScrollToTopFab(
         exit = fadeOut() + scaleOut(),
         modifier = Modifier
             .align(Alignment.BottomEnd)
-            .padding(16.dp)
+            .padding(end = 16.dp, bottom = 32.dp)
     ) {
         FloatingActionButton(
             onClick = { scope.launch { listState.animateScrollToItem(0) } },
@@ -524,6 +523,7 @@ private fun BoxScope.ReaderScrollToTopFab(
 @Composable
 internal fun ReaderStatusOverlay(
     uiState: com.epubreader.core.model.ReaderStatusUiState,
+    isVisible: Boolean,
     themeColors: ReaderTheme,
     chapterIndex: Int,
     maxChapters: Int,
@@ -556,19 +556,21 @@ internal fun ReaderStatusOverlay(
         } else ""
     }
 
-    val chapterText = remember(uiState.showChapterNumber, uiState.showMaxChapter, chapterIndex, maxChapters) {
-        when {
-            uiState.showChapterNumber && uiState.showMaxChapter -> "Chapter $chapterIndex | $maxChapters"
-            uiState.showChapterNumber -> "Chapter $chapterIndex"
-            uiState.showMaxChapter -> "Total: $maxChapters"
-            else -> ""
-        }
+    val batteryLevel = remember(context) {
+        val batteryStatus = context.registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
+        val level = batteryStatus?.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val scale = batteryStatus?.getIntExtra(android.os.BatteryManager.EXTRA_SCALE, -1) ?: -1
+        if (level != -1 && scale != -1) (level * 100 / scale.toFloat()).toInt() else null
+    }
+
+    val chapterText = remember(uiState.showChapterNumber, chapterIndex) {
+        if (uiState.showChapterNumber) "CH $chapterIndex" else ""
     }
 
     AnimatedVisibility(
-        visible = uiState.isEnabled,
-        enter = slideInVertically(initialOffsetY = { if (uiState.position == com.epubreader.core.model.StatusOverlayPosition.TOP) -it else it }) + fadeIn(),
-        exit = slideOutVertically(targetOffsetY = { if (uiState.position == com.epubreader.core.model.StatusOverlayPosition.TOP) -it else it }) + fadeOut(),
+        visible = uiState.isEnabled && isVisible,
+        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
         modifier = modifier
             .background(themeColors.background) // Solid background to block text underneath
     ) {
@@ -576,41 +578,66 @@ internal fun ReaderStatusOverlay(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
-            // Left-aligned with spacing between elements
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (chapterText.isNotEmpty()) {
-                Text(
-                    text = chapterText,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = themeColors.foreground.copy(alpha = 0.5f)
-                    )
-                )
+            // 1. Chapter Block
+            if (chapterText.isNotEmpty() || (uiState.showChapterProgress && progressPercentage != null)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                ) {
+                    if (chapterText.isNotEmpty()) {
+                        Text(
+                            text = chapterText,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                color = themeColors.foreground.copy(alpha = 0.5f)
+                            )
+                        )
+                    }
+                    if (uiState.showChapterProgress && progressPercentage != null) {
+                        Text(
+                            text = "${(progressPercentage * 100).toInt()}%",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                color = themeColors.foreground.copy(alpha = 0.5f)
+                            )
+                        )
+                    }
+                }
             }
-            if (uiState.showChapterProgress && progressPercentage != null) {
-                Text(
-                    text = "${(progressPercentage * 100).toInt()}%",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = themeColors.foreground.copy(alpha = 0.5f)
-                    )
-                )
-            }
+
+            // 2. Spacer to push Time and Battery to the right
+            Spacer(modifier = Modifier.weight(1f))
+
+            // 3. Time
             if (uiState.showClock) {
                 Text(
                     text = timeText,
                     style = MaterialTheme.typography.labelSmall.copy(
                         color = themeColors.foreground.copy(alpha = 0.5f)
-                    )
+                    ),
+                    modifier = Modifier.padding(end = 12.dp)
                 )
             }
+
+            // 4. Battery
             if (uiState.showBattery && batteryText.isNotEmpty()) {
-                Text(
-                    text = batteryText,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = themeColors.foreground.copy(alpha = 0.5f)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.BatteryFull,
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp),
+                        tint = themeColors.foreground.copy(alpha = 0.5f)
                     )
-                )
+                    Text(
+                        text = batteryText,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = themeColors.foreground.copy(alpha = 0.5f)
+                        )
+                    )
+                }
             }
         }
     }

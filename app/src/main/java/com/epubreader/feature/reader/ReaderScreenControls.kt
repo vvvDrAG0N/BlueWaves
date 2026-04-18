@@ -74,6 +74,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -567,6 +568,7 @@ fun ReaderControls(
     currentChapterIndex: Int,
     totalChapters: Int,
     sectionLabel: String,
+    progressPercentage: Float,
 ) {
     Card(
         modifier = Modifier
@@ -596,6 +598,7 @@ fun ReaderControls(
                     currentChapterIndex = currentChapterIndex,
                     totalChapters = totalChapters,
                     sectionLabel = sectionLabel,
+                    progressPercentage = progressPercentage,
                 )
 
                 ReaderControlsTab.Font -> ReaderFontControlsTab(
@@ -638,30 +641,15 @@ private fun ReaderChapterControlsTab(
     currentChapterIndex: Int,
     totalChapters: Int,
     sectionLabel: String,
+    progressPercentage: Float,
 ) {
     val scope = rememberCoroutineScope()
     var isDragging by remember { mutableStateOf(false) }
     var draggingValue by remember { mutableStateOf(0f) }
 
-    val scrollProgress = remember(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset, itemCount) {
-        val layoutInfo = listState.layoutInfo
-        val visibleItems = layoutInfo.visibleItemsInfo
-
-        if (visibleItems.isNotEmpty() && itemCount > 0) {
-            val viewportStart = layoutInfo.viewportStartOffset
-            val topItem = visibleItems.firstOrNull { it.offset + it.size > viewportStart } ?: visibleItems.first()
-            val itemTop = topItem.offset
-            val relativeOffset = (viewportStart - itemTop).coerceAtLeast(0)
-            val itemHeight = if (topItem.size > 0) topItem.size else 1
-            ((topItem.index.toFloat() + (relativeOffset.toFloat() / itemHeight.toFloat())) / itemCount.toFloat()).coerceIn(0f, 1f)
-        } else {
-            0f
-        }
-    }
-
-    LaunchedEffect(scrollProgress) {
+    LaunchedEffect(progressPercentage) {
         if (!isDragging) {
-            draggingValue = scrollProgress
+            draggingValue = progressPercentage
         }
     }
 
@@ -905,27 +893,43 @@ private fun ReaderGeneralControlsTab(
             }
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("Translate To", style = MaterialTheme.typography.titleMedium)
-        val languages = listOf(
-            "ar" to "العربية",
-            "en" to "English",
-            "es" to "Español",
-            "fr" to "Français",
-            "ja" to "日本語"
+        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = LocalContentColor.current.copy(alpha = 0.1f))
+
+        ReaderStatusSettingsRow(
+            settings = settings,
+            onUpdateSettings = onSettingsChange,
+            isReaderUI = true,
+            isSystemBarVisible = settings.showSystemBar
         )
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(languages) { (code, name) ->
-                FilterChip(
-                    selected = settings.targetTranslationLanguage == code,
-                    onClick = {
-                        onSettingsChange { it.copy(targetTranslationLanguage = code) }
-                    },
-                    label = { Text(name) }
-                )
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text("Translate To", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                "Target language for text selection translations",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            val languages = listOf(
+                "ar" to "العربية",
+                "en" to "English",
+                "es" to "Español",
+                "fr" to "Français",
+                "ja" to "日本語"
+            )
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(languages) { (code, name) ->
+                    FilterChip(
+                        selected = settings.targetTranslationLanguage == code,
+                        onClick = {
+                            onSettingsChange { it.copy(targetTranslationLanguage = code) }
+                        },
+                        label = { Text(name) }
+                    )
+                }
             }
         }
     }

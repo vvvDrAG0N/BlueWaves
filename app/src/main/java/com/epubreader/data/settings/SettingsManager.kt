@@ -277,12 +277,10 @@ class SettingsManager(private val context: Context) {
             preferences[SettingsPreferenceKeys.allowBlankCovers] = updated.allowBlankCovers
             preferences[SettingsPreferenceKeys.targetTranslationLanguage] = updated.targetTranslationLanguage
             preferences[SettingsPreferenceKeys.readerStatusEnabled] = updated.readerStatusUi.isEnabled
-            preferences[SettingsPreferenceKeys.readerStatusPosition] = updated.readerStatusUi.position.name
             preferences[SettingsPreferenceKeys.readerStatusShowClock] = updated.readerStatusUi.showClock
             preferences[SettingsPreferenceKeys.readerStatusShowBattery] = updated.readerStatusUi.showBattery
             preferences[SettingsPreferenceKeys.readerStatusShowChapterProgress] = updated.readerStatusUi.showChapterProgress
             preferences[SettingsPreferenceKeys.readerStatusShowChapterNumber] = updated.readerStatusUi.showChapterNumber
-            preferences[SettingsPreferenceKeys.readerStatusShowMaxChapter] = updated.readerStatusUi.showMaxChapter
         }
     }
 
@@ -436,10 +434,6 @@ class SettingsManager(private val context: Context) {
         context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusEnabled] = isEnabled }
     }
 
-    suspend fun updateReaderStatusPosition(position: com.epubreader.core.model.StatusOverlayPosition) {
-        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusPosition] = position.name }
-    }
-
     suspend fun updateReaderStatusShowClock(show: Boolean) {
         context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowClock] = show }
     }
@@ -457,6 +451,5 @@ class SettingsManager(private val context: Context) {
     }
 
     suspend fun updateReaderStatusShowMaxChapter(show: Boolean) {
-        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowMaxChapter] = show }
     }
 }

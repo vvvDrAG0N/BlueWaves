@@ -121,11 +121,18 @@ fun ReaderScreen(
             if (chapterElements.isEmpty()) 0f
             else {
                 val layoutInfo = listState.layoutInfo
+                val visibleItems = layoutInfo.visibleItemsInfo
                 val total = layoutInfo.totalItemsCount
-                if (total == 0) 0f
-                else {
-                    val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                    (lastVisible + 1).toFloat() / total.toFloat()
+
+                if (visibleItems.isNotEmpty() && total > 0) {
+                    val viewportStart = layoutInfo.viewportStartOffset
+                    val topItem = visibleItems.firstOrNull { it.offset + it.size > viewportStart } ?: visibleItems.first()
+                    val itemTop = topItem.offset
+                    val relativeOffset = (viewportStart - itemTop).coerceAtLeast(0)
+                    val itemHeight = if (topItem.size > 0) topItem.size else 1
+                    ((topItem.index.toFloat() + (relativeOffset.toFloat() / itemHeight.toFloat())) / total.toFloat()).coerceIn(0f, 1f)
+                } else {
+                    0f
                 }
             }
         }
