@@ -38,73 +38,70 @@ fun ReaderStatusSettingsRow(
             .fillMaxWidth()
             .alpha(alpha)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Reading Info",
                     style = if (isReaderUI) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(end = 52.dp) // Room for Switch
                 )
                 Text(
                     text = "Minimal reading info overlay at the bottom.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 52.dp) // Room for Switch
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .alpha(if (enabled && !isInteractionDisabled) 1f else 0.3f)
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // 1. Clock
-                    FilterChip(
-                        selected = readerStatusUi.showClock,
-                        onClick = { onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(showClock = !readerStatusUi.showClock)) } },
-                        label = { Text("Time") },
-                        enabled = enabled && !isInteractionDisabled
-                    )
-
-                    // 2. Battery
-                    FilterChip(
-                        selected = readerStatusUi.showBattery,
-                        onClick = { onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(showBattery = !readerStatusUi.showBattery)) } },
-                        label = { Text("Battery") },
-                        enabled = enabled && !isInteractionDisabled
-                    )
-
-                    // 3. Chapter Number
-                    FilterChip(
-                        selected = readerStatusUi.showChapterNumber,
-                        onClick = { onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(showChapterNumber = !readerStatusUi.showChapterNumber)) } },
-                        label = { Text("Chapter") },
-                        enabled = enabled && !isInteractionDisabled
-                    )
-
-                    // 4. Progress
-                    FilterChip(
-                        selected = readerStatusUi.showChapterProgress,
-                        onClick = { onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(showChapterProgress = !readerStatusUi.showChapterProgress)) } },
-                        label = { Text("Progress") },
-                        enabled = enabled && !isInteractionDisabled
-                    )
-                }
             }
-
             Switch(
                 checked = enabled,
                 onCheckedChange = { checked ->
                     onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(isEnabled = checked)) }
                 },
-                enabled = !isInteractionDisabled,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 4.dp)
+                enabled = !isInteractionDisabled
+            )
+        }
+
+        Spacer(modifier = Modifier.height(0.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .alpha(if (enabled && !isInteractionDisabled) 1f else 0.3f)
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 1. Clock
+            FilterChip(
+                selected = readerStatusUi.showClock,
+                onClick = { onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(showClock = !readerStatusUi.showClock)) } },
+                label = { Text("Time") },
+                enabled = enabled && !isInteractionDisabled
+            )
+
+            // 2. Battery
+            FilterChip(
+                selected = readerStatusUi.showBattery,
+                onClick = { onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(showBattery = !readerStatusUi.showBattery)) } },
+                label = { Text("Battery") },
+                enabled = enabled && !isInteractionDisabled
+            )
+
+            // 3. Chapter Number
+            FilterChip(
+                selected = readerStatusUi.showChapterNumber,
+                onClick = { onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(showChapterNumber = !readerStatusUi.showChapterNumber)) } },
+                label = { Text("Chapter") },
+                enabled = enabled && !isInteractionDisabled
+            )
+
+            // 4. Progress
+            FilterChip(
+                selected = readerStatusUi.showChapterProgress,
+                onClick = { onUpdateSettings { it.copy(readerStatusUi = it.readerStatusUi.copy(showChapterProgress = !readerStatusUi.showChapterProgress)) } },
+                label = { Text("Progress") },
+                enabled = enabled && !isInteractionDisabled
             )
         }
     }
