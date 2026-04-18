@@ -78,6 +78,9 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.mlkit.text.recognition)
 
+    // WebView
+    implementation(libs.androidx.webkit)
+
     testImplementation(libs.junit)
     testImplementation("org.json:json:20240303")
     testImplementation("io.mockk:mockk:1.13.12")

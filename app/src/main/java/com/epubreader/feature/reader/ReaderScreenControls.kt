@@ -8,6 +8,8 @@ package com.epubreader.feature.reader
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -58,17 +60,20 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -89,6 +94,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -108,6 +114,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import com.epubreader.core.model.availableThemeOptions
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.GlobalSettings
@@ -151,16 +160,18 @@ internal fun ReaderChapterContent(
     val platformTextToolbar = LocalTextToolbar.current
     val selectionActiveChangeState = rememberUpdatedState(onSelectionActiveChange)
 
-    // Selection menu rect tracking for floating action bar positioning
-    var selectionMenuRect by remember { mutableStateOf<Rect?>(null) }
+    // Stable selection tracking: isTextSelectionActive stays true throughout
+    // the entire drag/resize process and only turns false on explicit hide().
+    var isTextSelectionActive by remember { mutableStateOf(false) }
     var lastCopyAction by remember { mutableStateOf<(() -> Unit)?>(null) }
 
-    // The tracking toolbar intercepts showMenu/hide to track selection state
-    // and suppresses the native toolbar so our custom floating bar is used instead.
+    // Bottom sheet state for in-app WebView lookups
+    var pendingWebLookup by remember { mutableStateOf<WebLookupAction?>(null) }
+
     val trackingTextToolbar = remember(platformTextToolbar) {
         object : TextToolbar {
             override val status: TextToolbarStatus
-                get() = if (selectionMenuRect != null) TextToolbarStatus.Shown else TextToolbarStatus.Hidden
+                get() = if (isTextSelectionActive) TextToolbarStatus.Shown else TextToolbarStatus.Hidden
 
             override fun showMenu(
                 rect: Rect,
@@ -169,15 +180,17 @@ internal fun ReaderChapterContent(
                 onCutRequested: (() -> Unit)?,
                 onSelectAllRequested: (() -> Unit)?
             ) {
-                selectionMenuRect = rect
+                // Update the copy callback but keep selection active throughout drag.
+                // This is called repeatedly during handle drag — do NOT toggle state.
                 lastCopyAction = onCopyRequested
-                selectionActiveChangeState.value(true)
-                // Intentionally do NOT delegate to platformTextToolbar.showMenu();
-                // we render our own floating bar with Define/Translate actions instead.
+                if (!isTextSelectionActive) {
+                    isTextSelectionActive = true
+                    selectionActiveChangeState.value(true)
+                }
             }
 
             override fun hide() {
-                selectionMenuRect = null
+                isTextSelectionActive = false
                 lastCopyAction = null
                 selectionActiveChangeState.value(false)
             }
@@ -243,7 +256,7 @@ internal fun ReaderChapterContent(
 
     LaunchedEffect(selectionResetToken, settings.selectableText) {
         if (settings.selectableText && selectionResetToken > 0) {
-            selectionMenuRect = null
+            isTextSelectionActive = false
             lastCopyAction = null
             selectionActiveChangeState.value(false)
         }
@@ -259,10 +272,9 @@ internal fun ReaderChapterContent(
                 }
             }
 
-            // Floating action bar for text selection with Define/Translate
-            val showBar = selectionMenuRect != null
+            // Floating action bar for text selection with Copy/Define/Translate
             AnimatedVisibility(
-                visible = showBar,
+                visible = isTextSelectionActive,
                 enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                 exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
                 modifier = Modifier
@@ -277,25 +289,32 @@ internal fun ReaderChapterContent(
                         Toast.makeText(context, "Copied", Toast.LENGTH_SHORT).show()
                     },
                     onDefine = {
-                        // Copy text to clipboard first, then read it for the intent.
-                        // SelectionContainer copy puts text on the system clipboard.
                         lastCopyAction?.invoke()
                         val clip = clipboardManager.getText()?.text.orEmpty()
                         if (clip.isNotBlank()) {
-                            launchDefineAction(context, clip)
+                            pendingWebLookup = WebLookupAction.Define(clip)
                         }
                     },
                     onTranslate = {
                         lastCopyAction?.invoke()
                         val clip = clipboardManager.getText()?.text.orEmpty()
                         if (clip.isNotBlank()) {
-                            launchTranslateAction(context, clip)
+                            pendingWebLookup = WebLookupAction.Translate(clip)
                         }
                     },
-                    hasDefine = remember(context) { canDefineText(context) },
-                    hasTranslate = true, // Always show; falls back to web
                 )
             }
+        }
+
+        // In-app WebView bottom sheet for Define/Translate
+        pendingWebLookup?.let { action ->
+            WebViewBottomSheet(
+                url = action.url,
+                title = action.title,
+                themeColors = themeColors,
+                forceDark = settings.forceDarkWebLookups,
+                onDismiss = { pendingWebLookup = null },
+            )
         }
     } else {
         content()
@@ -327,20 +346,12 @@ private fun ReaderChapterImage(
     }
 }
 
-/**
- * Floating action bar shown at the bottom of the reader when text is selected.
- * Provides Copy, Define, and Translate actions.
- * Define is hidden when no dictionary app is installed.
- * Translate always shows (falls back to Google Translate web).
- */
 @Composable
 private fun TextSelectionActionBar(
     themeColors: ReaderTheme,
     onCopy: () -> Unit,
     onDefine: () -> Unit,
     onTranslate: () -> Unit,
-    hasDefine: Boolean,
-    hasTranslate: Boolean,
 ) {
     Surface(
         modifier = Modifier
@@ -355,33 +366,24 @@ private fun TextSelectionActionBar(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Copy
             TextSelectionActionButton(
                 icon = Icons.Default.ContentCopy,
                 label = "Copy",
                 themeColors = themeColors,
                 onClick = onCopy,
             )
-
-            // Define (hidden if no dictionary app installed)
-            if (hasDefine) {
-                TextSelectionActionButton(
-                    icon = Icons.AutoMirrored.Filled.MenuBook,
-                    label = "Define",
-                    themeColors = themeColors,
-                    onClick = onDefine,
-                )
-            }
-
-            // Translate (always available; web fallback)
-            if (hasTranslate) {
-                TextSelectionActionButton(
-                    icon = Icons.Default.GTranslate,
-                    label = "Translate",
-                    themeColors = themeColors,
-                    onClick = onTranslate,
-                )
-            }
+            TextSelectionActionButton(
+                icon = Icons.AutoMirrored.Filled.MenuBook,
+                label = "Define",
+                themeColors = themeColors,
+                onClick = onDefine,
+            )
+            TextSelectionActionButton(
+                icon = Icons.Default.GTranslate,
+                label = "Translate",
+                themeColors = themeColors,
+                onClick = onTranslate,
+            )
         }
     }
 }
@@ -413,6 +415,70 @@ private fun TextSelectionActionButton(
             color = themeColors.foreground.copy(alpha = 0.8f),
             maxLines = 1,
         )
+    }
+}
+
+/**
+ * In-app WebView bottom sheet for Define/Translate lookups.
+ * Container theming respects reader theme; WebView content dark mode
+ * is controlled by the [forceDark] setting.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("SetJavaScriptEnabled")
+@Composable
+private fun WebViewBottomSheet(
+    url: String,
+    title: String,
+    themeColors: ReaderTheme,
+    forceDark: Boolean,
+    onDismiss: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = themeColors.background,
+        scrimColor = Color.Black.copy(alpha = 0.4f),
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.7f)
+        ) {
+            // Title bar
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = themeColors.foreground,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+            HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.12f))
+
+            // WebView
+            val bgArgb = themeColors.background.toArgb()
+            AndroidView(
+                factory = { ctx ->
+                    WebView(ctx).apply {
+                        setBackgroundColor(bgArgb)
+                        webViewClient = WebViewClient()
+                        settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+
+                        // Force dark theme for web content when user enables the setting
+                        if (forceDark && WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+                            WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true)
+                        }
+
+                        loadUrl(url)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("web_lookup_webview"),
+            )
+        }
     }
 }
 
@@ -779,6 +845,14 @@ private fun ReaderGeneralControlsTab(
             checked = settings.selectableText,
             onCheckedChange = { selectableText ->
                 onSettingsChange { current -> current.copy(selectableText = selectableText) }
+            }
+        )
+
+        ReaderGeneralToggleRow(
+            label = "Force Dark Theme for Web Lookups",
+            checked = settings.forceDarkWebLookups,
+            onCheckedChange = { forceDark ->
+                onSettingsChange { current -> current.copy(forceDarkWebLookups = forceDark) }
             }
         )
     }

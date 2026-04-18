@@ -260,6 +260,7 @@ data class GlobalSettings(
     val showScrubber: Boolean = false,
     val showSystemBar: Boolean = false,
     val selectableText: Boolean = false,
+    val forceDarkWebLookups: Boolean = false,
     val allowBlankCovers: Boolean = false,
     val librarySort: String = "added_desc",
     val favoriteLibrary: String = "My Library",

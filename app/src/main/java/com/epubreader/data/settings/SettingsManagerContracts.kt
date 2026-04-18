@@ -52,6 +52,7 @@ internal object SettingsPreferenceKeys {
     val showScrubber = booleanPreferencesKey("show_scrubber")
     val showSystemBar = booleanPreferencesKey("show_system_bar")
     val selectableText = booleanPreferencesKey("selectable_text")
+    val forceDarkWebLookups = booleanPreferencesKey("force_dark_web_lookups")
     val allowBlankCovers = booleanPreferencesKey("allow_blank_covers")
     val librarySort = stringPreferencesKey("library_sort")
     val favoriteLibrary = stringPreferencesKey("favorite_library")
@@ -104,6 +105,7 @@ internal fun Preferences.toGlobalSettings(): GlobalSettings {
         showScrubber = this[SettingsPreferenceKeys.showScrubber] ?: false,
         showSystemBar = this[SettingsPreferenceKeys.showSystemBar] ?: false,
         selectableText = this[SettingsPreferenceKeys.selectableText] ?: false,
+        forceDarkWebLookups = this[SettingsPreferenceKeys.forceDarkWebLookups] ?: false,
         allowBlankCovers = this[SettingsPreferenceKeys.allowBlankCovers] ?: false,
         librarySort = this[SettingsPreferenceKeys.librarySort] ?: DefaultLibrarySort,
         favoriteLibrary = this[SettingsPreferenceKeys.favoriteLibrary] ?: DefaultLibraryName,
