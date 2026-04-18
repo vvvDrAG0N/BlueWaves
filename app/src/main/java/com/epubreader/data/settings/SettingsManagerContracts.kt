@@ -65,7 +65,8 @@ internal object SettingsPreferenceKeys {
     val readerStatusShowClock = booleanPreferencesKey("reader_status_show_clock")
     val readerStatusShowBattery = booleanPreferencesKey("reader_status_show_battery")
     val readerStatusShowChapterProgress = booleanPreferencesKey("reader_status_show_chapter_progress")
-    val readerStatusShowChapterTitle = booleanPreferencesKey("reader_status_show_chapter_title")
+    val readerStatusShowChapterNumber = booleanPreferencesKey("reader_status_show_chapter_number")
+    val readerStatusShowMaxChapter = booleanPreferencesKey("reader_status_show_max_chapter")
 }
 
 internal data class BookProgressPreferenceKeys(
@@ -132,7 +133,8 @@ internal fun Preferences.toGlobalSettings(): GlobalSettings {
             showClock = this[SettingsPreferenceKeys.readerStatusShowClock] ?: true,
             showBattery = this[SettingsPreferenceKeys.readerStatusShowBattery] ?: true,
             showChapterProgress = this[SettingsPreferenceKeys.readerStatusShowChapterProgress] ?: false,
-            showChapterTitle = this[SettingsPreferenceKeys.readerStatusShowChapterTitle] ?: false,
+            showChapterNumber = this[SettingsPreferenceKeys.readerStatusShowChapterNumber] ?: true,
+            showMaxChapter = this[SettingsPreferenceKeys.readerStatusShowMaxChapter] ?: false,
         ),
     )
 }

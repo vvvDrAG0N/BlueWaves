@@ -61,6 +61,13 @@ import androidx.compose.material.icons.outlined.FormatSize
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.WifiOff
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.BatteryFull
+import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.DataUsage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -93,6 +100,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -888,45 +896,95 @@ private fun GeneralTab(
                 )
             }
 
-            if (settings.readerStatusUi.isEnabled) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Overlay Position", style = MaterialTheme.typography.bodyMedium)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        com.epubreader.core.model.StatusOverlayPosition.entries.forEach { position ->
-                            FilterChip(
-                                selected = settings.readerStatusUi.position == position,
-                                onClick = {
-                                    scope.launch { settingsManager.updateReaderStatusPosition(position) }
-                                },
-                                label = { Text(position.name.lowercase().replaceFirstChar { it.uppercase() }) }
-                            )
-                        }
-                    }
+            @Composable
+            fun StatusIconButton(
+                icon: ImageVector,
+                active: Boolean,
+                enabled: Boolean,
+                contentDescription: String,
+                onClick: () -> Unit
+            ) {
+                IconButton(onClick = onClick, enabled = enabled) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = contentDescription,
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = if (active) 1f else 0.3f),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .alpha(if (settings.readerStatusUi.isEnabled) 1f else 0.3f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                val enabled = settings.readerStatusUi.isEnabled
+
+                // Position Toggle
+                IconButton(
+                    onClick = {
+                        val newPos = if (settings.readerStatusUi.position == com.epubreader.core.model.StatusOverlayPosition.TOP)
+                            com.epubreader.core.model.StatusOverlayPosition.BOTTOM
+                        else
+                            com.epubreader.core.model.StatusOverlayPosition.TOP
+                        scope.launch { settingsManager.updateReaderStatusPosition(newPos) }
+                    },
+                    enabled = enabled
+                ) {
+                    Icon(
+                        imageVector = if (settings.readerStatusUi.position == com.epubreader.core.model.StatusOverlayPosition.TOP)
+                            Icons.Default.KeyboardArrowUp
+                        else
+                            Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Toggle Position",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
 
-                @Composable
-                fun StatusSwitch(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-                        Switch(checked = checked, onCheckedChange = onCheckedChange)
-                    }
-                }
+                Spacer(modifier = Modifier.width(8.dp))
 
-                StatusSwitch("Show Clock", settings.readerStatusUi.showClock) {
-                    scope.launch { settingsManager.updateReaderStatusShowClock(it) }
-                }
-                StatusSwitch("Show Battery", settings.readerStatusUi.showBattery) {
-                    scope.launch { settingsManager.updateReaderStatusShowBattery(it) }
-                }
-                StatusSwitch("Show Chapter Title", settings.readerStatusUi.showChapterTitle) {
-                    scope.launch { settingsManager.updateReaderStatusShowChapterTitle(it) }
-                }
-                StatusSwitch("Show Chapter Progress", settings.readerStatusUi.showChapterProgress) {
-                    scope.launch { settingsManager.updateReaderStatusShowChapterProgress(it) }
-                }
+                StatusIconButton(
+                    icon = Icons.Default.Schedule,
+                    active = settings.readerStatusUi.showClock,
+                    enabled = enabled,
+                    contentDescription = "Clock",
+                    onClick = { scope.launch { settingsManager.updateReaderStatusShowClock(!settings.readerStatusUi.showClock) } }
+                )
+
+                StatusIconButton(
+                    icon = Icons.Default.BatteryFull,
+                    active = settings.readerStatusUi.showBattery,
+                    enabled = enabled,
+                    contentDescription = "Battery",
+                    onClick = { scope.launch { settingsManager.updateReaderStatusShowBattery(!settings.readerStatusUi.showBattery) } }
+                )
+
+                StatusIconButton(
+                    icon = Icons.Default.Tag,
+                    active = settings.readerStatusUi.showChapterNumber,
+                    enabled = enabled,
+                    contentDescription = "Chapter Number",
+                    onClick = { scope.launch { settingsManager.updateReaderStatusShowChapterNumber(!settings.readerStatusUi.showChapterNumber) } }
+                )
+
+                StatusIconButton(
+                    icon = Icons.Default.List,
+                    active = settings.readerStatusUi.showMaxChapter,
+                    enabled = enabled,
+                    contentDescription = "Max Chapters",
+                    onClick = { scope.launch { settingsManager.updateReaderStatusShowMaxChapter(!settings.readerStatusUi.showMaxChapter) } }
+                )
+
+                StatusIconButton(
+                    icon = Icons.Default.DataUsage,
+                    active = settings.readerStatusUi.showChapterProgress,
+                    enabled = enabled,
+                    contentDescription = "Progress",
+                    onClick = { scope.launch { settingsManager.updateReaderStatusShowChapterProgress(!settings.readerStatusUi.showChapterProgress) } }
+                )
             }
         }
 

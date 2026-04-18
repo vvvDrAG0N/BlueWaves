@@ -281,7 +281,8 @@ class SettingsManager(private val context: Context) {
             preferences[SettingsPreferenceKeys.readerStatusShowClock] = updated.readerStatusUi.showClock
             preferences[SettingsPreferenceKeys.readerStatusShowBattery] = updated.readerStatusUi.showBattery
             preferences[SettingsPreferenceKeys.readerStatusShowChapterProgress] = updated.readerStatusUi.showChapterProgress
-            preferences[SettingsPreferenceKeys.readerStatusShowChapterTitle] = updated.readerStatusUi.showChapterTitle
+            preferences[SettingsPreferenceKeys.readerStatusShowChapterNumber] = updated.readerStatusUi.showChapterNumber
+            preferences[SettingsPreferenceKeys.readerStatusShowMaxChapter] = updated.readerStatusUi.showMaxChapter
         }
     }
 
@@ -451,7 +452,11 @@ class SettingsManager(private val context: Context) {
         context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowChapterProgress] = show }
     }
 
-    suspend fun updateReaderStatusShowChapterTitle(show: Boolean) {
-        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowChapterTitle] = show }
+    suspend fun updateReaderStatusShowChapterNumber(show: Boolean) {
+        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowChapterNumber] = show }
+    }
+
+    suspend fun updateReaderStatusShowMaxChapter(show: Boolean) {
+        context.settingsDataStore.edit { it[SettingsPreferenceKeys.readerStatusShowMaxChapter] = show }
     }
 }

@@ -115,12 +115,6 @@ fun ReaderScreen(
         }
     }
 
-    val currentChapterTitle = remember(currentChapterIndex, book.toc) {
-        if (currentChapterIndex != -1 && currentChapterIndex < book.spineHrefs.size) {
-            val href = book.spineHrefs[currentChapterIndex]
-            book.toc.find { it.href.substringBefore("#") == href }?.title
-        } else null
-    }
 
     val progressPercentage by remember {
         derivedStateOf {
@@ -539,7 +533,6 @@ fun ReaderScreen(
         verticalOverscroll = verticalOverscroll,
         overscrollThreshold = overscrollThreshold,
         nestedScrollConnection = nestedScrollConnection,
-        chapterTitle = currentChapterTitle,
         progressPercentage = progressPercentage,
     )
     val chromeCallbacks = ReaderChromeCallbacks(

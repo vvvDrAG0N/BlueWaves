@@ -424,7 +424,8 @@ private fun ReaderContentSurface(
         ReaderStatusOverlay(
             uiState = state.settings.readerStatusUi,
             themeColors = state.themeColors,
-            chapterTitle = state.chapterTitle,
+            chapterIndex = state.currentChapterIndex + 1,
+            maxChapters = state.book.spineHrefs.size,
             progressPercentage = state.progressPercentage,
             modifier = Modifier.align(
                 if (state.settings.readerStatusUi.position == com.epubreader.core.model.StatusOverlayPosition.TOP)
@@ -524,7 +525,8 @@ private fun BoxScope.ReaderScrollToTopFab(
 internal fun ReaderStatusOverlay(
     uiState: com.epubreader.core.model.ReaderStatusUiState,
     themeColors: ReaderTheme,
-    chapterTitle: String?,
+    chapterIndex: Int,
+    maxChapters: Int,
     progressPercentage: Float?,
     modifier: Modifier = Modifier
 ) {
@@ -536,7 +538,8 @@ internal fun ReaderStatusOverlay(
         LaunchedEffect(Unit) {
             while (true) {
                 val now = java.util.Calendar.getInstance()
-                timeText = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(now.time)
+                // Explicitly use 12-hour format with AM/PM
+                timeText = java.text.SimpleDateFormat("h:mm a", java.util.Locale.getDefault()).format(now.time)
                 kotlinx.coroutines.delay(1000 * 30) // Update every 30 seconds
             }
         }
@@ -553,68 +556,61 @@ internal fun ReaderStatusOverlay(
         } else ""
     }
 
+    val chapterText = remember(uiState.showChapterNumber, uiState.showMaxChapter, chapterIndex, maxChapters) {
+        when {
+            uiState.showChapterNumber && uiState.showMaxChapter -> "Chapter $chapterIndex | $maxChapters"
+            uiState.showChapterNumber -> "Chapter $chapterIndex"
+            uiState.showMaxChapter -> "Total: $maxChapters"
+            else -> ""
+        }
+    }
+
     AnimatedVisibility(
         visible = uiState.isEnabled,
         enter = slideInVertically(initialOffsetY = { if (uiState.position == com.epubreader.core.model.StatusOverlayPosition.TOP) -it else it }) + fadeIn(),
         exit = slideOutVertically(targetOffsetY = { if (uiState.position == com.epubreader.core.model.StatusOverlayPosition.TOP) -it else it }) + fadeOut(),
         modifier = modifier
+            .background(themeColors.background) // Solid background to block text underneath
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+            // Left-aligned with spacing between elements
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left Group: Chapter Title, Progress
-            Row(
-                modifier = Modifier.weight(1f, fill = false),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (uiState.showChapterTitle && !chapterTitle.isNullOrBlank()) {
-                    Text(
-                        text = chapterTitle,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            color = themeColors.foreground.copy(alpha = 0.5f)
-                        ),
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            if (chapterText.isNotEmpty()) {
+                Text(
+                    text = chapterText,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = themeColors.foreground.copy(alpha = 0.5f)
                     )
-                }
-                if (uiState.showChapterProgress && progressPercentage != null) {
-                    if (uiState.showChapterTitle && !chapterTitle.isNullOrBlank()) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    Text(
-                        text = "${(progressPercentage * 100).toInt()}%",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            color = themeColors.foreground.copy(alpha = 0.5f)
-                        )
-                    )
-                }
+                )
             }
-
-            // Right Group: Clock, Battery
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (uiState.showClock) {
-                    Text(
-                        text = timeText,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            color = themeColors.foreground.copy(alpha = 0.5f)
-                        )
+            if (uiState.showChapterProgress && progressPercentage != null) {
+                Text(
+                    text = "${(progressPercentage * 100).toInt()}%",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = themeColors.foreground.copy(alpha = 0.5f)
                     )
-                }
-                if (uiState.showBattery) {
-                    if (uiState.showClock) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    Text(
-                        text = batteryText,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            color = themeColors.foreground.copy(alpha = 0.5f)
-                        )
+                )
+            }
+            if (uiState.showClock) {
+                Text(
+                    text = timeText,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = themeColors.foreground.copy(alpha = 0.5f)
                     )
-                }
+                )
+            }
+            if (uiState.showBattery && batteryText.isNotEmpty()) {
+                Text(
+                    text = batteryText,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = themeColors.foreground.copy(alpha = 0.5f)
+                    )
+                )
             }
         }
     }

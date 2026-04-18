@@ -18,7 +18,8 @@ data class ReaderStatusUiState(
     val showClock: Boolean = true,
     val showBattery: Boolean = true,
     val showChapterProgress: Boolean = false,
-    val showChapterTitle: Boolean = false,
+    val showChapterNumber: Boolean = true,
+    val showMaxChapter: Boolean = false
 )
 
 /**
