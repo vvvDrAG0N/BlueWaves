@@ -1,5 +1,6 @@
 package com.epubreader.core.model
 
+import androidx.compose.runtime.Immutable
 import java.util.UUID
 
 enum class BookFormat {
@@ -24,6 +25,7 @@ enum class BookRepresentation {
  * Data class for TOC navigation.
  * href usually points to the XHTML file within the EPUB container.
  */
+@Immutable
 data class TocItem(
     val title: String,
     val href: String
@@ -33,6 +35,7 @@ data class TocItem(
  * Sealed class representing a single element of content in a chapter.
  * Used for heterogeneous rendering in the reader LazyColumn.
  */
+@Immutable
 sealed class ChapterElement {
     abstract val id: String
 
@@ -64,6 +67,7 @@ sealed class ChapterElement {
  * High-level model for a book in the library.
  * bookId is an MD5 hash of (URI + FileSize). Changing this orphans progress.
  */
+@Immutable
 data class EpubBook(
     val id: String,
     val title: String,

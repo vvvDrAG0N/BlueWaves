@@ -1,5 +1,6 @@
 package com.epubreader.core.model
 
+import androidx.compose.runtime.Immutable
 import java.util.Locale
 
 const val LightThemeId = "light"
@@ -12,6 +13,7 @@ const val CustomThemeIdPrefix = "custom-"
  * Shared color seed used to derive app-wide Material colors and explicit reader colors.
  * The reader colors stay explicit so content contrast does not depend on generic Material tokens.
  */
+@Immutable
 data class ThemePalette(
     val primary: Long,
     val secondary: Long,
@@ -24,6 +26,7 @@ data class ThemePalette(
     val systemForeground: Long,
 )
 
+@Immutable
 data class CustomTheme(
     val id: String,
     val name: String,
@@ -31,6 +34,7 @@ data class CustomTheme(
     val isAdvanced: Boolean = true,
 )
 
+@Immutable
 data class ThemeOption(
     val id: String,
     val name: String,
@@ -248,6 +252,7 @@ fun themeButtonLabel(themeName: String, themeId: String): String {
  * Adding new fields here requires updating SettingsManager.updateGlobalSettings
  * and the SettingsManager.globalSettings mapping logic.
  */
+@Immutable
 data class GlobalSettings(
     val fontSize: Int = 18,
     val fontType: String = "serif",
@@ -274,6 +279,7 @@ data class GlobalSettings(
  * Data class for per-book reading progress.
  * scrollIndex refers to the first visible item in the reader LazyColumn.
  */
+@Immutable
 data class BookProgress(
     val scrollIndex: Int = 0,
     val scrollOffset: Int = 0,
