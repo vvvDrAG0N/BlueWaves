@@ -61,6 +61,7 @@ internal data class ReaderChromeState(
     val overscrollThreshold: Float,
     val nestedScrollConnection: NestedScrollConnection,
     val progressPercentage: Float?,
+    val selectionResetToken: Int,
 )
 
 internal data class ReaderChromeCallbacks(

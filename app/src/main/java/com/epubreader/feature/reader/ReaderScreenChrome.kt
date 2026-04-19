@@ -302,6 +302,13 @@ private fun ReaderContentSurface(
     // Chrome stays hidden for the full selection session, not just while the toolbar is visible.
     var isTextSelectionSessionActive by remember { mutableStateOf(false) }
 
+    LaunchedEffect(state.selectionResetToken) {
+        if (state.selectionResetToken > 0) {
+            isTextSelectionSessionActive = false
+            selectionResetToken++
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

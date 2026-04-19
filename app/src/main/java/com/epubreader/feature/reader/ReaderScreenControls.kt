@@ -37,6 +37,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -81,6 +82,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -100,6 +102,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -164,6 +167,7 @@ internal fun ReaderChapterContent(
     val platformTextToolbar = LocalTextToolbar.current
     val textSelectionScope = rememberCoroutineScope()
     val selectionActiveChangeState = rememberUpdatedState(onSelectionActiveChange)
+    val density = LocalDensity.current
     
     // Internal clipboard to capture text without triggering system popups
     val internalClipboard = remember {
@@ -183,6 +187,9 @@ internal fun ReaderChapterContent(
             }
         )
     }
+    var selectionMenuRect by remember { mutableStateOf<Rect?>(null) }
+    var contentHeightPx by remember { mutableIntStateOf(0) }
+    var actionBarHeightPx by remember { mutableIntStateOf(0) }
 
     // Bottom sheet state for in-app WebView lookups
     var pendingWebLookup by remember { mutableStateOf<WebLookupAction?>(null) }
@@ -201,6 +208,7 @@ internal fun ReaderChapterContent(
             ) {
                 // Update the copy callback but keep selection active throughout drag.
                 // This is called repeatedly during handle drag — do NOT toggle state.
+                selectionMenuRect = rect
                 selectionSession.showMenu(onCopyRequested)
             }
 
@@ -268,13 +276,32 @@ internal fun ReaderChapterContent(
         }
     }
 
+    LaunchedEffect(selectionSession.isActive) {
+        if (!selectionSession.isActive) {
+            selectionMenuRect = null
+        }
+    }
+
     if (settings.selectableText) {
         val selectionActionBarBottomPadding =
             if (settings.readerStatusUi.isEnabled && !settings.showSystemBar) 40.dp else 24.dp
+        val selectionActionBarTopPadding = 24.dp
+        val estimatedActionBarHeightPx =
+            if (actionBarHeightPx > 0) actionBarHeightPx else with(density) { 72.dp.roundToPx() }
+        val actionBarCollisionZonePx = estimatedActionBarHeightPx + with(density) {
+            (selectionActionBarBottomPadding + 24.dp).roundToPx()
+        }
+        val moveSelectionActionBarToTop =
+            selectionMenuRect?.bottom?.let { selectionBottom ->
+                contentHeightPx > 0 && selectionBottom >= (contentHeightPx - actionBarCollisionZonePx)
+            } == true
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .onSizeChanged { size ->
+                    contentHeightPx = size.height
+                }
                 .pointerInput(selectionResetToken) {
                     awaitPointerEventScope {
                         while (true) {
@@ -303,9 +330,21 @@ internal fun ReaderChapterContent(
                 enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                 exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = selectionActionBarBottomPadding)
-                    .navigationBarsPadding()
+                    .align(if (moveSelectionActionBarToTop) Alignment.TopCenter else Alignment.BottomCenter)
+                    .then(
+                        if (moveSelectionActionBarToTop) {
+                            Modifier
+                                .padding(top = selectionActionBarTopPadding)
+                                .statusBarsPadding()
+                        } else {
+                            Modifier
+                                .padding(bottom = selectionActionBarBottomPadding)
+                                .navigationBarsPadding()
+                        }
+                    )
+                    .onSizeChanged { size ->
+                        actionBarHeightPx = size.height
+                    }
             ) {
                 TextSelectionActionBar(
                     themeColors = themeColors,

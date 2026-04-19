@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -102,6 +103,7 @@ fun ReaderScreen(
     var isGestureNavigation by remember { mutableStateOf(false) }
     var shouldScrollToBottom by remember { mutableStateOf(false) }
     var showControls by remember { mutableStateOf(false) }
+    var selectionResetToken by remember(book.id) { mutableIntStateOf(0) }
 
     val listState = rememberLazyListState()
     val tocListState = rememberLazyListState()
@@ -322,6 +324,8 @@ fun ReaderScreen(
     }
 
     suspend fun saveAndBack() {
+        selectionResetToken++
+        withFrameNanos { }
         saveCurrentProgress()
         onBack()
     }
@@ -541,6 +545,7 @@ fun ReaderScreen(
         overscrollThreshold = overscrollThreshold,
         nestedScrollConnection = nestedScrollConnection,
         progressPercentage = progressPercentage,
+        selectionResetToken = selectionResetToken,
     )
     val chromeCallbacks = ReaderChromeCallbacks(
         onShowControlsChange = { showControls = it },
