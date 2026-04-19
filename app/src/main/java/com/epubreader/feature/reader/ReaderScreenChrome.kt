@@ -319,12 +319,12 @@ private fun ReaderContentSurface(
                 .fillMaxSize()
                 .testTag("reader_controls_overlay")
                 .then(
-                    if (!state.showControls && !state.isTextSelectionSessionActive) {
+                    if (!state.isTextSelectionSessionActive) {
                         Modifier.clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) {
-                            callbacks.onShowControlsChange(true)
+                            callbacks.onShowControlsChange(!state.showControls)
                         }
                     } else {
                         Modifier
