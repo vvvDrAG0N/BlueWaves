@@ -62,6 +62,10 @@ The reader supports three distinct ways to navigate chapters, each interacting d
 - `ReaderScreenControls.kt`
   - Owns chapter element rendering, bottom settings controls, scrubber UI, and reader theme buttons.
   - Theme controls render built-in and saved custom themes from the shared settings model.
+  - The reader settings card is now one drag-resizable sheet with a top handle, one vertically scrollable section stack ordered `Chapter`, `Theme`, `Font`, `Reading`, `Others`, and snap points at 50%, 80%, and 100% of the reader height.
+  - Dragging the settings sheet downward past the first detent dismisses it instead of snapping below 50%.
+  - Padding now lives under the `Font` section with font size and line height.
+  - When reader controls are visible, the exposed reading area above the sheet must stay touch-interactive so users can still scroll or start text selection there.
   - Text selection handle drags can trigger transient `TextToolbar.hide()` calls; do not treat those callbacks alone as proof that the selection session ended.
   - Do not wrap the chapter `LazyColumn` in one shared `SelectionContainer`; keep selection scoped to composed text items so the reader avoids lazy-layout selection invalidation.
 

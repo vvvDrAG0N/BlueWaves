@@ -1,11 +1,11 @@
 # Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-19)
 
 ## Corpus Check
-- 40 files · ~89,616 words
+- 40 files · ~89,992 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 497 nodes · 460 edges · 41 communities detected
+- 499 nodes · 462 edges · 41 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -15,8 +15,8 @@
 - [[_COMMUNITY_SettingsManager Cluster|SettingsManager Cluster]]
 - [[_COMMUNITY_EpubParserEditing Cluster|EpubParserEditing Cluster]]
 - [[_COMMUNITY_EditBookScreen Cluster|EditBookScreen Cluster]]
-- [[_COMMUNITY_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster|app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster]]
 - [[_COMMUNITY_ReaderScreenControls Cluster|ReaderScreenControls Cluster]]
+- [[_COMMUNITY_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster|app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster]]
 - [[_COMMUNITY_EditBookModels Cluster|EditBookModels Cluster]]
 - [[_COMMUNITY_SettingsScreen Cluster|SettingsScreen Cluster]]
 - [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
@@ -89,13 +89,13 @@ Nodes (0):
 Cohesion: 0.08
 Nodes (3): ChapterDisplaySort, ChapterSelectionMode, EditBookTab
 
-### Community 5 - "app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster"
+### Community 5 - "ReaderScreenControls Cluster"
+Cohesion: 0.08
+Nodes (1): NestedScrollWebView
+
+### Community 6 - "app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster"
 Cohesion: 0.09
 Nodes (2): PdfDocumentInfo, ResolvedBookCoverFiles
-
-### Community 6 - "ReaderScreenControls Cluster"
-Cohesion: 0.09
-Nodes (2): NestedScrollWebView, ReaderControlsTab
 
 ### Community 7 - "EditBookModels Cluster"
 Cohesion: 0.1
@@ -234,7 +234,7 @@ Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
-- **76 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+71 more)
+- **75 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+70 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `AppNavigation Cluster`** (2 nodes): `AppNavigation()`, `AppNavigation.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -253,7 +253,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `PdfConversionWorkspaceState` connect `pdftoepubconverter_pdfconversionworkspacestate Cluster` to `PdfToEpubConverter Cluster`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `Screen`, `LibraryAsyncUiState`, `LibraryScreenState` to the rest of the system?**
-  _76 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _75 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `PdfToEpubConverter Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `EpubParser Cluster` be split into smaller, more focused modules?**

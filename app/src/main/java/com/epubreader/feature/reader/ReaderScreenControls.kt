@@ -21,6 +21,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +36,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -49,6 +53,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.ContentCopy
@@ -57,7 +62,6 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.TextFormat
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -71,8 +75,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.LocalContentColor
@@ -82,6 +84,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -129,19 +132,23 @@ import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.themeButtonLabel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
+import kotlin.math.abs
 
-private enum class ReaderControlsTab(
-    val title: String,
-    val icon: ImageVector,
-    val testTag: String,
-) {
-    Chapter("Chapter", Icons.AutoMirrored.Filled.MenuBook, "reader_controls_tab_chapter"),
-    Font("Font", Icons.Default.TextFormat, "reader_controls_tab_font"),
-    Theme("Theme", Icons.Default.Palette, "reader_controls_tab_theme"),
-    General("General", Icons.Default.Tune, "reader_controls_tab_general"),
+private val ReaderControlsSheetFractions = listOf(0.5f, 0.8f, 1.0f)
+private const val ReaderControlsDismissThresholdRatio = 0.75f
+private const val ReaderControlsDismissVelocityThreshold = 1_600f
+
+private fun nearestReaderControlsHeightPx(
+    currentHeightPx: Float,
+    snapHeightsPx: List<Float>,
+): Float {
+    return snapHeightsPx.minByOrNull { snapHeightPx ->
+        abs(snapHeightPx - currentHeightPx)
+    } ?: currentHeightPx
 }
 
 @Composable
@@ -647,70 +654,171 @@ fun ReaderControls(
     totalChapters: Int,
     sectionLabel: String,
     progressPercentage: Float,
+    onDismiss: () -> Unit,
 ) {
-    Card(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(horizontal = 8.dp)
             .padding(top = 8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = themeColors.background.copy(alpha = 0.98f),
-            contentColor = themeColors.foreground
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        var selectedTab by remember { mutableStateOf(ReaderControlsTab.Chapter) }
-
-        Column(
-            modifier = Modifier.padding(top = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            when (selectedTab) {
-                ReaderControlsTab.Chapter -> ReaderChapterControlsTab(
-                    themeColors = themeColors,
-                    onNavigatePrev = onNavigatePrev,
-                    onNavigateNext = onNavigateNext,
-                    listState = listState,
-                    itemCount = itemCount,
-                    currentChapterIndex = currentChapterIndex,
-                    totalChapters = totalChapters,
-                    sectionLabel = sectionLabel,
-                    progressPercentage = progressPercentage,
-                )
-
-                ReaderControlsTab.Font -> ReaderFontControlsTab(
-                    settings = settings,
-                    onSettingsChange = onSettingsChange,
-                    themeColors = themeColors,
-                )
-
-                ReaderControlsTab.Theme -> ReaderThemeControlsTab(
-                    settings = settings,
-                    onSettingsChange = onSettingsChange,
-                )
-
-                ReaderControlsTab.General -> ReaderGeneralControlsTab(
-                    settings = settings,
-                    onSettingsChange = onSettingsChange,
-                )
+        val density = LocalDensity.current
+        val maxSheetHeightPx = with(density) { maxHeight.toPx() }
+        val snapHeightsPx = remember(maxHeight) {
+            ReaderControlsSheetFractions.map { fraction ->
+                with(density) { maxHeight.toPx() * fraction }
             }
+        }
+        val minSheetHeightPx = snapHeightsPx.first()
+        val dismissThresholdPx = minSheetHeightPx * ReaderControlsDismissThresholdRatio
+        var desiredSheetHeightPx by remember(maxHeight) { mutableFloatStateOf(minSheetHeightPx) }
+        var sheetChromeHeightPx by remember { mutableIntStateOf(0) }
+        val contentMaxHeightDp = with(density) {
+            (desiredSheetHeightPx - sheetChromeHeightPx)
+                .coerceAtLeast(0f)
+                .toDp()
+        }
+        val contentScrollState = rememberScrollState()
 
-            HorizontalDivider(
-                color = themeColors.foreground.copy(alpha = 0.2f)
-            )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("reader_controls_sheet"),
+            colors = CardDefaults.cardColors(
+                containerColor = themeColors.background.copy(alpha = 0.98f),
+                contentColor = themeColors.foreground
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column {
+                Column(
+                    modifier = Modifier.onSizeChanged { sheetChromeHeightPx = it.height }
+                ) {
+                    ReaderControlsDragHandle(
+                        themeColors = themeColors,
+                        onDragDelta = { delta ->
+                            desiredSheetHeightPx =
+                                (desiredSheetHeightPx - delta).coerceIn(0f, maxSheetHeightPx)
+                        },
+                        onDragStopped = { velocity ->
+                            val dismissByHeight = desiredSheetHeightPx < dismissThresholdPx
+                            val dismissByFling =
+                                velocity > ReaderControlsDismissVelocityThreshold &&
+                                    desiredSheetHeightPx <= minSheetHeightPx
 
-            ReaderControlsTabRow(
-                selectedTab = selectedTab,
-                themeColors = themeColors,
-                onTabSelected = { selectedTab = it },
+                            if (dismissByHeight || dismissByFling) {
+                                onDismiss()
+                            } else {
+                                desiredSheetHeightPx = nearestReaderControlsHeightPx(
+                                    currentHeightPx = desiredSheetHeightPx.coerceAtLeast(minSheetHeightPx),
+                                    snapHeightsPx = snapHeightsPx,
+                                )
+                            }
+                        }
+                    )
+
+                    HorizontalDivider(
+                        color = themeColors.foreground.copy(alpha = 0.2f)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = contentMaxHeightDp)
+                        .verticalScroll(contentScrollState)
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                ) {
+                    ReaderChapterControlsSection(
+                        themeColors = themeColors,
+                        onNavigatePrev = onNavigatePrev,
+                        onNavigateNext = onNavigateNext,
+                        listState = listState,
+                        itemCount = itemCount,
+                        currentChapterIndex = currentChapterIndex,
+                        totalChapters = totalChapters,
+                        sectionLabel = sectionLabel,
+                        progressPercentage = progressPercentage,
+                    )
+                    ReaderThemeControlsSection(
+                        settings = settings,
+                        onSettingsChange = onSettingsChange,
+                    )
+                    ReaderFontControlsSection(
+                        settings = settings,
+                        onSettingsChange = onSettingsChange,
+                    )
+                    ReaderReadingControlsSection(
+                        settings = settings,
+                        onSettingsChange = onSettingsChange,
+                    )
+                    ReaderOtherControlsSection(
+                        settings = settings,
+                        onSettingsChange = onSettingsChange,
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+private fun ReaderControlsDragHandle(
+    themeColors: ReaderTheme,
+    onDragDelta: (Float) -> Unit,
+    onDragStopped: suspend CoroutineScope.(Float) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp, bottom = 6.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .testTag("reader_controls_drag_handle")
+                .size(width = 44.dp, height = 24.dp)
+                .draggable(
+                    orientation = Orientation.Vertical,
+                    state = rememberDraggableState { delta -> onDragDelta(delta) },
+                    onDragStopped = onDragStopped,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 36.dp, height = 4.dp)
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(themeColors.foreground.copy(alpha = 0.28f))
             )
         }
     }
 }
 
 @Composable
-private fun ReaderChapterControlsTab(
+private fun ReaderControlsSection(
+    title: String,
+    testTag: String,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = Modifier.testTag(testTag),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            color = LocalContentColor.current.copy(alpha = 0.88f),
+        )
+        content()
+    }
+}
+
+@Composable
+private fun ReaderChapterControlsSection(
     themeColors: ReaderTheme,
     onNavigatePrev: () -> Unit,
     onNavigateNext: () -> Unit,
@@ -731,131 +839,153 @@ private fun ReaderChapterControlsTab(
         }
     }
 
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ReaderControlsSection(
+        title = "Chapter",
+        testTag = "reader_controls_section_chapter",
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "$sectionLabel ${currentChapterIndex + 1} of $totalChapters",
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = "${(draggingValue * 100).toInt()}%",
-                style = MaterialTheme.typography.labelMedium,
-                color = themeColors.foreground.copy(alpha = 0.65f),
-            )
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.width(48.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onNavigatePrev) {
-                    Icon(Icons.Default.SkipPrevious, contentDescription = "Previous $sectionLabel")
-                }
                 Text(
-                    text = if (currentChapterIndex > 0) "${sectionLabel.take(1)}. $currentChapterIndex" else "",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = themeColors.foreground.copy(alpha = 0.6f),
-                    maxLines = 1
+                    text = "$sectionLabel ${currentChapterIndex + 1} of $totalChapters",
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = "${(draggingValue * 100).toInt()}%",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = themeColors.foreground.copy(alpha = 0.65f),
                 )
             }
 
-            Slider(
-                value = draggingValue,
-                onValueChange = { progress ->
-                    isDragging = true
-                    draggingValue = progress
-                    val targetIndex = (progress * (itemCount - 1)).toInt().coerceIn(0, (itemCount - 1).coerceAtLeast(0))
-                    scope.launch { listState.scrollToItem(targetIndex) }
-                },
-                onValueChangeFinished = {
-                    isDragging = false
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
-            )
-
-            Column(
-                modifier = Modifier.width(48.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = onNavigateNext) {
-                    Icon(Icons.Default.SkipNext, contentDescription = "Next $sectionLabel")
+                Column(
+                    modifier = Modifier.width(48.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    IconButton(onClick = onNavigatePrev) {
+                        Icon(Icons.Default.SkipPrevious, contentDescription = "Previous $sectionLabel")
+                    }
+                    Text(
+                        text = if (currentChapterIndex > 0) "${sectionLabel.take(1)}. $currentChapterIndex" else "",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = themeColors.foreground.copy(alpha = 0.6f),
+                        maxLines = 1
+                    )
                 }
-                Text(
-                    text = if (currentChapterIndex < totalChapters - 1) "${sectionLabel.take(1)}. ${currentChapterIndex + 2}" else "",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = themeColors.foreground.copy(alpha = 0.6f),
-                    maxLines = 1
+
+                Slider(
+                    value = draggingValue,
+                    onValueChange = { progress ->
+                        isDragging = true
+                        draggingValue = progress
+                        val targetIndex = (progress * (itemCount - 1)).toInt().coerceIn(0, (itemCount - 1).coerceAtLeast(0))
+                        scope.launch { listState.scrollToItem(targetIndex) }
+                    },
+                    onValueChangeFinished = {
+                        isDragging = false
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 8.dp)
                 )
+
+                Column(
+                    modifier = Modifier.width(48.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    IconButton(onClick = onNavigateNext) {
+                        Icon(Icons.Default.SkipNext, contentDescription = "Next $sectionLabel")
+                    }
+                    Text(
+                        text = if (currentChapterIndex < totalChapters - 1) "${sectionLabel.take(1)}. ${currentChapterIndex + 2}" else "",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = themeColors.foreground.copy(alpha = 0.6f),
+                        maxLines = 1
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ReaderFontControlsTab(
+private fun ReaderFontControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
-    themeColors: ReaderTheme,
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ReaderControlsSection(
+        title = "Font",
+        testTag = "reader_controls_section_font",
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.TextFormat, null, modifier = Modifier.size(20.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
+                    Icon(Icons.Default.TextFormat, null, modifier = Modifier.size(20.dp))
+                }
+                Slider(
+                    value = settings.fontSize.toFloat(),
+                    onValueChange = { fontSize ->
+                        onSettingsChange { current -> current.copy(fontSize = fontSize.toInt()) }
+                    },
+                    valueRange = 12f..32f,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 8.dp)
+                )
+                Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "${settings.fontSize}sp",
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 1
+                    )
+                }
             }
-            Slider(
-                value = settings.fontSize.toFloat(),
-                onValueChange = { fontSize ->
-                    onSettingsChange { current -> current.copy(fontSize = fontSize.toInt()) }
-                },
-                valueRange = 12f..32f,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
-            )
-            Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "${settings.fontSize}sp",
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Line Height", style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        String.format(Locale.getDefault(), "%.1f", settings.lineHeight),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Slider(
+                    value = settings.lineHeight,
+                    onValueChange = { lineHeight ->
+                        onSettingsChange { current -> current.copy(lineHeight = lineHeight) }
+                    },
+                    valueRange = 1.2f..2.0f
+                )
+            }
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Padding", style = MaterialTheme.typography.labelSmall)
+                    Text("${settings.horizontalPadding}dp", style = MaterialTheme.typography.bodySmall)
+                }
+                Slider(
+                    value = settings.horizontalPadding.toFloat(),
+                    onValueChange = { padding ->
+                        onSettingsChange { current -> current.copy(horizontalPadding = padding.toInt()) }
+                    },
+                    valueRange = 0f..32f
                 )
             }
         }
+    }
 
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Line Height", style = MaterialTheme.typography.labelSmall)
-                Text(
-                    String.format(Locale.getDefault(), "%.1f", settings.lineHeight),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-            Slider(
-                value = settings.lineHeight,
-                onValueChange = { lineHeight ->
-                    onSettingsChange { current -> current.copy(lineHeight = lineHeight) }
-                },
-                valueRange = 1.2f..2.0f
-            )
-        }
-
+    ReaderControlsSection(
+        title = "Font Family",
+        testTag = "reader_controls_section_font_family",
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -866,6 +996,7 @@ private fun ReaderFontControlsTab(
             val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
             fonts.forEach { font ->
                 FilterChip(
+                    modifier = Modifier.testTag("reader_font_chip_$font"),
                     selected = settings.fontType == font,
                     onClick = {
                         onSettingsChange { current -> current.copy(fontType = font) }
@@ -874,34 +1005,29 @@ private fun ReaderFontControlsTab(
                 )
             }
         }
-
-        Text(
-            text = "Choose a reading font and spacing that stays comfortable over long sessions.",
-            style = MaterialTheme.typography.bodySmall,
-            color = themeColors.foreground.copy(alpha = 0.7f)
-        )
     }
+
 }
 
 @Composable
-private fun ReaderThemeControlsTab(
+private fun ReaderThemeControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ReaderControlsSection(
+        title = "Theme",
+        testTag = "reader_controls_section_theme",
     ) {
         val themeOptions = availableThemeOptions(settings.customThemes)
         val listState = rememberLazyListState()
-        
+
         LaunchedEffect(settings.theme) {
             val index = themeOptions.indexOfFirst { it.id == settings.theme }
             if (index != -1) {
                 listState.animateScrollToItem(index)
             }
         }
-        
+
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -922,80 +1048,74 @@ private fun ReaderThemeControlsTab(
             }
         }
     }
+
 }
 
 @Composable
-private fun ReaderGeneralControlsTab(
+private fun ReaderReadingControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ReaderControlsSection(
+        title = "Reading",
+        testTag = "reader_controls_section_reading",
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Padding", style = MaterialTheme.typography.labelSmall)
-                Text("${settings.horizontalPadding}dp", style = MaterialTheme.typography.bodySmall)
-            }
-            Slider(
-                value = settings.horizontalPadding.toFloat(),
-                onValueChange = { padding ->
-                    onSettingsChange { current -> current.copy(horizontalPadding = padding.toInt()) }
-                },
-                valueRange = 0f..32f
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            ReaderGeneralToggleRow(
+                label = "Show Scrubber",
+                checked = settings.showScrubber,
+                onCheckedChange = { showScrubber ->
+                    onSettingsChange { current -> current.copy(showScrubber = showScrubber) }
+                }
+            )
+
+            ReaderGeneralToggleRow(
+                label = "Show Scroll-to-Top",
+                checked = settings.showScrollToTop,
+                onCheckedChange = { show ->
+                    onSettingsChange { it.copy(showScrollToTop = show) }
+                }
+            )
+
+            ReaderGeneralToggleRow(
+                label = "Selectable Text",
+                checked = settings.selectableText,
+                onCheckedChange = { selectableText ->
+                    onSettingsChange { current -> current.copy(selectableText = selectableText) }
+                }
+            )
+
+            ReaderStatusSettingsRow(
+                settings = settings,
+                onUpdateSettings = onSettingsChange,
+                isReaderUI = true,
+                isSystemBarVisible = settings.showSystemBar,
+                showHeader = false,
             )
         }
+    }
+}
 
-        ReaderGeneralToggleRow(
-            label = "Show Scrubber",
-            checked = settings.showScrubber,
-            onCheckedChange = { showScrubber ->
-                onSettingsChange { current -> current.copy(showScrubber = showScrubber) }
-            }
-        )
-
-        ReaderGeneralToggleRow(
-            label = "Show System Bar",
-            checked = settings.showSystemBar,
-            onCheckedChange = { showSystemBar ->
-                onSettingsChange { current -> current.copy(showSystemBar = showSystemBar) }
-            }
-        )
-
-        ReaderGeneralToggleRow(
-            label = "Show Scroll-to-Top",
-            checked = settings.showScrollToTop,
-            onCheckedChange = { show ->
-                onSettingsChange { it.copy(showScrollToTop = show) }
-            }
-        )
-
-        ReaderGeneralToggleRow(
-            label = "Selectable Text",
-            checked = settings.selectableText,
-            onCheckedChange = { selectableText ->
-                onSettingsChange { current -> current.copy(selectableText = selectableText) }
-            }
-        )
-
-        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = LocalContentColor.current.copy(alpha = 0.1f))
-
-        ReaderStatusSettingsRow(
-            settings = settings,
-            onUpdateSettings = onSettingsChange,
-            isReaderUI = true,
-            isSystemBarVisible = settings.showSystemBar
-        )
-
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Translate To", style = MaterialTheme.typography.bodyMedium)
-            Text(
-                "Target language for text selection translations",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+@Composable
+private fun ReaderOtherControlsSection(
+    settings: GlobalSettings,
+    onSettingsChange: (GlobalSettingsTransform) -> Unit,
+) {
+    ReaderControlsSection(
+        title = "Others",
+        testTag = "reader_controls_section_others",
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            ReaderGeneralToggleRow(
+                label = "Show System Bar",
+                checked = settings.showSystemBar,
+                onCheckedChange = { showSystemBar ->
+                    onSettingsChange { current -> current.copy(showSystemBar = showSystemBar) }
+                }
             )
-            Spacer(modifier = Modifier.height(8.dp))
+
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Translate To", style = MaterialTheme.typography.labelSmall)
             val languages = listOf(
                 "ar" to "العربية",
                 "en" to "English",
@@ -1017,6 +1137,7 @@ private fun ReaderGeneralControlsTab(
                     )
                 }
             }
+            }
         }
     }
 }
@@ -1036,47 +1157,6 @@ private fun ReaderGeneralToggleRow(
             checked = checked,
             onCheckedChange = onCheckedChange
         )
-    }
-}
-
-@Composable
-private fun ReaderControlsTabRow(
-    selectedTab: ReaderControlsTab,
-    themeColors: ReaderTheme,
-    onTabSelected: (ReaderControlsTab) -> Unit,
-) {
-    TabRow(
-        selectedTabIndex = selectedTab.ordinal,
-        containerColor = Color.Transparent,
-        contentColor = themeColors.foreground,
-        divider = {},
-    ) {
-        ReaderControlsTab.entries.forEach { tab ->
-            Tab(
-                selected = selectedTab == tab,
-                onClick = { onTabSelected(tab) },
-                selectedContentColor = themeColors.foreground,
-                unselectedContentColor = themeColors.foreground.copy(alpha = 0.6f),
-                modifier = Modifier
-                    .testTag(tab.testTag)
-                    .semantics {
-                        contentDescription = "${tab.title} tab"
-                    },
-                text = {
-                    Text(
-                        text = tab.title,
-                        style = MaterialTheme.typography.labelSmall,
-                        maxLines = 1,
-                    )
-                },
-                icon = {
-                    Icon(
-                        imageVector = tab.icon,
-                        contentDescription = null,
-                    )
-                }
-            )
-        }
     }
 }
 

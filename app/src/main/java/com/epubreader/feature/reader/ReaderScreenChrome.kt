@@ -318,16 +318,18 @@ private fun ReaderContentSurface(
             modifier = Modifier
                 .fillMaxSize()
                 .testTag("reader_controls_overlay")
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    if (state.isTextSelectionSessionActive) {
-                        callbacks.onClearTextSelection()
+                .then(
+                    if (!state.showControls && !state.isTextSelectionSessionActive) {
+                        Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            callbacks.onShowControlsChange(true)
+                        }
                     } else {
-                        callbacks.onShowControlsChange(!state.showControls)
+                        Modifier
                     }
-                }
+                )
         ) {
             ReaderChapterContent(
                 settings = state.settings,
@@ -412,6 +414,7 @@ private fun ReaderContentSurface(
                 totalChapters = state.book.spineHrefs.size,
                 sectionLabel = state.book.navigationUnitLabel,
                 progressPercentage = state.progressPercentage ?: 0f,
+                onDismiss = { callbacks.onShowControlsChange(false) },
             )
         }
 

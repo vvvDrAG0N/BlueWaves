@@ -24,7 +24,8 @@ fun ReaderStatusSettingsRow(
     onUpdateSettings: (GlobalSettingsTransform) -> Unit,
     modifier: Modifier = Modifier,
     isReaderUI: Boolean = false,
-    isSystemBarVisible: Boolean = false
+    isSystemBarVisible: Boolean = false,
+    showHeader: Boolean = true,
 ) {
     val readerStatusUi = settings.readerStatusUi
     val enabled = readerStatusUi.isEnabled
@@ -47,11 +48,13 @@ fun ReaderStatusSettingsRow(
                     text = "Reading Info",
                     style = if (isReaderUI) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.titleMedium,
                 )
-                Text(
-                    text = "Minimal reading info overlay at the bottom.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                if (showHeader) {
+                    Text(
+                        text = "Minimal reading info overlay at the bottom.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             Switch(
                 checked = enabled,
@@ -106,4 +109,3 @@ fun ReaderStatusSettingsRow(
         }
     }
 }
-
