@@ -537,8 +537,20 @@ private fun AppearanceTab(
             Column {
                 Text("Font Family", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
+                val fontListState = rememberLazyListState()
+                val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
+
+                LaunchedEffect(Unit) {
+                    val index = fonts.indexOf(settings.fontType)
+                    if (index != -1) {
+                        fontListState.scrollToItem(index)
+                    }
+                }
+
+                LazyRow(
+                    state = fontListState,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     items(fonts) { font ->
                         FilterChip(
                             selected = settings.fontType == font,
@@ -736,7 +748,19 @@ private fun InteractionTab(
             Text("Target language for text translations", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(12.dp))
             val languages = listOf("ar" to "العربية", "en" to "English", "es" to "Español", "fr" to "Français", "ja" to "日本語")
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            val langListState = rememberLazyListState()
+
+            LaunchedEffect(Unit) {
+                val index = languages.indexOfFirst { it.first == settings.targetTranslationLanguage }
+                if (index != -1) {
+                    langListState.scrollToItem(index)
+                }
+            }
+
+            LazyRow(
+                state = langListState,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 items(languages) { (code, name) ->
                     FilterChip(
                         selected = settings.targetTranslationLanguage == code,
