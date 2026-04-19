@@ -97,6 +97,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ClipboardManager
@@ -161,6 +162,7 @@ internal fun ReaderChapterContent(
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val platformTextToolbar = LocalTextToolbar.current
+    val textSelectionScope = rememberCoroutineScope()
     val selectionActiveChangeState = rememberUpdatedState(onSelectionActiveChange)
     
     // Internal clipboard to capture text without triggering system popups
@@ -173,10 +175,14 @@ internal fun ReaderChapterContent(
         }
     }
 
-    // Stable selection tracking: isTextSelectionActive stays true throughout
-    // the entire drag/resize process and only turns false on explicit hide().
-    var isTextSelectionActive by remember { mutableStateOf(false) }
-    var lastCopyAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    val selectionSession = remember(textSelectionScope) {
+        ReaderTextSelectionSession(
+            scheduler = createReaderTextSelectionScheduler(textSelectionScope),
+            onActiveChanged = { isActive ->
+                selectionActiveChangeState.value(isActive)
+            }
+        )
+    }
 
     // Bottom sheet state for in-app WebView lookups
     var pendingWebLookup by remember { mutableStateOf<WebLookupAction?>(null) }
@@ -184,7 +190,7 @@ internal fun ReaderChapterContent(
     val trackingTextToolbar = remember(platformTextToolbar) {
         object : TextToolbar {
             override val status: TextToolbarStatus
-                get() = if (isTextSelectionActive) TextToolbarStatus.Shown else TextToolbarStatus.Hidden
+                get() = if (selectionSession.isActive) TextToolbarStatus.Shown else TextToolbarStatus.Hidden
 
             override fun showMenu(
                 rect: Rect,
@@ -195,17 +201,11 @@ internal fun ReaderChapterContent(
             ) {
                 // Update the copy callback but keep selection active throughout drag.
                 // This is called repeatedly during handle drag — do NOT toggle state.
-                lastCopyAction = onCopyRequested
-                if (!isTextSelectionActive) {
-                    isTextSelectionActive = true
-                    selectionActiveChangeState.value(true)
-                }
+                selectionSession.showMenu(onCopyRequested)
             }
 
             override fun hide() {
-                isTextSelectionActive = false
-                lastCopyAction = null
-                selectionActiveChangeState.value(false)
+                selectionSession.hide()
             }
         }
     }
@@ -224,28 +224,23 @@ internal fun ReaderChapterContent(
             items(chapterElements, key = { it.id }) { element ->
                 when (element) {
                     is ChapterElement.Text -> {
-                        val style = if (element.type == "h") {
-                            MaterialTheme.typography.headlineSmall.copy(
-                                fontSize = (settings.fontSize + 4).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        } else {
-                            MaterialTheme.typography.bodyLarge.copy(
-                                fontSize = settings.fontSize.sp,
-                                lineHeight = (settings.fontSize * settings.lineHeight).sp
+                        val textContent = @Composable {
+                            ReaderChapterText(
+                                element = element,
+                                settings = settings,
+                                themeColors = themeColors,
                             )
                         }
 
-                        Text(
-                            text = element.content,
-                            style = style,
-                            fontFamily = readerFontFamily(settings.fontType),
-                            color = themeColors.foreground,
-                            textAlign = if (element.type == "h") TextAlign.Center else TextAlign.Start,
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .fillMaxWidth()
-                        )
+                        if (settings.selectableText) {
+                            SelectionContainer(
+                                modifier = Modifier.testTag("reader_selectable_text_item")
+                            ) {
+                                textContent()
+                            }
+                        } else {
+                            textContent()
+                        }
                     }
 
                     is ChapterElement.Image -> {
@@ -263,34 +258,45 @@ internal fun ReaderChapterContent(
 
     LaunchedEffect(settings.selectableText) {
         if (!settings.selectableText) {
-            selectionActiveChangeState.value(false)
+            selectionSession.reset()
         }
     }
 
     LaunchedEffect(selectionResetToken, settings.selectableText) {
         if (settings.selectableText && selectionResetToken > 0) {
-            isTextSelectionActive = false
-            lastCopyAction = null
-            selectionActiveChangeState.value(false)
+            selectionSession.reset()
         }
     }
 
     if (settings.selectableText) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(selectionResetToken) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            when (awaitPointerEvent().type) {
+                                PointerEventType.Press -> selectionSession.onPointerPressed()
+                                PointerEventType.Release,
+                                PointerEventType.Exit -> selectionSession.onPointerReleased()
+                                else -> Unit
+                            }
+                        }
+                    }
+                }
+        ) {
             key(selectionResetToken) {
                 CompositionLocalProvider(
                     LocalTextToolbar provides trackingTextToolbar,
                     LocalClipboardManager provides internalClipboard
                 ) {
-                    SelectionContainer {
-                        content()
-                    }
+                    content()
                 }
             }
 
             // Floating action bar for text selection with Copy/Define/Translate
             AnimatedVisibility(
-                visible = isTextSelectionActive,
+                visible = selectionSession.isActive,
                 enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                 exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
                 modifier = Modifier
@@ -301,18 +307,18 @@ internal fun ReaderChapterContent(
                 TextSelectionActionBar(
                     themeColors = themeColors,
                     onCopy = {
-                        lastCopyAction?.invoke() // Copies to internalClipboard
+                        selectionSession.copyAction?.invoke() // Copies to internalClipboard
                         internalClipboard.getText()?.let { clipboardManager.setText(it) }
                     },
                     onDefine = {
-                        lastCopyAction?.invoke() // Copies to internalClipboard
+                        selectionSession.copyAction?.invoke() // Copies to internalClipboard
                         val text = internalClipboard.getText()?.text.orEmpty()
                         if (text.isNotBlank()) {
                             pendingWebLookup = WebLookupAction.Define(text)
                         }
                     },
                     onTranslate = {
-                        lastCopyAction?.invoke() // Copies to internalClipboard
+                        selectionSession.copyAction?.invoke() // Copies to internalClipboard
                         val text = internalClipboard.getText()?.text.orEmpty()
                         if (text.isNotBlank()) {
                             pendingWebLookup = WebLookupAction.Translate(text, settings.targetTranslationLanguage)
@@ -332,6 +338,36 @@ internal fun ReaderChapterContent(
     } else {
         content()
     }
+}
+
+@Composable
+private fun ReaderChapterText(
+    element: ChapterElement.Text,
+    settings: GlobalSettings,
+    themeColors: ReaderTheme,
+) {
+    val style = if (element.type == "h") {
+        MaterialTheme.typography.headlineSmall.copy(
+            fontSize = (settings.fontSize + 4).sp,
+            fontWeight = FontWeight.Bold
+        )
+    } else {
+        MaterialTheme.typography.bodyLarge.copy(
+            fontSize = settings.fontSize.sp,
+            lineHeight = (settings.fontSize * settings.lineHeight).sp
+        )
+    }
+
+    Text(
+        text = element.content,
+        style = style,
+        fontFamily = readerFontFamily(settings.fontType),
+        color = themeColors.foreground,
+        textAlign = if (element.type == "h") TextAlign.Center else TextAlign.Start,
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .fillMaxWidth()
+    )
 }
 
 @Composable

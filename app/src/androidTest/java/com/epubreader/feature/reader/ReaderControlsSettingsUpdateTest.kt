@@ -47,6 +47,7 @@ class ReaderControlsSettingsUpdateTest {
                         currentChapterIndex = 0,
                         totalChapters = 3,
                         sectionLabel = "Chapter",
+                        progressPercentage = 0f,
                     )
                 }
             }

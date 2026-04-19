@@ -91,6 +91,7 @@ class SettingsManagerContractsTest {
                         outline = 0xFF8AA7BB,
                         readerBackground = 0xFFEEF8FF,
                         readerForeground = 0xFF10212D,
+                        systemForeground = 0xFF000000,
                     ),
                 )
             ),

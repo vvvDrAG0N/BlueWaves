@@ -62,6 +62,8 @@ The reader supports three distinct ways to navigate chapters, each interacting d
 - `ReaderScreenControls.kt`
   - Owns chapter element rendering, bottom settings controls, scrubber UI, and reader theme buttons.
   - Theme controls render built-in and saved custom themes from the shared settings model.
+  - Text selection handle drags can trigger transient `TextToolbar.hide()` calls; do not treat those callbacks alone as proof that the selection session ended.
+  - Do not wrap the chapter `LazyColumn` in one shared `SelectionContainer`; keep selection scoped to composed text items so the reader avoids lazy-layout selection invalidation.
 
 ## Do Not Change Accidentally
 

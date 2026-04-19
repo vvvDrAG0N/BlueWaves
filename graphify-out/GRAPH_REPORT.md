@@ -1,11 +1,11 @@
 # Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-19)
 
 ## Corpus Check
-- 38 files · ~88,482 words
+- 39 files · ~88,965 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 476 nodes · 441 edges · 39 communities detected
+- 492 nodes · 456 edges · 40 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -22,6 +22,7 @@
 - [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
 - [[_COMMUNITY_ImportRouting Cluster|ImportRouting Cluster]]
 - [[_COMMUNITY_AppNavigationOperations Cluster|AppNavigationOperations Cluster]]
+- [[_COMMUNITY_ReaderTextSelectionSession Cluster|ReaderTextSelectionSession Cluster]]
 - [[_COMMUNITY_AppNavigationContracts Cluster|AppNavigationContracts Cluster]]
 - [[_COMMUNITY_LibraryModels Cluster|LibraryModels Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster|app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster]]
@@ -53,14 +54,14 @@
 ## God Nodes (most connected - your core abstractions)
 1. `EpubParser` - 34 edges
 2. `SettingsManager` - 27 edges
-3. `PdfConversionWorkspaceState` - 8 edges
-4. `AppLog` - 5 edges
-5. `PdfLegacyBridge` - 5 edges
-6. `PdfLegacyRuntime` - 5 edges
-7. `PdfConversionWorker` - 4 edges
-8. `Image` - 3 edges
-9. `PdfDocumentHandle` - 3 edges
-10. `resolve_graphify_python()` - 3 edges
+3. `ReaderTextSelectionSession` - 9 edges
+4. `PdfConversionWorkspaceState` - 8 edges
+5. `AppLog` - 5 edges
+6. `PdfLegacyBridge` - 5 edges
+7. `PdfLegacyRuntime` - 5 edges
+8. `PdfConversionWorker` - 4 edges
+9. `Image` - 3 edges
+10. `PdfDocumentHandle` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 - None detected - all connections are within the same source files.
@@ -92,7 +93,7 @@ Cohesion: 0.09
 Nodes (2): PdfDocumentInfo, ResolvedBookCoverFiles
 
 ### Community 6 - "ReaderScreenControls Cluster"
-Cohesion: 0.1
+Cohesion: 0.09
 Nodes (2): NestedScrollWebView, ReaderControlsTab
 
 ### Community 7 - "EditBookModels Cluster"
@@ -115,111 +116,115 @@ Nodes (9): ArchiveImportCandidate, ArchiveInspectionResult, Candidate, DirectEpu
 Cohesion: 0.12
 Nodes (6): Duplicate, EditBookResult, Failed, ImportBookResult, Imported, Updated
 
-### Community 12 - "AppNavigationContracts Cluster"
+### Community 12 - "ReaderTextSelectionSession Cluster"
+Cohesion: 0.13
+Nodes (3): ReaderTextSelectionCancellable, ReaderTextSelectionScheduler, ReaderTextSelectionSession
+
+### Community 13 - "AppNavigationContracts Cluster"
 Cohesion: 0.17
 Nodes (10): BookSelectionActionBarActions, BookSelectionActionBarState, BookSelectionUiState, FolderDrawerActions, FolderDrawerUiState, LibraryAsyncUiState, LibraryDialogActions, LibraryDialogState (+2 more)
 
-### Community 13 - "LibraryModels Cluster"
+### Community 14 - "LibraryModels Cluster"
 Cohesion: 0.17
 Nodes (8): BookFormat, BookRepresentation, ChapterElement, ConversionStatus, EpubBook, Image, Text, TocItem
 
-### Community 14 - "app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster"
+### Community 15 - "app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster"
 Cohesion: 0.17
 Nodes (0): 
 
-### Community 15 - "BookEditingModels Cluster"
+### Community 16 - "BookEditingModels Cluster"
 Cohesion: 0.18
 Nodes (10): BookChapterEdit, BookCoverAction, BookCoverUpdate, BookEditRequest, BookNewChapterContent, HtmlDocument, Keep, PlainText (+2 more)
 
-### Community 16 - "AppNavigationDialogs Cluster"
+### Community 17 - "AppNavigationDialogs Cluster"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 17 - "EpubParserChapter Cluster"
+### Community 18 - "EpubParserChapter Cluster"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 18 - "PdfLegacyBridge Cluster"
+### Community 19 - "PdfLegacyBridge Cluster"
 Cohesion: 0.2
 Nodes (4): PdfConversionProgress, PdfConversionProgressListener, PdfConversionResult, PdfLegacyBridge
 
-### Community 19 - "MainActivity Cluster"
+### Community 20 - "MainActivity Cluster"
 Cohesion: 0.22
 Nodes (2): MainActivity, Screen
 
-### Community 20 - "SettingsManagerContracts Cluster"
+### Community 21 - "SettingsManagerContracts Cluster"
 Cohesion: 0.22
 Nodes (2): BookProgressPreferenceKeys, SettingsPreferenceKeys
 
-### Community 21 - "PdfConversionWorker Cluster"
+### Community 22 - "PdfConversionWorker Cluster"
 Cohesion: 0.25
 Nodes (1): PdfConversionWorker
 
-### Community 22 - "pdftoepubconverter_pdfconversionworkspacestate Cluster"
+### Community 23 - "pdftoepubconverter_pdfconversionworkspacestate Cluster"
 Cohesion: 0.25
 Nodes (1): PdfConversionWorkspaceState
 
-### Community 23 - "PdfReaderScreen Cluster"
+### Community 24 - "PdfReaderScreen Cluster"
 Cohesion: 0.25
 Nodes (1): PdfDocumentHandle
 
-### Community 24 - "AppNavigationLibrary Cluster"
+### Community 25 - "AppNavigationLibrary Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 25 - "AppNavigationLibraryData Cluster"
+### Community 26 - "AppNavigationLibraryData Cluster"
 Cohesion: 0.29
 Nodes (1): FolderDragPreviewUpdate
 
-### Community 26 - "ReaderScreenChrome Cluster"
+### Community 27 - "ReaderScreenChrome Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 27 - "app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster"
+### Community 28 - "app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster"
 Cohesion: 0.33
 Nodes (1): AppShellStartupDecision
 
-### Community 28 - "AppLog Cluster"
+### Community 29 - "AppLog Cluster"
 Cohesion: 0.33
 Nodes (1): AppLog
 
-### Community 29 - "PdfLegacyRuntime Cluster"
+### Community 30 - "PdfLegacyRuntime Cluster"
 Cohesion: 0.33
 Nodes (1): PdfLegacyRuntime
 
-### Community 30 - "ReaderScreenContracts Cluster"
+### Community 31 - "ReaderScreenContracts Cluster"
 Cohesion: 0.33
 Nodes (4): ReaderChromeCallbacks, ReaderChromeState, ReaderTheme, TocSort
 
-### Community 31 - "check_graph_staleness Cluster"
+### Community 32 - "check_graph_staleness Cluster"
 Cohesion: 0.53
 Nodes (5): check_staleness(), get_last_modified(), infer_python_from_graphify_bin(), interpreter_has_graphify(), resolve_graphify_python()
 
-### Community 32 - "AppNavigationPdfLegacy Cluster"
+### Community 33 - "AppNavigationPdfLegacy Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 33 - "LibraryCards Cluster"
+### Community 34 - "LibraryCards Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 34 - "ReaderTextActions Cluster"
+### Community 35 - "ReaderTextActions Cluster"
 Cohesion: 0.5
 Nodes (3): Define, Translate, WebLookupAction
 
-### Community 35 - "AppNavigation Cluster"
+### Community 36 - "AppNavigation Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 36 - "WindowInsetsUtils Cluster"
+### Community 37 - "WindowInsetsUtils Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 37 - "ReaderScreen Cluster"
+### Community 38 - "ReaderScreen Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 38 - "ReaderStatusSettingsRow Cluster"
+### Community 39 - "ReaderStatusSettingsRow Cluster"
 Cohesion: 1.0
 Nodes (0): 
 

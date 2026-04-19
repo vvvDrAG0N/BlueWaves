@@ -299,7 +299,8 @@ private fun ReaderContentSurface(
     callbacks: ReaderChromeCallbacks
 ) {
     var selectionResetToken by remember { mutableIntStateOf(0) }
-    var hasActiveTextSelection by remember { mutableStateOf(false) }
+    // Chrome stays hidden for the full selection session, not just while the toolbar is visible.
+    var isTextSelectionSessionActive by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -325,8 +326,8 @@ private fun ReaderContentSurface(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
                 ) {
-                    if (hasActiveTextSelection) {
-                        hasActiveTextSelection = false
+                    if (isTextSelectionSessionActive) {
+                        isTextSelectionSessionActive = false
                         selectionResetToken++
                     } else {
                         callbacks.onShowControlsChange(!state.showControls)
@@ -341,7 +342,7 @@ private fun ReaderContentSurface(
                 isLoadingChapter = state.isLoadingChapter,
                 currentChapterIndex = state.currentChapterIndex,
                 selectionResetToken = selectionResetToken,
-                onSelectionActiveChange = { hasActiveTextSelection = it }
+                onSelectionActiveChange = { isTextSelectionSessionActive = it }
             )
         }
 
@@ -384,7 +385,7 @@ private fun ReaderContentSurface(
         }
 
         AnimatedVisibility(
-            visible = state.showControls && !hasActiveTextSelection,
+            visible = state.showControls && !isTextSelectionSessionActive,
             enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
             exit = slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(400, delayMillis = 100)) + fadeOut(animationSpec = tween(400, delayMillis = 50)),
             modifier = Modifier.align(Alignment.TopCenter)
@@ -399,7 +400,7 @@ private fun ReaderContentSurface(
         }
 
         AnimatedVisibility(
-            visible = state.showControls && !hasActiveTextSelection,
+            visible = state.showControls && !isTextSelectionSessionActive,
             enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
             exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400, delayMillis = 100)) + fadeOut(animationSpec = tween(400, delayMillis = 50)),
             modifier = Modifier.align(Alignment.BottomCenter)
