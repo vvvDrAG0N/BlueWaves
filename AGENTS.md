@@ -15,11 +15,12 @@ This document defines the architecture, coding standards, and modification safet
 
 ## 3. AI Development Protocol
 1. **Analyze Docs First**: Always review the `/docs` folder before writing any code. It contains the logic behind complex features.
-2. **Minimal Edits**: Prefer surgical, minimal edits over large-scale rewrites to preserve original intent and code style.
-3. **Protect the Reader**: Reader smoothness and scroll position restoration are sacred. Any changes to `ReaderScreen` must be stress-tested for these two properties.
-4. **Confirm Changes**: Always ask for confirmation before making significant architectural changes or altering the DataStore schema.
-5. **Verify Flows**: After any modification, re-verify the affected flow (e.g., if changing the parser, verify both metadata extraction and chapter rendering).
-6. **Right-Sized Tests**: New non-trivial features should ship with the smallest automated test that proves them: JVM for pure logic, Robolectric/local Android-aware tests for framework-dependent logic, instrumentation for runtime/UI flows. If no automated test is added, explain why and provide manual verification steps.
+2. **Intent Check (MANDATORY)**: Before implementing any changes, analyze if the user's request is for discussion/planning or direct execution. If the user mentions "talk," "discuss," "let's think," or "planning," **STOP** and wait for confirmation before writing code.
+3. **Minimal Edits**: Prefer surgical, minimal edits over large-scale rewrites to preserve original intent and code style.
+4. **Protect the Reader**: Reader smoothness and scroll position restoration are sacred. Any changes to `ReaderScreen` must be stress-tested for these two properties.
+5. **Confirm Changes**: Always ask for confirmation before making significant architectural changes or altering the DataStore schema.
+6. **Verify Flows**: After any modification, re-verify the affected flow (e.g., if changing the parser, verify both metadata extraction and chapter rendering).
+7. **Right-Sized Tests**: New non-trivial features should ship with the smallest automated test that proves them: JVM for pure logic, Robolectric/local Android-aware tests for framework-dependent logic, instrumentation for runtime/UI flows. If no automated test is added, explain why and provide manual verification steps.
 
 ## 4. Architecture Rules
 

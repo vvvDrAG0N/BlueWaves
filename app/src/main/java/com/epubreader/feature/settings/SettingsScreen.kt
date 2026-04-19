@@ -43,7 +43,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -57,6 +59,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.FormatSize
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Settings
@@ -74,6 +77,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -598,14 +602,12 @@ private fun AppearanceTab(
                 Text("Built-in Themes", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
                 val builtInListState = rememberLazyListState()
-                LazyRow(modifier = Modifier.fillMaxWidth(), state = builtInListState, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                LazyRow(modifier = Modifier.fillMaxWidth(), state = builtInListState, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     itemsIndexed(BuiltInThemeOptions) { _, option ->
-                        ThemeButton(
+                        ThemePreviewCard(
+                            palette = option.palette,
                             name = option.name,
-                            bgColor = Color(option.palette.readerBackground),
-                            textColor = Color(option.palette.readerForeground),
                             isSelected = settings.theme == option.id,
-                            label = themeButtonLabel(option.name, option.id),
                             onClick = { scope.launch { settingsManager.setActiveTheme(option.id) } }
                         )
                     }
@@ -626,21 +628,22 @@ private fun AppearanceTab(
                 }
                 Spacer(Modifier.height(8.dp))
                 if (settings.customThemes.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxWidth().height(80.dp).border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.fillMaxWidth().height(100.dp).border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium), contentAlignment = Alignment.Center) {
                         Text("No custom themes yet", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 } else {
                     LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         itemsIndexed(settings.customThemes) { _, theme ->
-                            CompactCustomThemeCard(
-                                theme = theme,
+                            ThemePreviewCard(
+                                palette = theme.palette,
+                                name = theme.name,
                                 isSelected = settings.theme == theme.id,
-                                onSelect = { scope.launch { settingsManager.setActiveTheme(theme.id) } },
+                                onClick = { scope.launch { settingsManager.setActiveTheme(theme.id) } },
                                 onEdit = { onOpenEditThemeEditor(theme) },
                                 onDelete = { onDeleteTheme(theme) },
                                 onExport = {
-                                    themeToExport = it
-                                    exportLauncher.launch("theme_${it.name.replace(" ", "_")}.json")
+                                    themeToExport = theme
+                                    exportLauncher.launch("theme_${theme.name.replace(" ", "_")}.json")
                                 }
                             )
                         }
@@ -817,108 +820,158 @@ private fun SettingsToggleRow(
 }
 
 @Composable
-fun ThemeButton(
+fun ThemePreviewCard(
+    palette: ThemePalette,
     name: String,
-    bgColor: Color,
-    textColor: Color,
     isSelected: Boolean,
-    modifier: Modifier = Modifier,
-    label: String = "A",
     onClick: () -> Unit,
+    onEdit: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
+    onExport: (() -> Unit)? = null,
 ) {
+    val containerColor = Color(palette.background)
+    val readerColor = Color(palette.readerBackground)
+    val textColor = Color(palette.readerForeground)
+    val primaryColor = Color(palette.primary)
+    val secondaryColor = Color(palette.secondary)
+    val surfaceColor = Color(palette.surface)
+    val outlineColor = Color(palette.outline)
+
+    val errorColor = MaterialTheme.colorScheme.error
+
     Surface(
         onClick = onClick,
-        shape = CircleShape,
-        color = Color.Transparent,
-        modifier = modifier
-            .padding(8.dp)
-            .size(60.dp)
-            .semantics {
-                contentDescription = "Theme $name"
-                selected = isSelected
-            },
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        modifier = Modifier
+            .width(130.dp)
+            .height(180.dp)
+            .padding(vertical = 4.dp),
+        shape = RoundedCornerShape(12.dp),
+        color = containerColor,
+        border = BorderStroke(
+            width = if (isSelected) 3.dp else 1.dp,
+            color = if (isSelected) primaryColor else outlineColor.copy(alpha = 0.3f)
+        ),
+        shadowElevation = if (isSelected) 4.dp else 1.dp
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(3.dp)
-                .clip(CircleShape)
-                .background(bgColor)
-                .border(
-                    width = if (isSelected) 3.dp else 1.dp,
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
-                    shape = CircleShape,
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(label, color = textColor, style = MaterialTheme.typography.bodySmall)
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Header simulated
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .background(surfaceColor)
+            )
+
+            // Content Preview
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(readerColor)
+                    .padding(8.dp)
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    repeat(4) { index ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(if (index == 3) 0.6f else 1f)
+                                .height(2.dp)
+                                .background(textColor.copy(alpha = 0.4f))
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Icon(
+                        Icons.Default.MenuBook,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp).align(Alignment.CenterHorizontally),
+                        tint = primaryColor.copy(alpha = 0.6f)
+                    )
+                }
+            }
+
+            // Footer with Palette & Name
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    PaletteDot(primaryColor, outlineColor)
+                    PaletteDot(secondaryColor, outlineColor)
+                    PaletteDot(outlineColor, outlineColor)
+                    Spacer(Modifier.weight(1f))
+                    if (onEdit != null) {
+                        IconButton(onClick = onEdit, modifier = Modifier.size(20.dp)) {
+                            Icon(Icons.Default.Edit, contentDescription = "Edit", modifier = Modifier.size(14.dp), tint = Color(palette.systemForeground).copy(alpha = 0.8f))
+                        }
+                    }
+                }
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val sysFg = Color(palette.systemForeground)
+                    Text(
+                        text = name,
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .weight(1f)
+                            .basicMarquee(),
+                        color = sysFg
+                    )
+                    if (onDelete != null || onExport != null) {
+                        ThemeCardMenu(onExport, onDelete, sysFg)
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun CompactCustomThemeCard(
-    theme: CustomTheme,
-    isSelected: Boolean,
-    onSelect: () -> Unit,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
-    onExport: (CustomTheme) -> Unit,
-) {
-    Card(
+private fun PaletteDot(color: Color, outlineColor: Color) {
+    Box(
         modifier = Modifier
-            .width(160.dp)
-            .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            ThemeButton(
-                name = theme.name,
-                bgColor = Color(theme.palette.readerBackground),
-                textColor = Color(theme.palette.readerForeground),
-                isSelected = isSelected,
-                label = themeButtonLabel(theme.name, theme.id),
-                onClick = onSelect,
-            )
-            Text(
-                text = theme.name,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                IconButton(onClick = { onExport(theme) }, modifier = Modifier.size(32.dp)) {
-                    Icon(
-                        Icons.Default.FileUpload,
-                        contentDescription = "Export ${theme.name}",
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-                IconButton(onClick = onEdit, modifier = Modifier.size(32.dp)) {
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = "Edit ${theme.name}",
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-                IconButton(onClick = onDelete, modifier = Modifier.size(32.dp)) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = "Delete ${theme.name}",
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
+            .size(10.dp)
+            .clip(CircleShape)
+            .background(color)
+            .border(0.5.dp, outlineColor.copy(alpha = 0.5f), CircleShape)
+    )
+}
+
+@Composable
+private fun ThemeCardMenu(
+    onExport: (() -> Unit)?,
+    onDelete: (() -> Unit)?,
+    tint: Color
+) {
+    var showMenu by remember { mutableStateOf(false) }
+    val errorColor = MaterialTheme.colorScheme.error
+
+    Box {
+        IconButton(onClick = { showMenu = true }, modifier = Modifier.size(20.dp)) {
+            Icon(Icons.Default.MoreVert, contentDescription = "More", modifier = Modifier.size(14.dp), tint = tint.copy(alpha = 0.8f))
+        }
+        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+            if (onExport != null) {
+                DropdownMenuItem(
+                    text = { Text("Export") },
+                    onClick = { onExport(); showMenu = false },
+                    leadingIcon = { Icon(Icons.Default.FileDownload, null, modifier = Modifier.size(18.dp)) }
+                )
+            }
+            if (onDelete != null) {
+                DropdownMenuItem(
+                    text = { Text("Delete", color = errorColor) },
+                    onClick = { onDelete(); showMenu = false },
+                    leadingIcon = { Icon(Icons.Default.Delete, null, modifier = Modifier.size(18.dp), tint = errorColor) }
+                )
             }
         }
     }
