@@ -774,18 +774,18 @@ private fun ReaderControlsDragHandle(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .draggable(
+                orientation = Orientation.Vertical,
+                state = rememberDraggableState { delta -> onDragDelta(delta) },
+                onDragStopped = onDragStopped,
+            )
             .padding(top = 10.dp, bottom = 6.dp),
         contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
                 .testTag("reader_controls_drag_handle")
-                .size(width = 44.dp, height = 24.dp)
-                .draggable(
-                    orientation = Orientation.Vertical,
-                    state = rememberDraggableState { delta -> onDragDelta(delta) },
-                    onDragStopped = onDragStopped,
-                ),
+                .size(width = 44.dp, height = 24.dp),
             contentAlignment = Alignment.Center,
         ) {
             Box(

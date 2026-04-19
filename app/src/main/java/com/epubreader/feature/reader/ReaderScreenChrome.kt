@@ -13,7 +13,8 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -384,7 +385,8 @@ private fun ReaderContentSurface(
         AnimatedVisibility(
             visible = state.showControls && !state.isTextSelectionSessionActive,
             enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(400, delayMillis = 100)) + fadeOut(animationSpec = tween(400, delayMillis = 50)),
+            exit = slideOutVertically(targetOffsetY = { -it }, animationSpec = spring(stiffness = Spring.StiffnessLow)) + 
+                   fadeOut(animationSpec = spring(stiffness = Spring.StiffnessLow)),
             modifier = Modifier.align(Alignment.TopCenter)
         ) {
             ReaderTopBar(
@@ -399,7 +401,8 @@ private fun ReaderContentSurface(
         AnimatedVisibility(
             visible = state.showControls && !state.isTextSelectionSessionActive,
             enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400, delayMillis = 100)) + fadeOut(animationSpec = tween(400, delayMillis = 50)),
+            exit = slideOutVertically(targetOffsetY = { it }, animationSpec = spring(stiffness = Spring.StiffnessLow)) + 
+                   fadeOut(animationSpec = spring(stiffness = Spring.StiffnessLow)),
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             ReaderControls(

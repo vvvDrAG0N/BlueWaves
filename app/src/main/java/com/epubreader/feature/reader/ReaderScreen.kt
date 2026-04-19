@@ -532,7 +532,7 @@ fun ReaderScreen(
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
         } else {
             // Delay to allow the Reader Top/Bottom bars to animate out first.
-            // Matches the tween(400, delayMillis = 100) exit animation in ReaderScreenChrome.
+            // Aligned with the StiffnessLow spring exit animation in ReaderScreenChrome.
             kotlinx.coroutines.delay(450)
             windowInsetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
