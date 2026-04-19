@@ -725,7 +725,7 @@ fun ReaderControls(
                         .heightIn(max = contentMaxHeightDp)
                         .verticalScroll(contentScrollState)
                         .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     ReaderChapterControlsSection(
                         themeColors = themeColors,
@@ -738,18 +738,22 @@ fun ReaderControls(
                         sectionLabel = sectionLabel,
                         progressPercentage = progressPercentage,
                     )
+                    HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderThemeControlsSection(
                         settings = settings,
                         onSettingsChange = onSettingsChange,
                     )
+                    HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderFontControlsSection(
                         settings = settings,
                         onSettingsChange = onSettingsChange,
                     )
+                    HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderReadingControlsSection(
                         settings = settings,
                         onSettingsChange = onSettingsChange,
                     )
+                    HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderOtherControlsSection(
                         settings = settings,
                         onSettingsChange = onSettingsChange,
@@ -798,17 +802,32 @@ private fun ReaderControlsDragHandle(
 private fun ReaderControlsSection(
     title: String,
     testTag: String,
+    trailingTitle: String? = null,
     content: @Composable () -> Unit,
 ) {
     Column(
         modifier = Modifier.testTag(testTag),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            color = LocalContentColor.current.copy(alpha = 0.88f),
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = LocalContentColor.current.copy(alpha = 1f),
+            )
+            if (trailingTitle != null) {
+                Text(
+                    text = trailingTitle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = LocalContentColor.current.copy(alpha = 0.65f),
+                )
+            }
+        }
         content()
     }
 }
@@ -836,27 +855,11 @@ private fun ReaderChapterControlsSection(
     }
 
     ReaderControlsSection(
-        title = "Chapter",
+        title = "$sectionLabel ${currentChapterIndex + 1} of $totalChapters",
+        trailingTitle = "${(draggingValue * 100).toInt()}%",
         testTag = "reader_controls_section_chapter",
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "$sectionLabel ${currentChapterIndex + 1} of $totalChapters",
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = "${(draggingValue * 100).toInt()}%",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = themeColors.foreground.copy(alpha = 0.65f),
-                )
-            }
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
