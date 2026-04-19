@@ -756,11 +756,13 @@ fun ReaderControls(
                     ReaderThemeControlsSection(
                         settings = settings,
                         onSettingsChange = onSettingsChange,
+                        isVisible = isVisible,
                     )
                     HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderFontControlsSection(
                         settings = settings,
                         onSettingsChange = onSettingsChange,
+                        isVisible = isVisible,
                     )
                     HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderReadingControlsSection(
@@ -771,6 +773,7 @@ fun ReaderControls(
                     ReaderOtherControlsSection(
                         settings = settings,
                         onSettingsChange = onSettingsChange,
+                        isVisible = isVisible,
                     )
                 }
             }
@@ -933,6 +936,7 @@ private fun ReaderChapterControlsSection(
 private fun ReaderFontControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
+    isVisible: Boolean,
 ) {
     ReaderControlsSection(
         title = "Font",
@@ -995,19 +999,38 @@ private fun ReaderFontControlsSection(
         }
     }
 
+    val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
+    val fontListState = rememberLazyListState()
+
+    // Smart Jump: Only scroll to selection if it's NOT fully on-screen when the bar opens.
+    LaunchedEffect(isVisible) {
+        if (isVisible) {
+            val selectedIndex = fonts.indexOf(settings.fontType)
+            val layoutInfo = fontListState.layoutInfo
+            val itemInfo = layoutInfo.visibleItemsInfo.find { it.index == selectedIndex }
+            
+            val isFullyVisible = if (itemInfo != null) {
+                itemInfo.offset >= 0 && (itemInfo.offset + itemInfo.size) <= layoutInfo.viewportEndOffset
+            } else false
+
+            if (!isFullyVisible && selectedIndex != -1) {
+                fontListState.scrollToItem(selectedIndex)
+            }
+        }
+    }
+
     ReaderControlsSection(
         title = "Font Family",
         testTag = "reader_controls_section_font_family",
     ) {
-        Row(
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
                 .testTag("reader_font_row"),
+            state = fontListState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
-            fonts.forEach { font ->
+            items(fonts) { font ->
                 FilterChip(
                     modifier = Modifier.testTag("reader_font_chip_$font"),
                     selected = settings.fontType == font,
@@ -1019,13 +1042,13 @@ private fun ReaderFontControlsSection(
             }
         }
     }
-
 }
 
 @Composable
 private fun ReaderThemeControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
+    isVisible: Boolean,
 ) {
     ReaderControlsSection(
         title = "Theme",
@@ -1033,6 +1056,23 @@ private fun ReaderThemeControlsSection(
     ) {
         val themeOptions = availableThemeOptions(settings.customThemes)
         val listState = rememberLazyListState()
+
+        // Smart Jump: Only scroll to selection if it's NOT fully on-screen when the bar opens.
+        LaunchedEffect(isVisible) {
+            if (isVisible) {
+                val index = themeOptions.indexOfFirst { it.id == settings.theme }
+                val layoutInfo = listState.layoutInfo
+                val itemInfo = layoutInfo.visibleItemsInfo.find { it.index == index }
+                
+                val isFullyVisible = if (itemInfo != null) {
+                    itemInfo.offset >= 0 && (itemInfo.offset + itemInfo.size) <= layoutInfo.viewportEndOffset
+                } else false
+
+                if (!isFullyVisible && index != -1) {
+                    listState.scrollToItem(index)
+                }
+            }
+        }
 
         LaunchedEffect(settings.theme) {
             val index = themeOptions.indexOfFirst { it.id == settings.theme }
@@ -1113,6 +1153,7 @@ private fun ReaderReadingControlsSection(
 private fun ReaderOtherControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
+    isVisible: Boolean,
 ) {
     ReaderControlsSection(
         title = "Others",
@@ -1129,27 +1170,47 @@ private fun ReaderOtherControlsSection(
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Translate To", style = MaterialTheme.typography.labelSmall)
-            val languages = listOf(
-                "ar" to "العربية",
-                "en" to "English",
-                "es" to "Español",
-                "fr" to "Français",
-                "ja" to "日本語"
-            )
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items(languages) { (code, name) ->
-                    FilterChip(
-                        selected = settings.targetTranslationLanguage == code,
-                        onClick = {
-                            onSettingsChange { it.copy(targetTranslationLanguage = code) }
-                        },
-                        label = { Text(name) }
-                    )
+                val languages = listOf(
+                    "ar" to "العربية",
+                    "en" to "English",
+                    "es" to "Español",
+                    "fr" to "Français",
+                    "ja" to "日本語"
+                )
+                val langListState = rememberLazyListState()
+
+                // Smart Jump for Translation: Ensure full visibility
+                LaunchedEffect(isVisible) {
+                    if (isVisible) {
+                        val index = languages.indexOfFirst { it.first == settings.targetTranslationLanguage }
+                        val layoutInfo = langListState.layoutInfo
+                        val itemInfo = layoutInfo.visibleItemsInfo.find { it.index == index }
+                        
+                        val isFullyVisible = if (itemInfo != null) {
+                            itemInfo.offset >= 0 && (itemInfo.offset + itemInfo.size) <= layoutInfo.viewportEndOffset
+                        } else false
+
+                        if (!isFullyVisible && index != -1) {
+                            langListState.scrollToItem(index)
+                        }
+                    }
                 }
-            }
+
+                LazyRow(
+                    state = langListState,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(languages) { (code, name) ->
+                        FilterChip(
+                            selected = settings.targetTranslationLanguage == code,
+                            onClick = {
+                                onSettingsChange { it.copy(targetTranslationLanguage = code) }
+                            },
+                            label = { Text(name) }
+                        )
+                    }
+                }
             }
         }
     }
