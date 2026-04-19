@@ -68,6 +68,8 @@ import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.DataUsage
+import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -134,10 +136,10 @@ import java.util.Locale
 
 /** Which top-level section the user has drilled into. Null = top-level list. */
 private enum class SettingsSection(val title: String) {
-    General("General"),
-    Fonts("Fonts & Reading"),
-    Themes("Themes"),
-    Network("Network"), // future placeholder
+    Appearance("Appearance"),
+    Interface("Interface"),
+    Interaction("Interaction"),
+    Library("Library"),
 }
 
 /**
@@ -159,9 +161,6 @@ fun SettingsScreen(
     var editorSession by remember { mutableStateOf<ThemeEditorSession?>(null) }
     var themeToDelete by remember { mutableStateOf<CustomTheme?>(null) }
 
-    val fontsScrollState = rememberScrollState()
-    val themesScrollState = rememberScrollState()
-    val generalScrollState = rememberScrollState()
 
     fun openCreateThemeEditor() {
         editorSession = ThemeEditorSession(
@@ -211,28 +210,29 @@ fun SettingsScreen(
                     settings = settings,
                     onNavigate = { activeSection = it },
                 )
-                SettingsSection.General -> GeneralTab(
-                    settings = settings,
-                    scope = scope,
-                    settingsManager = settingsManager,
-                    scrollState = generalScrollState,
-                )
-                SettingsSection.Fonts -> FontsTab(
-                    settings = settings,
-                    scope = scope,
-                    settingsManager = settingsManager,
-                    scrollState = fontsScrollState,
-                )
-                SettingsSection.Themes -> ThemesTab(
+                SettingsSection.Appearance -> AppearanceTab(
                     settings = settings,
                     scope = scope,
                     settingsManager = settingsManager,
                     onOpenCreateThemeEditor = ::openCreateThemeEditor,
                     onOpenEditThemeEditor = ::openEditThemeEditor,
                     onDeleteTheme = { themeToDelete = it },
-                    scrollState = themesScrollState,
                 )
-                SettingsSection.Network -> NetworkPlaceholderTab()
+                SettingsSection.Interface -> InterfaceTab(
+                    settings = settings,
+                    scope = scope,
+                    settingsManager = settingsManager,
+                )
+                SettingsSection.Interaction -> InteractionTab(
+                    settings = settings,
+                    scope = scope,
+                    settingsManager = settingsManager,
+                )
+                SettingsSection.Library -> LibraryTab(
+                    settings = settings,
+                    scope = scope,
+                    settingsManager = settingsManager,
+                )
             }
         }
     }
@@ -304,10 +304,10 @@ private fun SettingsMenuList(
     }
 
     val entries = listOf(
-        SectionEntry(SettingsSection.General, Icons.Outlined.Settings, null),
-        SectionEntry(SettingsSection.Fonts, Icons.Outlined.FormatSize, "${settings.fontSize}sp · ${settings.fontType}"),
-        SectionEntry(SettingsSection.Themes, Icons.Outlined.Palette, activeThemeName),
-        SectionEntry(SettingsSection.Network, Icons.Outlined.WifiOff, "Coming soon"),
+        SectionEntry(SettingsSection.Appearance, Icons.Outlined.Palette, "Themes · ${settings.fontSize}sp · ${settings.fontType}"),
+        SectionEntry(SettingsSection.Interface, Icons.Outlined.Settings, "Scrubber · System Bars · Status"),
+        SectionEntry(SettingsSection.Interaction, Icons.Default.TouchApp, "Selection · Haptics · Translation"),
+        SectionEntry(SettingsSection.Library, Icons.Default.MenuBook, "Book covers & management"),
     )
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -332,10 +332,7 @@ private fun SettingsMenuList(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(
-                        enabled = entry.section != SettingsSection.Network,
-                        onClick = { onNavigate(entry.section) },
-                    )
+                    .clickable { onNavigate(entry.section) }
                     .testTag("settings_section_${entry.section.name.lowercase()}"),
             )
             if (index < entries.lastIndex) {
@@ -374,136 +371,25 @@ private fun NetworkPlaceholderTab() {
 
 
 @Composable
-private fun FontsTab(
-    settings: GlobalSettings,
-    scope: CoroutineScope,
-    settingsManager: SettingsManager,
-    scrollState: ScrollState
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        Column {
-            Text("Font Size", style = MaterialTheme.typography.titleMedium)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Slider(
-                    value = settings.fontSize.toFloat(),
-                    onValueChange = { fontSize ->
-                        scope.launch {
-                            settingsManager.updateGlobalSettings { it.copy(fontSize = fontSize.toInt()) }
-                        }
-                    },
-                    valueRange = 12f..32f,
-                    modifier = Modifier
-                        .weight(1f)
-                        .semantics { contentDescription = "Font Size Slider" }
-                )
-                Text(
-                    "${settings.fontSize}sp",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.width(48.dp),
-                    textAlign = TextAlign.End
-                )
-            }
-        }
-
-        Column {
-            Text("Line Height", style = MaterialTheme.typography.titleMedium)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Slider(
-                    value = settings.lineHeight,
-                    onValueChange = { lineHeight ->
-                        scope.launch {
-                            settingsManager.updateGlobalSettings { it.copy(lineHeight = lineHeight) }
-                        }
-                    },
-                    valueRange = 1.2f..2.0f,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    String.format(Locale.getDefault(), "%.1f", settings.lineHeight),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.width(48.dp),
-                    textAlign = TextAlign.End
-                )
-            }
-        }
-
-        Column {
-            Text("Horizontal Padding", style = MaterialTheme.typography.titleMedium)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Slider(
-                    value = settings.horizontalPadding.toFloat(),
-                    onValueChange = { padding ->
-                        scope.launch {
-                            settingsManager.updateGlobalSettings { it.copy(horizontalPadding = padding.toInt()) }
-                        }
-                    },
-                    valueRange = 0f..32f,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    "${settings.horizontalPadding}dp",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.width(48.dp),
-                    textAlign = TextAlign.End
-                )
-            }
-        }
-
-        Column {
-            Text("Font Family", style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
-                fonts.forEach { font ->
-                    FilterChip(
-                        selected = settings.fontType == font,
-                        onClick = {
-                            scope.launch {
-                                settingsManager.updateGlobalSettings { it.copy(fontType = font) }
-                            }
-                        },
-                        label = { Text(font.replaceFirstChar { it.uppercase() }) }
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ThemesTab(
+private fun AppearanceTab(
     settings: GlobalSettings,
     scope: CoroutineScope,
     settingsManager: SettingsManager,
     onOpenCreateThemeEditor: () -> Unit,
     onOpenEditThemeEditor: (CustomTheme) -> Unit,
     onDeleteTheme: (CustomTheme) -> Unit,
-    scrollState: ScrollState
 ) {
+    val scrollState = rememberScrollState()
     val context = LocalContext.current
     var themeToExport by remember { mutableStateOf<CustomTheme?>(null) }
 
-    // Shared helper: import one parsed JSONObject as a custom theme.
-    // seenPalettes / seenNames track within-batch state to avoid intra-batch duplicates.
-    // Returns the imported theme name on success, null on skip (duplicate/invalid).
     suspend fun importSingleThemeJson(
         json: JSONObject,
         seenPalettes: MutableSet<ThemePalette>,
         seenNames: MutableSet<String>,
     ): String? {
         val keys = listOf("primary", "secondary", "background", "surface", "surfaceVariant", "outline", "readerBackground", "readerText")
-        if (keys.none { json.has(it) }) return null // silently skip non-theme JSON entries in ZIPs
+        if (keys.none { json.has(it) }) return null
 
         val palette = ThemePalette(
             primary = parseThemeColorOrNull(json.optString("primary")) ?: 0xFF6200EE,
@@ -517,7 +403,6 @@ private fun ThemesTab(
             systemForeground = parseThemeColorOrNull(json.optString("systemForeground")) ?: 0xFF000000,
         )
 
-        // Skip exact palette duplicates (both persisted and already-imported-this-batch)
         if (seenPalettes.contains(palette)) return null
 
         val baseName = json.optString("name", "Imported Theme")
@@ -545,7 +430,6 @@ private fun ThemesTab(
             var imported = 0
             var skipped = 0
             var failed = 0
-            // Seed the seen-sets from current persisted themes so we detect inter-session duplicates.
             val seenPalettes: MutableSet<ThemePalette> = settings.customThemes.map { it.palette }.toMutableSet()
             val seenNames: MutableSet<String> = settings.customThemes.map { it.name.lowercase().trim() }.toMutableSet()
 
@@ -566,13 +450,9 @@ private fun ThemesTab(
                                                 if (json != null) {
                                                     val name = importSingleThemeJson(json, seenPalettes, seenNames)
                                                     if (name != null) imported++ else skipped++
-                                                } else {
-                                                    failed++
-                                                }
+                                                } else failed++
                                             }
-                                        } catch (_: Exception) {
-                                            failed++
-                                        }
+                                        } catch (_: Exception) { failed++ }
                                         zip.closeEntry()
                                     }
                                     entry = zip.nextEntry
@@ -587,9 +467,7 @@ private fun ThemesTab(
                         val name = importSingleThemeJson(json, seenPalettes, seenNames)
                         if (name != null) imported++ else skipped++
                     }
-                } catch (_: Exception) {
-                    failed++
-                }
+                } catch (_: Exception) { failed++ }
             }
             val msg = buildString {
                 if (imported > 0) append("Imported $imported theme${if (imported > 1) "s" else ""}. ")
@@ -625,9 +503,7 @@ private fun ThemesTab(
                     Toast.makeText(context, "Theme exported", Toast.LENGTH_SHORT).show()
                 } catch (_: Exception) {
                     Toast.makeText(context, "Export failed", Toast.LENGTH_SHORT).show()
-                } finally {
-                    themeToExport = null
-                }
+                } finally { themeToExport = null }
             }
         }
     }
@@ -639,104 +515,123 @@ private fun ThemesTab(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        Column {
-            Text("Built-in Themes", style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
-            val builtInListState = rememberLazyListState()
-            LaunchedEffect(settings.theme) {
-                val index = BuiltInThemeOptions.indexOfFirst { it.id == settings.theme }
-                if (index != -1) {
-                    builtInListState.animateScrollToItem(index)
+        // --- FONTS SECTION ---
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text("Fonts & Layout", style = MaterialTheme.typography.titleLarge)
+
+            Column {
+                Text("Font Size", style = MaterialTheme.typography.titleMedium)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Slider(
+                        value = settings.fontSize.toFloat(),
+                        onValueChange = { fontSize ->
+                            scope.launch { settingsManager.updateGlobalSettings { it.copy(fontSize = fontSize.toInt()) } }
+                        },
+                        valueRange = 12f..32f,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text("${settings.fontSize}sp", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(48.dp), textAlign = TextAlign.End)
                 }
             }
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                state = builtInListState,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                itemsIndexed(BuiltInThemeOptions) { _, option ->
-                    ThemeButton(
-                        name = option.name,
-                        bgColor = Color(option.palette.readerBackground),
-                        textColor = Color(option.palette.readerForeground),
-                        isSelected = settings.theme == option.id,
-                        label = themeButtonLabel(option.name, option.id),
-                        onClick = {
-                            scope.launch {
-                                settingsManager.setActiveTheme(option.id)
-                            }
-                        }
+
+            Column {
+                Text("Font Family", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(8.dp))
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
+                    items(fonts) { font ->
+                        FilterChip(
+                            selected = settings.fontType == font,
+                            onClick = { scope.launch { settingsManager.updateGlobalSettings { it.copy(fontType = font) } } },
+                            label = { Text(font.replaceFirstChar { it.uppercase() }) }
+                        )
+                    }
+                }
+            }
+
+            Column {
+                Text("Line Height", style = MaterialTheme.typography.titleMedium)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Slider(
+                        value = settings.lineHeight,
+                        onValueChange = { val value = it; scope.launch { settingsManager.updateGlobalSettings { it.copy(lineHeight = value) } } },
+                        valueRange = 1.2f..2.0f,
+                        modifier = Modifier.weight(1f)
                     )
+                    Text(String.format(Locale.getDefault(), "%.1f", settings.lineHeight), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(48.dp), textAlign = TextAlign.End)
+                }
+            }
+
+            Column {
+                Text("Horizontal Padding", style = MaterialTheme.typography.titleMedium)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Slider(
+                        value = settings.horizontalPadding.toFloat(),
+                        onValueChange = { val value = it; scope.launch { settingsManager.updateGlobalSettings { it.copy(horizontalPadding = value.toInt()) } } },
+                        valueRange = 0f..32f,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text("${settings.horizontalPadding}dp", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(48.dp), textAlign = TextAlign.End)
                 }
             }
         }
 
-        Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Custom Themes", style = MaterialTheme.typography.titleMedium)
-                Row {
-                    IconButton(
-                        onClick = { bulkImportLauncher.launch("*/*") },
-                        modifier = Modifier.testTag("import_custom_theme_button")
-                    ) {
-                        Icon(Icons.Default.FileDownload, contentDescription = "Import Themes (JSON or ZIP)")
-                    }
-                    IconButton(
-                        onClick = onOpenCreateThemeEditor,
-                        modifier = Modifier.testTag("create_custom_theme_button")
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Create Theme")
+        HorizontalDivider()
+
+        // --- THEMES SECTION ---
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text("Themes", style = MaterialTheme.typography.titleLarge)
+
+            Column {
+                Text("Built-in Themes", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(8.dp))
+                val builtInListState = rememberLazyListState()
+                LazyRow(modifier = Modifier.fillMaxWidth(), state = builtInListState, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    itemsIndexed(BuiltInThemeOptions) { _, option ->
+                        ThemeButton(
+                            name = option.name,
+                            bgColor = Color(option.palette.readerBackground),
+                            textColor = Color(option.palette.readerForeground),
+                            isSelected = settings.theme == option.id,
+                            label = themeButtonLabel(option.name, option.id),
+                            onClick = { scope.launch { settingsManager.setActiveTheme(option.id) } }
+                        )
                     }
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            if (settings.customThemes.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "No custom themes yet",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            } else {
-                val customListState = rememberLazyListState()
-                LaunchedEffect(settings.theme, settings.customThemes) {
-                    val index = settings.customThemes.indexOfFirst { it.id == settings.theme }
-                    if (index != -1) {
-                        customListState.animateScrollToItem(index)
+
+            Column {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Text("Custom Themes", style = MaterialTheme.typography.titleMedium)
+                    Row {
+                        IconButton(onClick = { bulkImportLauncher.launch("*/*") }) {
+                            Icon(Icons.Default.FileDownload, contentDescription = "Import Themes")
+                        }
+                        IconButton(onClick = onOpenCreateThemeEditor) {
+                            Icon(Icons.Default.Add, contentDescription = "Create Theme")
+                        }
                     }
                 }
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = customListState,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    itemsIndexed(settings.customThemes) { _, theme ->
-                        CompactCustomThemeCard(
-                            theme = theme,
-                            isSelected = settings.theme == theme.id,
-                            onSelect = {
-                                scope.launch {
-                                    settingsManager.setActiveTheme(theme.id)
+                Spacer(Modifier.height(8.dp))
+                if (settings.customThemes.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxWidth().height(80.dp).border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium), contentAlignment = Alignment.Center) {
+                        Text("No custom themes yet", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                } else {
+                    LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        itemsIndexed(settings.customThemes) { _, theme ->
+                            CompactCustomThemeCard(
+                                theme = theme,
+                                isSelected = settings.theme == theme.id,
+                                onSelect = { scope.launch { settingsManager.setActiveTheme(theme.id) } },
+                                onEdit = { onOpenEditThemeEditor(theme) },
+                                onDelete = { onDeleteTheme(theme) },
+                                onExport = {
+                                    themeToExport = it
+                                    exportLauncher.launch("theme_${it.name.replace(" ", "_")}.json")
                                 }
-                            },
-                            onEdit = { onOpenEditThemeEditor(theme) },
-                            onDelete = { onDeleteTheme(theme) },
-                            onExport = {
-                                themeToExport = it
-                                exportLauncher.launch("theme_${it.name.replace(" ", "_")}.json")
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
@@ -745,158 +640,51 @@ private fun ThemesTab(
 }
 
 @Composable
-private fun GeneralTab(
+private fun InterfaceTab(
     settings: GlobalSettings,
     scope: CoroutineScope,
     settingsManager: SettingsManager,
-    scrollState: ScrollState
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text("Show Reader Scrubber", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    "Display a vertical progress handle on the right side of the screen while reading.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Switch(
-                checked = settings.showScrubber,
-                onCheckedChange = { checked ->
-                    scope.launch {
-                        settingsManager.updateGlobalSettings { it.copy(showScrubber = checked) }
-                    }
-                }
-            )
-        }
+        Text("Reader Interface", style = MaterialTheme.typography.titleLarge)
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text("Show System Bars", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    "Keep status and navigation bars visible while reading.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+        SettingsToggleRow(
+            title = "Show Reader Scrubber",
+            subtitle = "Vertical progress handle on the right side.",
+            checked = settings.showScrubber,
+            onCheckedChange = { checked ->
+                scope.launch { settingsManager.updateGlobalSettings { it.copy(showScrubber = checked) } }
             }
-            Switch(
-                checked = settings.showSystemBar,
-                onCheckedChange = { checked ->
-                    scope.launch {
-                        settingsManager.updateGlobalSettings { it.copy(showSystemBar = checked) }
-                    }
-                },
-                modifier = Modifier.testTag("show_system_bar_switch")
-            )
-        }
+        )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text("Show Scroll-to-Top Button", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    "Display a button to quickly scroll to the top of the chapter.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+        SettingsToggleRow(
+            title = "Show System Bars",
+            subtitle = "Keep status and navigation bars visible while reading.",
+            checked = settings.showSystemBar,
+            onCheckedChange = { checked ->
+                scope.launch { settingsManager.updateGlobalSettings { it.copy(showSystemBar = checked) } }
             }
-            Switch(
-                checked = settings.showScrollToTop,
-                onCheckedChange = { checked ->
-                    scope.launch {
-                        settingsManager.updateGlobalSettings { it.copy(showScrollToTop = checked) }
-                    }
-                },
-                modifier = Modifier.testTag("show_scroll_to_top_switch")
-            )
-        }
+        )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text("Selectable Text", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    "Allow long-pressing to select text for copying or sharing. May conflict with some navigation gestures.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+        SettingsToggleRow(
+            title = "Show Scroll-to-Top Button",
+            subtitle = "Quickly jump to the start of the chapter.",
+            checked = settings.showScrollToTop,
+            onCheckedChange = { checked ->
+                scope.launch { settingsManager.updateGlobalSettings { it.copy(showScrollToTop = checked) } }
             }
-            Switch(
-                checked = settings.selectableText,
-                onCheckedChange = { checked ->
-                    scope.launch {
-                        settingsManager.updateGlobalSettings { it.copy(selectableText = checked) }
-                    }
-                },
-                modifier = Modifier.testTag("selectable_text_switch")
-            )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text("Allow Blank Covers", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    "When enabled, removing the current cover can leave the book blank instead of falling back to the stored original cover.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Switch(
-                checked = settings.allowBlankCovers,
-                onCheckedChange = { checked ->
-                    scope.launch {
-                        settingsManager.updateGlobalSettings { it.copy(allowBlankCovers = checked) }
-                    }
-                },
-                modifier = Modifier.testTag("allow_blank_covers_switch")
-            )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text("Haptic Feedback", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    "Enable vibration feedback for gestures and interactions.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Switch(
-                checked = settings.hapticFeedback,
-                onCheckedChange = { checked ->
-                    scope.launch {
-                        settingsManager.updateGlobalSettings { it.copy(hapticFeedback = checked) }
-                    }
-                },
-                modifier = Modifier.testTag("haptic_feedback_switch")
-            )
-        }
+        )
 
         HorizontalDivider()
 
+        Text("Status Overlay", style = MaterialTheme.typography.titleMedium)
         ReaderStatusSettingsRow(
             settings = settings,
             onUpdateSettings = { transform ->
@@ -904,39 +692,103 @@ private fun GeneralTab(
             },
             isSystemBarVisible = settings.showSystemBar
         )
+    }
+}
+
+@Composable
+private fun InteractionTab(
+    settings: GlobalSettings,
+    scope: CoroutineScope,
+    settingsManager: SettingsManager,
+) {
+    val scrollState = rememberScrollState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Text("Interaction", style = MaterialTheme.typography.titleLarge)
+
+        SettingsToggleRow(
+            title = "Selectable Text",
+            subtitle = "Allow long-pressing to select text for copying or sharing.",
+            checked = settings.selectableText,
+            onCheckedChange = { checked ->
+                scope.launch { settingsManager.updateGlobalSettings { it.copy(selectableText = checked) } }
+            }
+        )
+
+        SettingsToggleRow(
+            title = "Haptic Feedback",
+            subtitle = "Enable vibration for gestures and clicks.",
+            checked = settings.hapticFeedback,
+            onCheckedChange = { checked ->
+                scope.launch { settingsManager.updateGlobalSettings { it.copy(hapticFeedback = checked) } }
+            }
+        )
+
+        HorizontalDivider()
 
         Column(modifier = Modifier.fillMaxWidth()) {
             Text("Translate To", style = MaterialTheme.typography.titleMedium)
-            Text(
-                "Target language for text selection translations",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            val languages = listOf(
-                "ar" to "العربية",
-                "en" to "English",
-                "es" to "Español",
-                "fr" to "Français",
-                "ja" to "日本語"
-            )
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Text("Target language for text translations", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Spacer(modifier = Modifier.height(12.dp))
+            val languages = listOf("ar" to "العربية", "en" to "English", "es" to "Español", "fr" to "Français", "ja" to "日本語")
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(languages) { (code, name) ->
                     FilterChip(
                         selected = settings.targetTranslationLanguage == code,
-                        onClick = {
-                            scope.launch {
-                                settingsManager.updateGlobalSettings { it.copy(targetTranslationLanguage = code) }
-                            }
-                        },
+                        onClick = { scope.launch { settingsManager.updateGlobalSettings { it.copy(targetTranslationLanguage = code) } } },
                         label = { Text(name) }
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LibraryTab(
+    settings: GlobalSettings,
+    scope: CoroutineScope,
+    settingsManager: SettingsManager,
+) {
+    val scrollState = rememberScrollState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Text("Library", style = MaterialTheme.typography.titleLarge)
+
+        SettingsToggleRow(
+            title = "Allow Blank Covers",
+            subtitle = "Removing a cover won't fall back to the original file cover.",
+            checked = settings.allowBlankCovers,
+            onCheckedChange = { checked ->
+                scope.launch { settingsManager.updateGlobalSettings { it.copy(allowBlankCovers = checked) } }
+            }
+        )
+    }
+}
+
+@Composable
+private fun SettingsToggleRow(
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.titleMedium)
+            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
 

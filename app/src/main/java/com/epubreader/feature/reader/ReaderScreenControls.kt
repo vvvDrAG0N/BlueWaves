@@ -1074,13 +1074,6 @@ private fun ReaderThemeControlsSection(
             }
         }
 
-        LaunchedEffect(settings.theme) {
-            val index = themeOptions.indexOfFirst { it.id == settings.theme }
-            if (index != -1) {
-                listState.animateScrollToItem(index)
-            }
-        }
-
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1251,6 +1244,7 @@ fun ReaderThemeButton(
                 this.selected = selected
             }
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+            .clip(CircleShape)
             .clickable { onClick() }
             .padding(3.dp),
         contentAlignment = Alignment.Center
