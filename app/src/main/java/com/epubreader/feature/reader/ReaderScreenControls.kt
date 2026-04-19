@@ -138,18 +138,8 @@ import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.math.abs
 
-private val ReaderControlsSheetFractions = listOf(0.5f, 0.8f, 1.0f)
 private const val ReaderControlsDismissThresholdRatio = 0.75f
 private const val ReaderControlsDismissVelocityThreshold = 1_600f
-
-private fun nearestReaderControlsHeightPx(
-    currentHeightPx: Float,
-    snapHeightsPx: List<Float>,
-): Float {
-    return snapHeightsPx.minByOrNull { snapHeightPx ->
-        abs(snapHeightPx - currentHeightPx)
-    } ?: currentHeightPx
-}
 
 @Composable
 internal fun ReaderChapterContent(
@@ -655,6 +645,7 @@ fun ReaderControls(
     sectionLabel: String,
     progressPercentage: Float,
     onDismiss: () -> Unit,
+    isVisible: Boolean,
 ) {
     BoxWithConstraints(
         modifier = Modifier
@@ -665,14 +656,18 @@ fun ReaderControls(
     ) {
         val density = LocalDensity.current
         val maxSheetHeightPx = with(density) { maxHeight.toPx() }
-        val snapHeightsPx = remember(maxHeight) {
-            ReaderControlsSheetFractions.map { fraction ->
-                with(density) { maxHeight.toPx() * fraction }
-            }
-        }
-        val minSheetHeightPx = snapHeightsPx.first()
+        val minSheetHeightPx = maxSheetHeightPx * 0.5f
         val dismissThresholdPx = minSheetHeightPx * ReaderControlsDismissThresholdRatio
         var desiredSheetHeightPx by remember(maxHeight) { mutableFloatStateOf(minSheetHeightPx) }
+
+        // Reset height to default 50% every time the controls are opened.
+        // This ensures the drag height isn't "saved" across visibility toggles.
+        LaunchedEffect(isVisible) {
+            if (isVisible) {
+                desiredSheetHeightPx = minSheetHeightPx
+            }
+        }
+
         var sheetChromeHeightPx by remember { mutableIntStateOf(0) }
         val contentMaxHeightDp = with(density) {
             (desiredSheetHeightPx - sheetChromeHeightPx)
@@ -710,10 +705,11 @@ fun ReaderControls(
                             if (dismissByHeight || dismissByFling) {
                                 onDismiss()
                             } else {
-                                desiredSheetHeightPx = nearestReaderControlsHeightPx(
-                                    currentHeightPx = desiredSheetHeightPx.coerceAtLeast(minSheetHeightPx),
-                                    snapHeightsPx = snapHeightsPx,
-                                )
+                                // Continuous resize above 50%, but snap back to 50% if below it 
+                                // and not enough to trigger a full dismiss.
+                                if (desiredSheetHeightPx < minSheetHeightPx) {
+                                    desiredSheetHeightPx = minSheetHeightPx
+                                }
                             }
                         }
                     )

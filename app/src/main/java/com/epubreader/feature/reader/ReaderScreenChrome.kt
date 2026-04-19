@@ -418,6 +418,7 @@ private fun ReaderContentSurface(
                 sectionLabel = state.book.navigationUnitLabel,
                 progressPercentage = state.progressPercentage ?: 0f,
                 onDismiss = { callbacks.onShowControlsChange(false) },
+                isVisible = state.showControls,
             )
         }
 
