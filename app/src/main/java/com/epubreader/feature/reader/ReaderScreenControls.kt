@@ -37,6 +37,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -98,6 +101,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
@@ -631,6 +635,7 @@ fun OverscrollIndicator(text: String, modifier: Modifier, color: Color) {
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ReaderControls(
     settings: GlobalSettings,
@@ -650,21 +655,25 @@ fun ReaderControls(
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .navigationBarsPadding()
-            .padding(horizontal = 8.dp)
-            .padding(top = 8.dp),
+            .navigationBarsPadding(),
     ) {
         val density = LocalDensity.current
-        val maxSheetHeightPx = with(density) { maxHeight.toPx() }
-        val minSheetHeightPx = maxSheetHeightPx * 0.5f
-        val dismissThresholdPx = minSheetHeightPx * ReaderControlsDismissThresholdRatio
-        var desiredSheetHeightPx by remember(maxHeight) { mutableFloatStateOf(minSheetHeightPx) }
+        val initialSheetHeightPx = with(density) { maxHeight.toPx() * 0.5f }
+        val minSheetHeightPx = with(density) { 190.dp.toPx() }
+        val dismissThresholdPx = with(density) { 120.dp.toPx() }
+        val maxSheetHeightPx = with(density) {
+            val topBarHeightPx = 64.dp.toPx()
+            val statusBarHeightPx = WindowInsets.statusBars.asPaddingValues().calculateTopPadding().toPx()
+            maxHeight.toPx() - topBarHeightPx - statusBarHeightPx
+        }
+
+        var desiredSheetHeightPx by remember(maxHeight) { mutableFloatStateOf(initialSheetHeightPx) }
 
         // Reset height to default 50% every time the controls are opened.
         // This ensures the drag height isn't "saved" across visibility toggles.
         LaunchedEffect(isVisible) {
             if (isVisible) {
-                desiredSheetHeightPx = minSheetHeightPx
+                desiredSheetHeightPx = initialSheetHeightPx
             }
         }
 
@@ -679,7 +688,9 @@ fun ReaderControls(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(with(density) { desiredSheetHeightPx.toDp() })
                 .testTag("reader_controls_sheet"),
+            shape = RectangleShape,
             colors = CardDefaults.cardColors(
                 containerColor = themeColors.background.copy(alpha = 0.98f),
                 contentColor = themeColors.foreground
@@ -687,6 +698,10 @@ fun ReaderControls(
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Column {
+                HorizontalDivider(
+                    thickness = 0.5.dp,
+                    color = themeColors.foreground.copy(alpha = 0.15f)
+                )
                 Column(
                     modifier = Modifier.onSizeChanged { sheetChromeHeightPx = it.height }
                 ) {
@@ -700,13 +715,12 @@ fun ReaderControls(
                             val dismissByHeight = desiredSheetHeightPx < dismissThresholdPx
                             val dismissByFling =
                                 velocity > ReaderControlsDismissVelocityThreshold &&
-                                    desiredSheetHeightPx <= minSheetHeightPx
+                                    desiredSheetHeightPx <= initialSheetHeightPx
 
                             if (dismissByHeight || dismissByFling) {
                                 onDismiss()
                             } else {
-                                // Continuous resize above 50%, but snap back to 50% if below it 
-                                // and not enough to trigger a full dismiss.
+                                // Snap back to scrubber minimum (160dp) if dragged too low but not enough to dismiss
                                 if (desiredSheetHeightPx < minSheetHeightPx) {
                                     desiredSheetHeightPx = minSheetHeightPx
                                 }
@@ -792,7 +806,7 @@ private fun ReaderControlsDragHandle(
                 modifier = Modifier
                     .size(width = 36.dp, height = 4.dp)
                     .clip(RoundedCornerShape(999.dp))
-                    .background(themeColors.foreground.copy(alpha = 0.28f))
+                    .background(themeColors.foreground.copy(alpha = 0.45f))
             )
         }
     }
