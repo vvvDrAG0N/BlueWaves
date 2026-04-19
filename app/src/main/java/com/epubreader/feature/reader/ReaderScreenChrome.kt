@@ -575,71 +575,76 @@ internal fun ReaderStatusOverlay(
         enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
         exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
         modifier = modifier
-            .background(themeColors.background) // Solid background to block text underneath
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .background(themeColors.background)
         ) {
-            // 1. Chapter Block
-            if (chapterText.isNotEmpty() || (uiState.showChapterProgress && progressPercentage != null)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
-                ) {
-                    if (chapterText.isNotEmpty()) {
-                        Text(
-                            text = chapterText,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = themeColors.foreground.copy(alpha = 0.5f)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // 1. Chapter Block
+                if (chapterText.isNotEmpty() || (uiState.showChapterProgress && progressPercentage != null)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (chapterText.isNotEmpty()) {
+                            Text(
+                                text = chapterText,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    color = themeColors.foreground.copy(alpha = 0.5f)
+                                )
                             )
-                        )
-                    }
-                    if (uiState.showChapterProgress && progressPercentage != null) {
-                        Text(
-                            text = "${(progressPercentage * 100).toInt()}%",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = themeColors.foreground.copy(alpha = 0.5f)
+                        }
+                        if (uiState.showChapterProgress && progressPercentage != null) {
+                            Text(
+                                text = "${(progressPercentage * 100).toInt()}%",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    color = themeColors.foreground.copy(alpha = 0.5f)
+                                )
                             )
-                        )
+                        }
                     }
                 }
-            }
 
-            // 2. Spacer to push Time and Battery to the right
-            Spacer(modifier = Modifier.weight(1f))
+                // 2. Spacer to push Time and Battery to the right
+                Spacer(modifier = Modifier.weight(1f))
 
-            // 3. Time
-            if (uiState.showClock) {
-                Text(
-                    text = timeText,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = themeColors.foreground.copy(alpha = 0.5f)
-                    ),
-                    modifier = Modifier.padding(end = 12.dp)
-                )
-            }
-
-            // 4. Battery
-            if (uiState.showBattery && batteryText.isNotEmpty()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.BatteryFull,
-                        contentDescription = null,
-                        modifier = Modifier.size(12.dp),
-                        tint = themeColors.foreground.copy(alpha = 0.5f)
-                    )
+                // 3. Time
+                if (uiState.showClock) {
                     Text(
-                        text = batteryText,
+                        text = timeText,
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = themeColors.foreground.copy(alpha = 0.5f)
-                        )
+                        ),
+                        modifier = Modifier.padding(end = 12.dp)
                     )
+                }
+
+                // 4. Battery
+                if (uiState.showBattery && batteryText.isNotEmpty()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.BatteryFull,
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp),
+                            tint = themeColors.foreground.copy(alpha = 0.5f)
+                        )
+                        Text(
+                            text = batteryText,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                color = themeColors.foreground.copy(alpha = 0.5f)
+                            )
+                        )
+                    }
                 }
             }
         }

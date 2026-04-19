@@ -269,6 +269,9 @@ internal fun ReaderChapterContent(
     }
 
     if (settings.selectableText) {
+        val selectionActionBarBottomPadding =
+            if (settings.readerStatusUi.isEnabled && !settings.showSystemBar) 40.dp else 24.dp
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -301,7 +304,7 @@ internal fun ReaderChapterContent(
                 exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 24.dp)
+                    .padding(bottom = selectionActionBarBottomPadding)
                     .navigationBarsPadding()
             ) {
                 TextSelectionActionBar(
