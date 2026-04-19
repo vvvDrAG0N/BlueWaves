@@ -765,19 +765,20 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         )
     }
 
-    val shellBackEnabled = shouldUseShellBackHandler(
+    val shellBackAction = resolveShellBackAction(
         currentScreen = currentScreen,
         isDrawerOpen = drawerState.isOpen,
         isFolderSelectionMode = isFolderSelectionMode,
         isBookSelectionMode = isBookSelectionMode,
     )
 
-    BackHandler(enabled = shellBackEnabled) {
-        when {
-            drawerState.isOpen -> closeDrawer()
-            isBookSelectionMode -> clearBookSelection()
-            isFolderSelectionMode -> clearFolderSelection()
-            else -> currentScreen = Screen.Library
+    BackHandler(enabled = shellBackAction != null) {
+        when (shellBackAction) {
+            ShellBackAction.ClearFolderSelection -> clearFolderSelection()
+            ShellBackAction.CloseDrawer -> closeDrawer()
+            ShellBackAction.ClearBookSelection -> clearBookSelection()
+            ShellBackAction.GoToLibrary -> currentScreen = Screen.Library
+            null -> Unit
         }
     }
 }

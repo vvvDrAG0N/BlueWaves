@@ -111,18 +111,42 @@ internal data class BookSelectionActionBarActions(
     val onEditSelectedBook: () -> Unit,
 )
 
+internal enum class ShellBackAction {
+    ClearFolderSelection,
+    CloseDrawer,
+    ClearBookSelection,
+    GoToLibrary,
+}
+
+internal fun resolveShellBackAction(
+    currentScreen: Screen,
+    isDrawerOpen: Boolean,
+    isFolderSelectionMode: Boolean,
+    isBookSelectionMode: Boolean,
+): ShellBackAction? {
+    return when {
+        isFolderSelectionMode -> ShellBackAction.ClearFolderSelection
+        isDrawerOpen -> ShellBackAction.CloseDrawer
+        isBookSelectionMode -> ShellBackAction.ClearBookSelection
+        currentScreen != Screen.Library &&
+            currentScreen != Screen.EditBook &&
+            currentScreen != Screen.Reader -> ShellBackAction.GoToLibrary
+        else -> null
+    }
+}
+
 internal fun shouldUseShellBackHandler(
     currentScreen: Screen,
     isDrawerOpen: Boolean,
     isFolderSelectionMode: Boolean,
     isBookSelectionMode: Boolean,
 ): Boolean {
-    return isDrawerOpen ||
-        isFolderSelectionMode ||
-        isBookSelectionMode ||
-        (currentScreen != Screen.Library &&
-            currentScreen != Screen.EditBook &&
-            currentScreen != Screen.Reader)
+    return resolveShellBackAction(
+        currentScreen = currentScreen,
+        isDrawerOpen = isDrawerOpen,
+        isFolderSelectionMode = isFolderSelectionMode,
+        isBookSelectionMode = isBookSelectionMode,
+    ) != null
 }
 
 // Dialog host bundle. Dialog composables stay dumb and receive only visibility plus callbacks.

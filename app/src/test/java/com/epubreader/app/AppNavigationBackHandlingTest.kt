@@ -1,6 +1,7 @@
 package com.epubreader.app
 
 import com.epubreader.Screen
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -57,5 +58,17 @@ class AppNavigationBackHandlingTest {
                 isBookSelectionMode = true,
             ),
         )
+    }
+
+    @Test
+    fun resolveShellBackAction_prioritizesFolderSelectionBeforeClosingDrawer() {
+        val action = resolveShellBackAction(
+            currentScreen = Screen.Library,
+            isDrawerOpen = true,
+            isFolderSelectionMode = true,
+            isBookSelectionMode = false,
+        )
+
+        assertEquals(ShellBackAction.ClearFolderSelection, action)
     }
 }

@@ -109,3 +109,8 @@ The 7-file split in `com.epubreader.app` is designed to reduce per-task context 
 - `AppNavigation.kt` still coordinates most action lambdas to keep behavior unchanged.
 - `AppNavigation.kt` still applies startup decisions and owns the back-handler/screen-routing logic.
 - `LibraryScreen` now depends on bundled contracts instead of raw parameter lists, but it still consumes `SettingsManager` indirectly because shared UI components already require it.
+
+## Back Behavior Notes
+
+- In the library drawer, folder-selection mode has higher back priority than drawer dismissal.
+- Pressing back while the `Libraries` drawer is in folder-selection mode should clear folder selection and keep the drawer open.

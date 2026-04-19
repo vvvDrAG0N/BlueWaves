@@ -104,6 +104,7 @@ fun ReaderScreen(
     var shouldScrollToBottom by remember { mutableStateOf(false) }
     var showControls by remember { mutableStateOf(false) }
     var selectionResetToken by remember(book.id) { mutableIntStateOf(0) }
+    var isTextSelectionSessionActive by remember(book.id) { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
     val tocListState = rememberLazyListState()
@@ -324,6 +325,7 @@ fun ReaderScreen(
     }
 
     suspend fun saveAndBack() {
+        isTextSelectionSessionActive = false
         selectionResetToken++
         withFrameNanos { }
         saveCurrentProgress()
@@ -481,12 +483,22 @@ fun ReaderScreen(
         }
     }
 
-    BackHandler(enabled = drawerState.isOpen) {
-        scope.launch { drawerState.close() }
-    }
-
-    BackHandler(enabled = !drawerState.isOpen) {
-        scope.launch { saveAndBack() }
+    BackHandler {
+        when (
+            resolveReaderBackAction(
+                isDrawerOpen = drawerState.isOpen,
+                isTextSelectionSessionActive = isTextSelectionSessionActive,
+                showControls = showControls,
+            )
+        ) {
+            ReaderBackAction.CloseToc -> scope.launch { drawerState.close() }
+            ReaderBackAction.ClearTextSelection -> {
+                isTextSelectionSessionActive = false
+                selectionResetToken++
+            }
+            ReaderBackAction.HideControls -> showControls = false
+            ReaderBackAction.ExitReader -> scope.launch { saveAndBack() }
+        }
     }
 
     // Scroll TOC to current chapter
@@ -539,6 +551,7 @@ fun ReaderScreen(
         chapterElements = chapterElements,
         isLoadingChapter = isLoadingChapter,
         showControls = showControls,
+        isTextSelectionSessionActive = isTextSelectionSessionActive,
         tocSort = tocSort,
         sortedToc = sortedToc,
         verticalOverscroll = verticalOverscroll,
@@ -549,6 +562,11 @@ fun ReaderScreen(
     )
     val chromeCallbacks = ReaderChromeCallbacks(
         onShowControlsChange = { showControls = it },
+        onTextSelectionActiveChange = { isTextSelectionSessionActive = it },
+        onClearTextSelection = {
+            isTextSelectionSessionActive = false
+            selectionResetToken++
+        },
         onToggleTocSort = {
             tocSort = if (tocSort == TocSort.Ascending) TocSort.Descending else TocSort.Ascending
         },

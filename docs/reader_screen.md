@@ -74,6 +74,12 @@ The reader supports three distinct ways to navigate chapters, each interacting d
 - overscroll release behavior
 - scrubber handling that forces `isInitialScrollDone = true` during manual user scrolling
 
+## Back Layer Order
+
+- Reader back should unwind one overlay layer at a time.
+- Current order is: TOC drawer, text-selection session, reader controls/settings, then exit reader.
+- If text selection is active while `showControls` is still true, back should clear only the selection session and leave the controls visible.
+
 ## AI Hint
 
 Do not load all reader files by default.

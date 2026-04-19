@@ -74,4 +74,43 @@ class ReaderScreenContractsTest {
         assertEquals(Color(0xFFEEF8FF), theme.background)
         assertEquals(Color(0xFF10212D), theme.foreground)
     }
+
+    @Test
+    fun resolveReaderBackAction_closesTopmostReaderOverlayOneLayerAtATime() {
+        assertEquals(
+            ReaderBackAction.CloseToc,
+            resolveReaderBackAction(
+                isDrawerOpen = true,
+                isTextSelectionSessionActive = true,
+                showControls = true,
+            ),
+        )
+
+        assertEquals(
+            ReaderBackAction.ClearTextSelection,
+            resolveReaderBackAction(
+                isDrawerOpen = false,
+                isTextSelectionSessionActive = true,
+                showControls = true,
+            ),
+        )
+
+        assertEquals(
+            ReaderBackAction.HideControls,
+            resolveReaderBackAction(
+                isDrawerOpen = false,
+                isTextSelectionSessionActive = false,
+                showControls = true,
+            ),
+        )
+
+        assertEquals(
+            ReaderBackAction.ExitReader,
+            resolveReaderBackAction(
+                isDrawerOpen = false,
+                isTextSelectionSessionActive = false,
+                showControls = false,
+            ),
+        )
+    }
 }

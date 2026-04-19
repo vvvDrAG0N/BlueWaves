@@ -1,14 +1,16 @@
 # ReaderScreenContracts Cluster
 
-> 6 nodes · cohesion 0.33
+> 8 nodes · cohesion 0.25
 
 ## Key Concepts
 
-- **ReaderScreenContracts.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **ReaderScreenContracts.kt** (7 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
 - **getThemeColors()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **ReaderBackAction** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
 - **ReaderChromeCallbacks** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
 - **ReaderChromeState** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
 - **ReaderTheme** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
+- **resolveReaderBackAction()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
 - **TocSort** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenContracts.kt`
 
 ## Relationships
@@ -21,7 +23,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 14 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

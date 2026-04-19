@@ -32,6 +32,26 @@ data class ReaderTheme(val background: Color, val foreground: Color)
 
 typealias GlobalSettingsTransform = (GlobalSettings) -> GlobalSettings
 
+internal enum class ReaderBackAction {
+    CloseToc,
+    ClearTextSelection,
+    HideControls,
+    ExitReader,
+}
+
+internal fun resolveReaderBackAction(
+    isDrawerOpen: Boolean,
+    isTextSelectionSessionActive: Boolean,
+    showControls: Boolean,
+): ReaderBackAction {
+    return when {
+        isDrawerOpen -> ReaderBackAction.CloseToc
+        isTextSelectionSessionActive -> ReaderBackAction.ClearTextSelection
+        showControls -> ReaderBackAction.HideControls
+        else -> ReaderBackAction.ExitReader
+    }
+}
+
 fun getThemeColors(
     theme: String,
     customThemes: List<CustomTheme> = emptyList(),
@@ -55,6 +75,7 @@ internal data class ReaderChromeState(
     val chapterElements: List<ChapterElement>,
     val isLoadingChapter: Boolean,
     val showControls: Boolean,
+    val isTextSelectionSessionActive: Boolean,
     val tocSort: TocSort,
     val sortedToc: List<TocItem>,
     val verticalOverscroll: Float,
@@ -66,6 +87,8 @@ internal data class ReaderChromeState(
 
 internal data class ReaderChromeCallbacks(
     val onShowControlsChange: (Boolean) -> Unit,
+    val onTextSelectionActiveChange: (Boolean) -> Unit,
+    val onClearTextSelection: () -> Unit,
     val onToggleTocSort: () -> Unit,
     val onReleaseOverscroll: () -> Unit,
     val onSaveAndBack: () -> Unit,
