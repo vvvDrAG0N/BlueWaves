@@ -9,15 +9,19 @@ This document defines the architecture, coding standards, and modification safet
 
 ## 2. Context Priority
 1. **AGENT.md**: Defines the behavior rules and constraints for all modifications.
-2. **docs/** folder: Contains detailed system knowledge and flow documentation.
-3. **Existing Code**: Always takes precedence over assumptions. Analyze current implementations before suggesting changes.
-4. **Refactors**: Large-scale refactors or architectural shifts require explicit user confirmation.
+2. **docs/agent_memory/GLOBAL_STEPS.md**: The sequential ledger of all steps taken. **MANDATORY**: Append your latest step to this file at the end of every turn using `scripts/update_global_steps.py`.
+3. **TODO**: The master roadmap for future goals and task ordering. **MANDATORY**: Read this to understand the current priority.
+4. **docs/** folder: Contains detailed system knowledge and flow documentation.
+5. **Existing Code**: Always takes precedence over assumptions. Analyze current implementations before suggesting changes.
+6. **Refactors**: Large-scale refactors or architectural shifts require explicit user confirmation.
 
 ## 3. AI Development Protocol
 1. **Analyze Docs First**: Always review the `/docs` folder before writing any code. It contains the logic behind complex features.
 2. **Intent Check (MANDATORY)**: Before implementing any changes, analyze if the user's request is for discussion/planning or direct execution. If the user mentions "talk," "discuss," "let's think," or "planning," **STOP** and wait for confirmation before writing code.
-3. **Minimal Edits**: Prefer surgical, minimal edits over large-scale rewrites to preserve original intent and code style.
-4. **Protect the Reader**: Reader smoothness and scroll position restoration are sacred. Any changes to `ReaderScreen` must be stress-tested for these two properties.
+3. **Step-First Protocol**: For complex tasks, record the intended plan in `GLOBAL_STEPS.md` as a "WIP" entry **BEFORE** modifying code. This ensures continuity if the session is interrupted.
+4. **Minimal Edits**: Prefer surgical, minimal edits over large-scale rewrites to preserve original intent and code style.
+5. **The Lego Philosophy**: Always build individual 'Lego Pieces' (Interfaces, Repos, or Components) in separate files **BEFORE** assembling them into a larger Shell or Screen. Each piece must be verified as functional in isolation.
+6. **Protect the Reader**: Reader smoothness and scroll position restoration are sacred. Any changes to `ReaderScreen` must be stress-tested for these two properties.
 5. **Confirm Changes**: Always ask for confirmation before making significant architectural changes or altering the DataStore schema.
 6. **Verify Flows**: After any modification, re-verify the affected flow (e.g., if changing the parser, verify both metadata extraction and chapter rendering).
 7. **Right-Sized Tests**: New non-trivial features should ship with the smallest automated test that proves them: JVM for pure logic, Robolectric/local Android-aware tests for framework-dependent logic, instrumentation for runtime/UI flows. If no automated test is added, explain why and provide manual verification steps.
@@ -146,6 +150,7 @@ This section extends the base rules above for repo agents and model handoffs.
   - risk areas
   - required verification
 - If a task changes behavior, update the relevant docs in the same pass when practical.
+- When a Phase or major Task from the `TODO` is completed, you MUST mark it as `[x]` and update the next priority items if needed.
 
 ### Debug Handling
 - Start debugging from `docs/AI_DEBUG_GUIDE.md`, then the focused area doc, then the smallest set of implementation files.
@@ -157,3 +162,23 @@ This section extends the base rules above for repo agents and model handoffs.
 - `docs/PROMPT_TEMPLATES.md` is the quick-start library for common task types.
 - `docs/ask_mode_prompt_rules.md` is the rulebook for generated or delegated implementation prompts.
 - `docs/TODO_PROMPTS.md` is the prompt library for top-level backlog items and should track the current root `TODO`.
+
+## 8. Titan Engine Documentation Protocol (CRITICAL)
+1.  **Documentation Sync**: No task in the `:engine-waves` module is "Done" until the corresponding documentation in `docs/v2_engine/` is updated.
+2.  **Lego Registration**: Every new "Lego Piece" (Interface, Repository, or Component) must be registered in `ENGINE_ARCHITECTURE.md` with its purpose and contract **BEFORE** assembly.
+3.  **Vision-to-Execution Pipeline**: 
+    -   **Mind Map**: High-level vision. Use this to derive the **Phases**.
+    -   **Visual Map**: The spatial "Habitat" and UI layout map for all media types.
+    -   **Technique List**: Mandatory technical reference for Shaders, Ray Tracing, and Math.
+    -   **TODO**: Master Task List. Convert Mind Map Phases into concrete tasks here.
+    -   **GLOBAL_STEPS**: Execution Ledger. Record every atomic change here.
+4.  **Native Comments**: C++ code must include "Titan Performance Notes" for any non-obvious optimizations (mmap, vectorization, etc.).
+4.  **Zero-Stale Memory**: If a JNI signature changes, the documentation MUST change in the same turn.
+5.  **Audit Rule**: Before starting any V2 task, the agent must read `docs/v2_engine/` to ensure continuity.
+6.  **Titan Logging Protocol**: Every new native feature MUST include explicit logging via `TitanLog.h` and include `TitanTimer` performance metrics for IO or Rendering paths.
+7.  **Melodies Protocol (ENFORCED)**: The AI agent is responsible for proactively recording significant creative inspirations or "Melodic Thoughts" in `docs/v2_engine/MELODIES.md`. **MANDATORY**: At the end of every major phase or session, the agent MUST ask the user if there is a 'Melodic Thought' to record.
+8.  **Titan Atomic File Rule**: Prefer many small, 'Atomic' files over large monolithic files. A single file should ideally focus on ONE responsibility and stay under 500 lines. If a file exceeds this or handles multiple logic domains, it MUST be refactored into smaller Lego pieces.
+9.  **Titan Header Rule (C++)**: To prevent circular dependencies ("cyclers"):
+    -   Every `.h` file MUST have `#ifndef HEADER_NAME_H` guards.
+    -   Use **Forward Declarations** (e.g., `class MyClass;`) in headers whenever possible instead of `#include`.
+    -   Only include dependencies in the `.cpp` file to keep header compilation fast and clean.

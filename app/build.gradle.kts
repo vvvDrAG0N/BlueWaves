@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.epubreader"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 12
         versionName = "1.1.1"
@@ -80,6 +80,8 @@ dependencies {
 
     // WebView
     implementation(libs.androidx.webkit)
+
+    implementation(project(":engine-waves"))
 
     testImplementation(libs.junit)
     testImplementation("org.json:json:20240303")

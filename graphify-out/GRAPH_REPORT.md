@@ -1,11 +1,11 @@
-# Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-19)
+# Graph Report - C:\Users\Amon\Desktop\projects\Epub_Reader_v2  (2026-04-20)
 
 ## Corpus Check
-- 40 files · ~89,989 words
+- 58 files · ~117,761 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 499 nodes · 462 edges · 41 communities detected
+- 577 nodes · 524 edges · 59 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -13,12 +13,12 @@
 - [[_COMMUNITY_PdfToEpubConverter Cluster|PdfToEpubConverter Cluster]]
 - [[_COMMUNITY_EpubParser Cluster|EpubParser Cluster]]
 - [[_COMMUNITY_SettingsManager Cluster|SettingsManager Cluster]]
+- [[_COMMUNITY_SettingsScreen Cluster|SettingsScreen Cluster]]
 - [[_COMMUNITY_EpubParserEditing Cluster|EpubParserEditing Cluster]]
 - [[_COMMUNITY_EditBookScreen Cluster|EditBookScreen Cluster]]
 - [[_COMMUNITY_ReaderScreenControls Cluster|ReaderScreenControls Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster|app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster]]
 - [[_COMMUNITY_EditBookModels Cluster|EditBookModels Cluster]]
-- [[_COMMUNITY_SettingsScreen Cluster|SettingsScreen Cluster]]
 - [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
 - [[_COMMUNITY_ImportRouting Cluster|ImportRouting Cluster]]
 - [[_COMMUNITY_AppNavigationOperations Cluster|AppNavigationOperations Cluster]]
@@ -26,6 +26,7 @@
 - [[_COMMUNITY_AppNavigationContracts Cluster|AppNavigationContracts Cluster]]
 - [[_COMMUNITY_LibraryModels Cluster|LibraryModels Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster|app_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt Cluster]]
+- [[_COMMUNITY_WavesEngine Cluster|WavesEngine Cluster]]
 - [[_COMMUNITY_BookEditingModels Cluster|BookEditingModels Cluster]]
 - [[_COMMUNITY_AppNavigationDialogs Cluster|AppNavigationDialogs Cluster]]
 - [[_COMMUNITY_EpubParserChapter Cluster|EpubParserChapter Cluster]]
@@ -39,30 +40,47 @@
 - [[_COMMUNITY_AppNavigationLibrary Cluster|AppNavigationLibrary Cluster]]
 - [[_COMMUNITY_AppNavigationLibraryData Cluster|AppNavigationLibraryData Cluster]]
 - [[_COMMUNITY_ReaderScreenChrome Cluster|ReaderScreenChrome Cluster]]
+- [[_COMMUNITY_RendererCore Cluster|RendererCore Cluster]]
 - [[_COMMUNITY_app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster|app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster]]
 - [[_COMMUNITY_AppLog Cluster|AppLog Cluster]]
 - [[_COMMUNITY_PdfLegacyRuntime Cluster|PdfLegacyRuntime Cluster]]
+- [[_COMMUNITY_ZipEngine Cluster|ZipEngine Cluster]]
 - [[_COMMUNITY_check_graph_staleness Cluster|check_graph_staleness Cluster]]
 - [[_COMMUNITY_AppNavigationPdfLegacy Cluster|AppNavigationPdfLegacy Cluster]]
+- [[_COMMUNITY_IEngineComponent Cluster|IEngineComponent Cluster]]
+- [[_COMMUNITY_LiquidOverscrollEffect Cluster|LiquidOverscrollEffect Cluster]]
+- [[_COMMUNITY_TitanNavigationController Cluster|TitanNavigationController Cluster]]
 - [[_COMMUNITY_LibraryCards Cluster|LibraryCards Cluster]]
 - [[_COMMUNITY_ReaderTextActions Cluster|ReaderTextActions Cluster]]
+- [[_COMMUNITY_ScraperViewModel Cluster|ScraperViewModel Cluster]]
+- [[_COMMUNITY_waves-engine Cluster|waves-engine Cluster]]
+- [[_COMMUNITY_TitanNavbar Cluster|TitanNavbar Cluster]]
 - [[_COMMUNITY_AppNavigation Cluster|AppNavigation Cluster]]
 - [[_COMMUNITY_WindowInsetsUtils Cluster|WindowInsetsUtils Cluster]]
 - [[_COMMUNITY_ReaderScreen Cluster|ReaderScreen Cluster]]
 - [[_COMMUNITY_ReaderStatusSettingsRow Cluster|ReaderStatusSettingsRow Cluster]]
+- [[_COMMUNITY_MockScraper Cluster|MockScraper Cluster]]
+- [[_COMMUNITY_ScraperEngine Cluster|ScraperEngine Cluster]]
+- [[_COMMUNITY_TitanLog Cluster|TitanLog Cluster]]
+- [[_COMMUNITY_TitanIntegrationDemo Cluster|TitanIntegrationDemo Cluster]]
+- [[_COMMUNITY_ProReaderScreen Cluster|ProReaderScreen Cluster]]
+- [[_COMMUNITY_ScraperSearchScreen Cluster|ScraperSearchScreen Cluster]]
+- [[_COMMUNITY_TitanOceanShell Cluster|TitanOceanShell Cluster]]
+- [[_COMMUNITY_LiquidOceanBackground Cluster|LiquidOceanBackground Cluster]]
+- [[_COMMUNITY_VolumetricBookCard Cluster|VolumetricBookCard Cluster]]
 - [[_COMMUNITY_update_protocol Cluster|update_protocol Cluster]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `EpubParser` - 34 edges
-2. `SettingsManager` - 27 edges
-3. `ReaderTextSelectionSession` - 9 edges
-4. `PdfConversionWorkspaceState` - 8 edges
-5. `AppLog` - 5 edges
-6. `PdfLegacyBridge` - 5 edges
-7. `PdfLegacyRuntime` - 5 edges
-8. `PdfConversionWorker` - 4 edges
-9. `Image` - 3 edges
-10. `PdfDocumentHandle` - 3 edges
+2. `SettingsManager` - 29 edges
+3. `WavesEngine` - 11 edges
+4. `ReaderTextSelectionSession` - 9 edges
+5. `PdfConversionWorkspaceState` - 8 edges
+6. `AppLog` - 5 edges
+7. `PdfLegacyBridge` - 5 edges
+8. `PdfLegacyRuntime` - 5 edges
+9. `PdfConversionWorker` - 4 edges
+10. `Image` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 - None detected - all connections are within the same source files.
@@ -81,29 +99,29 @@ Nodes (1): EpubParser
 Cohesion: 0.07
 Nodes (1): SettingsManager
 
-### Community 3 - "EpubParserEditing Cluster"
+### Community 3 - "SettingsScreen Cluster"
+Cohesion: 0.07
+Nodes (4): HsvColor, SettingsSection, ThemeEditorDraft, ThemeEditorSession
+
+### Community 4 - "EpubParserEditing Cluster"
 Cohesion: 0.08
 Nodes (0): 
 
-### Community 4 - "EditBookScreen Cluster"
+### Community 5 - "EditBookScreen Cluster"
 Cohesion: 0.08
 Nodes (3): ChapterDisplaySort, ChapterSelectionMode, EditBookTab
 
-### Community 5 - "ReaderScreenControls Cluster"
-Cohesion: 0.08
+### Community 6 - "ReaderScreenControls Cluster"
+Cohesion: 0.09
 Nodes (1): NestedScrollWebView
 
-### Community 6 - "app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster"
+### Community 7 - "app_src_main_java_com_epubreader_data_parser_epubparserbooks_kt Cluster"
 Cohesion: 0.09
 Nodes (2): PdfDocumentInfo, ResolvedBookCoverFiles
 
-### Community 7 - "EditBookModels Cluster"
+### Community 8 - "EditBookModels Cluster"
 Cohesion: 0.1
 Nodes (2): EditableChapterItem, EditableChapterSource
-
-### Community 8 - "SettingsScreen Cluster"
-Cohesion: 0.1
-Nodes (4): HsvColor, SettingsSection, ThemeEditorDraft, ThemeEditorSession
 
 ### Community 9 - "SettingsModels Cluster"
 Cohesion: 0.11
@@ -133,108 +151,180 @@ Nodes (8): BookFormat, BookRepresentation, ChapterElement, ConversionStatus, Epu
 Cohesion: 0.17
 Nodes (0): 
 
-### Community 16 - "BookEditingModels Cluster"
+### Community 16 - "WavesEngine Cluster"
+Cohesion: 0.17
+Nodes (1): WavesEngine
+
+### Community 17 - "BookEditingModels Cluster"
 Cohesion: 0.18
 Nodes (10): BookChapterEdit, BookCoverAction, BookCoverUpdate, BookEditRequest, BookNewChapterContent, HtmlDocument, Keep, PlainText (+2 more)
 
-### Community 17 - "AppNavigationDialogs Cluster"
+### Community 18 - "AppNavigationDialogs Cluster"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 18 - "EpubParserChapter Cluster"
+### Community 19 - "EpubParserChapter Cluster"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 19 - "PdfLegacyBridge Cluster"
+### Community 20 - "PdfLegacyBridge Cluster"
 Cohesion: 0.2
 Nodes (4): PdfConversionProgress, PdfConversionProgressListener, PdfConversionResult, PdfLegacyBridge
 
-### Community 20 - "MainActivity Cluster"
+### Community 21 - "MainActivity Cluster"
 Cohesion: 0.22
 Nodes (2): MainActivity, Screen
 
-### Community 21 - "SettingsManagerContracts Cluster"
+### Community 22 - "SettingsManagerContracts Cluster"
 Cohesion: 0.22
 Nodes (2): BookProgressPreferenceKeys, SettingsPreferenceKeys
 
-### Community 22 - "PdfConversionWorker Cluster"
+### Community 23 - "PdfConversionWorker Cluster"
 Cohesion: 0.25
 Nodes (1): PdfConversionWorker
 
-### Community 23 - "pdftoepubconverter_pdfconversionworkspacestate Cluster"
+### Community 24 - "pdftoepubconverter_pdfconversionworkspacestate Cluster"
 Cohesion: 0.25
 Nodes (1): PdfConversionWorkspaceState
 
-### Community 24 - "PdfReaderScreen Cluster"
+### Community 25 - "PdfReaderScreen Cluster"
 Cohesion: 0.25
 Nodes (1): PdfDocumentHandle
 
-### Community 25 - "ReaderScreenContracts Cluster"
+### Community 26 - "ReaderScreenContracts Cluster"
 Cohesion: 0.25
 Nodes (5): ReaderBackAction, ReaderChromeCallbacks, ReaderChromeState, ReaderTheme, TocSort
 
-### Community 26 - "AppNavigationLibrary Cluster"
+### Community 27 - "AppNavigationLibrary Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 27 - "AppNavigationLibraryData Cluster"
+### Community 28 - "AppNavigationLibraryData Cluster"
 Cohesion: 0.29
 Nodes (1): FolderDragPreviewUpdate
 
-### Community 28 - "ReaderScreenChrome Cluster"
+### Community 29 - "ReaderScreenChrome Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 29 - "app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster"
+### Community 30 - "RendererCore Cluster"
+Cohesion: 0.29
+Nodes (2): ChapterLayout, LiquidLayoutEngine
+
+### Community 31 - "app_src_main_java_com_epubreader_app_appnavigationstartup_kt Cluster"
 Cohesion: 0.33
 Nodes (1): AppShellStartupDecision
 
-### Community 30 - "AppLog Cluster"
+### Community 32 - "AppLog Cluster"
 Cohesion: 0.33
 Nodes (1): AppLog
 
-### Community 31 - "PdfLegacyRuntime Cluster"
+### Community 33 - "PdfLegacyRuntime Cluster"
 Cohesion: 0.33
 Nodes (1): PdfLegacyRuntime
 
-### Community 32 - "check_graph_staleness Cluster"
+### Community 34 - "ZipEngine Cluster"
+Cohesion: 0.47
+Nodes (4): decompress_file(), Java_com_epubreader_engine_WavesEngine_extractEpub(), make_dir(), NativeZipSource
+
+### Community 35 - "check_graph_staleness Cluster"
 Cohesion: 0.53
 Nodes (5): check_staleness(), get_last_modified(), infer_python_from_graphify_bin(), interpreter_has_graphify(), resolve_graphify_python()
 
-### Community 33 - "AppNavigationPdfLegacy Cluster"
+### Community 36 - "AppNavigationPdfLegacy Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 34 - "LibraryCards Cluster"
+### Community 37 - "IEngineComponent Cluster"
+Cohesion: 0.4
+Nodes (0): 
+
+### Community 38 - "LiquidOverscrollEffect Cluster"
+Cohesion: 0.4
+Nodes (1): LiquidOverscrollState
+
+### Community 39 - "TitanNavigationController Cluster"
+Cohesion: 0.4
+Nodes (2): TitanNavigationController, TitanScreen
+
+### Community 40 - "LibraryCards Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 35 - "ReaderTextActions Cluster"
+### Community 41 - "ReaderTextActions Cluster"
 Cohesion: 0.5
 Nodes (3): Define, Translate, WebLookupAction
 
-### Community 36 - "AppNavigation Cluster"
+### Community 42 - "ScraperViewModel Cluster"
+Cohesion: 0.5
+Nodes (2): ScrapeResultUI, ScraperViewModel
+
+### Community 43 - "waves-engine Cluster"
+Cohesion: 0.67
+Nodes (0): 
+
+### Community 44 - "TitanNavbar Cluster"
+Cohesion: 0.67
+Nodes (0): 
+
+### Community 45 - "AppNavigation Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 37 - "WindowInsetsUtils Cluster"
+### Community 46 - "WindowInsetsUtils Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 38 - "ReaderScreen Cluster"
+### Community 47 - "ReaderScreen Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 39 - "ReaderStatusSettingsRow Cluster"
+### Community 48 - "ReaderStatusSettingsRow Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 40 - "update_protocol Cluster"
+### Community 49 - "MockScraper Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 50 - "ScraperEngine Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 51 - "TitanLog Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 52 - "TitanIntegrationDemo Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 53 - "ProReaderScreen Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 54 - "ScraperSearchScreen Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 55 - "TitanOceanShell Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 56 - "LiquidOceanBackground Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 57 - "VolumetricBookCard Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 58 - "update_protocol Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
-- **75 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+70 more)
+- **80 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+75 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `AppNavigation Cluster`** (2 nodes): `AppNavigation()`, `AppNavigation.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -243,6 +333,24 @@ Nodes (0):
 - **Thin community `ReaderScreen Cluster`** (2 nodes): `ReaderScreen.kt`, `ReaderScreen()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `ReaderStatusSettingsRow Cluster`** (2 nodes): `ReaderStatusSettingsRow.kt`, `ReaderStatusSettingsRow()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `MockScraper Cluster`** (2 nodes): `MockScraper.cpp`, `Java_com_epubreader_engine_WavesEngine_mockSearch()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `ScraperEngine Cluster`** (2 nodes): `ScraperEngine.cpp`, `Java_com_epubreader_engine_WavesEngine_parseWebnovel()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `TitanLog Cluster`** (2 nodes): `TitanLog.h`, `TitanTimer()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `TitanIntegrationDemo Cluster`** (2 nodes): `TitanIntegrationDemo.kt`, `TitanIntegrationDemo()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `ProReaderScreen Cluster`** (2 nodes): `ProReaderScreen.kt`, `ProReaderScreen()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `ScraperSearchScreen Cluster`** (2 nodes): `ScraperSearchScreen.kt`, `ScraperSearchScreen()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `TitanOceanShell Cluster`** (2 nodes): `TitanOceanShell.kt`, `TitanOceanShell()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `LiquidOceanBackground Cluster`** (2 nodes): `LiquidOceanBackground.kt`, `LiquidOceanBackground()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `VolumetricBookCard Cluster`** (2 nodes): `VolumetricBookCard.kt`, `VolumetricBookCard()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `update_protocol Cluster`** (1 nodes): `update_protocol.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -253,14 +361,14 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `PdfConversionWorkspaceState` connect `pdftoepubconverter_pdfconversionworkspacestate Cluster` to `PdfToEpubConverter Cluster`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `Screen`, `LibraryAsyncUiState`, `LibraryScreenState` to the rest of the system?**
-  _75 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _80 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `PdfToEpubConverter Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `EpubParser Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
 - **Should `SettingsManager Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.07 - nodes in this community are weakly interconnected._
+- **Should `SettingsScreen Cluster` be split into smaller, more focused modules?**
+  _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `EpubParserEditing Cluster` be split into smaller, more focused modules?**
-  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
-- **Should `EditBookScreen Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._

@@ -19,4 +19,5 @@ local.properties
 *.dm
 test-books/
 .obsidian/
-gemini api.txt
+*.txt
+engine-waves/build/

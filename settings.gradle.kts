@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Epub Reader"
 include(":app")
+include(":engine-waves")

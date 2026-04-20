@@ -14,6 +14,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -24,13 +25,14 @@ import androidx.compose.ui.graphics.luminance
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.epubreader.app.AppNavigation
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.DarkThemeId
 import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.OledThemeId
 import com.epubreader.core.model.SepiaThemeId
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.engine.WavesEngine
+import com.epubreader.engine.ui.TitanOceanShell
 
 /**
  * Entry point of the application.
@@ -69,7 +71,8 @@ class MainActivity : ComponentActivity() {
                     }
 
                     CompositionLocalProvider(LocalHapticFeedback provides haptics) {
-                        AppNavigation(settingsManager, globalSettings)
+                        val engine = remember { WavesEngine() }
+                        TitanOceanShell(engine = engine)
                     }
                 }
             } else {

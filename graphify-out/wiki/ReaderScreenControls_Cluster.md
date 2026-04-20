@@ -1,13 +1,12 @@
 # ReaderScreenControls Cluster
 
-> 24 nodes · cohesion 0.08
+> 23 nodes · cohesion 0.09
 
 ## Key Concepts
 
-- **ReaderScreenControls.kt** (22 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenControls.kt`
+- **ReaderScreenControls.kt** (21 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenControls.kt`
 - **NestedScrollWebView** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenControls.kt`
 - **KeypadButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenControls.kt`
-- **nearestReaderControlsHeightPx()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenControls.kt`
 - **.onTouchEvent()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenControls.kt`
 - **OverscrollIndicator()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenControls.kt`
 - **ReaderChapterContent()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenControls.kt`
@@ -39,7 +38,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 46 (100%)
+- EXTRACTED: 44 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

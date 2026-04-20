@@ -151,7 +151,7 @@ internal fun Preferences.toGlobalSettings(): GlobalSettings {
  * [RISK_NOTE]
  * If the JSON is manually edited and becomes invalid, all custom themes will be lost (defaults to empty list).
  */
-internal fun parseCustomThemes(raw: String?): List<CustomTheme> {
+fun parseCustomThemes(raw: String?): List<CustomTheme> {
     if (raw.isNullOrBlank()) {
         return emptyList()
     }

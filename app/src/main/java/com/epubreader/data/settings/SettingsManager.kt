@@ -321,6 +321,45 @@ class SettingsManager(private val context: Context) {
         }
     }
 
+    suspend fun importThemes(newThemes: List<CustomTheme>) {
+        context.settingsDataStore.edit { preferences ->
+            val existingThemes = parseCustomThemes(preferences[SettingsPreferenceKeys.customThemes]).toMutableList()
+            var changed = false
+
+            newThemes.forEach { imported ->
+                var name = imported.name.trim()
+                if (name.isEmpty()) return@forEach
+                
+                // Handle duplicate names
+                var counter = 1
+                val baseName = name
+                while (existingThemes.any { it.name.equals(name, ignoreCase = true) }) {
+                    name = "$baseName ($counter)"
+                    counter++
+                }
+
+                // Always generate a new unique ID for imported themes to avoid collisions
+                val newId = "custom_${System.currentTimeMillis()}_${(0..9999).random()}"
+                existingThemes.add(imported.copy(id = newId, name = name))
+                changed = true
+            }
+
+            if (changed) {
+                preferences[SettingsPreferenceKeys.customThemes] = existingThemes.toCustomThemesJson()
+            }
+        }
+    }
+
+    suspend fun deleteAllCustomThemes() {
+        context.settingsDataStore.edit { preferences ->
+            preferences[SettingsPreferenceKeys.customThemes] = "[]"
+            val currentTheme = preferences[SettingsPreferenceKeys.theme]
+            if (currentTheme != null && !isBuiltInTheme(currentTheme)) {
+                preferences[SettingsPreferenceKeys.theme] = LightThemeId
+            }
+        }
+    }
+
     suspend fun deleteCustomTheme(themeId: String) {
         context.settingsDataStore.edit { preferences ->
             val existingThemes = parseCustomThemes(preferences[SettingsPreferenceKeys.customThemes])

@@ -1,23 +1,28 @@
 # Blue Waves EPUB Reader
 
-Blue Waves is a native Android EPUB reader built with Jetpack Compose. The project is optimized for offline reading, fast metadata loading, and stable scroll-position restoration.
+A high-performance, native Android reading ecosystem.
 
-## Current Architecture
+## 1. The Engines
+*   **V1 (Legacy stable)**: Standard EPUB reader (Compose + Epublib).
+*   **V2 (Titan Sovereign)**: High-performance volumetric media (Webnovels, Manga, Anime).
 
-The project uses a single-activity app shell with state-based navigation.
+## 2. Context Entry Points
+Always start with these three documents:
+1.  **[AGENTS.md](file:///c:/Users/Amon/Desktop/projects/Epub_Reader_v2/AGENTS.md)**: Mandatory behavior and safety rules.
+2.  **[SYSTEM_ARCHITECTURE.md](file:///c:/Users/Amon/Desktop/projects/Epub_Reader_v2/docs/SYSTEM_ARCHITECTURE.md)**: Dual-engine layout and structural rules.
+3.  **[TODO](file:///c:/Users/Amon/Desktop/projects/Epub_Reader_v2/TODO)**: The master roadmap.
 
-- `com.epubreader.MainActivity`
-  - App bootstrap, theme selection, and the `Screen` enum.
-- `com.epubreader.app.AppNavigation`
-  - Top-level navigation and library/folder UI state.
-- `com.epubreader.data.settings.SettingsManager`
-  - DataStore-backed persisted source of truth.
-- `com.epubreader.data.parser.EpubParser`
-  - EPUB extraction, metadata caching, and chapter parsing.
-- `com.epubreader.feature.reader.ReaderScreen`
-  - Reader UI, chapter lifecycle, scroll restoration, and overscroll navigation.
-- `com.epubreader.feature.settings.SettingsScreen`
-  - Settings UI for reader preferences.
+## 3. High-Signal Documentation
+*   **[AI_RISKS.md](file:///c:/Users/Amon/Desktop/projects/Epub_Reader_v2/docs/AI_RISKS.md)**: Load-bearing logic and regression hazards.
+*   **[docs/v2_engine/](file:///c:/Users/Amon/Desktop/projects/Epub_Reader_v2/docs/v2_engine/)**: Deep dive into the Titan V2 ecosystem.
+*   **[docs/agent_memory/](file:///c:/Users/Amon/Desktop/projects/Epub_Reader_v2/docs/agent_memory/)**: Sequential development ledger and decision logs.
+
+## 4. UI Design Philosophy
+The UI follows the **Liquid Design** language:
+*   **Oceanic Shell**: A deep, volumetric 3D navigation environment.
+*   **Titan Ocean**: Real-time AGSL shaders and 120fps physics.
+*   **Lego Pieces**: Modular, Atomic UI components registered in `ENGINE_ARCHITECTURE.md`.
+ UI for reader preferences.
 - `com.epubreader.core.model.*`
   - Shared domain models such as `EpubBook`, `GlobalSettings`, and `BookProgress`.
 - `com.epubreader.core.ui.*`
