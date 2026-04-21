@@ -31,6 +31,7 @@ import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.OledThemeId
 import com.epubreader.core.model.SepiaThemeId
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.feature.settings.ThemeStudioScreen
 
 /**
  * Entry point of the application.
@@ -69,7 +70,11 @@ class MainActivity : ComponentActivity() {
                     }
 
                     CompositionLocalProvider(LocalHapticFeedback provides haptics) {
-                        AppNavigation(settingsManager, globalSettings)
+                        // [AI_TEMP_TEST_MODE] Override navigation to show the new UI for testing
+                        ThemeStudioScreen(
+                            settingsManager = settingsManager,
+                            onBack = { /* No-op in test mode or exit app */ }
+                        )
                     }
                 }
             } else {
