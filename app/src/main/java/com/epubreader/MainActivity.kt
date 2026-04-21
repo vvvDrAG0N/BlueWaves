@@ -70,10 +70,9 @@ class MainActivity : ComponentActivity() {
                     }
 
                     CompositionLocalProvider(LocalHapticFeedback provides haptics) {
-                        // [AI_TEMP_TEST_MODE] Override navigation to show the new UI for testing
-                        ThemeStudioScreen(
+                        AppNavigation(
                             settingsManager = settingsManager,
-                            onBack = { /* No-op in test mode or exit app */ }
+                            globalSettings = globalSettings
                         )
                     }
                 }

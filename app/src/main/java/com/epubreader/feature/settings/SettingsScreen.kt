@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -74,6 +75,8 @@ import androidx.compose.material.icons.filled.DataUsage
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -109,12 +112,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -129,8 +135,17 @@ import com.epubreader.core.model.parseThemeColorOrNull
 import com.epubreader.core.model.themeButtonLabel
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.settings.SettingsManager
-import com.epubreader.feature.reader.ReaderStatusSettingsRow
 import com.epubreader.core.ui.getStaticWindowInsets
+import com.epubreader.feature.reader.KarlaFont
+import com.epubreader.feature.reader.ReaderStatusSettingsRow
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.ui.unit.sp
 import java.util.UUID
 import java.util.zip.ZipInputStream
 import org.json.JSONObject
@@ -253,6 +268,12 @@ fun SettingsScreen(
                     editorSession = null
                 }
             },
+            onDelete = {
+                scope.launch {
+                    settingsManager.deleteCustomTheme(session.themeId)
+                    editorSession = null
+                }
+            }
         )
     }
 
@@ -383,16 +404,16 @@ private fun AppearanceTab(
     onOpenEditThemeEditor: (CustomTheme) -> Unit,
     onDeleteTheme: (CustomTheme) -> Unit,
 ) {
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
     var themeToExport by remember { mutableStateOf<CustomTheme?>(null) }
 
+    // --- REFACTORED LOGIC HELPERS ---
     suspend fun importSingleThemeJson(
         json: JSONObject,
         seenPalettes: MutableSet<ThemePalette>,
         seenNames: MutableSet<String>,
     ): String? {
-        val keys = listOf("primary", "secondary", "background", "surface", "surfaceVariant", "outline", "readerBackground", "readerText")
+        val keys = listOf("primary", "secondary", "background", "surface", "surfaceVariant", "outline", "readerBackground", "readerForeground")
         if (keys.none { json.has(it) }) return null
 
         val palette = ThemePalette(
@@ -426,65 +447,28 @@ private fun AppearanceTab(
         return finalName
     }
 
-    val bulkImportLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents()
-    ) { uris ->
+    val bulkImportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         if (uris.isEmpty()) return@rememberLauncherForActivityResult
         scope.launch {
             var imported = 0
-            var skipped = 0
-            var failed = 0
             val seenPalettes: MutableSet<ThemePalette> = settings.customThemes.map { it.palette }.toMutableSet()
             val seenNames: MutableSet<String> = settings.customThemes.map { it.name.lowercase().trim() }.toMutableSet()
-
             for (uri in uris) {
                 try {
-                    val mimeType = context.contentResolver.getType(uri) ?: ""
-                    val isZip = mimeType.contains("zip") || uri.toString().endsWith(".zip", ignoreCase = true)
-                    if (isZip) {
-                        context.contentResolver.openInputStream(uri)?.use { raw ->
-                            ZipInputStream(raw).use { zip ->
-                                var entry = zip.nextEntry
-                                while (entry != null) {
-                                    if (!entry.isDirectory && entry.name.endsWith(".json", ignoreCase = true)) {
-                                        try {
-                                            val content = zip.bufferedReader(Charsets.UTF_8).readText()
-                                            if (content.isNotBlank()) {
-                                                val json = try { JSONObject(content) } catch (_: Exception) { null }
-                                                if (json != null) {
-                                                    val name = importSingleThemeJson(json, seenPalettes, seenNames)
-                                                    if (name != null) imported++ else skipped++
-                                                } else failed++
-                                            }
-                                        } catch (_: Exception) { failed++ }
-                                        zip.closeEntry()
-                                    }
-                                    entry = zip.nextEntry
-                                }
-                            }
-                        }
-                    } else {
-                        val content = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
-                        if (content.isNullOrBlank()) { failed++; continue }
-                        val json = try { JSONObject(content) } catch (_: Exception) { null }
-                        if (json == null) { failed++; continue }
+                    val content = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+                    if (content.isNullOrBlank()) continue
+                    val json = try { JSONObject(content) } catch (_: Exception) { null }
+                    if (json != null) {
                         val name = importSingleThemeJson(json, seenPalettes, seenNames)
-                        if (name != null) imported++ else skipped++
+                        if (name != null) imported++
                     }
-                } catch (_: Exception) { failed++ }
+                } catch (_: Exception) {}
             }
-            val msg = buildString {
-                if (imported > 0) append("Imported $imported theme${if (imported > 1) "s" else ""}. ")
-                if (skipped > 0) append("$skipped duplicate${if (skipped > 1) "s" else ""} skipped. ")
-                if (failed > 0) append("$failed failed.")
-            }.trim()
-            Toast.makeText(context, msg.ifEmpty { "Nothing imported." }, Toast.LENGTH_LONG).show()
+            if (imported > 0) Toast.makeText(context, "Imported $imported themes", Toast.LENGTH_SHORT).show()
         }
     }
 
-    val exportLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json")
-    ) { uri ->
+    val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         uri?.let { exportUri ->
             val theme = themeToExport ?: return@let
             scope.launch {
@@ -501,156 +485,395 @@ private fun AppearanceTab(
                         put("readerText", formatThemeColor(theme.palette.readerForeground))
                         put("systemForeground", formatThemeColor(theme.palette.systemForeground))
                     }
-                    context.contentResolver.openOutputStream(exportUri)?.use { out ->
-                        out.write(json.toString(4).toByteArray())
-                    }
-                    Toast.makeText(context, "Theme exported", Toast.LENGTH_SHORT).show()
-                } catch (_: Exception) {
-                    Toast.makeText(context, "Export failed", Toast.LENGTH_SHORT).show()
-                } finally { themeToExport = null }
+                    context.contentResolver.openOutputStream(exportUri)?.use { it.write(json.toString(4).toByteArray()) }
+                } catch (_: Exception) {} finally { themeToExport = null }
             }
         }
     }
 
+    // --- DASHBOARD UI ---
+    val allThemes = remember(settings.customThemes) {
+        BuiltInThemeOptions.map { CustomTheme(it.id, it.name, it.palette) } + settings.customThemes
+    }
+    
+    val initialPage = remember(allThemes) {
+        allThemes.indexOfFirst { it.id == settings.theme }.coerceAtLeast(0)
+    }
+    val pagerState = rememberPagerState(initialPage = initialPage) { allThemes.size }
+
+    // Fix for regression: Ensure the pager starts at the selected theme
+    LaunchedEffect(settings.theme) {
+        val targetPage = allThemes.indexOfFirst { it.id == settings.theme }
+        if (targetPage >= 0 && pagerState.currentPage != targetPage) {
+            pagerState.scrollToPage(targetPage)
+        }
+    }
+
+    LaunchedEffect(pagerState.currentPage, allThemes) {
+        val safeIndex = pagerState.currentPage.coerceIn(allThemes.indices)
+        val themeId = allThemes[safeIndex].id
+        if (themeId != settings.theme) {
+            settingsManager.setActiveTheme(themeId)
+        }
+    }
+
+    // THEME ANIMATION: Gradual color transition for the dashboard
+    val currentTheme = allThemes[pagerState.currentPage.coerceIn(allThemes.indices)]
+    val animBg by animateColorAsState(Color(currentTheme.palette.background), tween(600), label = "bg")
+    val animSysFg by animateColorAsState(Color(currentTheme.palette.systemForeground), tween(600), label = "sys")
+    val animPrimary by animateColorAsState(Color(currentTheme.palette.primary), tween(600), label = "pri")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+            .background(animBg)
+            .verticalScroll(rememberScrollState())
     ) {
-        // --- FONTS SECTION ---
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("Fonts & Layout", style = MaterialTheme.typography.titleLarge)
+        // 1. Landscape Gallery
+        Spacer(Modifier.height(16.dp))
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            contentPadding = PaddingValues(horizontal = 48.dp),
+            pageSpacing = 16.dp
+        ) { page ->
+            LandscapeSpecimenCard(
+                theme = allThemes[page],
+                fontFamily = getFontFamily(settings.fontType)
+            )
+        }
 
-            Column {
-                Text("Font Size", style = MaterialTheme.typography.titleMedium)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Slider(
-                        value = settings.fontSize.toFloat(),
-                        onValueChange = { fontSize ->
-                            scope.launch { settingsManager.updateGlobalSettings { it.copy(fontSize = fontSize.toInt()) } }
-                        },
-                        valueRange = 12f..32f,
-                        modifier = Modifier.weight(1f)
+        // 2. The Counter & Hub
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "${pagerState.currentPage + 1} / ${allThemes.size}",
+                style = MaterialTheme.typography.labelMedium,
+                color = animSysFg.copy(alpha = 0.5f),
+                letterSpacing = 1.sp
+            )
+            
+            Spacer(Modifier.height(12.dp))
+            
+            ThemeControlHub(
+                currentTheme = currentTheme,
+                animSysFg = animSysFg,
+                animPrimary = animPrimary,
+                onCreate = onOpenCreateThemeEditor,
+                onData = { bulkImportLauncher.launch("*/*") },
+                onModify = { onOpenEditThemeEditor(currentTheme) },
+                onDelete = { onDeleteTheme(currentTheme) },
+                onExport = { 
+                    themeToExport = currentTheme
+                    exportLauncher.launch("theme_${currentTheme.name}.json")
+                }
+            )
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp), color = animSysFg.copy(alpha = 0.1f))
+
+        // 3. Typography & Rhythm
+        TypographySettingsPanel(
+            settings = settings,
+            settingsManager = settingsManager,
+            scope = scope,
+            animSysFg = animSysFg,
+            animPrimary = animPrimary
+        )
+        
+        Spacer(Modifier.height(32.dp))
+    }
+}
+
+@Composable
+private fun ThemeControlHub(
+    currentTheme: CustomTheme,
+    animSysFg: Color,
+    animPrimary: Color,
+    onCreate: () -> Unit,
+    onData: () -> Unit,
+    onModify: () -> Unit,
+    onDelete: () -> Unit,
+    onExport: () -> Unit
+) {
+    val isCustom = currentTheme.id.startsWith(CustomThemeIdPrefix)
+    var showDataMenu by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // CREATE
+        HubButton(Icons.Default.Add, "Create", animSysFg, animPrimary, onCreate)
+
+        // DATA (Import/Export)
+        Box {
+            HubButton(Icons.Default.DataUsage, "Data", animSysFg, animPrimary) { showDataMenu = true }
+            DropdownMenu(expanded = showDataMenu, onDismissRequest = { showDataMenu = false }) {
+                DropdownMenuItem(
+                    text = { Text("Import Themes") },
+                    onClick = { showDataMenu = false; onData() },
+                    leadingIcon = { Icon(Icons.Default.FileDownload, null) }
+                )
+                if (isCustom) {
+                    DropdownMenuItem(
+                        text = { Text("Export This Theme") },
+                        onClick = { showDataMenu = false; onExport() },
+                        leadingIcon = { Icon(Icons.Default.FileUpload, null) }
                     )
-                    Text("${settings.fontSize}sp", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(48.dp), textAlign = TextAlign.End)
-                }
-            }
-
-            Column {
-                Text("Font Family", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
-                val fontListState = rememberLazyListState()
-                val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
-
-                LaunchedEffect(Unit) {
-                    val index = fonts.indexOf(settings.fontType)
-                    if (index != -1) {
-                        fontListState.scrollToItem(index)
-                    }
-                }
-
-                LazyRow(
-                    state = fontListState,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(fonts) { font ->
-                        FilterChip(
-                            selected = settings.fontType == font,
-                            onClick = { scope.launch { settingsManager.updateGlobalSettings { it.copy(fontType = font) } } },
-                            label = { Text(font.replaceFirstChar { it.uppercase() }) }
-                        )
-                    }
-                }
-            }
-
-            Column {
-                Text("Line Height", style = MaterialTheme.typography.titleMedium)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Slider(
-                        value = settings.lineHeight,
-                        onValueChange = { val value = it; scope.launch { settingsManager.updateGlobalSettings { it.copy(lineHeight = value) } } },
-                        valueRange = 1.2f..2.0f,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(String.format(Locale.getDefault(), "%.1f", settings.lineHeight), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(48.dp), textAlign = TextAlign.End)
-                }
-            }
-
-            Column {
-                Text("Horizontal Padding", style = MaterialTheme.typography.titleMedium)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Slider(
-                        value = settings.horizontalPadding.toFloat(),
-                        onValueChange = { val value = it; scope.launch { settingsManager.updateGlobalSettings { it.copy(horizontalPadding = value.toInt()) } } },
-                        valueRange = 0f..32f,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text("${settings.horizontalPadding}dp", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(48.dp), textAlign = TextAlign.End)
                 }
             }
         }
 
-        HorizontalDivider()
+        // MODIFY (Edit/Delete)
+        HubButton(Icons.Default.Edit, "Modify", animSysFg, animPrimary) { 
+            onModify()
+        }
+    }
+}
 
-        // --- THEMES SECTION ---
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("Themes", style = MaterialTheme.typography.titleLarge)
+@Composable
+private fun HubButton(icon: ImageVector, label: String, animSysFg: Color, animPrimary: Color, onClick: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(48.dp).clip(CircleShape).background(animSysFg.copy(alpha = 0.05f))
+        ) {
+            Icon(icon, contentDescription = label, tint = animSysFg.copy(alpha = 0.8f))
+        }
+        Text(label, style = MaterialTheme.typography.labelSmall, color = animSysFg.copy(alpha = 0.4f), fontSize = 10.sp)
+    }
+}
 
-            Column {
-                Text("Built-in Themes", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
-                val builtInListState = rememberLazyListState()
-                LazyRow(modifier = Modifier.fillMaxWidth(), state = builtInListState, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    itemsIndexed(BuiltInThemeOptions) { _, option ->
-                        ThemePreviewCard(
-                            palette = option.palette,
-                            name = option.name,
-                            isSelected = settings.theme == option.id,
-                            onClick = { scope.launch { settingsManager.setActiveTheme(option.id) } }
-                        )
+@Composable
+private fun LandscapeSpecimenCard(
+    theme: CustomTheme,
+    fontFamily: FontFamily
+) {
+    val p = theme.palette
+    Card(
+        modifier = Modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                val pageOffset = 0f
+                alpha = 1f
+            },
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        // Inner App Simulation (Reader Background)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color(p.readerBackground))
+                .border(1.dp, Color(p.outline).copy(alpha = 0.05f), RoundedCornerShape(16.dp))
+        ) {
+            // 1. System Bar Representation
+            SystemBarMock(p)
+
+            Row(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Left Side: Reader Text Content
+                Column(modifier = Modifier.weight(1.2f)) {
+                    Text(
+                        text = theme.name,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color(p.readerForeground),
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = fontFamily,
+                        maxLines = 1,
+                        softWrap = false,
+                        modifier = Modifier.basicMarquee()
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        SkeletonLine(color = Color(p.readerForeground), widthPercent = 0.9f)
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            SkeletonLine(color = Color(p.readerForeground).copy(alpha = 0.5f), widthPercent = 0.3f)
+                            SkeletonLine(color = Color(p.primary), widthPercent = 0.4f)
+                        }
+                        SkeletonLine(color = Color(p.readerForeground).copy(alpha = 0.5f), widthPercent = 0.8f)
                     }
                 }
-            }
 
-            Column {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    Text("Custom Themes", style = MaterialTheme.typography.titleMedium)
-                    Row {
-                        IconButton(onClick = { bulkImportLauncher.launch("*/*") }) {
-                            Icon(Icons.Default.FileDownload, contentDescription = "Import Themes")
-                        }
-                        IconButton(onClick = onOpenCreateThemeEditor) {
-                            Icon(Icons.Default.Add, contentDescription = "Create Theme")
-                        }
-                    }
-                }
-                Spacer(Modifier.height(8.dp))
-                if (settings.customThemes.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxWidth().height(100.dp).border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium), contentAlignment = Alignment.Center) {
-                        Text("No custom themes yet", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                } else {
-                    LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        itemsIndexed(settings.customThemes) { _, theme ->
-                            ThemePreviewCard(
-                                palette = theme.palette,
-                                name = theme.name,
-                                isSelected = settings.theme == theme.id,
-                                onClick = { scope.launch { settingsManager.setActiveTheme(theme.id) } },
-                                onEdit = { onOpenEditThemeEditor(theme) },
-                                onDelete = { onDeleteTheme(theme) },
-                                onExport = {
-                                    themeToExport = theme
-                                    exportLauncher.launch("theme_${theme.name.replace(" ", "_")}.json")
-                                }
-                            )
-                        }
-                    }
+                // Right Side: UI Surface Mock
+                Box(modifier = Modifier.weight(1f).align(Alignment.Bottom)) {
+                    SurfaceMock(p)
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SystemBarMock(p: ThemePalette) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("12:00", fontSize = 8.sp, color = Color(p.systemForeground).copy(alpha = 0.6f))
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Box(modifier = Modifier.size(8.dp, 4.dp).background(Color(p.systemForeground).copy(alpha = 0.2f)))
+            Box(modifier = Modifier.size(8.dp, 4.dp).background(Color(p.systemForeground).copy(alpha = 0.6f)))
+        }
+    }
+}
+
+@Composable
+private fun SurfaceMock(p: ThemePalette) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(p.surface))
+            .border(1.dp, Color(p.outline).copy(alpha = 0.1f), RoundedCornerShape(12.dp))
+            .padding(8.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(16.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color(p.surfaceVariant))
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp, 12.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .border(0.5.dp, Color(p.secondary), RoundedCornerShape(2.dp))
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Box(
+                modifier = Modifier
+                    .size(32.dp, 12.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(Color(p.primary))
+            )
+        }
+    }
+}
+
+@Composable
+private fun SkeletonLine(color: Color, widthPercent: Float) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(widthPercent)
+            .height(4.dp)
+            .clip(CircleShape)
+            .background(color.copy(alpha = 0.15f))
+    )
+}
+
+@Composable
+private fun TypographySettingsPanel(
+    settings: GlobalSettings,
+    settingsManager: SettingsManager,
+    scope: CoroutineScope,
+    animSysFg: Color,
+    animPrimary: Color
+) {
+    Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        Text("Typography & Rhythm", style = MaterialTheme.typography.titleMedium, color = animSysFg)
+
+        // Font Family
+        Column {
+            val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
+            val listState = rememberLazyListState(
+                initialFirstVisibleItemIndex = fonts.indexOf(settings.fontType).coerceAtLeast(0)
+            )
+
+            LazyRow(
+                state = listState,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(fonts) { font ->
+                    val isSelected = settings.fontType == font
+                    FilterChip(
+                        selected = isSelected,
+                        onClick = { scope.launch { settingsManager.updateGlobalSettings { it.copy(fontType = font) } } },
+                        label = { Text(font.replaceFirstChar { it.uppercase() }) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            containerColor = Color.Transparent,
+                            labelColor = animSysFg.copy(alpha = 0.5f),
+                            selectedContainerColor = animPrimary.copy(alpha = 0.15f),
+                            selectedLabelColor = animPrimary
+                        ),
+                        border = FilterChipDefaults.filterChipBorder(
+                            enabled = true,
+                            selected = isSelected,
+                            borderColor = animSysFg.copy(alpha = 0.1f),
+                            selectedBorderColor = animPrimary.copy(alpha = 0.5f),
+                            borderWidth = 1.dp,
+                            selectedBorderWidth = 1.dp
+                        )
+                    )
+                }
+            }
+        }
+
+        // sliders for padding and line height
+        ControlSlider(
+            label = "Font Size",
+            value = settings.fontSize.toFloat(),
+            range = 12f..32f,
+            animSysFg = animSysFg,
+            animPrimary = animPrimary,
+            onValueChange = { v -> scope.launch { settingsManager.updateGlobalSettings { it.copy(fontSize = v.toInt()) } } }
+        )
+
+        ControlSlider(
+            label = "Line Height",
+            value = settings.lineHeight,
+            range = 1.2f..2.0f,
+            animSysFg = animSysFg,
+            animPrimary = animPrimary,
+            onValueChange = { v -> scope.launch { settingsManager.updateGlobalSettings { it.copy(lineHeight = v) } } }
+        )
+
+        ControlSlider(
+            label = "Padding",
+            value = settings.horizontalPadding.toFloat(),
+            range = 0f..48f,
+            animSysFg = animSysFg,
+            animPrimary = animPrimary,
+            onValueChange = { v -> scope.launch { settingsManager.updateGlobalSettings { it.copy(horizontalPadding = v.toInt()) } } }
+        )
+    }
+}
+
+@Composable
+private fun ControlSlider(label: String, value: Float, range: ClosedFloatingPointRange<Float>, animSysFg: Color, animPrimary: Color, onValueChange: (Float) -> Unit) {
+    Column {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(label, style = MaterialTheme.typography.labelLarge, color = animSysFg.copy(alpha = 0.7f))
+            Text(if (range.endInclusive > 5f) "${value.toInt()}" else String.format("%.1f", value), style = MaterialTheme.typography.labelMedium, color = animSysFg.copy(alpha = 0.5f))
+        }
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = range,
+            colors = SliderDefaults.colors(
+                thumbColor = animPrimary,
+                activeTrackColor = animPrimary.copy(alpha = 0.5f),
+                inactiveTrackColor = animSysFg.copy(alpha = 0.1f)
+            )
+        )
     }
 }
 
@@ -984,6 +1207,7 @@ private fun CustomThemeEditorDialog(
     existingThemes: List<CustomTheme>,
     onDismiss: () -> Unit,
     onSave: (CustomTheme, Boolean) -> Unit,
+    onDelete: () -> Unit = {},
 ) {
     var draft by remember(session) { mutableStateOf(session.draft) }
 
@@ -1130,8 +1354,15 @@ private fun CustomThemeEditorDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (!session.isNew && session.themeId.startsWith(CustomThemeIdPrefix)) {
+                    TextButton(onClick = onDelete) {
+                        Text("Delete", color = MaterialTheme.colorScheme.error)
+                    }
+                }
+                TextButton(onClick = onDismiss) {
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
+                }
             }
         },
     )
@@ -1408,5 +1639,15 @@ private data class ThemeEditorDraft(
                 isAdvanced = isAdvanced,
             )
         }
+    }
+}
+
+private fun getFontFamily(fontType: String): FontFamily {
+    return when (fontType.lowercase()) {
+        "serif" -> FontFamily.Serif
+        "sans-serif" -> FontFamily.SansSerif
+        "monospace" -> FontFamily.Monospace
+        "karla" -> KarlaFont
+        else -> FontFamily.Default
     }
 }

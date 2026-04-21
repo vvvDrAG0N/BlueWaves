@@ -157,3 +157,12 @@ This section extends the base rules above for repo agents and model handoffs.
 - `docs/PROMPT_TEMPLATES.md` is the quick-start library for common task types.
 - `docs/ask_mode_prompt_rules.md` is the rulebook for generated or delegated implementation prompts.
 - `docs/TODO_PROMPTS.md` is the prompt library for top-level backlog items and should track the current root `TODO`.
+
+## 8. Remote Deployment & Testing
+When the user is remote or lacks a locally connected device:
+1. **Wireless Debugging**: If the user is on a phone with wireless debugging, prioritize `./gradlew installDebug` to push the build directly to their device.
+2. **Build Verification**: Always verify the build with `./gradlew assembleDebug --info` before providing an artifact or attempting an install.
+3. **APK Artifact**: Generate and provide the absolute path to the debug APK (`app/build/outputs/apk/debug/app-debug.apk`) as a fallback.
+4. **Automated UI Verification**: Use the `android_ui_verification` skill to validate UI changes on a local emulator/simulator.
+5. **Visual Evidence**: Capture and share screenshots/videos of the modified UI using verification tools to provide confidence.
+6. **Log Integrity**: Ensure all critical business logic and navigation events are logged via `AppLog.kt` for remote debugging.
