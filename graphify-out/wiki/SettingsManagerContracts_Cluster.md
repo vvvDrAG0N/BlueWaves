@@ -1,18 +1,20 @@
 # SettingsManagerContracts Cluster
 
-> 9 nodes · cohesion 0.22
+> 11 nodes · cohesion 0.18
 
 ## Key Concepts
 
-- **SettingsManagerContracts.kt** (8 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **bookProgressKeyPrefix()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **BookProgressPreferenceKeys** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **legacyBookProgressPreferenceKeys()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **parseCustomThemes()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **SettingsPreferenceKeys** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **toBookProgress()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **toCustomThemesJson()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **toGlobalSettings()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **SettingsManagerContracts.kt** (10 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **bookProgressKeyPrefix()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **BookProgressPreferenceKeys** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **GlobalSettingsSnapshot** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **legacyBookProgressPreferenceKeys()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **parseCustomThemes()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **SettingsPreferenceKeys** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **toBookProgress()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **toCustomThemesJson()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **toGlobalSettings()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **toGlobalSettingsSnapshot()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
 
 ## Relationships
 
@@ -20,11 +22,11 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
 
 ## Audit Trail
 
-- EXTRACTED: 16 (100%)
+- EXTRACTED: 20 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

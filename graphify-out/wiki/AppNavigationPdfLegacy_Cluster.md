@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **AppNavigationPdfLegacy.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
-- **ObserveLegacyPdfConversionState()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
-- **observeLegacyPdfWorkIds()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
-- **refreshPdfBookFromMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
-- **refreshPdfBookFromWork()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
+- **AppNavigationPdfLegacy.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
+- **ObserveLegacyPdfConversionState()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
+- **observeLegacyPdfWorkIds()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
+- **refreshPdfBookFromMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
+- **refreshPdfBookFromWork()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationPdfLegacy.kt`
 
 ## Audit Trail
 

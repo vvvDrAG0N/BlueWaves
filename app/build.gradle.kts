@@ -43,6 +43,16 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:model"))
+    implementation(project(":core:ui"))
+    implementation(project(":data:settings"))
+    implementation(project(":data:books"))
+    implementation(project(":feature:library"))
+    implementation(project(":feature:reader"))
+    implementation(project(":feature:settings"))
+    implementation(project(":feature:editbook"))
+    implementation(project(":feature:pdf-legacy"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

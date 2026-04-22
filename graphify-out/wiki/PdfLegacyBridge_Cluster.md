@@ -4,16 +4,16 @@
 
 ## Key Concepts
 
-- **PdfLegacyBridge** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **PdfLegacyBridge.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **PdfConversionProgressListener** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **PdfConversionProgress** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **.onProgress()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **PdfConversionResult** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **.cancel()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **.convert()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **.enqueue()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
-- **.uniqueWorkName()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **PdfLegacyBridge** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **PdfLegacyBridge.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **PdfConversionProgressListener** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **PdfConversionProgress** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **.onProgress()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **PdfConversionResult** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **.cancel()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **.convert()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **.enqueue()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- **.uniqueWorkName()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
 
 ## Relationships
 
@@ -21,7 +21,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\PdfLegacyBridge.kt`
 
 ## Audit Trail
 

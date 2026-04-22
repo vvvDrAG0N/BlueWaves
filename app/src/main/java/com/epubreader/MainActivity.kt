@@ -26,13 +26,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.epubreader.app.AppNavigation
 import com.epubreader.core.model.CustomTheme
-import com.epubreader.core.model.AzureThemeId
-import com.epubreader.core.model.DarkThemeId
-import com.epubreader.core.model.LightThemeId
-import com.epubreader.core.model.OledThemeId
 import com.epubreader.core.model.ThemePalette
-import com.epubreader.core.model.findThemeOption
-import com.epubreader.core.model.availableThemeOptions
+import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.settings.SettingsManager
 import com.epubreader.feature.settings.ThemeStudioScreen
 
@@ -97,10 +92,7 @@ internal fun appColorScheme(
     theme: String,
     customThemes: List<CustomTheme> = emptyList(),
 ): ColorScheme {
-    val option = findThemeOption(theme, customThemes)
-        ?: availableThemeOptions(emptyList()).first() // Fallback to Light
-
-    return colorSchemeFromPalette(option.palette)
+    return colorSchemeFromPalette(themePaletteSeed(theme, customThemes))
 }
 
 private fun customAppColorScheme(theme: CustomTheme): ColorScheme {

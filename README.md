@@ -1,40 +1,37 @@
 # Blue Waves EPUB Reader
 
-Blue Waves is a native Android EPUB reader built with Jetpack Compose. The project is optimized for offline reading, fast metadata loading, and stable scroll-position restoration.
+Blue Waves is a native Android EPUB reader built with Jetpack Compose. The project is optimized for offline reading, fast metadata loading, stable scroll-position restoration, and a modular codebase that avoids file and feature monoliths.
 
 ## Current Architecture
 
-The project uses a single-activity app shell with state-based navigation.
+The project uses a modular single-activity shell with state-based navigation.
 
-- `com.epubreader.MainActivity`
+- `MainActivity`
   - App bootstrap, theme selection, and the `Screen` enum.
-- `com.epubreader.app.AppNavigation`
-  - Top-level navigation and library/folder UI state.
-- `com.epubreader.data.settings.SettingsManager`
+- `AppNavigation`
+  - Top-level navigation and library/folder shell state.
+- `SettingsManager`
   - DataStore-backed persisted source of truth.
-- `com.epubreader.data.parser.EpubParser`
-  - EPUB extraction, metadata caching, and chapter parsing.
-- `com.epubreader.feature.reader.ReaderScreen`
-  - Reader UI, chapter lifecycle, scroll restoration, and overscroll navigation.
-- `com.epubreader.feature.settings.SettingsScreen`
-  - Settings UI for reader preferences.
-- `com.epubreader.core.model.*`
-  - Shared domain models such as `EpubBook`, `GlobalSettings`, and `BookProgress`.
-- `com.epubreader.core.ui.*`
-  - Shared UI components reused across the app.
+- `EpubParser`
+  - EPUB extraction, metadata caching, chapter parsing, and EPUB mutation support.
+- `ReaderScreen`
+  - Reader lifecycle, restoration, and chapter navigation behavior.
+- `EditBookScreen`
+  - EPUB metadata, cover, and chapter mutation UI.
 
-## Project Layout
+## Module Layout
 
 ```text
-app/src/main/java/com/epubreader
-  MainActivity.kt
-  app/AppNavigation.kt
-  core/model/
-  core/ui/
-  data/parser/
-  data/settings/
-  feature/reader/
-  feature/settings/
+:app
+:core:model
+:core:ui
+:data:settings
+:data:books
+:feature:library
+:feature:reader
+:feature:settings
+:feature:editbook
+:feature:pdf-legacy
 ```
 
 ## Build
@@ -45,43 +42,35 @@ app/src/main/java/com/epubreader
 
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [System Overview](docs/system_overview.md)
-- [Package Map](docs/package_map.md)
-- [AI Entry Points](docs/AI_ENTRY_POINTS.md)
+- [Docs Index](docs/README.md)
+- [Project Graph](docs/project_graph.md)
 - [Quick Reference](docs/quick_ref.md)
-- [Reader Flow](docs/reader_flow.md)
+- [Architecture](docs/architecture.md)
+- [App Shell Navigation](docs/app_shell_navigation.md)
+- [Settings Persistence](docs/settings_persistence.md)
+- [EPUB Parsing](docs/epub_parsing.md)
+- [Reader Screen](docs/reader_screen.md)
+- [UI Rules](docs/ui_rules.md)
 - [AI Debug Guide](docs/AI_DEBUG_GUIDE.md)
-- [Prompt Templates](docs/PROMPT_TEMPLATES.md)
-- [Known Risks](docs/known_risks.md)
+- [AI Mental Model](docs/ai_mental_model.md)
+- [Test Checklist](docs/test_checklist.md)
+- [Legacy PDF Note](docs/legacy/PDF_review.md)
 
 ## Notes For Future Refactors
 
-- `ReaderScreen` remains the highest-risk file. Preserve the restoration flow unless it is fully revalidated.
+- `ReaderScreen` remains the highest-risk surface. Preserve restoration flow unless it is fully revalidated.
 - `SettingsManager` remains the persisted source of truth for app and per-book state.
-- `EpubParser` still owns EPUB extraction and chapter parsing, but shared models no longer live inside it.
+- `EpubParser` still owns EPUB extraction and chapter parsing, but helper responsibilities are split across focused files.
+- Shared runtime guidance belongs in the canonical root docs, not scattered prompt files.
 
 ## Planned Roadmap
 
-- Theme System
-  - User-defined custom themes and color palettes.
-  - Expected delivery requirement: add unit coverage for theme model, persistence, and application behavior.
-- Format Support
-  - PDF support.
-  - ZIP support.
-  - Expected delivery requirement: add unit coverage for format detection and routing.
-- Edit Book
-  - Custom book cover.
-  - Editable author and title metadata.
-  - Chapter deletion and chapter addition.
-  - Expected delivery requirement: add unit coverage for metadata and chapter mutation flows.
-- Selectable Text
-  - Reader text selection for chapter text only.
-  - Toggle form matching the `Show System Bar` setting.
-  - UI placement in the global `Appearance` settings area.
-  - Expected delivery requirement: add unit coverage for persistence, state, and toggle behavior.
-
-All roadmap items should also update the relevant markdown docs and rebuild `graphify-out/` when implemented.
+- Selectable Text follow-up
+  - Stabilize selection behavior and add define/translate integrations without breaking reader controls.
+- Infinite Scroll Reader Mode
+  - Keep behind the performance/stability and reader-safety boundary.
+- PDF / format support later
+  - Revisit only through an explicit design pass and the legacy PDF note.
 
 ## AI Agent Workflow
 
@@ -91,9 +80,9 @@ All roadmap items should also update the relevant markdown docs and rebuild `gra
   - Companion guide for planning, scoping, and review-oriented Gemini passes.
 - `CODEX.md`
   - Companion guide for implementation, debugging, and verification-oriented Codex passes.
-- `docs/ask_mode_prompt_rules.md`
-  - Rulebook for generated implementation prompts and handoffs.
-- `docs/TODO_PROMPTS.md`
-  - Prompt library for the current top-level TODO tracks.
 - `docs/agent_memory/README.md`
-  - Shared durable memory for agent collaboration, handoffs, decisions, and debug lessons.
+  - Schema for structured step history and next-step continuity.
+- `docs/agent_memory/step_history.md`
+  - Append-only record of substantial agent work.
+- `docs/agent_memory/next_steps.md`
+  - Concrete queued follow-up work.

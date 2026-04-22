@@ -19,7 +19,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.first
-import org.json.JSONObject
 import java.security.MessageDigest
 
 private const val PdfImportDisabledMessage =
@@ -60,14 +59,14 @@ internal suspend fun importBookIntoLibrary(
     parser: EpubParser,
     settingsManager: SettingsManager,
     selectedFolderName: String,
-    bookGroups: JSONObject,
+    bookGroups: Map<String, String>,
 ): ImportBookResult {
     return try {
         val existingBook = withContext(Dispatchers.IO) {
             findExistingBook(books = books, context = context, uri = uri)
         }
         if (existingBook != null) {
-            val folderName = bookGroups.optString(existingBook.id, "").ifEmpty { RootLibraryName }
+            val folderName = bookGroups[existingBook.id].orEmpty().ifBlank { RootLibraryName }
             return ImportBookResult.Duplicate(folderName)
         }
 
@@ -103,9 +102,10 @@ internal suspend fun moveBooksToFolder(
     bookIds: Set<String>,
     folderName: String,
 ) {
-    bookIds.forEach { id ->
-        settingsManager.updateBookGroup(id, if (folderName == RootLibraryName) null else folderName)
-    }
+    settingsManager.updateBookGroups(
+        bookIds = bookIds,
+        groupName = if (folderName == RootLibraryName) null else folderName,
+    )
 }
 
 internal suspend fun deleteSelectedBooks(
@@ -121,7 +121,7 @@ internal suspend fun deleteSelectedBooks(
             books.find { it.id == id }?.let { parser.deleteBook(it) }
         }
     }
-    idsToDelete.forEach { settingsManager.deleteBookData(it) }
+    settingsManager.deleteBooksData(idsToDelete.toSet())
 }
 
 internal suspend fun editBookInLibrary(

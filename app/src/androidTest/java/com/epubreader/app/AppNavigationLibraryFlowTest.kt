@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -43,7 +44,7 @@ class AppNavigationLibraryFlowTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     private val settingsManager by lazy { SettingsManager(composeRule.activity) }
-    private val parser by lazy { EpubParser(composeRule.activity) }
+    private val parser by lazy { EpubParser.create(composeRule.activity) }
     private val booksDir by lazy { File(composeRule.activity.cacheDir, "books") }
     private val createdBookIds = mutableListOf<String>()
     private val currentVersionCode by lazy {
@@ -102,6 +103,8 @@ class AppNavigationLibraryFlowTest {
         composeRule.onNodeWithContentDescription("Move Selected Books").performClick()
         waitUntilDisplayed("Move To")
         composeRule.onNodeWithContentDescription("Folder Flow Shelf Renamed").performClick()
+        waitUntilTextMissing("Flow Book One")
+        waitUntilTextMissing("Flow Book Two")
 
         waitUntilContentDescriptionExists("Menu")
         composeRule.onNodeWithContentDescription("Menu").performClick()
@@ -156,6 +159,12 @@ class AppNavigationLibraryFlowTest {
     private fun waitUntilContentDescriptionExists(description: String, timeoutMillis: Long = 15_000) {
         composeRule.waitUntil(timeoutMillis) {
             composeRule.onAllNodesWithContentDescription(description).fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
+    private fun waitUntilTextMissing(text: String, timeoutMillis: Long = 15_000) {
+        composeRule.waitUntil(timeoutMillis) {
+            composeRule.onAllNodesWithText(text).fetchSemanticsNodes().isEmpty()
         }
     }
 

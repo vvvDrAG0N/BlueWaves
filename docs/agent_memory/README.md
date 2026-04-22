@@ -1,102 +1,81 @@
-# Agent Shared Memory
+# Agent Memory Schema
 
-This folder is the durable shared memory layer for Blue Waves agents.
+This folder is the non-default continuity layer for Blue Waves agents.
 
-It exists so collaboration does not depend on transient chat history, one model's private context window, or tool-specific runtime state.
+Read it only after the canonical runtime docs when you need:
+- recent step continuity
+- concrete queued follow-up work
+- a clue about what the last agent actually did
 
-## What Lives Here
+Do not use this folder as the canonical architecture source of truth.
+Promote stable rules into `AGENTS.md` or the canonical root docs instead.
 
-Use this folder for shared memory that should survive across sessions and across agents:
-- stable workflow decisions
-- handoffs and partial progress notes
-- reusable debug lessons
-- unresolved questions that should not be guessed away
+## Files
 
-Do not use this folder for:
-- canonical architecture rules that belong in `AGENTS.md` or the area docs
-- task priority, which belongs in the root `TODO`
-- generated structure, which belongs in `graphify-out/`
+- `step_history.md`
+  - Append-only chronological work log.
+- `next_steps.md`
+  - Current queued future work.
 
-## Memory Layers
+## Step History Rules
 
-Use these layers on purpose:
+Append one entry after any substantial implementation, audit, review, planning pass, or verification cycle.
 
-1. Canonical project memory
-- `AGENTS.md`
-- `docs/*.md`
-- root `TODO`
+Required fields:
+- Index (sequential # starting at 1)
+- Timestamp
+- Agent model
+- Agent name
+- Task goal
+- Area or files touched/inspected
+- Action taken
+- Result
+- Verification
+- Blockers
+- Suggested next step
 
-2. Shared working memory
-- `docs/agent_memory/decision_log.md`
-- `docs/agent_memory/handoffs.md`
-- `docs/agent_memory/debug_lessons.md`
-- `docs/agent_memory/open_questions.md`
+Template:
 
-3. Generated structural memory
-- `graphify-out/GRAPH_REPORT.md`
-- `graphify-out/wiki/`
+```text
+## [Index]. YYYY-MM-DD HH:MM
+- Agent model:
+- Agent name:
+- Task goal:
+- Area/files:
+- Action taken:
+- Result:
+- Verification:
+- Blockers:
+- Suggested next step:
+```
 
-4. Runtime orchestration state
-- Microsoft Agent Framework workflow/session state
-- in-run agent thread state
-- temporary tool/runtime context
+## Next Steps Rules
 
-Rule:
-- Layers 1 and 2 are the durable source of truth for this repo.
-- Layer 3 is generated navigation help.
-- Layer 4 is useful, but not sufficient as long-term shared memory by itself.
+Keep only actionable queued work here.
 
-## MAF vs Shared Memory
+Required fields:
+- Goal
+- Why it matters now
+- Suggested owner/model
+- Starting docs/files
+- Risks
+- Verification target
 
-Microsoft Agent Framework is useful for:
-- workflow orchestration
-- per-run shared state
-- agent threads and conversation continuity
-- long-running and human-in-the-loop execution
+Template:
 
-It is not, by itself, the durable memory contract for this repo.
+```text
+## <short next step title>
+- Goal:
+- Why now:
+- Suggested owner/model:
+- Starting docs/files:
+- Risks:
+- Verification target:
+```
 
-Why:
-- runtime state is scoped to workflow instances, sessions, or configured backing stores
-- it is not automatically the same thing as human-readable project memory
-- later agents still need stable markdown artifacts they can inspect, diff, review, and update in Git
+## General Rules
 
-For Blue Waves, use this rule:
-- MAF handles orchestration and per-run state.
-- Repo markdown handles durable shared memory.
-
-If we later add a database, MCP memory server, or MAF-backed memory provider, it should mirror or derive from this repo memory contract instead of replacing it blindly.
-
-## Obsidian
-
-Obsidian is useful here.
-
-Use it as the human UI for:
-- browsing `docs/agent_memory/`
-- reading `docs/`
-- navigating backlinks between notes
-- browsing `graphify-out/wiki/`
-
-Do not rely on:
-- `.obsidian/` config files as the memory source of truth
-- local plugin state that agents cannot read
-- private notes outside the repo when the knowledge should be shared with future agents
-
-## File Guide
-
-- `decision_log.md`
-  - append stable decisions and their rationale
-- `handoffs.md`
-  - track active work, paused work, and next steps
-- `debug_lessons.md`
-  - record reusable debugging lessons or command/runtime gotchas
-- `open_questions.md`
-  - track unresolved decisions that need confirmation or future investigation
-
-## Write Rules
-
-- Prefer short, dated entries over long essays.
-- Append instead of rewriting history.
-- Link to the relevant repo files when possible.
-- Promote mature, architectural knowledge into `AGENTS.md` or the relevant area doc.
-- Remove stale handoff entries when the work is truly complete, but keep durable lessons and decisions.
+- Append to `step_history.md`; do not rewrite history.
+- Keep `next_steps.md` short and current.
+- When a queued item completes, move the outcome into `step_history.md` and remove or update the next-step entry.
+- Use repo-relative paths when useful.

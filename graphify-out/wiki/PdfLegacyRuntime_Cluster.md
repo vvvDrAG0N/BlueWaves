@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **PdfLegacyRuntime** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
-- **PdfLegacyRuntime.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
-- **.cancel()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
-- **.convert()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
-- **.enqueue()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
-- **.uniqueWorkName()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
+- **PdfLegacyRuntime** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
+- **PdfLegacyRuntime.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
+- **.cancel()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
+- **.convert()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
+- **.enqueue()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
+- **.uniqueWorkName()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfLegacyRuntime.kt`
 
 ## Audit Trail
 

@@ -1,16 +1,13 @@
 # ReaderScreenChrome Cluster
 
-> 7 nodes · cohesion 0.29
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
-- **ReaderScreenChrome.kt** (6 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderContentSurface()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderScreenChrome()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderScrollToTopFab()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderStatusOverlay()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderTocDrawerContent()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderTopBar()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderScreenChrome.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderContentSurface()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderOverscrollOverlay()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderScreenChrome()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
 
 ## Relationships
 
@@ -18,11 +15,11 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

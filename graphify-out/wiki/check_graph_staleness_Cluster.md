@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **check_graph_staleness.py** (5 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
-- **resolve_graphify_python()** (3 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
-- **check_staleness()** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
-- **get_last_modified()** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
-- **infer_python_from_graphify_bin()** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
-- **interpreter_has_graphify()** (2 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
+- **check_graph_staleness.py** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\check_graph_staleness.py`
+- **resolve_graphify_python()** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\check_graph_staleness.py`
+- **check_staleness()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\check_graph_staleness.py`
+- **get_last_modified()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\check_graph_staleness.py`
+- **infer_python_from_graphify_bin()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\check_graph_staleness.py`
+- **interpreter_has_graphify()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\check_graph_staleness.py`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\scripts\check_graph_staleness.py`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\check_graph_staleness.py`
 
 ## Audit Trail
 

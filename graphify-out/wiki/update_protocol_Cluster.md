@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **update_protocol.py** (0 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\update_protocol.py`
+- **update_protocol.py** (0 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\update_protocol.py`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\update_protocol.py`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\update_protocol.py`
 
 ## Audit Trail
 

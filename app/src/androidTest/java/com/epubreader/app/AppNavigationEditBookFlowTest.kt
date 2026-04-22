@@ -41,7 +41,7 @@ class AppNavigationEditBookFlowTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     private val settingsManager by lazy { SettingsManager(composeRule.activity) }
-    private val parser by lazy { EpubParser(composeRule.activity) }
+    private val parser by lazy { EpubParser.create(composeRule.activity) }
     private val booksDir by lazy { File(composeRule.activity.cacheDir, "books") }
     private val createdBookIds = mutableListOf<String>()
     private val currentVersionCode by lazy {

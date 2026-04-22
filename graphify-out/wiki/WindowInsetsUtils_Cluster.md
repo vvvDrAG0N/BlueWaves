@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **WindowInsetsUtils.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\ui\WindowInsetsUtils.kt`
-- **getStaticWindowInsets()** (1 connections) — `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\ui\WindowInsetsUtils.kt`
+- **WindowInsetsUtils.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\WindowInsetsUtils.kt`
+- **getStaticWindowInsets()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\WindowInsetsUtils.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\core\ui\WindowInsetsUtils.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\WindowInsetsUtils.kt`
 
 ## Audit Trail
 

@@ -1,5 +1,8 @@
 *.iml
 .gradle
+.agents
+.codex
+.gemini
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -8,8 +11,14 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
-/captures
+build/
+captures/
+.gradle/
+*.class
+Thumbs.db
+desktop.ini
+graphify-out/cache/
+logs/
 .externalNativeBuild
 .cxx
 local.properties

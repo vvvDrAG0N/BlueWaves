@@ -1,178 +1,162 @@
 # Architecture Overview
 
-Blue Waves uses a reactive single-activity architecture with manual dependency passing and a small set of clearly separated layers.
+Blue Waves is a modular single-activity Android app with manual dependency passing, graph-first docs, and an EPUB-first active shell.
 
-## Graph-First Traversal
+## Product Boundary
 
-Use `docs/project_graph.md` plus `graphify-out/GRAPH_REPORT.md` before loading large groups of files.
+- The active shell imports and opens EPUB only.
+- PDF-origin books may still appear in library metadata and scans.
+- Active PDF open/import remains intentionally disabled until a future explicit refactor.
 
-Recommended order for low-token work:
-1. `docs/project_graph.md`
-2. `graphify-out/GRAPH_REPORT.md`
-3. `graphify query "<question>" --budget 1200` if scope is still unclear
-4. the single area doc for the target surface
-5. only the raw files named by the graph and the area doc
+## Module Graph
 
-## Structural Summary
+- `:app`
+  - `MainActivity` bootstrap and `AppNavigation` shell assembly.
+- `:core:model`
+  - Shared pure models, theme contracts, and edit-book request models.
+- `:core:ui`
+  - Shared Compose presentation helpers and reusable UI primitives.
+- `:data:settings`
+  - `SettingsManager`, key/default mapping, and JSON-backed folder metadata helpers.
+- `:data:books`
+  - `EpubParser`, metadata/chapter/editing helpers, and parser-side PDF legacy seams.
+- `:feature:library`
+  - Library rendering surfaces consumed by the app shell.
+- `:feature:reader`
+  - Reader state owner, chrome, controls, and text-selection UI.
+- `:feature:settings`
+  - Reader/settings surfaces and theme-management UI.
+- `:feature:editbook`
+  - EPUB metadata, cover, and chapter mutation UI.
+- `:feature:pdf-legacy`
+  - Parked legacy runtime kept outside the active shell.
 
-### 1. App Entry (`MainActivity.kt`)
+Repo guard:
+- `checkKotlinFileLineLimit` fails when Kotlin files under `src/main`, `src/test`, or `src/androidTest` exceed 500 lines.
 
-- Lives in `com.epubreader`.
-- Owns app bootstrap, edge-to-edge setup, theme selection, and the `Screen` enum.
-- Derives the app-level Material `ColorScheme` from the active built-in theme or saved custom theme.
-- Intentionally small so future edits to navigation logic do not accumulate here.
+## Runtime Layers
 
-### 2. App Shell (`app/AppNavigation.kt`)
+### Entry Layer
 
-- Lives in `com.epubreader.app`.
-- Owns top-level navigation state and library-level transient UI state.
-- Coordinates folder management, selection mode, dialogs, file import, and screen transitions.
-- Instantiates and passes `SettingsManager` and `EpubParser` dependencies manually.
+`MainActivity.kt`
+- Owns bootstrap, edge-to-edge setup, app theme selection, and the `Screen` enum.
+- Must stay small. Do not move app-shell state back into it.
 
-### 3. Shared Models (`core/model`)
+### App Shell
 
-- `LibraryModels.kt`: `EpubBook`, `TocItem`, `ChapterElement`
-- `SettingsModels.kt`: `GlobalSettings`, `BookProgress`
-- `SettingsModels.kt`: `GlobalSettings`, `BookProgress`, and shared theme palette contracts
+`AppNavigationContracts.kt`
+- Fastest shell contract map for state/action bundles.
 
-These are the shared contracts between persistence, parsing, and UI. They were extracted from large files to reduce cross-file coupling.
+`AppNavigation.kt`
+- Owns top-level screen selection, library transient state, startup effects, and shell coordination.
 
-### 4. Data Layer (`data/*`)
+`AppNavigationStartup.kt`
+- Startup/version/changelog decision helpers.
 
-- `data/settings/SettingsManager.kt`
-  - DataStore-backed source of truth for global settings, folder state, and reading progress.
-- `data/settings/SettingsManagerContracts.kt`
-  - Package-private key/default map and `Preferences` to model mappers.
-  - Also maps the additive custom-theme registry stored in DataStore.
-- `data/settings/SettingsManagerJson.kt`
-  - Package-private JSON helpers for folder metadata edits.
-- `data/parser/EpubParser.kt`
-  - EPUB extraction, metadata caching, chapter parsing, and cached book scanning.
+`AppNavigationOperations.kt`
+- Import, delete, last-read touch, edit-book save coordination, and other shell side effects.
 
-### 5. Feature Layer (`feature/*`)
+`AppNavigationLibraryData.kt`
+- Pure folder derivation, sort/filter, and drag-preview helpers.
 
-- `feature/reader/ReaderScreen.kt`
-  - Reader lifecycle, chapter loading, restoration, overscroll navigation, controls, and TOC behavior.
-- `feature/settings/SettingsScreen.kt`
-  - Reader preference editing UI.
+`AppNavigationLibrary.kt`
+- Drawer, top bar, library grid, and selection action bar rendering.
 
-### 6. Shared UI (`core/ui`)
+`AppNavigationDialogs.kt`
+- Sort sheet plus library-level dialogs.
 
-- `LibraryCards.kt`
-  - `BookItem`
-  - `RecentlyViewedStrip`
+`AppNavigationPdfLegacy.kt`
+- Small shell bridge for the intentionally disabled PDF boundary.
 
-These remain presentation-oriented and should not become new state owners.
+### Data Layer
 
-### 7. Shared Debug Infra (`core/debug`)
+`SettingsManagerContracts.kt`
+- Key/default map and `Preferences` to model mappers.
 
-- `AppLog.kt`
-  - Small wrapper over Android logging.
-  - Keeps debug/info logs debug-build only and gives the app one obvious place for high-signal diagnostics.
+`SettingsManager.kt`
+- Public persistence API and all DataStore edit transactions.
 
-## Architectural Rules
+`SettingsManagerJson.kt`
+- Folder-order, folder-sort, and group JSON helpers.
 
-- Navigation remains state-based through the `Screen` enum.
-- `SettingsManager` remains the persisted source of truth.
-- `EpubParser` remains responsible for file system and ZIP interactions.
-- `ReaderScreen` remains the highest-risk feature and should be modified conservatively.
-- New non-trivial features should add the smallest appropriate automated test, or explicitly document why automated coverage is being skipped.
+`EpubParser.kt`
+- Public parser facade used by the shell and reader.
 
-## Why This Layout Is AI-Friendlier
+`EpubParserBooks.kt`
+- Book ID generation, metadata cache, cover extraction, and TOC rebuild.
 
-- Smaller files reduce the amount of context an agent must load before making a safe change.
-- Shared models now have one obvious home.
-- Entry, data, feature, and shared UI responsibilities are easier to infer from package names.
-- App bootstrapping and app navigation are no longer mixed into the same file.
+`EpubParserEditing.kt`
+- Staged EPUB mutation for the Edit Book flow.
 
-## App Shell Detail
+`EpubParserChapter.kt`
+- Chapter parsing, image lookup, malformed XHTML tolerance, and `normalizePath()`.
 
-The app shell is now split across six files with different roles:
+`PdfLegacyBridge.kt`
+- Parser-side seam for parked PDF runtime work.
 
-- `app/AppNavigationContracts.kt`
-  - App-shell private contract map.
-  - Shared constants plus bundled state/action types for library UI and dialogs.
+### Feature Layer
 
-- `app/AppNavigation.kt`
-  - Shell state owner.
-  - Startup/version/changelog coordinator.
-  - Screen router for `Library`, `Reader`, and `Settings`.
+`feature/library/*`
+- Presentational library components driven by shell-derived state.
 
-- `app/AppNavigationStartup.kt`
-  - Startup/version/changelog decision helpers.
-  - Computes what the shell should show without owning writes itself.
+`EditBookScreen.kt`
+- EPUB-only editor for metadata, cover, and chapter mutation flows.
 
-- `app/AppNavigationOperations.kt`
-  - App-shell side-effect helpers.
-  - Import, scan, last-read update, and destructive mutation coordination.
+`ReaderScreen.kt`
+- Reader state owner. Keeps chapter loading, restoration, save-progress, and navigation effects.
 
-- `app/AppNavigationLibraryData.kt`
-  - Pure library derivation helpers.
-  - JSON parsing, folder ordering, sort filtering, and drag-preview updates.
+`ReaderScreenContracts.kt`
+- Reader contract map plus theme/helper types.
 
-- `app/AppNavigationLibrary.kt`
-  - Presentational library shell.
-  - Drawer, top bar, grid, and bottom action bar.
+`ReaderScreenChrome.kt`
+- Drawer, top bar, overlays, and shell layout.
 
-- `app/AppNavigationDialogs.kt`
-  - Presentational modal surfaces.
-  - Sort sheet, folder dialogs, bulk delete dialogs, and welcome/changelog dialogs.
+`ReaderScreenControls.kt`, `ReaderChapterContent.kt`, `ReaderControlsSections.kt`, `ReaderControlsWidgets.kt`, `ReaderVerticalScrubber.kt`
+- Reader controls, chapter rendering, widgets, and scrubber support.
 
-This split is meant to reduce per-task context load rather than total LOC. An agent should usually load `AppNavigationContracts.kt` plus `AppNavigation.kt`, then open only the focused helper or rendering file needed by the task.
+`SettingsScreen.kt` plus split settings files
+- Global reader settings, theme management, import/export, and related UI.
 
-## Settings Layer Detail
+`feature/pdf-legacy/*`
+- Parked runtime only. Not part of the active shell flow.
 
-The settings layer is now split across three files with different roles:
+### Shared Layer
 
-- `data/settings/SettingsManagerContracts.kt`
-  - Key/default map.
-  - `Preferences` to `GlobalSettings` and `BookProgress` mapping helpers.
+`core/model/*`
+- `EpubBook`, `TocItem`, `ChapterElement`, `GlobalSettings`, `BookProgress`, theme contracts, and edit-book models.
 
-- `data/settings/SettingsManager.kt`
-  - Public persistence API.
-  - DataStore edit transactions and persistence behavior.
+`core/ui/*`
+- Shared presentation helpers such as library cards and reader UI support.
 
-- `data/settings/SettingsManagerJson.kt`
-  - JSON helpers for folder sorts, folder order, and book groups.
+`core/debug/AppLog.kt`
+- Shared logging surface for high-signal diagnostics.
 
-This split is meant to reduce per-task context load without changing the DataStore schema. An agent should usually load `SettingsManagerContracts.kt` plus `SettingsManager.kt`, and only open `SettingsManagerJson.kt` if folder metadata behavior is relevant.
+## Ownership Rules
 
-## Parser Layer Detail
+- `:app` assembles and routes. It must not become a feature-logic dumping ground.
+- `:feature:*` owns feature-specific UI and orchestration.
+- `:core:model` owns shared pure contracts and models.
+- `:core:ui` owns shared presentation-only helpers.
+- `:data:*` owns persistence, parsing, storage, and runtime behavior.
+- Do not use feature-to-feature imports for convenience reuse. Extract shared code downward.
 
-The parser layer is now split across three files with different roles:
+## Loading Hints
 
-- `data/parser/EpubParser.kt`
-  - Public parser facade.
-  - Used by `AppNavigation` and `ReaderScreen`.
+- Repo-wide routing -> `docs/project_graph.md`
+- App shell work -> `docs/app_shell_navigation.md`
+- Settings or progress persistence -> `docs/settings_persistence.md`
+- Parser or EPUB mutation work -> `docs/epub_parsing.md`
+- Reader work -> `docs/reader_screen.md`
+- High-risk behavior changes -> `docs/ai_mental_model.md`
+- Verification selection -> `docs/test_checklist.md`
 
-- `data/parser/EpubParserBooks.kt`
-  - Book rebuild and metadata cache logic.
-  - Keeps book ID generation, TOC reconstruction, cover extraction, and `metadata.json` persistence together.
-
-- `data/parser/EpubParserChapter.kt`
-  - Chapter parsing logic.
-  - Keeps `ZipFile` handling, malformed XHTML cleanup, image lookup, and `normalizePath()` together.
-
-This split is meant to reduce per-task context load without changing parser behavior. An agent should usually load `docs/epub_parsing.md` plus `EpubParser.kt`, then open only the focused helper file needed by the task.
-
-## Reader Layer Detail
-
-The reader layer is now split across four files with different roles:
+## High-Risk Zones
 
 - `feature/reader/ReaderScreen.kt`
-  - Reader state owner.
-  - Keeps chapter loading, restoration, save-progress, and navigation effects together.
-
-- `feature/reader/ReaderScreenContracts.kt`
-  - Reader contract map.
-  - Shared theme helpers plus bundled state/callback contracts for reader chrome.
-
-- `feature/reader/ReaderScreenChrome.kt`
-  - Reader shell and overlays.
-  - TOC drawer, top bar, overscroll prompts, and scroll-to-top FAB.
-
-- `feature/reader/ReaderScreenControls.kt`
-  - Reader controls and rendering helpers.
-  - Bottom settings controls, scrubber UI, theme buttons, and chapter element rendering.
-
-This split is meant to reduce per-task context load without changing the restoration state machine. An agent should usually load `docs/reader_screen.md` plus `ReaderScreen.kt`, then open only the focused helper file needed by the task.
+  - Restoration timing, save-progress gating, and overscroll navigation.
+- `data/settings/SettingsManager.kt`
+  - DataStore keys/defaults, folder metadata, and progress integrity.
+- `data/parser/EpubParserBooks.kt` / `EpubParserChapter.kt`
+  - `buildBookId(...)`, `metadata.json`, ZIP safety, and `normalizePath()`.
+- `data/parser/EpubParserEditing.kt`
+  - Atomic EPUB rewrites for the Edit Book flow.

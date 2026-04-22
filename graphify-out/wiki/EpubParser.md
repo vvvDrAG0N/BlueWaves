@@ -1,6 +1,6 @@
 # EpubParser
 
-> God node · 34 connections · `C:\Users\Amon\Desktop\projects\Epub_Reader_v2\app\src\main\java\com\epubreader\data\parser\EpubParser.kt`
+> God node · 19 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParser.kt`
 
 ## Connections by Relation
 
@@ -25,9 +25,7 @@
 - [[.retryPdfConversion()]] `EXTRACTED`
 - [[.cancelPdfConversion()]] `EXTRACTED`
 - [[.convertStoredPdfForBook()]] `EXTRACTED`
-- [[.queryFileSize()]] `EXTRACTED`
-- [[.queryDisplayName()]] `EXTRACTED`
-- [[.readHeaderBytes()]] `EXTRACTED`
+- [[.invalidateChapterCache()]] `EXTRACTED`
 
 ---
 

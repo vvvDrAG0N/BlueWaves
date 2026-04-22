@@ -3,9 +3,9 @@ package com.epubreader.app
 import androidx.compose.material3.DrawerState
 import com.epubreader.Screen
 import androidx.compose.material3.SnackbarHostState
+import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
-import com.epubreader.data.settings.SettingsManager
 import org.json.JSONObject
 
 /**
@@ -13,8 +13,6 @@ import org.json.JSONObject
  * - Read this file when the question is "what state or callbacks does the app shell expose?"
  * - These contracts exist to reduce scan cost in the UI files. They are app-shell private.
  */
-internal const val RootLibraryName = "My Library"
-internal const val DefaultLibrarySort = "added_desc"
 internal val LibrarySortOptions = listOf(
     "added" to "Date Added",
     "title" to "Title",
@@ -32,18 +30,26 @@ internal data class LibraryAsyncUiState(
 // Screen-facing state bundles. These are derived in `AppNavigation.kt` and consumed by the
 // presentational app-shell files.
 internal data class LibraryScreenState(
-    val settingsManager: SettingsManager,
     val globalSettings: GlobalSettings,
     val drawerState: DrawerState,
     val snackbarHostState: SnackbarHostState,
     val books: List<EpubBook>,
     val libraryItems: List<EpubBook>,
+    val progressByBookId: Map<String, BookProgress>,
+    val bookFolderById: Map<String, String>,
     val lastOpenedBook: EpubBook?,
     val selectedFolderName: String,
     val asyncState: LibraryAsyncUiState,
     val selection: BookSelectionUiState,
     val folderDrawer: FolderDrawerUiState,
 )
+
+internal fun shouldRefreshLibraryOnEntry(
+    currentScreen: Screen,
+    hasBooks: Boolean,
+): Boolean {
+    return currentScreen == Screen.Library && !hasBooks
+}
 
 internal data class BookSelectionUiState(
     val isBookSelectionMode: Boolean,

@@ -1,168 +1,233 @@
 # Blue Waves Agent Guide
 
-This document defines the architecture, coding standards, and modification safety rules for the Blue Waves EPUB Reader project.
+This file is the high-signal working contract for repo agents.
 
-## 1. Core Philosophy
-- **Native & High Performance**: Use Jetpack Compose and native Android APIs. Avoid heavy abstractions.
-- **Privacy & Speed**: Offline-first. Cache metadata to avoid re-parsing large EPUBs.
-- **Reading Focus**: The UI must remain clean and content-focused.
+Keep this guide concise. Deep explanations belong in the canonical root docs under `docs/`.
 
-## 2. Context Priority
-1. **AGENT.md**: Defines the behavior rules and constraints for all modifications.
-2. **docs/** folder: Contains detailed system knowledge and flow documentation.
-3. **Existing Code**: Always takes precedence over assumptions. Analyze current implementations before suggesting changes.
-4. **Refactors**: Large-scale refactors or architectural shifts require explicit user confirmation.
+## 1. Priorities
 
-## 3. AI Development Protocol
-1. **Analyze Docs First**: Always review the `/docs` folder before writing any code. It contains the logic behind complex features.
-2. **Intent Check (MANDATORY)**: Before implementing any changes, analyze if the user's request is for discussion/planning or direct execution. If the user mentions "talk," "discuss," "let's think," or "planning," **STOP** and wait for confirmation before writing code.
-3. **Minimal Edits**: Prefer surgical, minimal edits over large-scale rewrites to preserve original intent and code style.
-4. **Protect the Reader**: Reader smoothness and scroll position restoration are sacred. Any changes to `ReaderScreen` must be stress-tested for these two properties.
-5. **Confirm Changes**: Always ask for confirmation before making significant architectural changes or altering the DataStore schema.
-6. **Verify Flows**: After any modification, re-verify the affected flow (e.g., if changing the parser, verify both metadata extraction and chapter rendering).
-7. **Right-Sized Tests**: New non-trivial features should ship with the smallest automated test that proves them: JVM for pure logic, Robolectric/local Android-aware tests for framework-dependent logic, instrumentation for runtime/UI flows. If no automated test is added, explain why and provide manual verification steps.
+1. `AGENTS.md`
+2. `docs/README.md`
+3. `docs/project_graph.md`
+4. `graphify-out/GRAPH_REPORT.md`
+5. the single relevant area doc
+6. the current code
 
-## 4. Architecture Rules
+Existing code always wins over assumptions.
 
-### Navigation
-- **State-Based Navigation**: Use an `enum class Screen` in `MainActivity.kt` to switch views via `AnimatedContent`. 
-- **DO NOT** add Jetpack Navigation Component unless complexity drastically increases.
+Large architectural shifts, module graph changes, and DataStore schema changes require explicit user confirmation.
 
-### Data & Persistence
-- **SettingsManager**: All global and per-book state must go through `SettingsManager.kt` using **Jetpack DataStore (Preferences)**.
-- **Reactive Flow**: UI should collect settings as `State` to ensure real-time updates (e.g., font size changes reflecting instantly in the reader).
+## 2. Current Architecture Snapshot
 
-### EPUB Engine (`EpubParser.kt`)
-- **Extraction Strategy**: EPUBs are extracted into `cacheDir/books/{id}`. 
-- **Metadata Caching**: `metadata.json` is stored in the book's folder. Always check for this file before re-parsing the ZIP.
-- **Sealed Element Hierarchy**: Use `ChapterElement` (Text/Image) to represent content. This keeps the `LazyColumn` logic clean.
+Blue Waves is a modular Android app:
 
-## 4. Reader Logic & UI Conventions
+- `:app`
+  - bootstrap and shell assembly only
+- `:core:model`
+  - shared pure models and theme contracts
+- `:core:ui`
+  - shared Compose UI and presentation helpers
+- `:data:settings`
+  - `SettingsManager` and DataStore-backed persistence
+- `:data:books`
+  - `EpubParser`, EPUB runtime, metadata cache, and parked PDF data/runtime seams
+- `:feature:library`
+- `:feature:reader`
+- `:feature:settings`
+- `:feature:editbook`
+- `:feature:pdf-legacy`
 
-### Forced LTR
-- The project enforces `LayoutDirection.Ltr` in `MainActivity` and `ReaderScreen` to maintain consistent reading behavior (scrolling and gestures) even on RTL-configured devices.
+Product boundary:
 
-### Theme Handling
-- Use `getThemeColors(theme)` in `ReaderScreen.kt`. 
-- Standard Material 3 color schemes are used for the Library/Settings, but the **Reader** uses specific hex colors (Sepia: `#F4ECD8`, Dark: `#121212`) for better eye comfort.
+- The active shell is EPUB-first.
+- PDF-origin books may exist in metadata/library flows.
+- PDF open/import paths in the active shell remain intentionally disabled.
+- Legacy PDF runtime code is parked and must not be reactivated accidentally.
 
-### Scroll & Progress Restoration
-- The most critical logic is the sync between `LaunchedEffect` and `LazyListState` in `ReaderScreen.kt`.
-- **Restoration Flow**: Wait for `totalItemsCount` to match `chapterElements.size` before attempting `scrollToItem`.
-- **Position Saving**: Debounced saving (500ms delay) to prevent excessive disk writes during scrolling.
+Architecture rules:
 
-## 5. Implicit Coding Conventions
-- **IO Safety**: Always use `withContext(Dispatchers.IO)` for parsing, file operations, and DataStore edits.
-- **HTML Cleanup**: Use the `unescapeHtml()` and `normalizePath()` helpers in `EpubParser` to handle malformed XHTML and relative image paths.
-- **Coroutines**: Prefer `rememberCoroutineScope()` for UI-triggered actions (like button clicks) and `LaunchedEffect` for state-driven side effects.
-- **Logging**: Use `core/debug/AppLog.kt` for new app logs instead of scattering raw `android.util.Log` calls. Keep debug/info logs debug-only, keep warn/error logs high-signal, and never log book contents or noisy per-scroll/per-frame events.
+- Navigation stays state-based through `Screen` and `AppNavigation`.
+- Do not add Jetpack Navigation unless the user explicitly asks for that architectural change.
+- `SettingsManager` remains the persisted source of truth for global settings and per-book progress.
+- `EpubParser` remains the public parser facade.
+- Dependency wiring stays manual. Do not introduce Hilt, Koin, or similar DI without explicit approval.
 
-## 6. Modification Safety Rules (CRITICAL)
-1. **Parser Changes**: When modifying `parseChapter`, ensure that the `ZipFile` stream is always closed and that image path normalization supports various EPUB internal structures (`OEBPS/`, `OPS/`, etc.).
-2. **Reader Scroll**: Do not modify the `isInitialScrollDone` or `isRestoringPosition` flags without fully testing book opening and chapter switching. Breaking these will cause the reader to lose the user's place.
-3. **Overscroll Navigation**: The `NestedScrollConnection` in `ReaderScreen` is sensitive. Ensure `verticalOverscroll` resets correctly on `Release`.
-4. **Version Tracking**: If adding features that change the data schema, update `changelog.json` and handle version migration in `AppNavigation`.
-- `Simulate the Validation Checklist: Before finalizing any change to ReaderScreen.kt, mentally execute the Validation Checklist found in ai_mental_model.md (Position Persistence, Chapter Boundary, Theme Reactivity, Parser Stress, Memory Safety). If the proposed change would cause any checklist item to fail, the change is unsafe and must be revised.`
+## 3. How To Load Context
 
+Do not read the whole repo by default.
 
-## 7. Library Management
-- The library is a scan of the `books` directory.
-- `EpubBook.id` is a MD5 hash of URI + FileSize to prevent duplicate entries for the same file.
-- Cover thumbnails are extracted once and stored as `cover_thumb.png` in the cache folder.
+Start with:
 
-## AI Documentation Awareness
-- `docs/` contains authoritative architectural memory.
-- `ai_mental_model.md` defines validation expectations and safety heuristics.
-- `quick_ref.md` is optimized for fast context loading and high-signal reference.
-- **Mandatory Reading**: Agents must read these files before modifying `ReaderScreen.kt`, `EpubParser.kt`, or any core scroll and parsing logic.
+1. `docs/README.md` if you need the canonical docs map
+2. `docs/project_graph.md`
+3. `graphify-out/GRAPH_REPORT.md`
+4. one focused runtime doc:
+   - `docs/app_shell_navigation.md`
+   - `docs/settings_persistence.md`
+   - `docs/epub_parsing.md`
+   - `docs/reader_screen.md`
+   - `docs/ui_rules.md`
+   - `docs/AI_DEBUG_GUIDE.md`
+   - `docs/ai_mental_model.md`
+   - `docs/test_checklist.md`
+5. only the specific files needed for the task
 
-## Documentation Preservation Rule
-AI agents must treat AGENT.md and docs/ as stable architectural memory.
-Do not refactor or summarize these files unless explicitly instructed.
-New knowledge must be appended, never replaced.
+`docs/agent_memory/` is not part of the default read path.
 
-## browser-use
+## 4. Core Working Rules
 
-this project has web browser through browser-use.md.
+- Prefer surgical edits over broad rewrites.
+- Start each non-trivial task by identifying the owner files and the verification path.
+- Preserve behavior unless the user explicitly asks for a behavior change.
+- After any change, verify the affected flow.
+- New non-trivial work should include the smallest appropriate automated test:
+  - JVM for pure logic
+  - Robolectric/local Android-aware for framework behavior
+  - instrumentation for runtime/UI flows
+- If no automated test is added, explain why and provide manual verification steps.
 
-## graphify
+Implementation conventions:
 
-This project has a graphify knowledge graph at graphify-out/.
+- Use `withContext(Dispatchers.IO)` for file, ZIP, and DataStore work.
+- Prefer `rememberCoroutineScope()` for UI-triggered actions and `LaunchedEffect` for state-driven effects.
+- Use `com.epubreader.core.debug.AppLog` for durable logging instead of ad-hoc `Log`.
+- Never log book contents or noisy per-frame/per-scroll data.
 
-Rules:
-- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure.
-- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files.
-- **Maintenance**: The graph must be kept fresh. Use `python scripts/check_graph_staleness.py` to check if a rebuild is needed.
-- **Rebuild**: After structural code changes or documentation updates, run `python scripts/check_graph_staleness.py --rebuild` to synchronize the graph.
-- Automated check is integrated into `scripts/rebuild_graphify.py` and `scripts/check_graph_staleness.py`.
+## 5. Anti-Monolith And Extraction Rules
 
-## Graph-First Loading Workflow
+The refactor established a hard size boundary. Keep it intact.
 
-For low-token work in this repo:
-- Read `docs/project_graph.md` before broad codebase questions or cross-package tasks.
-- If `graphify-out/GRAPH_REPORT.md` exists, use it before opening raw source files.
-- If scope is unclear, run `graphify query "<question>" --budget 800-1500` to narrow the file set.
-- After the graph narrows the area, read only the relevant area doc and then only the files named by the graph.
-- Use `python scripts/rebuild_graphify.py` when `graphify-out/` is missing, stale, or after structural code changes.
+Size triggers:
 
-## AI Agent Workflow Addendum
+- No Kotlin file under `src/main`, `src/test`, or `src/androidTest` may exceed 500 lines.
+- `checkKotlinFileLineLimit` is a required guard, not a suggestion.
+- Start planning a split once a file moves past roughly 350 lines or gains a second responsibility.
+- If an edit would push a file near 450 lines, stop and extract before finishing.
+- Prefer focused files with one ownership area over region-based "god files".
 
-This section extends the base rules above for repo agents and model handoffs.
+Placement rules:
 
-### Model Routing
-- `Codex` is the primary implementation and verification agent for this repo. Treat it as the default owner for difficult code changes, build/test execution, focused debugging, and final validation.
-- `Gemini` is a secondary planning/review agent. Use it for repo-wide scoping, backlog decomposition, prompt authoring, design comparison, and optional second-pass review, but not as the default owner of difficult implementation work unless the user explicitly asks for that split.
-- When both are used on the same task, keep one active owner. The planning/review agent should frame the work, but the implementation agent must still verify everything against the current code and docs.
-- Do not treat model-specific docs as a second source of truth over `AGENTS.md`; they are companion guides, not replacements.
-- Multi-agent coordination through Microsoft Agent Framework is a future optimization layer. Do not introduce framework-specific repo changes unless the task explicitly asks for that integration.
+- `:app` assembles and routes only. It must not absorb reusable feature logic.
+- `:feature:*` owns feature-specific UI and orchestration.
+- `:core:ui` owns cross-feature presentation primitives and shared Compose helpers.
+- `:core:model` owns shared pure models, contracts, and mappers.
+- `:data:*` owns persistence, parsing, storage, and runtime behavior.
+- Do not make one feature depend on another feature for convenience reuse. Extract shared pieces downward into `:core:*` or `:data:*`.
+- If a reusable piece needs knowledge of multiple feature modules, it likely belongs lower in the graph or should stay duplicated until the real boundary is clear.
 
-### Persistent Memory
-- Durable repo knowledge belongs in `docs/`, `AGENTS.md`, or the root `TODO`, not only in transient chat history.
-- When a task reveals stale AI guidance, repair the repo memory close to the affected workflow. Example: add the missing doc, update the index, or append the new rule to the relevant guide.
-- Append new knowledge; do not silently rewrite existing architectural memory.
-- Keep prompt libraries aligned with the current root `TODO` ordering so future agents do not optimize the wrong backlog item first.
+Component extraction ladder:
 
-### Shared Memory
-- Shared durable memory for agent collaboration lives in `docs/agent_memory/`.
-- Treat `docs/agent_memory/README.md` as the entry point, then update the focused memory file (`decision_log.md`, `handoffs.md`, `debug_lessons.md`, `open_questions.md`) instead of scattering one-off notes.
-- Microsoft Agent Framework runtime state is coordination state, not the long-term project memory source of truth.
-- Obsidian is the human browsing layer for repo markdown and `graphify-out/wiki/`; do not keep critical project memory only in Obsidian config, plugin state, or private local notes.
-- When a new decision becomes stable and architectural, promote it from agent memory into the canonical docs.
+1. Keep code inline if it is tiny, obvious, and single-use.
+2. Extract a private local helper in the same file if that only improves readability.
+3. Move to a feature-local file when the unit has its own UI, state, or callback surface.
+4. Promote to a shared feature component only when multiple files in the same feature use it.
+5. Promote to `:core:ui` only when multiple features share it and it stays presentation-only.
+6. Promote to `:core:model` for shared pure models, contracts, or mapping logic.
+7. Promote to `:data:*` for persistence, parser, storage, or runtime logic.
+8. Create a new module only when the boundary is durable and the user has explicitly approved it.
 
-### Token Efficiency
-- Stay graph-first. Prefer `docs/project_graph.md`, `graphify-out/GRAPH_REPORT.md`, `graphify-out/wiki/index.md`, and the low-context area docs before raw source files.
-- Do not load every split file in a package by default. Use the area docs to choose the smallest relevant surface.
-- Prefer contract-map files (`AppNavigationContracts`, `SettingsManagerContracts`, `ReaderScreenContracts`) when they answer the question without opening the full implementation.
-- If a task is broad, first narrow it into a file list, owner list, or execution order before opening more code.
+Lego rules:
 
-### Task Handling
-- Start each non-trivial task by restating the goal, the likely owner files, and the verification path.
-- Prefer minimal, surgical edits over broad rewrites.
-- Treat prompt quality as part of the implementation quality: the next agent should be able to continue from the repo state without reconstructing the entire context.
-- For cross-model or cross-agent handoffs, spell out:
-  - the exact goal
-  - allowed files
-  - files to avoid
-  - risk areas
-  - required verification
-- If a task changes behavior, update the relevant docs in the same pass when practical.
+- Prefer domain-named pieces like `LibraryTabBar` over vague builders like `createTab`, `buildTab`, or `setupTab`.
+- Prefer declarative APIs with explicit state plus callbacks over imperative parent, window, or position mutation APIs.
+- Group reusable code by domain and ownership, not in catch-all `helpers.kt`, `utils.kt`, or `components.kt` files.
+- Default to feature-local reuse first. Shared extraction is earned, not automatic.
+- If a file starts holding unrelated pieces, split it even if the line count is still safe.
 
-### Debug Handling
-- Start debugging from `docs/AI_DEBUG_GUIDE.md`, then the focused area doc, then the smallest set of implementation files.
-- Prefer high-signal instrumentation through `core/debug/AppLog.kt` instead of ad-hoc logging.
-- Capture repro steps and expected behavior before changing logic.
-- Remove temporary debug noise before finishing unless the retained log materially helps future debugging.
+Pre-merge self-check:
 
-### Prompt Workflow
-- `docs/PROMPT_TEMPLATES.md` is the quick-start library for common task types.
-- `docs/ask_mode_prompt_rules.md` is the rulebook for generated or delegated implementation prompts.
-- `docs/TODO_PROMPTS.md` is the prompt library for top-level backlog items and should track the current root `TODO`.
+- Where should this code live?
+- Can it remain feature-local?
+- Is the API declarative and domain-named?
+- Does this add a second responsibility to the file?
+- Does this push the file toward the split threshold?
+- Am I creating convenience coupling between features?
 
-## 8. Remote Deployment & Testing
-When the user is remote or lacks a locally connected device:
-1. **Wireless Debugging**: If the user is on a phone with wireless debugging, prioritize `./gradlew installDebug` to push the build directly to their device.
-2. **Build Verification**: Always verify the build with `./gradlew assembleDebug --info` before providing an artifact or attempting an install.
-3. **APK Artifact**: Generate and provide the absolute path to the debug APK (`app/build/outputs/apk/debug/app-debug.apk`) as a fallback.
-4. **Automated UI Verification**: Use the `android_ui_verification` skill to validate UI changes on a local emulator/simulator.
-5. **Visual Evidence**: Capture and share screenshots/videos of the modified UI using verification tools to provide confidence.
-6. **Log Integrity**: Ensure all critical business logic and navigation events are logged via `AppLog.kt` for remote debugging.
+## 6. High-Risk Areas
+
+Reader safety rules:
+
+- Reader smoothness and scroll restoration are sacred.
+- Before touching reader restoration logic, read:
+  - `docs/reader_screen.md`
+  - `docs/ai_mental_model.md`
+- Do not casually change:
+  - `isInitialScrollDone`
+  - `isRestoringPosition`
+  - restoration timing
+  - overscroll release behavior
+- Mentally execute the reader validation checklist before finalizing reader changes.
+
+Parser safety rules:
+
+- Before touching parser logic, read `docs/epub_parsing.md`.
+- Preserve `metadata.json` caching behavior.
+- Ensure ZIP/stream resources are always closed.
+- Keep malformed XHTML cleanup and path normalization robust across EPUB layouts.
+
+Settings safety rules:
+
+- Do not rename DataStore keys.
+- Do not change defaults or schema shape without explicit approval.
+- Preserve active-theme, folder, and progress persistence semantics unless the user asks otherwise.
+
+Edit Book safety rules:
+
+- Keep EPUB editing saves staged and atomic.
+- Preserve chapter order, href stability, and cover update semantics.
+
+## 7. Documentation Rules
+
+- `docs/` root is for AI-agent runtime memory only.
+- Root docs must not become prompt libraries, duplicate overview docs, or backlog prompt packs.
+- Merge into an existing canonical root doc before creating a new one.
+- Put parked or historical notes under `docs/legacy/`, not the root.
+- `docs/agent_memory/` is the non-default continuity layer:
+  - `step_history.md` for append-only substantial work history (Implementation, Audits, Reviews, or Planning). **Each entry must use a sequential index heading (e.g., `## 1. 2026-04-16 00:00`).**
+  - `next_steps.md` for concrete queued follow-up work
+- Do not treat `docs/agent_memory/` as the canonical architecture source of truth.
+- Promote stable rules into `AGENTS.md` or canonical root docs instead of leaving them only in agent memory.
+- After substantial work, append a structured entry to `docs/agent_memory/step_history.md`.
+- If follow-up remains, update `docs/agent_memory/next_steps.md`.
+
+This repo also includes:
+
+- `browser-use.md`
+- `graphify-out/`
+
+Graph maintenance:
+
+- Run `python scripts/check_graph_staleness.py` when unsure.
+- Run `python scripts/check_graph_staleness.py --rebuild` after structural code changes or meaningful documentation updates.
+
+## 8. Collaboration Rules
+
+- `Codex` is the primary implementation and verification agent for this repo.
+- `Gemini` is a secondary planning/review agent when the user wants that split.
+- If multiple agents are involved, keep one clear implementation owner.
+- Durable decisions belong in `AGENTS.md`, canonical root docs, or the structured `docs/agent_memory/` history.
+
+For substantial handoffs or follow-up notes, spell out:
+
+- exact goal
+- allowed files
+- files to avoid
+- risk areas
+- required verification
+
+## 9. Remote Build And Validation
+
+If the user is remote or using a device over wireless debugging:
+
+1. Verify with `./gradlew assembleDebug --info`
+2. Prefer `./gradlew installDebug` when device install is possible
+3. Provide the APK fallback at `app/build/outputs/apk/debug/app-debug.apk`
+4. Use Android emulator/device verification tooling when UI confidence matters
+5. Capture screenshots or other evidence for user-facing UI changes when practical
+
+## 10. Workspace Hygiene
+
+- **Root Preservation**: Do not create new files in the project root unless they are mandatory configuration files (e.g., new Gradle/Git configs).
+- **Scripts**: All helper scripts, automation tools, and maintenance utilities MUST live in `scripts/`.
+- **Logs**: Any persistent log files or build artifacts generated by agents should be placed in `logs/` or a dedicated temporary directory, never in the root.
+- **Documentation**: New documentation belongs in `docs/`. Only the primary entry points (`README.md`, `AGENTS.md`, `GEMINI.md`) should reside in root.

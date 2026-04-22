@@ -20,7 +20,6 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -45,7 +44,7 @@ class AppNavigationOperationsTest {
             parser = parser,
             settingsManager = settingsManager,
             selectedFolderName = RootLibraryName,
-            bookGroups = JSONObject("""{"$existingId":"Sci-Fi"}"""),
+            bookGroups = mapOf(existingId to "Sci-Fi"),
         )
 
         assertEquals(ImportBookResult.Duplicate("Sci-Fi"), result)
@@ -77,7 +76,7 @@ class AppNavigationOperationsTest {
             parser = parser,
             settingsManager = settingsManager,
             selectedFolderName = RootLibraryName,
-            bookGroups = JSONObject(),
+            bookGroups = emptyMap(),
         )
 
         assertEquals(ImportBookResult.Imported(newBook), result)
@@ -108,7 +107,7 @@ class AppNavigationOperationsTest {
             parser = parser,
             settingsManager = settingsManager,
             selectedFolderName = "Sci-Fi",
-            bookGroups = JSONObject(),
+            bookGroups = emptyMap(),
         )
 
         assertEquals(ImportBookResult.Imported(newBook), result)
@@ -136,7 +135,7 @@ class AppNavigationOperationsTest {
             parser = parser,
             settingsManager = settingsManager,
             selectedFolderName = RootLibraryName,
-            bookGroups = JSONObject(),
+            bookGroups = emptyMap(),
         )
 
         assertEquals(
@@ -164,7 +163,7 @@ class AppNavigationOperationsTest {
             parser = parser,
             settingsManager = settingsManager,
             selectedFolderName = RootLibraryName,
-            bookGroups = JSONObject(),
+            bookGroups = emptyMap(),
         )
 
         assertEquals(
@@ -205,8 +204,20 @@ class AppNavigationOperationsTest {
         verify { parser.cancelPdfConversion("book-2") }
         verify { parser.deleteBook(match { it.id == "book-1" }) }
         verify { parser.deleteBook(match { it.id == "book-2" }) }
-        coVerify { settingsManager.deleteBookData("book-1") }
-        coVerify { settingsManager.deleteBookData("book-2") }
+        coVerify { settingsManager.deleteBooksData(setOf("book-1", "book-2")) }
+    }
+
+    @Test
+    fun moveBooksToFolder_usesBulkSettingsUpdate() = runBlocking {
+        val settingsManager = mockk<SettingsManager>(relaxed = true)
+
+        moveBooksToFolder(
+            settingsManager = settingsManager,
+            bookIds = setOf("book-1", "book-2"),
+            folderName = "Sci-Fi",
+        )
+
+        coVerify { settingsManager.updateBookGroups(setOf("book-1", "book-2"), "Sci-Fi") }
     }
 
     private fun mockImportDeps(

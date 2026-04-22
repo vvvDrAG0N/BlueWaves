@@ -6,7 +6,7 @@ Execution Order
 - Improve agent performance, intelligence, persistent memory, token efficiency, task handling, and debug handling.
 - Define model responsibilities and task-routing rules for Gemini and Codex.
 - Evaluate multi-agent support through Microsoft Agent Framework after the single-agent workflow is cleaned up.
-- Repair AI-doc hygiene gaps, including stale references such as `docs/TODO_PROMPTS.md` being listed in `docs/README.md` while missing from the repo.
+- Keep AI-doc hygiene aligned with the canonical runtime docs root and the `docs/agent_memory/` step-history schema.
 
 2. Performance and stability pass
 - Investigate the app size regression from 15.1 MB to 60+ MB.

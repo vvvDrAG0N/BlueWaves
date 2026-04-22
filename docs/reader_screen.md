@@ -1,93 +1,87 @@
-# Reader Screen Note
+# Reader Screen Guide
 
-This note is the low-context guide for the reader package after the safe split of `ReaderScreen.kt`.
+Use this guide before changing reader restoration, progress saving, TOC behavior, overscroll navigation, controls, or chapter rendering.
 
 ## Read Order
 
 1. `feature/reader/ReaderScreen.kt`
    - State owner and effect coordinator.
-   - Start here for chapter loading, restoration, progress saving, and navigation behavior.
 2. `feature/reader/ReaderScreenContracts.kt`
-   - Shared reader contract map.
-   - Load this file when you only need reader theme helpers, `TocSort`, or the chrome callback/state surface.
-3. `feature/reader/ReaderScreenChrome.kt`
-   - Drawer, top bar, overscroll indicators, and reader shell layout.
-   - Load only for TOC, overlay, or chrome rendering work.
-4. `feature/reader/ReaderScreenControls.kt`
-   - Bottom controls, scrubber, theme buttons, and chapter element rendering.
-   - Load only for settings controls, scrubber, or text/image rendering work.
+   - Contract map and theme helpers.
+3. One focused helper/rendering file only if needed:
+   - `ReaderScreenChrome.kt`
+   - `ReaderScreenControls.kt`
+   - `ReaderChapterContent.kt`
+   - `ReaderControlsSections.kt`
+   - `ReaderControlsWidgets.kt`
+   - `ReaderVerticalScrubber.kt`
 
 ## File Boundaries
 
 - `ReaderScreen.kt`
-  - Owns `currentChapterIndex`, `chapterElements`, restoration flags, and reader navigation actions.
-  - Owns the chapter load effect, restoration effect, save-progress effect, and overscroll state machine.
-
-## State Transition Logic (The "Why")
-
-The reader supports three distinct ways to navigate chapters, each interacting differently with the scroll restoration state machine:
-
-1.  **Initial Book Open**: `isInitialScrollDone = false`.
-    - *Behavior*: Triggers the restoration effect to look up `savedProgress` and `scrollToItem(savedProgress.scrollIndex)`.
-
-2.  **TOC Selection (`selectTocChapter`)**:
-    - *Behavior*: Snaps to the top of the selected chapter.
-    - *State Impact*: Sets `skipRestoration = true` and `isInitialScrollDone = true`. This forces a "manual jump" behavior where the restoration effect ignores saved progress and simply scrolls to index 0.
-
-3.  **Go to Chapter / Numeric Jump (`jumpToChapter`)**:
-    - *Behavior*: Resets the restoration state machine for a clean "out-of-context" jump.
-    - *State Impact*: Sets `isInitialScrollDone = false` and `skipRestoration = true`. This triggers a full "re-restoration" cycle but forces it to the top (index 0) of the target chapter.
-
-4.  **Gesture / Button Navigation (`navigateNext` / `navigatePrev`)**:
-    - *Behavior*: Navigates sequentially between chapters.
-    - *State Impact*: Sets `isGestureNavigation = true` and `isInitialScrollDone = true`.
-    - *Critical Detail*: Forcing `isInitialScrollDone = true` *before* the index changes prevents the restoration LaunchedEffect from looking up "stale" progress from the DataStore for the chapter being navigated into. This ensures you always land at the very top (for next) or very bottom (for prev) of the adjacent chapter.
-
-5.  **Scrubber Interaction**: `isInitialScrollDone = true`.
-    - *Why*: Prevents the save-progress effect from fighting with the user's active manual scroll.
-
-### Fragile Interactions with Restoration Logic
-
-*   **Saving Progress Interference**: The `isRestoringPosition` and `isInitialScrollDone` flags must be handled carefully. If `isInitialScrollDone` is false, progress saving is disabled. If `isRestoringPosition` is true, progress saving is disabled.
-*   **SnapshotFlow Filtering**: All navigation flows rely on `snapshotFlow` to wait for the `LazyColumn` to finish measuring the newly loaded `chapterElements`. If the `totalItemsCount` check is removed, navigation will often fail or "jump" back to the previous chapter's position.
-*   **Restoration Settle Time**: The `delay(100)` in the restoration effect is mandatory to allow the Compose runtime to settle after a `scrollToItem` call before enabling progress saving.
-
+  - Owns `currentChapterIndex`, `chapterElements`, restoration flags, progress saving, and navigation actions.
 - `ReaderScreenContracts.kt`
-  - Owns reader theme helpers, `TocSort`, and the `ReaderChromeState` / `ReaderChromeCallbacks` bundles.
-  - Resolves both built-in and saved custom themes into explicit reader foreground/background colors.
-
+  - Owns reader contract types, theme helpers, and chrome surface contracts.
 - `ReaderScreenChrome.kt`
-  - Owns the TOC drawer, chapter surface shell, top bar, bottom bar mounting, overscroll prompts, and scroll-to-top FAB.
+  - Owns drawer, top bar, overlays, and reader shell layout.
+- `ReaderScreenControls.kt` and split helpers
+  - Own controls sheet, scrubber support, chapter rendering, and selection widgets.
 
-- `ReaderScreenControls.kt`
-  - Owns chapter element rendering, bottom settings controls, scrubber UI, and reader theme buttons.
-  - Theme controls render built-in and saved custom themes from the shared settings model.
-  - The reader settings card is now one drag-resizable sheet with a top handle, one vertically scrollable section stack ordered `Chapter`, `Theme`, `Font`, `Reading`, `Others`, and snap points at 50%, 80%, and 100% of the reader height.
-  - Dragging the settings sheet downward past the first detent dismisses it instead of snapping below 50%.
-  - Padding now lives under the `Font` section with font size and line height.
-  - When reader controls are visible, the exposed reading area above the sheet must stay touch-interactive so users can still scroll or start text selection there.
-  - Text selection handle drags can trigger transient `TextToolbar.hide()` calls; do not treat those callbacks alone as proof that the selection session ended.
-  - Do not wrap the chapter `LazyColumn` in one shared `SelectionContainer`; keep selection scoped to composed text items so the reader avoids lazy-layout selection invalidation.
+## Critical State Machine
+
+### Chapter Load Flow
+
+1. `currentChapterIndex` changes.
+2. `ReaderScreen.kt` loads chapter content through `parser.parseChapter(...)` on IO.
+3. `chapterElements` updates and drives recomposition.
+4. Adjacent chapter prefetch runs as child work of the active load effect.
+
+### Restoration Flow
+
+1. Wait for the `LazyColumn` to finish measuring the new chapter content.
+2. Use `snapshotFlow` to wait until item count matches the loaded content.
+3. Restore either saved progress or the correct edge position for sequential navigation.
+4. Call `scrollToItem(...)`.
+5. Keep the `delay(100)` settle step.
+6. Set `isInitialScrollDone = true` only after restoration fully settles.
+
+### Progress Save Flow
+
+1. Observe `firstVisibleItemIndex` and `firstVisibleItemScrollOffset`.
+2. Gate writes behind `isInitialScrollDone` and `isRestoringPosition`.
+3. Keep the `delay(500)` debounce before saving `BookProgress`.
+
+### Navigation Modes
+
+- Initial open:
+  - restoration uses saved progress.
+- TOC selection:
+  - manual jump to the top of the target chapter.
+- Numeric jump:
+  - reset restoration and land at the top of the target chapter.
+- Sequential next/prev:
+  - force the correct top or bottom landing position and do not restore stale saved progress.
+- Scrubber interaction:
+  - keeps `isInitialScrollDone = true` so progress saving does not fight active manual scrolling.
 
 ## Do Not Change Accidentally
 
 - `isInitialScrollDone`
 - `isRestoringPosition`
 - the `delay(100)` restoration settle step
-- the `delay(500)` progress-save debounce
+- the `delay(500)` save debounce
 - overscroll release behavior
-- scrubber handling that forces `isInitialScrollDone = true` during manual user scrolling
+- the rule that back unwinds overlay layers before leaving the reader
 
 ## Back Layer Order
 
-- Reader back should unwind one overlay layer at a time.
-- Current order is: TOC drawer, text-selection session, reader controls/settings, then exit reader.
-- If text selection is active while `showControls` is still true, back should clear only the selection session and leave the controls visible.
+- TOC drawer
+- text-selection session
+- reader controls/settings
+- exit reader
 
-## AI Hint
+## Performance Notes
 
-Do not load all reader files by default.
-
-- For restoration or progress bugs: start with `ReaderScreen.kt`.
-- For TOC, app bar, overscroll prompt, or drawer work: then open `ReaderScreenChrome.kt`.
-- For reader controls, scrubber, theme, or chapter rendering work: then open `ReaderScreenControls.kt`.
+- Reader setting sliders should preview locally and persist only on settle, not on every drag sample.
+- Keep scroll-driven UI signals as narrow state reads so the state owner does not recompose more than necessary.
+- Keep selection scoped to composed text items; do not wrap the whole chapter `LazyColumn` in one broad `SelectionContainer`.
