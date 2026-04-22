@@ -27,6 +27,7 @@ import com.epubreader.core.model.DarkThemeId
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.isBuiltInTheme
+import com.epubreader.core.model.availableThemeOptions
 import com.epubreader.core.model.normalizeThemeSelection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -322,16 +323,54 @@ class SettingsManager(private val context: Context) {
     }
 
     suspend fun deleteCustomTheme(themeId: String) {
+        deleteCustomThemes(setOf(themeId))
+    }
+
+    /**
+     * PURPOSE: Deletes one or more custom themes and handles active theme fallback.
+     * INPUT: Set of theme IDs to delete.
+     * OUTPUT: None (Suspending).
+     * FALLBACK STRATEGY:
+     *  1. If the currently active theme is deleted, capture its index N.
+     *  2. Attempt to switch to the theme at the new index N-1.
+     *  3. If N-1 is out of bounds (e.g., deleted the first theme), fallback to Index 1 (Light Theme).
+     * // AI_MUTATION_POINT: Modifies custom themes registry and active theme selection.
+     */
+    suspend fun deleteCustomThemes(themeIds: Set<String>) {
         context.settingsDataStore.edit { preferences ->
             val existingThemes = parseCustomThemes(preferences[SettingsPreferenceKeys.customThemes])
-            val updatedThemes = existingThemes.filterNot { it.id == themeId }
-            if (updatedThemes.size == existingThemes.size) {
-                return@edit
-            }
+            
+            // Filter targets to ensure only custom themes are deleted.
+            val customIds = existingThemes.map { it.id }.toSet()
+            val targetsToDelete = themeIds.intersect(customIds)
+            
+            if (targetsToDelete.isEmpty()) return@edit
 
-            preferences[SettingsPreferenceKeys.customThemes] = updatedThemes.toCustomThemesJson()
-            if (preferences[SettingsPreferenceKeys.theme] == themeId) {
-                preferences[SettingsPreferenceKeys.theme] = LightThemeId
+            // Capture state BEFORE deletion to calculate the relative shift.
+            val allOptionsBefore = availableThemeOptions(existingThemes)
+            val currentActiveId = preferences[SettingsPreferenceKeys.theme] ?: LightThemeId
+            
+            // Perform the deletion.
+            val updatedCustomThemes = existingThemes.filterNot { it.id in targetsToDelete }
+            preferences[SettingsPreferenceKeys.customThemes] = updatedCustomThemes.toCustomThemesJson()
+            
+            // If the active theme was among the deleted ones, calculate the fallback.
+            if (currentActiveId in targetsToDelete) {
+                val activeIndexBefore = allOptionsBefore.indexOfFirst { it.id == currentActiveId }
+                val allOptionsAfter = availableThemeOptions(updatedCustomThemes)
+                
+                // Fallback target: index N-1 (User 1-based) translates to i-1 (Kotlin 0-based).
+                // We coerce at most to the last valid index to handle "deleted last" gracefully.
+                val targetIndex = activeIndexBefore - 1
+                
+                val newThemeId = if (targetIndex >= 0 && targetIndex < allOptionsAfter.size) {
+                    allOptionsAfter[targetIndex].id
+                } else {
+                    // Guaranteed fallback to Index 1 (Light Theme).
+                    LightThemeId
+                }
+                
+                preferences[SettingsPreferenceKeys.theme] = newThemeId
             }
         }
     }

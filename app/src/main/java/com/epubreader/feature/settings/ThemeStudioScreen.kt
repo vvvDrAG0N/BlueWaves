@@ -74,7 +74,12 @@ fun ThemeStudioScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) { page ->
                 val actualIndex = page % allThemes.size
-                ContextualSpecimenCard(theme = allThemes[actualIndex])
+                ContextualSpecimenCard(
+                    theme = allThemes[actualIndex],
+                    fontSize = settings.fontSize,
+                    lineHeight = settings.lineHeight,
+                    horizontalPadding = settings.horizontalPadding
+                )
             }
 
             ThemeIndicators(
@@ -88,10 +93,21 @@ fun ThemeStudioScreen(
 }
 
 @Composable
-private fun ContextualSpecimenCard(theme: CustomTheme) {
+private fun ContextualSpecimenCard(
+    theme: CustomTheme,
+    fontSize: Int,
+    lineHeight: Float,
+    horizontalPadding: Int
+) {
     val p = theme.palette
     
-    // Outer Container representing the 'Background' token
+    // Scale settings for the large specimen card context
+    val baseLineHeight = 8.dp * (fontSize.toFloat() / 18f)
+    val spacingBetweenLines = baseLineHeight * (lineHeight - 1f) + 8.dp
+    val internalPadding = 24.dp * (horizontalPadding.toFloat() / 16f)
+    val constrainedPadding = if (internalPadding > 40.dp) 40.dp else internalPadding
+
+    // Outer Container representing the 'Background' token (Stable UI Zone)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,11 +125,17 @@ private fun ContextualSpecimenCard(theme: CustomTheme) {
                 .background(Color(p.readerBackground))
                 .border(1.dp, Color(p.outline).copy(alpha = 0.1f), RoundedCornerShape(24.dp))
         ) {
-            // 1. System Representation (System Foreground)
+            // 1. System Representation (Stable UI Zone)
             SystemBarMock(p)
 
-            Column(modifier = Modifier.padding(24.dp)) {
-                // 2. Reader Representation (Reader Text + Primary Highlight)
+            Column(
+                modifier = Modifier
+                    .padding(vertical = 24.dp)
+                    .padding(horizontal = (constrainedPadding + 24.dp)) // Dynamic Padding
+            ) {
+                // 2. Reader Representation (Affected by reader settings)
+                
+                // Stable Title
                 Text(
                     text = theme.name,
                     style = MaterialTheme.typography.titleLarge,
@@ -124,20 +146,41 @@ private fun ContextualSpecimenCard(theme: CustomTheme) {
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SkeletonLine(color = Color(p.readerForeground), widthPercent = 0.8f)
+                // Reactive Reader Content
+                Column(verticalArrangement = Arrangement.spacedBy(spacingBetweenLines)) {
+                    SkeletonLine(
+                        color = Color(p.readerForeground), 
+                        widthPercent = 0.8f,
+                        height = baseLineHeight
+                    )
                     // Highlighting a part of the "text" with Primary
                     Row(modifier = Modifier.fillMaxWidth(1.0f), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        SkeletonLine(color = Color(p.readerForeground).copy(alpha = 0.5f), widthPercent = 0.4f)
-                        SkeletonLine(color = Color(p.primary), widthPercent = 0.3f)
-                        SkeletonLine(color = Color(p.readerForeground).copy(alpha = 0.5f), widthPercent = 0.2f)
+                        SkeletonLine(
+                            color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                            widthPercent = 0.4f,
+                            height = baseLineHeight
+                        )
+                        SkeletonLine(
+                            color = Color(p.primary), 
+                            widthPercent = 0.3f,
+                            height = baseLineHeight
+                        )
+                        SkeletonLine(
+                            color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                            widthPercent = 0.2f,
+                            height = baseLineHeight
+                        )
                     }
-                    SkeletonLine(color = Color(p.readerForeground).copy(alpha = 0.5f), widthPercent = 0.9f)
+                    SkeletonLine(
+                        color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                        widthPercent = 0.9f,
+                        height = baseLineHeight
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(48.dp))
 
-                // 3. UI Layer Representation (Surface + Variant + Secondary)
+                // 3. UI Layer Representation (Stable UI Zone)
                 SurfaceMock(p)
             }
         }
@@ -209,11 +252,11 @@ private fun SurfaceMock(p: ThemePalette) {
 }
 
 @Composable
-private fun SkeletonLine(color: Color, widthPercent: Float) {
+private fun SkeletonLine(color: Color, widthPercent: Float, height: androidx.compose.ui.unit.Dp = 8.dp) {
     Box(
         modifier = Modifier
             .fillMaxWidth(widthPercent)
-            .height(8.dp)
+            .height(height)
             .clip(CircleShape)
             .background(color.copy(alpha = 0.2f))
     )

@@ -11,7 +11,7 @@
  *    re-renders across the app via Flow collection in SettingsManager.
  * 2. [AI_WARNING] Parameter Sync: Values (fontSize, lineHeight, horizontalPadding) here MUST
  *    be kept in sync with the ranges defined in ReaderControls.kt to avoid UI inconsistencies.
- * 3. [AI_CRITICAL] Theme Identification: Built-in theme identifiers ("light", "sepia", "dark", "oled")
+ * 3. [AI_CRITICAL] Theme Identification: Built-in theme identifiers ("light", "azure", "dark", "oled")
  *    remain stable. Custom theme identifiers must stay additive so older stored theme names keep working.
  */
 
@@ -103,6 +103,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -131,6 +132,7 @@ import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.ThemePalette
 import com.epubreader.core.model.formatThemeColor
 import com.epubreader.core.model.generatePaletteFromBase
+import com.epubreader.core.model.isThemeNameUnique
 import com.epubreader.core.model.parseThemeColorOrNull
 import com.epubreader.core.model.themeButtonLabel
 import com.epubreader.core.model.themePaletteSeed
@@ -146,9 +148,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.ui.unit.sp
-import java.util.UUID
-import java.util.zip.ZipInputStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.util.UUID
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -282,7 +287,7 @@ fun SettingsScreen(
             onDismissRequest = { themeToDelete = null },
             title = { Text("Delete Theme") },
             text = {
-                Text("Delete \"${customTheme.name}\"? If it is active, the app falls back to Light.")
+                Text("Delete \"${customTheme.name}\"? If it is active, the app will switch to the previous theme.")
             },
             confirmButton = {
                 TextButton(
@@ -408,63 +413,139 @@ private fun AppearanceTab(
     var themeToExport by remember { mutableStateOf<CustomTheme?>(null) }
 
     // --- REFACTORED LOGIC HELPERS ---
+    fun normalizeThemeName(name: String): String = name.trim().lowercase(Locale.US).replace(Regex("\\s+"), " ")
+
     suspend fun importSingleThemeJson(
         json: JSONObject,
         seenPalettes: MutableSet<ThemePalette>,
         seenNames: MutableSet<String>,
     ): String? {
-        val keys = listOf("primary", "secondary", "background", "surface", "surfaceVariant", "outline", "readerBackground", "readerForeground")
-        if (keys.none { json.has(it) }) return null
+        // [PHASE 4: VALIDATION STRICTNESS] - Require at least 3 color keys to prevent empty imports
+        val colorKeys = listOf("primary", "secondary", "background", "surface", "surfaceVariant", "outline", "readerBackground", "readerForeground", "readerText")
+        val presentKeys = colorKeys.count { json.has(it) }
+        if (presentKeys < 3) return null
 
+        // [PHASE 2: SCHEMA HARDENING] - Handle readerForeground with readerText as fallback
+        val readerBg = parseThemeColorOrNull(json.optString("readerBackground")) ?: 0xFFFFFFFF
+        val readerFg = parseThemeColorOrNull(json.optString("readerForeground")) 
+            ?: parseThemeColorOrNull(json.optString("readerText")) 
+            ?: 0xFF000000
+
+        val bg = parseThemeColorOrNull(json.optString("background")) ?: 0xFFFFFFFF
+        val pri = parseThemeColorOrNull(json.optString("primary")) ?: 0xFF6200EE
+        
+        // [PHASE 2: INTELLIGENT INHERITANCE] - Fallback to background/primary if specific UI colors are missing
         val palette = ThemePalette(
-            primary = parseThemeColorOrNull(json.optString("primary")) ?: 0xFF6200EE,
-            secondary = parseThemeColorOrNull(json.optString("secondary")) ?: 0xFF03DAC6,
-            background = parseThemeColorOrNull(json.optString("background")) ?: 0xFFFFFFFF,
-            surface = parseThemeColorOrNull(json.optString("surface")) ?: 0xFFFFFFFF,
-            surfaceVariant = parseThemeColorOrNull(json.optString("surfaceVariant")) ?: 0xFFEEEEEE,
+            primary = pri,
+            secondary = parseThemeColorOrNull(json.optString("secondary")) ?: pri,
+            background = bg,
+            surface = parseThemeColorOrNull(json.optString("surface")) ?: bg,
+            surfaceVariant = parseThemeColorOrNull(json.optString("surfaceVariant")) ?: bg,
             outline = parseThemeColorOrNull(json.optString("outline")) ?: 0xFF757575,
-            readerBackground = parseThemeColorOrNull(json.optString("readerBackground")) ?: 0xFFFFFFFF,
-            readerForeground = parseThemeColorOrNull(json.optString("readerText")) ?: 0xFF000000,
+            readerBackground = readerBg,
+            readerForeground = readerFg,
             systemForeground = parseThemeColorOrNull(json.optString("systemForeground")) ?: 0xFF000000,
         )
 
         if (seenPalettes.contains(palette)) return null
 
-        val baseName = json.optString("name", "Imported Theme")
+        val baseName = json.optString("name", "Imported Theme").trim()
         var finalName = baseName
-        if (seenNames.contains(finalName.lowercase().trim())) {
+        if (seenNames.contains(normalizeThemeName(finalName))) {
             var counter = 1
-            while (seenNames.contains("${baseName.lowercase().trim()} ($counter)")) counter++
+            while (seenNames.contains(normalizeThemeName("$baseName ($counter)"))) counter++
             finalName = "$baseName ($counter)"
         }
 
         val themeId = "${CustomThemeIdPrefix}${UUID.randomUUID()}"
         val newTheme = CustomTheme(id = themeId, name = finalName, palette = palette, isAdvanced = true)
-        settingsManager.saveCustomTheme(newTheme, activate = false)
-
-        seenPalettes.add(palette)
-        seenNames.add(finalName.lowercase().trim())
-        return finalName
+        
+        // [PHASE 3: ATOMIC VERIFICATION] - Only return name if save actually succeeds
+        return try {
+            settingsManager.saveCustomTheme(newTheme, activate = false)
+            seenPalettes.add(palette)
+            seenNames.add(normalizeThemeName(finalName))
+            finalName
+        } catch (e: Exception) {
+            null
+        }
     }
 
     val bulkImportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         if (uris.isEmpty()) return@rememberLauncherForActivityResult
         scope.launch {
-            var imported = 0
-            val seenPalettes: MutableSet<ThemePalette> = settings.customThemes.map { it.palette }.toMutableSet()
-            val seenNames: MutableSet<String> = settings.customThemes.map { it.name.lowercase().trim() }.toMutableSet()
-            for (uri in uris) {
-                try {
-                    val content = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
-                    if (content.isNullOrBlank()) continue
-                    val json = try { JSONObject(content) } catch (_: Exception) { null }
-                    if (json != null) {
-                        val name = importSingleThemeJson(json, seenPalettes, seenNames)
-                        if (name != null) imported++
+            // [PHASE 1: PERFORMANCE] - Move heavy IO and decompression to Dispatchers.IO
+            withContext(Dispatchers.IO) {
+                var importedCount = 0
+                var skippedCount = 0
+                val seenPalettes: MutableSet<ThemePalette> = settings.customThemes.map { it.palette }.toMutableSet()
+                val seenNames: MutableSet<String> = (BuiltInThemeOptions.map { it.name } + settings.customThemes.map { it.name })
+                    .map { normalizeThemeName(it) }.toMutableSet()
+                
+                for (uri in uris) {
+                    try {
+                        // [PHASE 1: OOM GUARD] - Skip standalone files > 1MB; ZIPs > 5MB
+                        val size = context.contentResolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: 0
+                        
+                        // Detect if it's a ZIP by extension (simple and common for picked files)
+                        val isZip = context.contentResolver.getType(uri)?.contains("zip") == true || 
+                                    uri.toString().lowercase().endsWith(".zip")
+
+                        if (isZip) {
+                            if (size > 5 * 1024 * 1024) { skippedCount++; continue }
+                            
+                            // [PHASE 2: ZIP EXTRACTION ENGINE]
+                            context.contentResolver.openInputStream(uri)?.use { input ->
+                                ZipInputStream(input).use { zis ->
+                                    var entry: ZipEntry? = zis.nextEntry
+                                    while (entry != null) {
+                                        if (!entry.isDirectory && entry.name.lowercase().endsWith(".json") && !entry.name.contains("__MACOSX")) {
+                                            // Read entry content safely
+                                            val content = zis.bufferedReader().readText()
+                                            val json = try { JSONObject(content) } catch (_: Exception) { null }
+                                            if (json != null) {
+                                                val name = importSingleThemeJson(json, seenPalettes, seenNames)
+                                                if (name != null) importedCount++ else skippedCount++
+                                            } else {
+                                                skippedCount++
+                                            }
+                                        }
+                                        zis.closeEntry()
+                                        entry = zis.nextEntry
+                                    }
+                                }
+                            }
+                        } else {
+                            if (size > 1024 * 1024) { skippedCount++; continue }
+                            
+                            // SINGLE JSON PROCESSING
+                            val content = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+                            if (!content.isNullOrBlank()) {
+                                val json = try { JSONObject(content) } catch (_: Exception) { null }
+                                if (json != null) {
+                                    val name = importSingleThemeJson(json, seenPalettes, seenNames)
+                                    if (name != null) importedCount++ else skippedCount++
+                                } else {
+                                    skippedCount++
+                                }
+                            }
+                        }
+                    } catch (_: Exception) {
+                        skippedCount++
                     }
-                } catch (_: Exception) {}
+                }
+                
+                // [PHASE 3: CONSOLIDATED REPORTING]
+                withContext(Dispatchers.Main) {
+                    val msg = when {
+                        importedCount > 0 && skippedCount > 0 -> "Imported $importedCount themes ($skippedCount skipped/duplicate)"
+                        importedCount > 0 -> "Imported $importedCount themes successfully"
+                        skippedCount > 0 -> "No new themes found ($skippedCount skipped/invalid)"
+                        else -> "No valid theme files found"
+                    }
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                }
             }
-            if (imported > 0) Toast.makeText(context, "Imported $imported themes", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -472,21 +553,38 @@ private fun AppearanceTab(
         uri?.let { exportUri ->
             val theme = themeToExport ?: return@let
             scope.launch {
-                try {
-                    val json = JSONObject().apply {
-                        put("name", theme.name)
-                        put("primary", formatThemeColor(theme.palette.primary))
-                        put("secondary", formatThemeColor(theme.palette.secondary))
-                        put("background", formatThemeColor(theme.palette.background))
-                        put("surface", formatThemeColor(theme.palette.surface))
-                        put("surfaceVariant", formatThemeColor(theme.palette.surfaceVariant))
-                        put("outline", formatThemeColor(theme.palette.outline))
-                        put("readerBackground", formatThemeColor(theme.palette.readerBackground))
-                        put("readerText", formatThemeColor(theme.palette.readerForeground))
-                        put("systemForeground", formatThemeColor(theme.palette.systemForeground))
+                // [PHASE 1: PERFORMANCE] - Move file writing to Dispatchers.IO
+                withContext(Dispatchers.IO) {
+                    try {
+                        val json = JSONObject().apply {
+                            put("name", theme.name)
+                            put("primary", formatThemeColor(theme.palette.primary))
+                            put("secondary", formatThemeColor(theme.palette.secondary))
+                            put("background", formatThemeColor(theme.palette.background))
+                            put("surface", formatThemeColor(theme.palette.surface))
+                            put("surfaceVariant", formatThemeColor(theme.palette.surfaceVariant))
+                            put("outline", formatThemeColor(theme.palette.outline))
+                            put("readerBackground", formatThemeColor(theme.palette.readerBackground))
+                            // [PHASE 2: SCHEMA ALIGNMENT] - Use readerForeground as the standardized key
+                            put("readerForeground", formatThemeColor(theme.palette.readerForeground))
+                            put("systemForeground", formatThemeColor(theme.palette.systemForeground))
+                        }
+                        context.contentResolver.openOutputStream(exportUri)?.use { it.write(json.toString(4).toByteArray()) }
+                        
+                        // [PHASE 3: FEEDBACK] - Show success confirmation
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Theme exported successfully", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (_: Exception) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Failed to export theme", Toast.LENGTH_SHORT).show()
+                        }
+                    } finally {
+                        withContext(Dispatchers.Main) {
+                            themeToExport = null
+                        }
                     }
-                    context.contentResolver.openOutputStream(exportUri)?.use { it.write(json.toString(4).toByteArray()) }
-                } catch (_: Exception) {} finally { themeToExport = null }
+                }
             }
         }
     }
@@ -517,6 +615,13 @@ private fun AppearanceTab(
         }
     }
 
+    // --- LOCAL SETTINGS STATE (For Buttery Smooth Performance) ---
+    // We use local state to drive the sliders and live preview at 60fps,
+    // only committing to DataStore (disk I/O) once the drag is finished.
+    var localFontSize by remember(settings.fontSize) { mutableIntStateOf(settings.fontSize) }
+    var localLineHeight by remember(settings.lineHeight) { mutableFloatStateOf(settings.lineHeight) }
+    var localPadding by remember(settings.horizontalPadding) { mutableIntStateOf(settings.horizontalPadding) }
+
     // THEME ANIMATION: Gradual color transition for the dashboard
     val currentTheme = allThemes[pagerState.currentPage.coerceIn(allThemes.indices)]
     val animBg by animateColorAsState(Color(currentTheme.palette.background), tween(600), label = "bg")
@@ -539,7 +644,10 @@ private fun AppearanceTab(
         ) { page ->
             LandscapeSpecimenCard(
                 theme = allThemes[page],
-                fontFamily = getFontFamily(settings.fontType)
+                fontFamily = getFontFamily(settings.fontType),
+                fontSize = localFontSize,
+                lineHeight = localLineHeight,
+                horizontalPadding = localPadding
             )
         }
 
@@ -577,6 +685,15 @@ private fun AppearanceTab(
         // 3. Typography & Rhythm
         TypographySettingsPanel(
             settings = settings,
+            currentFontSize = localFontSize,
+            currentLineHeight = localLineHeight,
+            currentPadding = localPadding,
+            onFontSizeChange = { localFontSize = it.toInt() },
+            onLineHeightChange = { localLineHeight = it },
+            onPaddingChange = { localPadding = it.toInt() },
+            onCommitFontSize = { scope.launch { settingsManager.updateGlobalSettings { it.copy(fontSize = localFontSize) } } },
+            onCommitLineHeight = { scope.launch { settingsManager.updateGlobalSettings { it.copy(lineHeight = localLineHeight) } } },
+            onCommitPadding = { scope.launch { settingsManager.updateGlobalSettings { it.copy(horizontalPadding = localPadding) } } },
             settingsManager = settingsManager,
             scope = scope,
             animSysFg = animSysFg,
@@ -651,9 +768,19 @@ private fun HubButton(icon: ImageVector, label: String, animSysFg: Color, animPr
 @Composable
 private fun LandscapeSpecimenCard(
     theme: CustomTheme,
-    fontFamily: FontFamily
+    fontFamily: FontFamily,
+    fontSize: Int,
+    lineHeight: Float,
+    horizontalPadding: Int
 ) {
     val p = theme.palette
+    
+    // Scale settings for the preview card context
+    val baseLineHeight = 4.dp * (fontSize.toFloat() / 18f)
+    val spacingBetweenLines = baseLineHeight * (lineHeight - 1f) + 4.dp
+    val internalPadding = 16.dp * (horizontalPadding.toFloat() / 16f)
+    val constrainedPadding = if (internalPadding > 32.dp) 32.dp else internalPadding
+
     Card(
         modifier = Modifier
             .fillMaxSize()
@@ -672,15 +799,20 @@ private fun LandscapeSpecimenCard(
                 .background(Color(p.readerBackground))
                 .border(1.dp, Color(p.outline).copy(alpha = 0.05f), RoundedCornerShape(16.dp))
         ) {
-            // 1. System Bar Representation
+            // 1. System Bar Representation (Stable UI Zone)
             SystemBarMock(p)
 
             Row(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Left Side: Reader Text Content
-                Column(modifier = Modifier.weight(1.2f)) {
+                // Left Side: Reader Preview Zone (Affected by reader settings)
+                Column(
+                    modifier = Modifier
+                        .weight(1.2f)
+                        .padding(start = constrainedPadding) // Dynamic Padding
+                ) {
+                    // Stable Title (Interface Element)
                     Text(
                         text = theme.name,
                         style = MaterialTheme.typography.titleSmall,
@@ -691,18 +823,37 @@ private fun LandscapeSpecimenCard(
                         softWrap = false,
                         modifier = Modifier.basicMarquee()
                     )
+                    
                     Spacer(Modifier.height(8.dp))
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        SkeletonLine(color = Color(p.readerForeground), widthPercent = 0.9f)
+                    
+                    // Reactive Reader Content
+                    Column(verticalArrangement = Arrangement.spacedBy(spacingBetweenLines)) {
+                        SkeletonLine(
+                            color = Color(p.readerForeground), 
+                            widthPercent = 0.9f,
+                            height = baseLineHeight
+                        )
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            SkeletonLine(color = Color(p.readerForeground).copy(alpha = 0.5f), widthPercent = 0.3f)
-                            SkeletonLine(color = Color(p.primary), widthPercent = 0.4f)
+                            SkeletonLine(
+                                color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                                widthPercent = 0.3f,
+                                height = baseLineHeight
+                            )
+                            SkeletonLine(
+                                color = Color(p.primary), 
+                                widthPercent = 0.4f,
+                                height = baseLineHeight
+                            )
                         }
-                        SkeletonLine(color = Color(p.readerForeground).copy(alpha = 0.5f), widthPercent = 0.8f)
+                        SkeletonLine(
+                            color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                            widthPercent = 0.8f,
+                            height = baseLineHeight
+                        )
                     }
                 }
 
-                // Right Side: UI Surface Mock
+                // Right Side: UI Surface Mock (Stable UI Zone)
                 Box(modifier = Modifier.weight(1f).align(Alignment.Bottom)) {
                     SurfaceMock(p)
                 }
@@ -770,11 +921,11 @@ private fun SurfaceMock(p: ThemePalette) {
 }
 
 @Composable
-private fun SkeletonLine(color: Color, widthPercent: Float) {
+private fun SkeletonLine(color: Color, widthPercent: Float, height: androidx.compose.ui.unit.Dp = 4.dp) {
     Box(
         modifier = Modifier
             .fillMaxWidth(widthPercent)
-            .height(4.dp)
+            .height(height)
             .clip(CircleShape)
             .background(color.copy(alpha = 0.15f))
     )
@@ -783,6 +934,15 @@ private fun SkeletonLine(color: Color, widthPercent: Float) {
 @Composable
 private fun TypographySettingsPanel(
     settings: GlobalSettings,
+    currentFontSize: Int,
+    currentLineHeight: Float,
+    currentPadding: Int,
+    onFontSizeChange: (Float) -> Unit,
+    onLineHeightChange: (Float) -> Unit,
+    onPaddingChange: (Float) -> Unit,
+    onCommitFontSize: () -> Unit,
+    onCommitLineHeight: () -> Unit,
+    onCommitPadding: () -> Unit,
     settingsManager: SettingsManager,
     scope: CoroutineScope,
     animSysFg: Color,
@@ -830,43 +990,55 @@ private fun TypographySettingsPanel(
         // sliders for padding and line height
         ControlSlider(
             label = "Font Size",
-            value = settings.fontSize.toFloat(),
+            value = currentFontSize.toFloat(),
             range = 12f..32f,
             animSysFg = animSysFg,
             animPrimary = animPrimary,
-            onValueChange = { v -> scope.launch { settingsManager.updateGlobalSettings { it.copy(fontSize = v.toInt()) } } }
+            onValueChange = onFontSizeChange,
+            onValueChangeFinished = onCommitFontSize
         )
 
         ControlSlider(
             label = "Line Height",
-            value = settings.lineHeight,
-            range = 1.2f..2.0f,
+            value = currentLineHeight,
+            range = 1.0f..2.0f,
             animSysFg = animSysFg,
             animPrimary = animPrimary,
-            onValueChange = { v -> scope.launch { settingsManager.updateGlobalSettings { it.copy(lineHeight = v) } } }
+            onValueChange = onLineHeightChange,
+            onValueChangeFinished = onCommitLineHeight
         )
 
         ControlSlider(
             label = "Padding",
-            value = settings.horizontalPadding.toFloat(),
+            value = currentPadding.toFloat(),
             range = 0f..48f,
             animSysFg = animSysFg,
             animPrimary = animPrimary,
-            onValueChange = { v -> scope.launch { settingsManager.updateGlobalSettings { it.copy(horizontalPadding = v.toInt()) } } }
+            onValueChange = onPaddingChange,
+            onValueChangeFinished = onCommitPadding
         )
     }
 }
 
 @Composable
-private fun ControlSlider(label: String, value: Float, range: ClosedFloatingPointRange<Float>, animSysFg: Color, animPrimary: Color, onValueChange: (Float) -> Unit) {
+private fun ControlSlider(
+    label: String,
+    value: Float,
+    range: ClosedFloatingPointRange<Float>,
+    animSysFg: Color,
+    animPrimary: Color,
+    onValueChange: (Float) -> Unit,
+    onValueChangeFinished: () -> Unit
+) {
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(label, style = MaterialTheme.typography.labelLarge, color = animSysFg.copy(alpha = 0.7f))
-            Text(if (range.endInclusive > 5f) "${value.toInt()}" else String.format("%.1f", value), style = MaterialTheme.typography.labelMedium, color = animSysFg.copy(alpha = 0.5f))
+            Text(if (range.endInclusive > 5f) "${value.toInt()}" else String.format("%.2f", value), style = MaterialTheme.typography.labelMedium, color = animSysFg.copy(alpha = 0.5f))
         }
         Slider(
             value = value,
             onValueChange = onValueChange,
+            onValueChangeFinished = onValueChangeFinished,
             valueRange = range,
             colors = SliderDefaults.colors(
                 thumbColor = animPrimary,
@@ -1234,11 +1406,8 @@ private fun CustomThemeEditorDialog(
     val parsedTheme = remember(draft, session.themeId) {
         draft.toCustomTheme(session.themeId)
     }
-    val trimmedName = draft.name.trim()
-    val nameConflict = existingThemes.any { existing ->
-        existing.id != session.themeId && existing.name.equals(trimmedName, ignoreCase = true)
-    }
-    val isValid = parsedTheme != null && trimmedName.isNotEmpty() && !nameConflict
+    val nameConflict = !isThemeNameUnique(draft.name, session.themeId, existingThemes)
+    val isValid = parsedTheme != null && draft.name.trim().isNotEmpty() && !nameConflict
     val shouldActivate = session.isNew || activeThemeId == session.themeId
 
     AlertDialog(
@@ -1258,7 +1427,7 @@ private fun CustomThemeEditorDialog(
                     onValueChange = { draft = draft.copy(name = it) },
                     label = { Text("Theme Name") },
                     singleLine = true,
-                    isError = trimmedName.isEmpty() || nameConflict,
+                    isError = draft.name.trim().isEmpty() || nameConflict,
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("custom_theme_name"),

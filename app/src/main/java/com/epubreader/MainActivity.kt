@@ -26,10 +26,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.epubreader.app.AppNavigation
 import com.epubreader.core.model.CustomTheme
+import com.epubreader.core.model.AzureThemeId
 import com.epubreader.core.model.DarkThemeId
 import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.OledThemeId
-import com.epubreader.core.model.SepiaThemeId
+import com.epubreader.core.model.ThemePalette
+import com.epubreader.core.model.findThemeOption
+import com.epubreader.core.model.availableThemeOptions
 import com.epubreader.data.settings.SettingsManager
 import com.epubreader.feature.settings.ThemeStudioScreen
 
@@ -94,67 +97,17 @@ internal fun appColorScheme(
     theme: String,
     customThemes: List<CustomTheme> = emptyList(),
 ): ColorScheme {
-    customThemes.firstOrNull { it.id == theme }?.let(::customAppColorScheme)?.let { return it }
+    val option = findThemeOption(theme, customThemes)
+        ?: availableThemeOptions(emptyList()).first() // Fallback to Light
 
-    val darkColorScheme = darkColorScheme(
-        primary = Color(0xFFD0BCFF),
-        secondary = Color(0xFFCCC2DC),
-        tertiary = Color(0xFFEFB8C8)
-    )
-
-    val sepiaColorScheme = lightColorScheme(
-        primary = Color(0xFF8A5A44),
-        onPrimary = Color.White,
-        primaryContainer = Color(0xFFE6D3BF),
-        onPrimaryContainer = Color(0xFF3F2C1F),
-        secondary = Color(0xFF7A6657),
-        onSecondary = Color.White,
-        secondaryContainer = Color(0xFFE4D8CB),
-        onSecondaryContainer = Color(0xFF35291F),
-        tertiary = Color(0xFF8C6F56),
-        onTertiary = Color.White,
-        background = Color(0xFFF4ECD8),
-        onBackground = Color(0xFF5B4636),
-        surface = Color(0xFFF4ECD8),
-        onSurface = Color(0xFF5B4636),
-        surfaceVariant = Color(0xFFE8DCC9),
-        onSurfaceVariant = Color(0xFF6A5849),
-        outline = Color(0xFF8F7C6C),
-        outlineVariant = Color(0xFFCDBCA9),
-    ).copy(
-        surfaceContainerLowest = Color(0xFFFFF8EE),
-        surfaceContainerLow = Color(0xFFF9F1E0),
-        surfaceContainer = Color(0xFFF2E7D2),
-        surfaceContainerHigh = Color(0xFFEADDC6),
-        surfaceContainerHighest = Color(0xFFE3D3BB),
-    )
-
-    val oledColorScheme = darkColorScheme.copy(
-        background = Color.Black,
-        surface = Color.Black,
-        surfaceVariant = Color.Black,
-        onBackground = Color.White,
-        onSurface = Color.White,
-        onSurfaceVariant = Color.White,
-        surfaceContainer = Color.Black,
-        surfaceContainerLow = Color.Black,
-        surfaceContainerHigh = Color.Black,
-        surfaceContainerHighest = Color.Black,
-        outline = Color.White.copy(alpha = 0.2f),
-        outlineVariant = Color.White.copy(alpha = 0.1f)
-    )
-
-    return when (theme) {
-        OledThemeId -> oledColorScheme
-        DarkThemeId -> darkColorScheme
-        SepiaThemeId -> sepiaColorScheme
-        LightThemeId -> lightColorScheme()
-        else -> lightColorScheme()
-    }
+    return colorSchemeFromPalette(option.palette)
 }
 
 private fun customAppColorScheme(theme: CustomTheme): ColorScheme {
-    val palette = theme.palette
+    return colorSchemeFromPalette(theme.palette)
+}
+
+private fun colorSchemeFromPalette(palette: ThemePalette): ColorScheme {
     val primary = Color(palette.primary)
     val secondary = Color(palette.secondary)
     val background = Color(palette.background)

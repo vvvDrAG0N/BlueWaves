@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import java.util.Locale
 
 const val LightThemeId = "light"
-const val SepiaThemeId = "sepia"
+const val AzureThemeId = "azure"
 const val DarkThemeId = "dark"
 const val OledThemeId = "oled"
 const val CustomThemeIdPrefix = "custom-"
@@ -54,62 +54,62 @@ data class ThemeOption(
 val BuiltInThemeOptions = listOf(
     ThemeOption(
         id = LightThemeId,
-        name = "Light",
+        name = "Paper White",
         palette = ThemePalette(
-            primary = 0xFF6750A4,
-            secondary = 0xFF625B71,
-            background = 0xFFFFFFFF,
+            primary = 0xFF4F46E5,      // Indigo 600
+            secondary = 0xFF475569,    // Slate 600
+            background = 0xFFFAF9F6,   // Soft Paper
             surface = 0xFFFFFFFF,
-            surfaceVariant = 0xFFE7E0EC,
-            outline = 0xFF79747E,
-            readerBackground = 0xFFFFFFFF,
-            readerForeground = 0xFF000000,
-            systemForeground = 0xFF000000,
+            surfaceVariant = 0xFFF3F4F6,
+            outline = 0xFFD1D5DB,
+            readerBackground = 0xFFFAF9F6,
+            readerForeground = 0xFF18181B, // Zinc 900
+            systemForeground = 0xFF18181B,
         ),
         isCustom = false,
     ),
     ThemeOption(
-        id = SepiaThemeId,
-        name = "Sepia",
+        id = AzureThemeId,
+        name = "Azure Wave",
         palette = ThemePalette(
-            primary = 0xFF8A5A44,
-            secondary = 0xFF7A6657,
-            background = 0xFFF4ECD8,
-            surface = 0xFFF4ECD8,
-            surfaceVariant = 0xFFE8DCC9,
-            outline = 0xFF8F7C6C,
-            readerBackground = 0xFFF4ECD8,
-            readerForeground = 0xFF5B4636,
-            systemForeground = 0xFF5B4636,
+            primary = 0xFF38BDF8,      // Sky 400
+            secondary = 0xFF7DD3FC,    // Sky 300
+            background = 0xFF0F172A,   // Slate 900
+            surface = 0xFF1E293B,      // Slate 800
+            surfaceVariant = 0xFF334155,
+            outline = 0xFF475569,
+            readerBackground = 0xFF0F172A,
+            readerForeground = 0xFFF1F5F9,
+            systemForeground = 0xFFF1F5F9,
         ),
         isCustom = false,
     ),
     ThemeOption(
         id = DarkThemeId,
-        name = "Dark",
+        name = "Midnight",
         palette = ThemePalette(
-            primary = 0xFFD0BCFF,
-            secondary = 0xFFCCC2DC,
-            background = 0xFF1C1B1F,
-            surface = 0xFF1C1B1F,
-            surfaceVariant = 0xFF49454F,
-            outline = 0xFF938F99,
+            primary = 0xFFA5B4FC,      // Indigo 300
+            secondary = 0xFF94A3B8,    // Slate 400
+            background = 0xFF18181B,   // Zinc 900
+            surface = 0xFF27272A,      // Zinc 800
+            surfaceVariant = 0xFF3F3F46,
+            outline = 0xFF52525B,
             readerBackground = 0xFF121212,
-            readerForeground = 0xFFFFFFFF,
-            systemForeground = 0xFFFFFFFF,
+            readerForeground = 0xFFE4E4E7, // Zinc 300
+            systemForeground = 0xFFE4E4E7,
         ),
         isCustom = false,
     ),
     ThemeOption(
         id = OledThemeId,
-        name = "OLED",
+        name = "Onyx",
         palette = ThemePalette(
-            primary = 0xFFD0BCFF,
-            secondary = 0xFFCCC2DC,
+            primary = 0xFF60A5FA,      // Blue 400
+            secondary = 0xFF94A3B8,
             background = 0xFF000000,
             surface = 0xFF000000,
-            surfaceVariant = 0xFF000000,
-            outline = 0xFF333333,
+            surfaceVariant = 0xFF111827,
+            outline = 0xFF374151,
             readerBackground = 0xFF000000,
             readerForeground = 0xFFFFFFFF,
             systemForeground = 0xFFFFFFFF,
@@ -138,8 +138,9 @@ fun findThemeOption(themeId: String, customThemes: List<CustomTheme>): ThemeOpti
 }
 
 fun normalizeThemeSelection(themeId: String?, customThemes: List<CustomTheme>): String {
-    val normalized = themeId?.trim().orEmpty()
-    return if (findThemeOption(normalized, customThemes) != null) normalized else LightThemeId
+    val trimmed = themeId?.trim().orEmpty()
+    val migrated = if (trimmed == "sepia") AzureThemeId else trimmed
+    return if (findThemeOption(migrated, customThemes) != null) migrated else LightThemeId
 }
 
 fun themePaletteSeed(themeId: String, customThemes: List<CustomTheme>): ThemePalette {
@@ -296,3 +297,34 @@ data class BookProgress(
     val scrollOffset: Int = 0,
     val lastChapterHref: String? = null
 )
+
+/**
+ * Checks if a proposed theme name is unique across all built-in and custom themes.
+ * Normalizes by trimming, lowercase conversion, and collapsing duplicate spaces.
+ *
+ * @param proposedName The name being validated.
+ * @param excludeThemeId The ID of the theme being edited (null if new).
+ * @param customThemes The list of existing custom themes.
+ * @return True if the name is unique and valid.
+ */
+fun isThemeNameUnique(
+    proposedName: String,
+    excludeThemeId: String?,
+    customThemes: List<CustomTheme>
+): Boolean {
+    val normalizedProposed = proposedName.trim().lowercase(Locale.US).replace(Regex("\\s+"), " ")
+    if (normalizedProposed.isEmpty()) return false
+    
+    // Check built-ins
+    val builtInConflict = BuiltInThemeOptions.any {
+        it.id != excludeThemeId && it.name.trim().lowercase(Locale.US).replace(Regex("\\s+"), " ") == normalizedProposed
+    }
+    if (builtInConflict) return false
+    
+    // Check custom themes
+    val customConflict = customThemes.any {
+        it.id != excludeThemeId && it.name.trim().lowercase(Locale.US).replace(Regex("\\s+"), " ") == normalizedProposed
+    }
+    
+    return !customConflict
+}

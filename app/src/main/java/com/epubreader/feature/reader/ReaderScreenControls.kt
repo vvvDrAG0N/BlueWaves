@@ -970,7 +970,7 @@ private fun ReaderFontControlsSection(
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Line Height", style = MaterialTheme.typography.labelSmall)
                     Text(
-                        String.format(Locale.getDefault(), "%.1f", settings.lineHeight),
+                        String.format(Locale.getDefault(), "%.2f", settings.lineHeight),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -979,7 +979,7 @@ private fun ReaderFontControlsSection(
                     onValueChange = { lineHeight ->
                         onSettingsChange { current -> current.copy(lineHeight = lineHeight) }
                     },
-                    valueRange = 1.2f..2.0f
+                    valueRange = 1.0f..2.0f
                 )
             }
 
