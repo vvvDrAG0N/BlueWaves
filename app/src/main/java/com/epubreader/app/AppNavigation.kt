@@ -60,8 +60,10 @@ import com.epubreader.feature.reader.ReaderScreen
 import com.epubreader.feature.settings.SettingsScreen
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import org.json.JSONObject
 
 /**
@@ -153,6 +155,8 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
 
     // Shell-owned refresh. Keep scanning here so screen transitions and dialogs share one source.
     fun refreshLibrary() {
+        if (asyncState.libraryRefresh) return // Guard: Don't stack parallel scans
+        
         scope.launch {
             asyncState = asyncState.copy(libraryRefresh = true)
             try {
@@ -271,8 +275,9 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
 
     // Startup checks stay in the shell because they drive global dialogs and version bookkeeping.
     LaunchedEffect(Unit) {
-        refreshLibrary()
-
+        // Yield to the UI thread for initial rendering and JIT warm-up
+        delay(150)
+        
         val startupDecision = evaluateAppShellStartup(context, globalSettings)
         detectedVersionCode = startupDecision.detectedVersionCode
         showFirstTimeNote = startupDecision.showFirstTimeNote
@@ -282,13 +287,15 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
             settingsManager.setFirstTime(false)
         }
         startupDecision.versionCodeToMarkSeen?.let { settingsManager.setLastSeenVersionCode(it) }
+        
+        // Final refresh only if we are on the library screen
+        if (currentScreen == Screen.Library) {
+            refreshLibrary()
+        }
     }
 
-    LaunchedEffect(selectedFolderName) {
-        refreshLibrary()
-    }
-
-    LaunchedEffect(currentScreen) {
+    // Lazy Refresh: Only scan when the user is actually looking at the library or switches folders.
+    LaunchedEffect(currentScreen, selectedFolderName) {
         if (currentScreen == Screen.Library) {
             refreshLibrary()
         }

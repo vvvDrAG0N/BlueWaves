@@ -29,6 +29,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -128,7 +129,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlin.math.roundToInt
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -148,8 +159,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import com.epubreader.core.model.BuiltInThemeOptions
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.CustomThemeIdPrefix
@@ -172,7 +183,6 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.FilterChipDefaults
@@ -678,7 +688,7 @@ private fun AppearanceTab(
         BuiltInThemeOptions.map { CustomTheme(it.id, it.name, it.palette) } + settings.customThemes
     }
     
-    val initialPage = remember(allThemes) {
+    val initialPage = remember {
         allThemes.indexOfFirst { it.id == settings.theme }.coerceAtLeast(0)
     }
     val pagerState = rememberPagerState(initialPage = initialPage) { allThemes.size }
@@ -686,13 +696,15 @@ private fun AppearanceTab(
     // Fix for regression: Ensure the pager starts at the selected theme
     LaunchedEffect(settings.theme) {
         val targetPage = allThemes.indexOfFirst { it.id == settings.theme }
-        if (targetPage >= 0 && pagerState.currentPage != targetPage) {
-            pagerState.scrollToPage(targetPage)
+        // AUTHORITY LOGIC: Only move the pager if it's not already settled on the target.
+        // This prevents "stale" DataStore updates from snapping the user back during a transition.
+        if (targetPage >= 0 && pagerState.settledPage != targetPage && !pagerState.isScrollInProgress) {
+            pagerState.animateScrollToPage(targetPage)
         }
     }
 
-    LaunchedEffect(pagerState.currentPage, allThemes) {
-        val safeIndex = pagerState.currentPage.coerceIn(allThemes.indices)
+    LaunchedEffect(pagerState.settledPage, allThemes) {
+        val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
         val themeId = allThemes[safeIndex].id
         if (themeId != settings.theme) {
             settingsManager.setActiveTheme(themeId)
@@ -705,19 +717,44 @@ private fun AppearanceTab(
     var localFontSize by remember(settings.fontSize) { mutableIntStateOf(settings.fontSize) }
     var localLineHeight by remember(settings.lineHeight) { mutableFloatStateOf(settings.lineHeight) }
     var localPadding by remember(settings.horizontalPadding) { mutableIntStateOf(settings.horizontalPadding) }
-    val readerFontFamily = getFontFamily(settings.fontType)
+    val readerFontFamily = remember(settings.fontType) { getFontFamily(settings.fontType) }
 
-    // THEME ANIMATION: Gradual color transition for the dashboard
-    val currentTheme = allThemes[pagerState.currentPage.coerceIn(allThemes.indices)]
-    val animBg by animateColorAsState(Color(currentTheme.palette.background), tween(600), label = "bg")
-    val animSysFg by animateColorAsState(Color(currentTheme.palette.systemForeground), tween(600), label = "sys")
-    val animPrimary by animateColorAsState(Color(currentTheme.palette.primary), tween(600), label = "pri")
+    // --- ZERO-RECOMPOSITION DASHBOARD ANIMATION ---
+    // We use Animatable driven by snapshotFlow to ensure the shell never recomposes
+    // during a swipe. Colors are read only during the Draw phase.
+    val dashboardBg = remember { Animatable(Color(allThemes[pagerState.settledPage.coerceIn(allThemes.indices)].palette.background)) }
+    val dashboardSys = remember { Animatable(Color(allThemes[pagerState.settledPage.coerceIn(allThemes.indices)].palette.systemForeground)) }
+    val dashboardPri = remember { Animatable(Color(allThemes[pagerState.settledPage.coerceIn(allThemes.indices)].palette.primary)) }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { (pagerState.currentPage + 0.5f).toInt() }
+            .distinctUntilChanged()
+            .collect { index ->
+                val target = allThemes[index.coerceIn(allThemes.indices)]
+                launch { dashboardBg.animateTo(Color(target.palette.background), tween(600)) }
+                launch { dashboardSys.animateTo(Color(target.palette.systemForeground), tween(600)) }
+                launch { dashboardPri.animateTo(Color(target.palette.primary), tween(600)) }
+            }
+    }
+
+    // Stability Lambdas: Point to the Animatable values for draw-phase consumption
+    val getSysFg = remember { { dashboardSys.value } }
+    val getPrimary = remember { { dashboardPri.value } }
+    
+    // Business Logic Stability: Use settledPage for currentTheme to avoid recomposing 
+    // the controls during the middle of a swipe animation.
+    val currentTheme = remember(pagerState.settledPage) { 
+        allThemes[pagerState.settledPage.coerceIn(allThemes.indices)] 
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(animBg)
+                .drawBehind { 
+                    // Draw-phase background update (Zero Recomposition)
+                    drawRect(dashboardBg.value) 
+                }
                 .verticalScroll(rememberScrollState())
         ) {
         // 1. Landscape Gallery
@@ -726,29 +763,43 @@ private fun AppearanceTab(
             state = pagerState,
             modifier = Modifier.fillMaxWidth().height(200.dp),
             contentPadding = PaddingValues(horizontal = 48.dp),
-            pageSpacing = 16.dp
+            pageSpacing = 16.dp,
+            key = { allThemes[it].id }
         ) { page ->
             // Stability Check: Only marquee if settled and not currently dragging
             val isFocused = pagerState.settledPage == page && !pagerState.isScrollInProgress
-            LandscapeSpecimenCard(
-                theme = allThemes[page],
-                fontFamily = getFontFamily(settings.fontType),
-                fontSize = localFontSize,
-                lineHeight = localLineHeight,
-                horizontalPadding = localPadding,
-                isMarqueeActive = isFocused
-            )
+            
+            Box(modifier = Modifier.graphicsLayer { 
+                // Hardware Acceleration for scaling and alpha transitions
+                clip = true
+                shape = RoundedCornerShape(16.dp)
+            }) {
+                LandscapeSpecimenCard(
+                    theme = allThemes[page],
+                    fontFamily = readerFontFamily,
+                    fontSize = localFontSize,
+                    lineHeight = localLineHeight,
+                    horizontalPadding = localPadding,
+                    isMarqueeActive = { isFocused }
+                )
+            }
         }
 
         // 2. The Counter & Hub
         Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .graphicsLayer { 
+                    // Isolate bottom UI from carousel recomposition
+                    clip = false 
+                },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "${pagerState.currentPage + 1} / ${allThemes.size}",
+                text = "${pagerState.currentPage.toInt() + 1} / ${allThemes.size}",
                 style = MaterialTheme.typography.labelMedium,
-                color = animSysFg.copy(alpha = 0.5f),
+                color = getSysFg().copy(alpha = 0.5f),
                 letterSpacing = 1.sp
             )
             
@@ -756,8 +807,8 @@ private fun AppearanceTab(
             
             ThemeControlHub(
                 currentTheme = currentTheme,
-                animSysFg = animSysFg,
-                animPrimary = animPrimary,
+                getSysFg = getSysFg,
+                getPrimary = getPrimary,
                 onCreate = onOpenCreateThemeEditor,
                 onData = { bulkImportLauncher.launch("*/*") },
                 onModify = { onOpenEditThemeEditor(currentTheme) },
@@ -770,25 +821,36 @@ private fun AppearanceTab(
             )
         }
 
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp), color = animSysFg.copy(alpha = 0.1f))
+        // Divider moved to draw-phase spacer to prevent parent recomposition
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .height(1.dp)
+                .drawBehind {
+                    drawRect(getSysFg().copy(alpha = 0.1f))
+                }
+        )
 
         // 3. Typography & Rhythm
-        TypographySettingsPanel(
-            settings = settings,
-            currentFontSize = localFontSize,
-            currentLineHeight = localLineHeight,
-            currentPadding = localPadding,
-            onFontSizeChange = { localFontSize = it.toInt() },
-            onLineHeightChange = { localLineHeight = it },
-            onPaddingChange = { localPadding = it.toInt() },
-            onCommitFontSize = { scope.launch { settingsManager.updateGlobalSettings { it.copy(fontSize = localFontSize) } } },
-            onCommitLineHeight = { scope.launch { settingsManager.updateGlobalSettings { it.copy(lineHeight = localLineHeight) } } },
-            onCommitPadding = { scope.launch { settingsManager.updateGlobalSettings { it.copy(horizontalPadding = localPadding) } } },
-            settingsManager = settingsManager,
-            scope = scope,
-            animSysFg = animSysFg,
-            animPrimary = animPrimary
-        )
+        Box(modifier = Modifier.graphicsLayer { clip = false }) {
+            TypographySettingsPanel(
+                settings = settings,
+                currentFontSize = localFontSize,
+                currentLineHeight = localLineHeight,
+                currentPadding = localPadding,
+                onFontSizeChange = { localFontSize = it.toInt() },
+                onLineHeightChange = { localLineHeight = it },
+                onPaddingChange = { localPadding = it.toInt() },
+                onCommitFontSize = { scope.launch { settingsManager.updateGlobalSettings { it.copy(fontSize = localFontSize) } } },
+                onCommitLineHeight = { scope.launch { settingsManager.updateGlobalSettings { it.copy(lineHeight = localLineHeight) } } },
+                onCommitPadding = { scope.launch { settingsManager.updateGlobalSettings { it.copy(horizontalPadding = localPadding) } } },
+                settingsManager = settingsManager,
+                scope = scope,
+                getSysFg = getSysFg,
+                getPrimary = getPrimary
+            )
+        }
         
         Spacer(Modifier.height(32.dp))
 
@@ -857,8 +919,8 @@ private fun AppearanceTab(
 @Composable
 private fun ThemeControlHub(
     currentTheme: CustomTheme,
-    animSysFg: Color,
-    animPrimary: Color,
+    getSysFg: () -> Color,
+    getPrimary: () -> Color,
     onCreate: () -> Unit,
     onData: () -> Unit,
     onModify: () -> Unit,
@@ -878,8 +940,8 @@ private fun ThemeControlHub(
         HubButton(
             icon = Icons.Default.Add, 
             label = "Create", 
-            animSysFg = animSysFg, 
-            animPrimary = animPrimary
+            getSysFg = getSysFg, 
+            getPrimary = getPrimary
         ) { 
             onCreate() 
         }
@@ -889,8 +951,8 @@ private fun ThemeControlHub(
             HubButton(
                 icon = Icons.Default.DataUsage, 
                 label = "Data", 
-                animSysFg = animSysFg, 
-                animPrimary = animPrimary
+                getSysFg = getSysFg, 
+                getPrimary = getPrimary
             ) { 
                 showDataMenu = true 
             }
@@ -914,8 +976,8 @@ private fun ThemeControlHub(
         HubButton(
             icon = Icons.Default.Edit, 
             label = "Modify", 
-            animSysFg = animSysFg, 
-            animPrimary = animPrimary,
+            getSysFg = getSysFg, 
+            getPrimary = getPrimary,
             enabled = isCustom
         ) { 
             onModify()
@@ -925,8 +987,8 @@ private fun ThemeControlHub(
         HubButton(
             icon = Icons.Default.GridView, 
             label = "Gallery", 
-            animSysFg = animSysFg, 
-            animPrimary = animPrimary
+            getSysFg = getSysFg, 
+            getPrimary = getPrimary
         ) {
             onGallery()
         }
@@ -937,8 +999,8 @@ private fun ThemeControlHub(
 private fun HubButton(
     icon: ImageVector, 
     label: String, 
-    animSysFg: Color, 
-    animPrimary: Color, 
+    getSysFg: () -> Color, 
+    getPrimary: () -> Color, 
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
@@ -949,11 +1011,26 @@ private fun HubButton(
         IconButton(
             onClick = onClick,
             enabled = enabled,
-            modifier = Modifier.size(48.dp).clip(CircleShape).background(animSysFg.copy(alpha = 0.05f))
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .drawBehind { 
+                    // Draw-phase background update
+                    drawCircle(color = getSysFg().copy(alpha = 0.05f))
+                }
         ) {
-            Icon(icon, contentDescription = label, tint = animSysFg.copy(alpha = alpha))
+            Icon(
+                icon, 
+                contentDescription = label, 
+                tint = getSysFg().copy(alpha = alpha)
+            )
         }
-        Text(label, style = MaterialTheme.typography.labelSmall, color = animSysFg.copy(alpha = labelAlpha), fontSize = 10.sp)
+        Text(
+            label, 
+            style = MaterialTheme.typography.labelSmall, 
+            color = getSysFg().copy(alpha = labelAlpha), 
+            fontSize = 10.sp
+        )
     }
 }
 
@@ -964,7 +1041,7 @@ private fun LandscapeSpecimenCard(
     fontSize: Int,
     lineHeight: Float,
     horizontalPadding: Int,
-    isMarqueeActive: Boolean
+    isMarqueeActive: () -> Boolean
 ) {
     Card(
         modifier = Modifier.fillMaxSize(),
@@ -996,16 +1073,24 @@ private fun ThemeSpecimenContent(
     horizontalPadding: Int,
     modifier: Modifier = Modifier,
     isMini: Boolean = false,
-    isMarqueeActive: Boolean = true
+    isMarqueeActive: () -> Boolean = { true }
 ) {
     val p = theme.palette
     val scaleFactor = if (isMini) 0.65f else 1f
     
-    // Scale settings for the preview card context
-    val baseLineHeight = (4.dp * (fontSize.toFloat() / 18f)) * scaleFactor
-    val spacingBetweenLines = (baseLineHeight * (lineHeight - 1f) + 4.dp) * scaleFactor
-    val internalPadding = (16.dp * (horizontalPadding.toFloat() / 16f)) * scaleFactor
-    val constrainedPadding = if (internalPadding > 32.dp * scaleFactor) 32.dp * scaleFactor else internalPadding
+    // [STEEL FRAME] Cached geometry to prevent math on every frame
+    val geometry = remember(fontSize, lineHeight, horizontalPadding, scaleFactor) {
+        val baseLineHeight = (4.dp * (fontSize.toFloat() / 18f)) * scaleFactor
+        val spacingBetweenLines = (baseLineHeight * (lineHeight - 1f) + 4.dp) * scaleFactor
+        val internalPadding = (16.dp * (horizontalPadding.toFloat() / 16f)) * scaleFactor
+        val constrainedPadding = if (internalPadding > 32.dp * scaleFactor) 32.dp * scaleFactor else internalPadding
+        
+        object {
+            val lineHeight = baseLineHeight
+            val spacing = spacingBetweenLines
+            val padding = constrainedPadding
+        }
+    }
 
     Column(
         modifier = modifier
@@ -1023,7 +1108,7 @@ private fun ThemeSpecimenContent(
             Column(
                 modifier = Modifier
                     .weight(1.2f)
-                    .padding(start = constrainedPadding)
+                    .padding(start = geometry.padding)
             ) {
                 Text(
                     text = theme.name,
@@ -1037,36 +1122,52 @@ private fun ThemeSpecimenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .basicMarquee(
-                            iterations = if (isMarqueeActive) Int.MAX_VALUE else 0,
+                            iterations = if (isMarqueeActive()) Int.MAX_VALUE else 0,
                             animationMode = MarqueeAnimationMode.Immediately
                         )
                 )
                 
                 Spacer(Modifier.height(8.dp * scaleFactor))
                 
-                // Reactive Reader Content
-                Column(verticalArrangement = Arrangement.spacedBy(spacingBetweenLines)) {
-                    SkeletonLine(
-                        color = Color(p.readerForeground), 
-                        widthPercent = 0.9f,
-                        height = baseLineHeight
+                // [STEEL FRAME] Single Canvas for skeleton lines (zero layout overhead)
+                val readerFg = Color(p.readerForeground)
+                val primaryColor = Color(p.primary)
+                androidx.compose.foundation.Canvas(
+                    modifier = Modifier.fillMaxWidth().weight(1f)
+                ) {
+                    val h = geometry.lineHeight.toPx()
+                    val s = geometry.spacing.toPx()
+                    val r = h / 2
+                    
+                    // Line 1: Full width
+                    drawRoundRect(
+                        color = readerFg,
+                        size = androidx.compose.ui.geometry.Size(size.width * 0.9f, h),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r)
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp * scaleFactor)) {
-                        SkeletonLine(
-                            color = Color(p.readerForeground).copy(alpha = 0.5f), 
-                            widthPercent = 0.3f,
-                            height = baseLineHeight
-                        )
-                        SkeletonLine(
-                            color = Color(p.primary), 
-                            widthPercent = 0.4f,
-                            height = baseLineHeight
-                        )
-                    }
-                    SkeletonLine(
-                        color = Color(p.readerForeground).copy(alpha = 0.5f), 
-                        widthPercent = 0.8f,
-                        height = baseLineHeight
+                    
+                    // Line 2: Multi-color row
+                    val y2 = h + s
+                    drawRoundRect(
+                        color = readerFg.copy(alpha = 0.5f),
+                        topLeft = androidx.compose.ui.geometry.Offset(0f, y2),
+                        size = androidx.compose.ui.geometry.Size(size.width * 0.3f, h),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r)
+                    )
+                    drawRoundRect(
+                        color = primaryColor,
+                        topLeft = androidx.compose.ui.geometry.Offset(size.width * 0.3f + 4.dp.toPx(), y2),
+                        size = androidx.compose.ui.geometry.Size(size.width * 0.4f, h),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r)
+                    )
+                    
+                    // Line 3: Indented
+                    val y3 = (h + s) * 2
+                    drawRoundRect(
+                        color = readerFg.copy(alpha = 0.5f),
+                        topLeft = androidx.compose.ui.geometry.Offset(0f, y3),
+                        size = androidx.compose.ui.geometry.Size(size.width * 0.8f, h),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r)
                     )
                 }
             }
@@ -1168,11 +1269,11 @@ private fun TypographySettingsPanel(
     onCommitPadding: () -> Unit,
     settingsManager: SettingsManager,
     scope: CoroutineScope,
-    animSysFg: Color,
-    animPrimary: Color
+    getSysFg: () -> Color,
+    getPrimary: () -> Color
 ) {
     Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text("Typography & Rhythm", style = MaterialTheme.typography.titleMedium, color = animSysFg)
+        Text("Typography & Rhythm", style = MaterialTheme.typography.titleMedium, color = getSysFg())
 
         // Font Family
         Column {
@@ -1193,15 +1294,15 @@ private fun TypographySettingsPanel(
                         label = { Text(font.replaceFirstChar { it.uppercase() }) },
                         colors = FilterChipDefaults.filterChipColors(
                             containerColor = Color.Transparent,
-                            labelColor = animSysFg.copy(alpha = 0.5f),
-                            selectedContainerColor = animPrimary.copy(alpha = 0.15f),
-                            selectedLabelColor = animPrimary
+                            labelColor = getSysFg().copy(alpha = 0.5f),
+                            selectedContainerColor = getPrimary().copy(alpha = 0.15f),
+                            selectedLabelColor = getPrimary()
                         ),
                         border = FilterChipDefaults.filterChipBorder(
                             enabled = true,
                             selected = isSelected,
-                            borderColor = animSysFg.copy(alpha = 0.1f),
-                            selectedBorderColor = animPrimary.copy(alpha = 0.5f),
+                            borderColor = getSysFg().copy(alpha = 0.1f),
+                            selectedBorderColor = getPrimary().copy(alpha = 0.5f),
                             borderWidth = 1.dp,
                             selectedBorderWidth = 1.dp
                         )
@@ -1215,8 +1316,8 @@ private fun TypographySettingsPanel(
             label = "Font Size",
             value = currentFontSize.toFloat(),
             range = 12f..32f,
-            animSysFg = animSysFg,
-            animPrimary = animPrimary,
+            getSysFg = getSysFg,
+            getPrimary = getPrimary,
             onValueChange = onFontSizeChange,
             onValueChangeFinished = onCommitFontSize
         )
@@ -1225,8 +1326,8 @@ private fun TypographySettingsPanel(
             label = "Line Height",
             value = currentLineHeight,
             range = 1.0f..2.0f,
-            animSysFg = animSysFg,
-            animPrimary = animPrimary,
+            getSysFg = getSysFg,
+            getPrimary = getPrimary,
             onValueChange = onLineHeightChange,
             onValueChangeFinished = onCommitLineHeight
         )
@@ -1235,8 +1336,8 @@ private fun TypographySettingsPanel(
             label = "Padding",
             value = currentPadding.toFloat(),
             range = 0f..48f,
-            animSysFg = animSysFg,
-            animPrimary = animPrimary,
+            getSysFg = getSysFg,
+            getPrimary = getPrimary,
             onValueChange = onPaddingChange,
             onValueChangeFinished = onCommitPadding
         )
@@ -1248,15 +1349,15 @@ private fun ControlSlider(
     label: String,
     value: Float,
     range: ClosedFloatingPointRange<Float>,
-    animSysFg: Color,
-    animPrimary: Color,
+    getSysFg: () -> Color,
+    getPrimary: () -> Color,
     onValueChange: (Float) -> Unit,
     onValueChangeFinished: () -> Unit
 ) {
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(label, style = MaterialTheme.typography.labelLarge, color = animSysFg.copy(alpha = 0.7f))
-            Text(if (range.endInclusive > 5f) "${value.toInt()}" else String.format("%.2f", value), style = MaterialTheme.typography.labelMedium, color = animSysFg.copy(alpha = 0.5f))
+            Text(label, style = MaterialTheme.typography.labelLarge, color = getSysFg().copy(alpha = 0.7f))
+            Text(if (range.endInclusive > 5f) "${value.toInt()}" else String.format("%.2f", value), style = MaterialTheme.typography.labelMedium, color = getSysFg().copy(alpha = 0.5f))
         }
         Slider(
             value = value,
@@ -1264,9 +1365,9 @@ private fun ControlSlider(
             onValueChangeFinished = onValueChangeFinished,
             valueRange = range,
             colors = SliderDefaults.colors(
-                thumbColor = animPrimary,
-                activeTrackColor = animPrimary.copy(alpha = 0.5f),
-                inactiveTrackColor = animSysFg.copy(alpha = 0.1f)
+                thumbColor = getPrimary(),
+                activeTrackColor = getPrimary().copy(alpha = 0.5f),
+                inactiveTrackColor = getSysFg().copy(alpha = 0.1f)
             )
         )
     }
