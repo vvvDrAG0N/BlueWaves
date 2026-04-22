@@ -6,10 +6,21 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -54,8 +65,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -64,6 +77,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -90,6 +104,10 @@ internal fun ThemeGalleryOverlay(
     onCloseSelectionMode: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
+    val sheetOffsetY = remember { Animatable(0f) }
+
     BackHandler {
         if (isSelectionMode) onCloseSelectionMode() else onDismiss()
     }
@@ -98,7 +116,11 @@ internal fun ThemeGalleryOverlay(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.32f))
+                .drawBehind {
+                    // GPU-Accelerated dimming (Zero Recomposition)
+                    val alphaProgress = (1f - (sheetOffsetY.value / 1000f)).coerceIn(0f, 1f)
+                    drawRect(color = Color.Black, alpha = 0.32f * alphaProgress)
+                }
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -113,25 +135,48 @@ internal fun ThemeGalleryOverlay(
                 .fillMaxWidth()
                 .fillMaxHeight(0.85f)
                 .graphicsLayer {
-                    shadowElevation = 24.dp.toPx()
+                    translationY = sheetOffsetY.value
+                    shadowElevation = with(density) { 24.dp.toPx() }
                     shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
                     clip = true
                 },
             color = MaterialTheme.colorScheme.surface,
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                // 1. Antigravity Floating Header
+                // 1. Antigravity Floating Header with Optimized Drag Support
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(72.dp)
+                        .pointerInput(Unit) {
+                            val velocityTracker = VelocityTracker()
+                            detectVerticalDragGestures(
+                                onDragEnd = {
+                                    val velocity = velocityTracker.calculateVelocity().y
+                                    scope.launch {
+                                        if (sheetOffsetY.value > 300f || velocity > 1500f) {
+                                            onDismiss()
+                                        } else {
+                                            sheetOffsetY.animateTo(0f, spring(stiffness = Spring.StiffnessMediumLow))
+                                        }
+                                    }
+                                },
+                                onVerticalDrag = { change, dragAmount ->
+                                    change.consume()
+                                    velocityTracker.addPosition(change.uptimeMillis, change.position)
+                                    scope.launch {
+                                        sheetOffsetY.snapTo((sheetOffsetY.value + dragAmount).coerceAtLeast(0f))
+                                    }
+                                }
+                            )
+                        }
                         .drawBehind {
                             // Bottom separator line
                             val strokeWidth = 1.dp.toPx()
                             drawLine(
                                 color = Color.LightGray.copy(alpha = 0.2f),
-                                start = androidx.compose.ui.geometry.Offset(0f, size.height),
-                                end = androidx.compose.ui.geometry.Offset(size.width, size.height),
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
                                 strokeWidth = strokeWidth
                             )
                             
@@ -141,9 +186,9 @@ internal fun ThemeGalleryOverlay(
                             val pillY = 12.dp.toPx()
                             drawRoundRect(
                                 color = Color.Gray.copy(alpha = 0.3f),
-                                topLeft = androidx.compose.ui.geometry.Offset((size.width - pillWidth) / 2, pillY),
-                                size = androidx.compose.ui.geometry.Size(pillWidth, pillHeight),
-                                cornerRadius = androidx.compose.ui.geometry.CornerRadius(pillHeight / 2)
+                                topLeft = Offset((size.width - pillWidth) / 2, pillY),
+                                size = Size(pillWidth, pillHeight),
+                                cornerRadius = CornerRadius(pillHeight / 2, pillHeight / 2)
                             )
                         }
                         .padding(top = 12.dp) // Space for grabber
@@ -190,7 +235,7 @@ internal fun ThemeGalleryOverlay(
                                 Text(
                                     "Theme Gallery",
                                     style = MaterialTheme.typography.headlineSmall.copy(
-                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                        fontWeight = FontWeight.Bold
                                     )
                                 )
                                 
@@ -270,30 +315,48 @@ private fun ThemePreviewCard(
         }
     }
 
-    val bloomAlpha by animateFloatAsState(
+    val entryProgress by animateFloatAsState(
         targetValue = if (isRevealed) 1f else 0f,
-        animationSpec = tween(durationMillis = 300),
-        label = "bloomAlpha",
+        animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow),
+        label = "entryProgress"
     )
+
     val auraColor = Color(theme.palette.primary).copy(alpha = 0.15f)
     val isCustom = theme.id.startsWith(CustomThemeIdPrefix)
+    
     val contentAlpha by animateFloatAsState(
         targetValue = if (isSelectionMode && !isCustom) 0.38f else 1f,
         label = "contentAlpha",
     )
+    
     val cardScale by animateFloatAsState(
         targetValue = if (isSelectionMode && isCustom) {
-            if (isSelected) 0.98f else 0.94f
+            if (isSelected) 1.0f else 0.92f
+        } else if (isActive && !isSelectionMode) {
+            1.02f
         } else {
-            1f
+            1.0f
         },
         animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow),
         label = "cardScale",
     )
+
+    val density = LocalDensity.current
+    val elevation by animateFloatAsState(
+        targetValue = with(density) {
+            when {
+                isSelected -> 12.dp.toPx()
+                isActive && !isSelectionMode -> 8.dp.toPx()
+                else -> 2.dp.toPx()
+            }
+        },
+        label = "elevation"
+    )
+
     val borderColor by animateColorAsState(
         targetValue = when {
             isSelected -> Color(theme.palette.primary)
-            isActive && !isSelectionMode -> Color(theme.palette.primary)
+            isActive && !isSelectionMode -> Color(theme.palette.primary).copy(alpha = 0.8f)
             else -> Color.Transparent
         },
         animationSpec = tween(400),
@@ -302,9 +365,19 @@ private fun ThemePreviewCard(
 
     Surface(
         modifier = Modifier
-            .alpha(contentAlpha)
-            .scale(cardScale)
-            .clip(RoundedCornerShape(12.dp))
+            .graphicsLayer {
+                // Antigravity entry: cards fly in from below with a slight 3D tilt
+                alpha = entryProgress * contentAlpha
+                scaleX = cardScale * (0.95f + 0.05f * entryProgress)
+                scaleY = cardScale * (0.95f + 0.05f * entryProgress)
+                translationY = with(density) { (1f - entryProgress) * 64.dp.toPx() }
+                rotationX = (1f - entryProgress) * 10f
+                
+                // Spatial depth
+                shadowElevation = elevation
+                shape = RoundedCornerShape(16.dp)
+                clip = true
+            }
             .testTag("theme_gallery_preview_${theme.id}")
             .semantics {
                 contentDescription = "Theme ${theme.name}"
@@ -312,29 +385,31 @@ private fun ThemePreviewCard(
             }
             .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .drawBehind {
+                // Background aura "Glow"
                 drawCircle(
                     color = auraColor,
                     radius = size.maxDimension * 0.8f,
                     center = center,
-                    alpha = 0.6f * if (isSelectionMode && !isSelected) 0.4f else 1f,
+                    alpha = 0.4f * entryProgress * (if (isSelectionMode && !isSelected) 0.4f else 1f),
                 )
             },
+        color = Color.Transparent // Surface is just a transform shell now
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(theme.palette.background)),
-                border = BorderStroke(3.dp, borderColor),
-                elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 6.dp else 2.dp),
+                border = BorderStroke(2.dp, borderColor),
+                // Elevation handled by parent graphicsLayer for better performance
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), 
             ) {
                 Column {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1.6f)
-                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                            .graphicsLayer { alpha = bloomAlpha },
+                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                     ) {
                         ThemeSpecimenContent(
                             theme = theme,
