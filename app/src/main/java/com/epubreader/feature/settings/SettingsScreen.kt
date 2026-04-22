@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.WindowCompat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -33,6 +34,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,6 +62,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -128,12 +132,14 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.math.roundToInt
 import androidx.compose.ui.Alignment
@@ -143,8 +149,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.clipRect
@@ -249,27 +258,32 @@ fun SettingsScreen(
 
     val currentSection = activeSection
 
+    val isAppearance = currentSection == SettingsSection.Appearance
+    
     Scaffold(
-        contentWindowInsets = getStaticWindowInsets(),
+        contentWindowInsets = if (isAppearance) WindowInsets(0,0,0,0) else getStaticWindowInsets(),
+        containerColor = if (isAppearance) Color.Transparent else MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                windowInsets = getStaticWindowInsets(),
-                title = { Text(currentSection?.title ?: "Settings") },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        if (currentSection != null) {
-                            activeSection = null
-                        } else {
-                            onBack()
+            if (!isAppearance) {
+                TopAppBar(
+                    windowInsets = getStaticWindowInsets(),
+                    title = { Text(currentSection?.title ?: "Settings") },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            if (currentSection != null) {
+                                activeSection = null
+                            } else {
+                                onBack()
+                            }
+                        }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                         }
-                    }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-            )
+                    },
+                )
+            }
         },
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
+        Box(modifier = Modifier.fillMaxSize().padding(if (isAppearance) PaddingValues(0.dp) else padding)) {
             when (currentSection) {
                 null -> SettingsMenuList(
                     settings = settings,
@@ -282,6 +296,7 @@ fun SettingsScreen(
                     onOpenCreateThemeEditor = ::openCreateThemeEditor,
                     onOpenEditThemeEditor = ::openEditThemeEditor,
                     onDeleteTheme = { themeToDelete = it },
+                    onBack = { activeSection = null }
                 )
                 SettingsSection.Interface -> InterfaceTab(
                     settings = settings,
@@ -442,6 +457,16 @@ private fun NetworkPlaceholderTab() {
 
 
 @OptIn(ExperimentalMaterial3Api::class)
+// --- STABLE GEOMETRY BLUEPRINT ---
+// We pre-calculate math once at the parent level to save CPU instructions in cards.
+data class SpecimenGeometry(
+    val lineHeight: androidx.compose.ui.unit.Dp,
+    val spacing: androidx.compose.ui.unit.Dp,
+    val padding: androidx.compose.ui.unit.Dp,
+    val fontSize: androidx.compose.ui.unit.TextUnit,
+    val scale: Float
+)
+
 @Composable
 private fun AppearanceTab(
     settings: GlobalSettings,
@@ -450,6 +475,7 @@ private fun AppearanceTab(
     onOpenCreateThemeEditor: () -> Unit,
     onOpenEditThemeEditor: (CustomTheme) -> Unit,
     onDeleteTheme: (CustomTheme) -> Unit,
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
     var themeToExport by remember { mutableStateOf<CustomTheme?>(null) }
@@ -719,44 +745,163 @@ private fun AppearanceTab(
     var localPadding by remember(settings.horizontalPadding) { mutableIntStateOf(settings.horizontalPadding) }
     val readerFontFamily = remember(settings.fontType) { getFontFamily(settings.fontType) }
 
-    // --- ZERO-RECOMPOSITION DASHBOARD ANIMATION ---
-    // We use Animatable driven by snapshotFlow to ensure the shell never recomposes
-    // during a swipe. Colors are read only during the Draw phase.
-    val dashboardBg = remember { Animatable(Color(allThemes[pagerState.settledPage.coerceIn(allThemes.indices)].palette.background)) }
-    val dashboardSys = remember { Animatable(Color(allThemes[pagerState.settledPage.coerceIn(allThemes.indices)].palette.systemForeground)) }
-    val dashboardPri = remember { Animatable(Color(allThemes[pagerState.settledPage.coerceIn(allThemes.indices)].palette.primary)) }
+    // PRE-CALCULATED GEOMETRY: Master blueprint for all specimen cards.
+    val carouselGeometry = remember(localFontSize, localLineHeight, localPadding) {
+        val scale = 1f
+        val baseLineHeight = (4.dp * (localFontSize.toFloat() / 18f)) * scale
+        val spacingBetweenLines = (baseLineHeight * (localLineHeight - 1f) + 4.dp) * scale
+        val internalPadding = (16.dp * (localPadding.toFloat() / 16f)) * scale
+        val constrainedPadding = if (internalPadding > 32.dp * scale) 32.dp * scale else internalPadding
+        
+        SpecimenGeometry(
+            lineHeight = baseLineHeight,
+            spacing = spacingBetweenLines,
+            padding = constrainedPadding,
+            fontSize = localFontSize.sp,
+            scale = scale
+        )
+    }
 
-    LaunchedEffect(pagerState) {
-        snapshotFlow { (pagerState.currentPage + 0.5f).toInt() }
-            .distinctUntilChanged()
-            .collect { index ->
-                val target = allThemes[index.coerceIn(allThemes.indices)]
-                launch { dashboardBg.animateTo(Color(target.palette.background), tween(600)) }
-                launch { dashboardSys.animateTo(Color(target.palette.systemForeground), tween(600)) }
-                launch { dashboardPri.animateTo(Color(target.palette.primary), tween(600)) }
+    val galleryGeometry = remember(localFontSize, localLineHeight, localPadding) {
+        val scale = 0.65f
+        val baseLineHeight = (4.dp * (localFontSize.toFloat() / 18f)) * scale
+        val spacingBetweenLines = (baseLineHeight * (localLineHeight - 1f) + 4.dp) * scale
+        val internalPadding = (16.dp * (localPadding.toFloat() / 16f)) * scale
+        val constrainedPadding = if (internalPadding > 32.dp * scale) 32.dp * scale else internalPadding
+        
+        SpecimenGeometry(
+            lineHeight = baseLineHeight,
+            spacing = spacingBetweenLines,
+            padding = constrainedPadding,
+            fontSize = localFontSize.sp,
+            scale = scale
+        )
+    }
+
+    // --- SHADER-CORE GPU-DIRECT ANIMATION ---
+    // Zero CPU logic: Background follows finger exactly via Draw-phase lerping.
+    val dashboardBgModifier = Modifier.drawBehind {
+        val total = allThemes.size
+        if (total == 0) return@drawBehind
+        
+        val rawPage = pagerState.currentPage
+        val floor = rawPage.toInt().coerceIn(0, total - 1)
+        val ceil = (floor + 1).coerceIn(0, total - 1)
+        val fraction = (rawPage - floor).toFloat()
+        
+        val startPalette = allThemes[floor].palette
+        val endPalette = allThemes[ceil].palette
+        
+        val mixedColor = lerp(
+            Color(startPalette.background),
+            Color(endPalette.background),
+            fraction
+        )
+        drawRect(mixedColor)
+    }
+
+    // Secondary colors (Dividers/Systems) also lerped in Draw-phase
+    val getSysFg = remember(allThemes, pagerState) {
+        {
+            val total = allThemes.size
+            if (total == 0) Color.Transparent else {
+                val rawPage = pagerState.currentPage
+                val floor = rawPage.toInt().coerceIn(0, total - 1)
+                val ceil = (floor + 1).coerceIn(0, total - 1)
+                val fraction = (rawPage - floor).toFloat()
+                lerp(
+                    Color(allThemes[floor].palette.systemForeground),
+                    Color(allThemes[ceil].palette.systemForeground),
+                    fraction
+                )
             }
+        }
     }
-
-    // Stability Lambdas: Point to the Animatable values for draw-phase consumption
-    val getSysFg = remember { { dashboardSys.value } }
-    val getPrimary = remember { { dashboardPri.value } }
     
-    // Business Logic Stability: Use settledPage for currentTheme to avoid recomposing 
-    // the controls during the middle of a swipe animation.
-    val currentTheme = remember(pagerState.settledPage) { 
-        allThemes[pagerState.settledPage.coerceIn(allThemes.indices)] 
+    val getPrimary = remember(allThemes, pagerState) {
+        {
+            val total = allThemes.size
+            if (total == 0) Color.Transparent else {
+                val rawPage = pagerState.currentPage
+                val floor = rawPage.toInt().coerceIn(0, total - 1)
+                val ceil = (floor + 1).coerceIn(0, total - 1)
+                val fraction = (rawPage - floor).toFloat()
+                lerp(
+                    Color(allThemes[floor].palette.primary),
+                    Color(allThemes[ceil].palette.primary),
+                    fraction
+                )
+            }
+        }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    // Persistent State: Debounced to avoid full-screen recomposition mid-swipe
+    LaunchedEffect(pagerState.settledPage, allThemes) {
+        delay(600) // The "Lazy Persistence" window
+        val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+        val themeId = allThemes[safeIndex].id
+        if (themeId != settings.theme) {
+            settingsManager.setActiveTheme(themeId)
+        }
+    }
+
+    // 4. System Icon Sync (Light/Dark switch)
+    // We can't lerp icons (Android limitation), but we switch them at the 50% mark.
+    SideEffect {
+        val window = (context as? android.app.Activity)?.window ?: return@SideEffect
+        val total = allThemes.size
+        if (total > 0) {
+            val rawPage = pagerState.currentPage
+            val floor = rawPage.toInt().coerceIn(0, total - 1)
+            val ceil = (floor + 1).coerceIn(0, total - 1)
+            val fraction = (rawPage - floor).toFloat()
+            
+            // Pick the theme that covers most of the screen
+            val dominantTheme = if (fraction < 0.5f) allThemes[floor] else allThemes[ceil]
+            val isDark = Color(dominantTheme.palette.background).luminance() < 0.5f
+            
+            WindowCompat.getInsetsController(window, window.decorView).apply {
+                isAppearanceLightStatusBars = !isDark
+                isAppearanceLightNavigationBars = !isDark
+            }
+        }
+    }
+
+    val currentTheme = remember(pagerState.settledPage, allThemes) { 
+        if (allThemes.isEmpty()) null else allThemes[pagerState.settledPage.coerceIn(allThemes.indices)] 
+    }
+
+    Box(modifier = Modifier.fillMaxSize().then(dashboardBgModifier)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .drawBehind { 
-                    // Draw-phase background update (Zero Recomposition)
-                    drawRect(dashboardBg.value) 
-                }
                 .verticalScroll(rememberScrollState())
+                .navigationBarsPadding() // [SHADER-CORE] Ensure bottom nav is transparent
         ) {
+        // 0. Smooth Header (Shader-Core enabled)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .height(64.dp)
+                .padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack, 
+                    contentDescription = "Back",
+                    tint = getSysFg() // [SHADER-CORE] Color lerps with swipe
+                )
+            }
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(start = 12.dp),
+                color = getSysFg() // [SHADER-CORE] Color lerps with swipe
+            )
+        }
+
         // 1. Landscape Gallery
         Spacer(Modifier.height(16.dp))
         HorizontalPager(
@@ -764,22 +909,20 @@ private fun AppearanceTab(
             modifier = Modifier.fillMaxWidth().height(200.dp),
             contentPadding = PaddingValues(horizontal = 48.dp),
             pageSpacing = 16.dp,
-            key = { allThemes[it].id }
+            beyondViewportPageCount = 1, // Keep next card ready in memory
+            key = { index -> if (index < allThemes.size) allThemes[index].id else index }
         ) { page ->
             // Stability Check: Only marquee if settled and not currently dragging
             val isFocused = pagerState.settledPage == page && !pagerState.isScrollInProgress
             
             Box(modifier = Modifier.graphicsLayer { 
-                // Hardware Acceleration for scaling and alpha transitions
-                clip = true
-                shape = RoundedCornerShape(16.dp)
+                // Hardware Isolation for the carousel item
+                clip = false 
             }) {
                 LandscapeSpecimenCard(
                     theme = allThemes[page],
                     fontFamily = readerFontFamily,
-                    fontSize = localFontSize,
-                    lineHeight = localLineHeight,
-                    horizontalPadding = localPadding,
+                    geometry = carouselGeometry,
                     isMarqueeActive = { isFocused }
                 )
             }
@@ -797,7 +940,7 @@ private fun AppearanceTab(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "${pagerState.currentPage.toInt() + 1} / ${allThemes.size}",
+                text = "${pagerState.settledPage + 1} / ${allThemes.size}",
                 style = MaterialTheme.typography.labelMedium,
                 color = getSysFg().copy(alpha = 0.5f),
                 letterSpacing = 1.sp
@@ -811,11 +954,13 @@ private fun AppearanceTab(
                 getPrimary = getPrimary,
                 onCreate = onOpenCreateThemeEditor,
                 onData = { bulkImportLauncher.launch("*/*") },
-                onModify = { onOpenEditThemeEditor(currentTheme) },
-                onDelete = { onDeleteTheme(currentTheme) },
+                onModify = { currentTheme?.let { onOpenEditThemeEditor(it) } },
+                onDelete = { currentTheme?.let { onDeleteTheme(it) } },
                 onExport = { 
-                    themeToExport = currentTheme
-                    exportLauncher.launch("theme_${currentTheme.name}.json")
+                    currentTheme?.let {
+                        themeToExport = it
+                        exportLauncher.launch("theme_${it.name}.json")
+                    }
                 },
                 onGallery = { isGalleryOpen = true }
             )
@@ -889,9 +1034,7 @@ private fun AppearanceTab(
                     selectedThemeIds = emptySet()
                 },
                 fontFamily = readerFontFamily,
-                fontSize = localFontSize,
-                lineHeight = localLineHeight,
-                horizontalPadding = localPadding,
+                geometry = galleryGeometry,
                 onDismiss = { 
                     isGalleryOpen = false 
                     isSelectionMode = false
@@ -918,7 +1061,7 @@ private fun AppearanceTab(
 
 @Composable
 private fun ThemeControlHub(
-    currentTheme: CustomTheme,
+    currentTheme: CustomTheme?,
     getSysFg: () -> Color,
     getPrimary: () -> Color,
     onCreate: () -> Unit,
@@ -928,7 +1071,7 @@ private fun ThemeControlHub(
     onExport: () -> Unit,
     onGallery: () -> Unit
 ) {
-    val isCustom = currentTheme.id.startsWith(CustomThemeIdPrefix)
+    val isCustom = currentTheme?.id?.startsWith(CustomThemeIdPrefix) == true
     var showDataMenu by remember { mutableStateOf(false) }
 
     Row(
@@ -1038,25 +1181,28 @@ private fun HubButton(
 private fun LandscapeSpecimenCard(
     theme: CustomTheme,
     fontFamily: FontFamily,
-    fontSize: Int,
-    lineHeight: Float,
-    horizontalPadding: Int,
+    geometry: SpecimenGeometry,
     isMarqueeActive: () -> Boolean
 ) {
     Card(
         modifier = Modifier.fillMaxSize(),
         shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // Shadows are heavy mid-swipe
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         ThemeSpecimenContent(
             theme = theme,
             fontFamily = fontFamily,
-            fontSize = fontSize,
-            lineHeight = lineHeight,
-            horizontalPadding = horizontalPadding,
+            geometry = geometry,
             modifier = Modifier
                 .fillMaxSize()
-                .clip(RoundedCornerShape(16.dp))
+                .drawBehind {
+                    // HARDWARE-NATIVE ROUNDING: Bypasses expensive Path clipping
+                    drawRoundRect(
+                        color = Color(theme.palette.readerBackground),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx())
+                    )
+                }
                 .border(1.dp, Color(theme.palette.outline).copy(alpha = 0.05f), RoundedCornerShape(16.dp)),
             isMini = false,
             isMarqueeActive = isMarqueeActive
@@ -1068,34 +1214,19 @@ private fun LandscapeSpecimenCard(
 private fun ThemeSpecimenContent(
     theme: CustomTheme,
     fontFamily: FontFamily,
-    fontSize: Int,
-    lineHeight: Float,
-    horizontalPadding: Int,
+    geometry: SpecimenGeometry,
     modifier: Modifier = Modifier,
     isMini: Boolean = false,
     isMarqueeActive: () -> Boolean = { true }
 ) {
     val p = theme.palette
-    val scaleFactor = if (isMini) 0.65f else 1f
+    val scaleFactor = geometry.scale
     
-    // [STEEL FRAME] Cached geometry to prevent math on every frame
-    val geometry = remember(fontSize, lineHeight, horizontalPadding, scaleFactor) {
-        val baseLineHeight = (4.dp * (fontSize.toFloat() / 18f)) * scaleFactor
-        val spacingBetweenLines = (baseLineHeight * (lineHeight - 1f) + 4.dp) * scaleFactor
-        val internalPadding = (16.dp * (horizontalPadding.toFloat() / 16f)) * scaleFactor
-        val constrainedPadding = if (internalPadding > 32.dp * scaleFactor) 32.dp * scaleFactor else internalPadding
-        
-        object {
-            val lineHeight = baseLineHeight
-            val spacing = spacingBetweenLines
-            val padding = constrainedPadding
-        }
-    }
-
+    val readerBg = remember(p.readerBackground) { Color(p.readerBackground) }
+    
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(p.readerBackground))
     ) {
         // 1. System Bar Representation (Stable UI Zone)
         SystemBarMock(p, isMini)
@@ -2152,9 +2283,7 @@ private fun ThemeGalleryOverlay(
     isSelectionMode: Boolean,
     selectedIds: Set<String>,
     fontFamily: FontFamily,
-    fontSize: Int,
-    lineHeight: Float,
-    horizontalPadding: Int,
+    geometry: SpecimenGeometry,
     onThemeSelect: (CustomTheme) -> Unit,
     onToggleSelection: (String) -> Unit,
     onEnterSelectionMode: (String) -> Unit,
@@ -2240,6 +2369,9 @@ private fun ThemeGalleryOverlay(
                     }
                 }
 
+                val galleryOpenTime = remember { System.currentTimeMillis() }
+                var revealedThemeIds by remember { mutableStateOf(setOf<String>()) }
+
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp),
@@ -2247,16 +2379,18 @@ private fun ThemeGalleryOverlay(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.weight(1f)
                 ) {
-                    items(allThemes, key = { it.id }) { theme ->
+                    itemsIndexed(allThemes, key = { _, theme -> theme.id }) { index, theme ->
                         val isSelected = selectedIds.contains(theme.id)
                         val isActive = theme.id == activeThemeId
                         
                         ThemePreviewCard(
                             theme = theme,
+                            staggerIndex = index,
+                            galleryOpenTime = galleryOpenTime,
+                            isAlreadyRevealed = revealedThemeIds.contains(theme.id),
+                            onRevealed = { id -> revealedThemeIds = revealedThemeIds + id },
                             fontFamily = fontFamily,
-                            fontSize = fontSize,
-                            lineHeight = lineHeight,
-                            horizontalPadding = horizontalPadding,
+                            geometry = geometry,
                             isActive = isActive,
                             isSelected = isSelected,
                             isSelectionMode = isSelectionMode,
@@ -2288,16 +2422,40 @@ private fun ThemeGalleryOverlay(
 @Composable
 private fun ThemePreviewCard(
     theme: CustomTheme,
+    staggerIndex: Int,
+    galleryOpenTime: Long,
+    isAlreadyRevealed: Boolean,
+    onRevealed: (String) -> Unit,
     fontFamily: FontFamily,
-    fontSize: Int,
-    lineHeight: Float,
-    horizontalPadding: Int,
+    geometry: SpecimenGeometry,
     isActive: Boolean,
     isSelected: Boolean,
     isSelectionMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
+    // [SEQUENTIAL BLOOM] logic with session memory
+    var isRevealed by remember { mutableStateOf(isAlreadyRevealed) }
+    
+    LaunchedEffect(Unit) {
+        if (!isAlreadyRevealed) {
+            val timeSinceOpen = System.currentTimeMillis() - galleryOpenTime
+            val delayTime = if (timeSinceOpen < 500) {
+                (staggerIndex * 40L).coerceAtMost(300L)
+            } else 0L
+            
+            delay(delayTime)
+            isRevealed = true
+            onRevealed(theme.id)
+        }
+    }
+
+    val bloomAlpha by animateFloatAsState(
+        targetValue = if (isRevealed) 1.0f else 0.0f,
+        animationSpec = tween(durationMillis = 300),
+        label = "bloomAlpha"
+    )
+
     val auraColor = Color(theme.palette.primary).copy(alpha = 0.15f)
     val isCustom = theme.id.startsWith(CustomThemeIdPrefix)
     
@@ -2354,21 +2512,24 @@ private fun ThemePreviewCard(
             ) {
                 Column {
                     // Mini Page (Mirror)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1.6f)
-                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    ) {
-                        ThemeSpecimenContent(
-                            theme = theme,
-                            fontFamily = fontFamily,
-                            fontSize = fontSize,
-                            lineHeight = lineHeight,
-                            horizontalPadding = horizontalPadding,
-                            isMini = true
-                        )
-                    }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1.6f)
+                                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                                .graphicsLayer { 
+                                    // [SHADER-CORE] Hardware accelerated alpha fade
+                                    // This prevents re-drawing the content every frame during the fade.
+                                    alpha = bloomAlpha
+                                }
+                        ) {
+                            ThemeSpecimenContent(
+                                theme = theme,
+                                fontFamily = fontFamily,
+                                geometry = geometry,
+                                isMini = true
+                            )
+                        }
                     
                     // Chrome / Info
                     Row(

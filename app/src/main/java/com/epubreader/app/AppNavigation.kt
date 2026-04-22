@@ -275,8 +275,9 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
 
     // Startup checks stay in the shell because they drive global dialogs and version bookkeeping.
     LaunchedEffect(Unit) {
-        // Yield to the UI thread for initial rendering and JIT warm-up
-        delay(150)
+        // Extended yield to the UI thread for initial rendering and JIT warm-up.
+        // This ensures the theme carousel has a clear window to reach 60fps.
+        delay(500)
         
         val startupDecision = evaluateAppShellStartup(context, globalSettings)
         detectedVersionCode = startupDecision.detectedVersionCode
@@ -288,7 +289,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         }
         startupDecision.versionCodeToMarkSeen?.let { settingsManager.setLastSeenVersionCode(it) }
         
-        // Final refresh only if we are on the library screen
+        // Background Noise Reduction: Only refresh if the user is looking at the library.
         if (currentScreen == Screen.Library) {
             refreshLibrary()
         }
@@ -313,33 +314,43 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
 
     // The derived models below are intentionally pure. They are the safest place to inspect
     // folder/sort bugs before touching rendering code.
-    val bookGroups by produceState(initialValue = JSONObject(), globalSettings.bookGroups) {
-        value = withContext(Dispatchers.Default) {
-            parseJsonObject(globalSettings.bookGroups)
+    // GHOST PROTOCOL: Only parse library data if the library is visible.
+    // This eliminates background CPU jitter while swiping themes in Settings.
+    val bookGroups by produceState(initialValue = JSONObject(), globalSettings.bookGroups, currentScreen) {
+        if (currentScreen == Screen.Library) {
+            value = withContext(Dispatchers.Default) {
+                parseJsonObject(globalSettings.bookGroups)
+            }
         }
     }
-    val folderSorts by produceState(initialValue = JSONObject(), globalSettings.folderSorts) {
-        value = withContext(Dispatchers.Default) {
-            parseJsonObject(globalSettings.folderSorts)
+    val folderSorts by produceState(initialValue = JSONObject(), globalSettings.folderSorts, currentScreen) {
+        if (currentScreen == Screen.Library) {
+            value = withContext(Dispatchers.Default) {
+                parseJsonObject(globalSettings.folderSorts)
+            }
         }
     }
-    val folderOrder by produceState(initialValue = emptyList<String>(), globalSettings.folderOrder) {
-        value = withContext(Dispatchers.Default) {
-            parseFolderOrder(globalSettings.folderOrder)
+    val folderOrder by produceState(initialValue = emptyList<String>(), globalSettings.folderOrder, currentScreen) {
+        if (currentScreen == Screen.Library) {
+            value = withContext(Dispatchers.Default) {
+                parseFolderOrder(globalSettings.folderOrder)
+            }
         }
     }
 
     val folders by produceState(
         initialValue = emptyList<String>(),
-        books, globalSettings.bookGroups, globalSettings.folderSorts, folderOrder
+        books, globalSettings.bookGroups, globalSettings.folderSorts, folderOrder, currentScreen
     ) {
-        value = withContext(Dispatchers.Default) {
-            buildFolders(
-                books = books,
-                bookGroups = bookGroups,
-                folderSorts = folderSorts,
-                folderOrder = folderOrder,
-            )
+        if (currentScreen == Screen.Library) {
+            value = withContext(Dispatchers.Default) {
+                buildFolders(
+                    books = books,
+                    bookGroups = bookGroups,
+                    folderSorts = folderSorts,
+                    folderOrder = folderOrder,
+                )
+            }
         }
     }
 
