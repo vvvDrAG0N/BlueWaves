@@ -742,25 +742,16 @@ class EpubParser internal constructor(
                 isZipSignature(if (read > 0) headerBytes.copyOf(read) else ByteArray(0))
             }
         }.getOrDefault(false)
-        if (!looksLikeZip) {
-            return false
-        }
+        if (!looksLikeZip) return false
 
-        val hasEpubContainer = runCatching {
+        return try {
             ZipFile(epubFile).use { zip ->
-                zip.getEntry("META-INF/container.xml") != null || zip.getEntry("mimetype") != null
+                val metadata = InternalEpubParser.parseEpub(zip)
+                metadata != null && metadata.spine.isNotEmpty()
             }
-        }.getOrDefault(false)
-        if (!hasEpubContainer) {
-            return false
+        } catch (e: Exception) {
+            false
         }
-
-        return runCatching {
-            epubFile.inputStream().use { input ->
-                val book = nl.siegmann.epublib.epub.EpubReader().readEpub(input)
-                book.spine.spineReferences.isNotEmpty()
-            }
-        }.getOrDefault(false)
     }
 
     private fun isGeneratedEpubReadyForReading(

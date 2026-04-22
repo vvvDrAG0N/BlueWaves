@@ -1,10 +1,7 @@
 /**
- * FILE: InternalEpubParser.kt
- * PURPOSE: Lightweight, high-performance EPUB XML parser using XmlPullParser.
- * DESIGN: 
- *  - Eliminates epublib dependency to reduce JVM GC pressure.
- *  - Implements O(1) path resolution via direct ZipEntry lookups.
- *  - Supports EPUB 2 (toc.ncx) and EPUB 3 (nav.xhtml) navigation.
+ * FILE: InternalEpubParser.kt (Hardened & Preservation-Ready)
+ * PURPOSE: Lightweight EPUB XML parser.
+ * IMPROVEMENTS: Extracts full manifest to support high-fidelity metadata rebuilding.
  */
 package com.epubreader.data.parser
 
@@ -15,31 +12,34 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 import java.util.zip.ZipFile
 
+internal data class ManifestItem(
+    val id: String,
+    val href: String, // Original relative href for rebuilding
+    val mediaType: String,
+    val properties: String? = null
+)
+
 internal data class RawEpubMetadata(
     val title: String?,
     val author: String?,
-    val spine: List<String>,
+    val spine: List<String>, // Absolute paths
+    val manifest: List<ManifestItem>,
     val toc: List<TocItem>,
-    val coverHref: String?
+    val coverHref: String? // Absolute path
 )
 
 internal object InternalEpubParser {
 
-    /**
-     * Entry point for extracting core structural metadata from an EPUB ZipFile.
-     */
     fun parseEpub(zip: ZipFile): RawEpubMetadata? {
         return try {
             val opfPath = findOpfPath(zip) ?: return null
             val opfDir = opfPath.substringBeforeLast("/", "")
             
             val opfEntry = zip.getEntry(opfPath) ?: return null
-            // FIXED: OPF stream is now correctly wrapped in .use {} to prevent memory leaks.
             val opfData = zip.getInputStream(opfEntry).use { opfStream -> 
                 parseOpf(opfStream, opfDir)
             }
             
-            // Resolve TOC from EPUB 3 (Nav) or EPUB 2 (NCX)
             val toc = if (opfData.navPath != null) {
                 val navEntry = zip.getEntry(opfData.navPath)
                 if (navEntry != null) {
@@ -56,6 +56,7 @@ internal object InternalEpubParser {
                 title = opfData.title,
                 author = opfData.author,
                 spine = opfData.spine,
+                manifest = opfData.manifestItems,
                 toc = toc ?: emptyList(),
                 coverHref = opfData.coverHref
             )
@@ -87,6 +88,7 @@ internal object InternalEpubParser {
         val title: String?,
         val author: String?,
         val spine: List<String>,
+        val manifestItems: List<ManifestItem>,
         val ncxPath: String?,
         val navPath: String?,
         val coverHref: String?
@@ -99,7 +101,8 @@ internal object InternalEpubParser {
 
         var title: String? = null
         var author: String? = null
-        val manifest = mutableMapOf<String, String>() // ID -> Absolute ZIP Path
+        val manifestMap = mutableMapOf<String, String>() // id -> absolute path
+        val manifestItems = mutableListOf<ManifestItem>()
         val spineIds = mutableListOf<String>()
         var ncxId: String? = null
         var navPath: String? = null
@@ -111,15 +114,17 @@ internal object InternalEpubParser {
             when (eventType) {
                 XmlPullParser.START_TAG -> {
                     when (name) {
-                        "dc:title", "title" -> title = parser.nextText()
-                        "dc:creator", "creator" -> author = parser.nextText()
+                        "dc:title", "title" -> title = readTextContent(parser)
+                        "dc:creator", "creator" -> author = readTextContent(parser)
                         "item" -> {
                             val id = parser.getAttributeValue(null, "id")
                             val href = parser.getAttributeValue(null, "href")
+                            val mediaType = parser.getAttributeValue(null, "media-type")
                             val properties = parser.getAttributeValue(null, "properties")
-                            if (id != null && href != null) {
+                            if (id != null && href != null && mediaType != null) {
                                 val fullPath = resolveZipPath(opfDir, href)
-                                manifest[id] = fullPath
+                                manifestMap[id] = fullPath
+                                manifestItems.add(ManifestItem(id, href, mediaType, properties))
                                 if (properties?.contains("nav") == true) navPath = fullPath
                                 if (properties?.contains("cover-image") == true) coverId = id
                             }
@@ -145,10 +150,11 @@ internal object InternalEpubParser {
         return OpfData(
             title = title,
             author = author,
-            spine = spineIds.mapNotNull { manifest[it] },
-            ncxPath = ncxId?.let { manifest[it] },
+            spine = spineIds.mapNotNull { manifestMap[it] },
+            manifestItems = manifestItems,
+            ncxPath = ncxId?.let { manifestMap[it] },
             navPath = navPath,
-            coverHref = coverId?.let { manifest[it] }
+            coverHref = coverId?.let { manifestMap[it] }
         )
     }
 
@@ -165,7 +171,7 @@ internal object InternalEpubParser {
             when (eventType) {
                 XmlPullParser.START_TAG -> {
                     when (name) {
-                        "text" -> currentTitle = parser.nextText()
+                        "text" -> currentTitle = readTextContent(parser)
                         "content" -> {
                             val src = parser.getAttributeValue(null, "src")
                             if (src != null && currentTitle != null) {
@@ -197,7 +203,7 @@ internal object InternalEpubParser {
                         if (type == "toc") inTocNav = true
                     } else if (inTocNav && name == "a") {
                         val href = parser.getAttributeValue(null, "href")
-                        val title = parser.nextText()
+                        val title = readTextContent(parser)
                         if (href != null) {
                             toc.add(TocItem(title, resolveZipPath(opfDir, href)))
                         }
@@ -212,12 +218,22 @@ internal object InternalEpubParser {
         return toc
     }
 
-    /**
-     * Resolves a relative Href against a base directory within the ZIP.
-     */
+    private fun readTextContent(parser: XmlPullParser): String {
+        val result = StringBuilder()
+        val startDepth = parser.depth
+        while (true) {
+            val eventType = parser.next()
+            if (eventType == XmlPullParser.END_DOCUMENT) break
+            if (eventType == XmlPullParser.END_TAG && parser.depth == startDepth) break
+            
+            if (eventType == XmlPullParser.TEXT) {
+                result.append(parser.text)
+            }
+        }
+        return result.toString().trim()
+    }
+
     fun resolveZipPath(baseDir: String, relativeHref: String): String {
-        // Handle anchor removal for path normalization, then re-append if needed for TOC.
-        // For ZipEntry lookup, we only need the path part.
         val pathPart = relativeHref.substringBefore("#")
         val resolved = if (pathPart.startsWith("/") || baseDir.isEmpty()) {
             normalizePath(pathPart.removePrefix("/"))
@@ -225,7 +241,6 @@ internal object InternalEpubParser {
             normalizePath("$baseDir/$pathPart")
         }
         
-        // If the original href had an anchor, preserve it for TOC navigation.
         return if (relativeHref.contains("#")) {
             "$resolved#${relativeHref.substringAfter("#")}"
         } else {
@@ -234,10 +249,6 @@ internal object InternalEpubParser {
     }
 }
 
-/**
- * Normalizes relative paths (e.g., "../Images/pic.jpg" -> "Images/pic.jpg").
- * Consistently used across the parser package to resolve ZIP entry paths.
- */
 internal fun normalizePath(path: String): String {
     val parts = path.split("/")
     val result = mutableListOf<String>()
