@@ -12,7 +12,12 @@ val KarlaFont = FontFamily(
     Font(R.font.karla, FontWeight.Normal)
 )
 
-data class ReaderTheme(val background: Color, val foreground: Color)
+data class ReaderTheme(
+    val background: Color, 
+    val foreground: Color,
+    val variantForeground: Color,
+    val primary: Color,
+)
 
 typealias GlobalSettingsTransform = (GlobalSettings) -> GlobalSettings
 
@@ -21,8 +26,18 @@ fun getThemeColors(
     customThemes: List<CustomTheme> = emptyList(),
 ): ReaderTheme {
     val palette = themePaletteSeed(theme, customThemes)
+    val background = Color(palette.readerBackground)
+    val foreground = Color(palette.readerForeground)
+    val primary = Color(palette.primary)
+    
+    // Derive secondary foreground color (onSurfaceVariant equivalent)
+    // We use a 70% alpha of the foreground to ensure tonal harmony
+    val variantForeground = foreground.copy(alpha = 0.7f)
+    
     return ReaderTheme(
-        background = Color(palette.readerBackground),
-        foreground = Color(palette.readerForeground),
+        background = background,
+        foreground = foreground,
+        variantForeground = variantForeground,
+        primary = primary,
     )
 }

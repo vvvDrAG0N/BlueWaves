@@ -180,6 +180,7 @@ internal fun LandscapeSpecimenCard(
     theme: CustomTheme,
     fontFamily: FontFamily,
     geometry: SpecimenGeometry,
+    isActive: Boolean = false,
     isMarqueeActive: () -> Boolean,
 ) {
     Card(
@@ -188,6 +189,7 @@ internal fun LandscapeSpecimenCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
     ) {
+        val p = theme.palette
         ThemeSpecimenContent(
             theme = theme,
             fontFamily = fontFamily,
@@ -196,11 +198,15 @@ internal fun LandscapeSpecimenCard(
                 .fillMaxSize()
                 .drawBehind {
                     drawRoundRect(
-                        color = Color(theme.palette.readerBackground),
+                        color = Color(p.readerBackground),
                         cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx()),
                     )
                 }
-                .border(1.dp, Color(theme.palette.outline).copy(alpha = 0.05f), RoundedCornerShape(16.dp)),
+                .border(
+                    width = if (isActive) 3.dp else 1.dp,
+                    color = if (isActive) Color(p.primary) else Color(p.outline).copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(16.dp)
+                ),
             isMini = false,
             isMarqueeActive = isMarqueeActive,
         )
@@ -399,16 +405,16 @@ internal fun TypographySettingsPanel(
                         colors = FilterChipDefaults.filterChipColors(
                             containerColor = Color.Transparent,
                             labelColor = getSysFg().copy(alpha = 0.5f),
-                            selectedContainerColor = getPrimary().copy(alpha = 0.15f),
+                            selectedContainerColor = Color.Transparent,
                             selectedLabelColor = getPrimary(),
                         ),
                         border = FilterChipDefaults.filterChipBorder(
                             enabled = true,
                             selected = isSelected,
                             borderColor = getSysFg().copy(alpha = 0.1f),
-                            selectedBorderColor = getPrimary().copy(alpha = 0.5f),
+                            selectedBorderColor = getPrimary(),
                             borderWidth = 1.dp,
-                            selectedBorderWidth = 1.dp,
+                            selectedBorderWidth = 2.dp,
                         ),
                     )
                 }
@@ -476,8 +482,8 @@ private fun ControlSlider(
             },
             colors = SliderDefaults.colors(
                 thumbColor = getPrimary(),
-                activeTrackColor = getPrimary().copy(alpha = 0.5f),
-                inactiveTrackColor = getSysFg().copy(alpha = 0.1f),
+                activeTrackColor = getPrimary(),
+                inactiveTrackColor = getSysFg().copy(alpha = 0.2f),
             ),
         )
     }

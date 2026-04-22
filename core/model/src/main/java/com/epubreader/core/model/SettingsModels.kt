@@ -8,6 +8,7 @@ const val SepiaThemeId = "sepia"
 const val AzureThemeId = "azure"
 const val DarkThemeId = "dark"
 const val OledThemeId = "oled"
+const val ForestThemeId = "forest"
 const val CustomThemeIdPrefix = "custom-"
 
 @Immutable
@@ -59,12 +60,12 @@ val BuiltInThemeOptions = listOf(
         palette = ThemePalette(
             primary = 0xFF4F46E5,      // Indigo 600
             secondary = 0xFF475569,    // Slate 600
-            background = 0xFFFAF9F6,   // Soft Paper
+            background = 0xFFFAF9F6,   // Solarized White
             surface = 0xFFFFFFFF,
-            surfaceVariant = 0xFFF3F4F6,
-            outline = 0xFFD1D5DB,
-            readerBackground = 0xFFFFFFFF,
-            readerForeground = 0xFF000000,
+            surfaceVariant = 0xFFF1F5F9,
+            outline = 0xFFCBD5E1,
+            readerBackground = 0xFFFAF9F6,
+            readerForeground = 0xFF18181B,
             systemForeground = 0xFF18181B,
         ),
         isCustom = false,
@@ -73,13 +74,13 @@ val BuiltInThemeOptions = listOf(
         id = SepiaThemeId,
         name = "Sepia",
         palette = ThemePalette(
-            primary = 0xFF8B5E3C,
+            primary = 0xFF8B5E3C,      // Warm Brown
             secondary = 0xFF6D4C41,
-            background = 0xFFF4ECD8,
-            surface = 0xFFEADDC6,
-            surfaceVariant = 0xFFEADDC6,
-            outline = 0xFFC4AE8B,
-            readerBackground = 0xFFF4ECD8,
+            background = 0xFFFDF6E3,   // Solarized Cream
+            surface = 0xFFFDF6E3,
+            surfaceVariant = 0xFFEEE8D5,
+            outline = 0xFF93A1A1,
+            readerBackground = 0xFFFDF6E3,
             readerForeground = 0xFF5B4636,
             systemForeground = 0xFF5B4636,
         ),
@@ -91,13 +92,13 @@ val BuiltInThemeOptions = listOf(
         palette = ThemePalette(
             primary = 0xFFA5B4FC,      // Indigo 300
             secondary = 0xFF94A3B8,    // Slate 400
-            background = 0xFF18181B,   // Zinc 900
-            surface = 0xFF27272A,      // Zinc 800
-            surfaceVariant = 0xFF3F3F46,
-            outline = 0xFF52525B,
-            readerBackground = 0xFF121212,
-            readerForeground = 0xFFFFFFFF,
-            systemForeground = 0xFFE4E4E7,
+            background = 0xFF0F172A,   // Slate 950 (Ink Blue)
+            surface = 0xFF1E293B,      // Slate 900
+            surfaceVariant = 0xFF334155,
+            outline = 0xFF475569,
+            readerBackground = 0xFF0F172A,
+            readerForeground = 0xFFE2E8F0,
+            systemForeground = 0xFFCBD5E1,
         ),
         isCustom = false,
     ),
@@ -105,15 +106,31 @@ val BuiltInThemeOptions = listOf(
         id = OledThemeId,
         name = "Onyx",
         palette = ThemePalette(
-            primary = 0xFF60A5FA,      // Blue 400
+            primary = 0xFF38BDF8,      // Sky 400
             secondary = 0xFF94A3B8,
             background = 0xFF000000,
             surface = 0xFF000000,
-            surfaceVariant = 0xFF111827,
-            outline = 0xFF374151,
+            surfaceVariant = 0xFF0F172A,
+            outline = 0xFF1E293B,
             readerBackground = 0xFF000000,
-            readerForeground = 0xFFFFFFFF,
+            readerForeground = 0xFFF8FAFC,
             systemForeground = 0xFFFFFFFF,
+        ),
+        isCustom = false,
+    ),
+    ThemeOption(
+        id = ForestThemeId,
+        name = "Deep Forest",
+        palette = ThemePalette(
+            primary = 0xFF34D399,      // Emerald 400
+            secondary = 0xFF059669,
+            background = 0xFF064E3B,   // Emerald 900
+            surface = 0xFF064E3B,
+            surfaceVariant = 0xFF065F46,
+            outline = 0xFF047857,
+            readerBackground = 0xFF064E3B,
+            readerForeground = 0xFFECFDF5,
+            systemForeground = 0xFFD1FAE5,
         ),
         isCustom = false,
     ),

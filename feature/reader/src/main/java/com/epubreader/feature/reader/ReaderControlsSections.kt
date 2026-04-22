@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -54,7 +55,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.availableThemeOptions
-import com.epubreader.core.model.themeButtonLabel
 import com.epubreader.core.ui.ReaderStatusSettingsRow
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
@@ -95,6 +95,7 @@ internal fun ReaderControlsDragHandle(
 internal fun ReaderControlsSection(
     title: String,
     testTag: String,
+    themeColors: ReaderTheme,
     trailingTitle: String? = null,
     content: @Composable () -> Unit,
 ) {
@@ -111,13 +112,13 @@ internal fun ReaderControlsSection(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = LocalContentColor.current.copy(alpha = 1f),
+                color = themeColors.foreground,
             )
             if (trailingTitle != null) {
                 Text(
                     text = trailingTitle,
                     style = MaterialTheme.typography.labelMedium,
-                    color = LocalContentColor.current.copy(alpha = 0.65f),
+                    color = themeColors.variantForeground,
                 )
             }
         }
@@ -152,6 +153,7 @@ internal fun ReaderChapterControlsSection(
         title = "$sectionLabel ${currentChapterIndex + 1} of $totalChapters",
         trailingTitle = "${(draggingValue * 100).toInt()}%",
         testTag = "reader_controls_section_chapter",
+        themeColors = themeColors,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(
@@ -163,12 +165,16 @@ internal fun ReaderChapterControlsSection(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     IconButton(onClick = onNavigatePrev) {
-                        Icon(Icons.Default.SkipPrevious, contentDescription = "Previous $sectionLabel")
+                        Icon(
+                            Icons.Default.SkipPrevious, 
+                            contentDescription = "Previous $sectionLabel",
+                            tint = themeColors.foreground
+                        )
                     }
                     Text(
                         text = if (currentChapterIndex > 0) "${sectionLabel.take(1)}. $currentChapterIndex" else "",
                         style = MaterialTheme.typography.labelSmall,
-                        color = themeColors.foreground.copy(alpha = 0.6f),
+                        color = themeColors.variantForeground,
                         maxLines = 1,
                     )
                 }
@@ -184,6 +190,11 @@ internal fun ReaderChapterControlsSection(
                     onValueChangeFinished = {
                         isDragging = false
                     },
+                    colors = androidx.compose.material3.SliderDefaults.colors(
+                        thumbColor = themeColors.primary,
+                        activeTrackColor = themeColors.primary,
+                        inactiveTrackColor = themeColors.foreground.copy(alpha = 0.2f)
+                    ),
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 8.dp),
@@ -194,12 +205,16 @@ internal fun ReaderChapterControlsSection(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     IconButton(onClick = onNavigateNext) {
-                        Icon(Icons.Default.SkipNext, contentDescription = "Next $sectionLabel")
+                        Icon(
+                            Icons.Default.SkipNext, 
+                            contentDescription = "Next $sectionLabel",
+                            tint = themeColors.foreground
+                        )
                     }
                     Text(
                         text = if (currentChapterIndex < totalChapters - 1) "${sectionLabel.take(1)}. ${currentChapterIndex + 2}" else "",
                         style = MaterialTheme.typography.labelSmall,
-                        color = themeColors.foreground.copy(alpha = 0.6f),
+                        color = themeColors.variantForeground,
                         maxLines = 1,
                     )
                 }
@@ -214,6 +229,7 @@ internal fun ReaderFontControlsSection(
     onPreviewSettingsChange: (GlobalSettingsTransform) -> Unit,
     onPersistSettingsChange: (GlobalSettingsTransform) -> Unit,
     isVisible: Boolean,
+    themeColors: ReaderTheme,
 ) {
     var pendingFontSize by remember(settings.fontSize) { mutableIntStateOf(settings.fontSize) }
     var pendingLineHeight by remember(settings.lineHeight) { mutableFloatStateOf(settings.lineHeight) }
@@ -222,11 +238,17 @@ internal fun ReaderFontControlsSection(
     ReaderControlsSection(
         title = "Font",
         testTag = "reader_controls_section_font",
+        themeColors = themeColors,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.TextFormat, null, modifier = Modifier.size(20.dp))
+                    Icon(
+                        Icons.Default.TextFormat, 
+                        null, 
+                        modifier = Modifier.size(20.dp),
+                        tint = themeColors.foreground
+                    )
                 }
                 Slider(
                     value = pendingFontSize.toFloat(),
@@ -238,6 +260,11 @@ internal fun ReaderFontControlsSection(
                         onPersistSettingsChange { current -> current.copy(fontSize = pendingFontSize) }
                     },
                     valueRange = 12f..32f,
+                    colors = androidx.compose.material3.SliderDefaults.colors(
+                        thumbColor = themeColors.primary,
+                        activeTrackColor = themeColors.primary,
+                        inactiveTrackColor = themeColors.foreground.copy(alpha = 0.2f)
+                    ),
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 8.dp)
@@ -247,6 +274,7 @@ internal fun ReaderFontControlsSection(
                     Text(
                         text = "${pendingFontSize}sp",
                         style = MaterialTheme.typography.bodySmall,
+                        color = themeColors.foreground,
                         maxLines = 1,
                     )
                 }
@@ -254,10 +282,15 @@ internal fun ReaderFontControlsSection(
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Line Height", style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        "Line Height", 
+                        style = MaterialTheme.typography.labelSmall,
+                        color = themeColors.variantForeground
+                    )
                     Text(
                         String.format(Locale.getDefault(), "%.2f", pendingLineHeight),
                         style = MaterialTheme.typography.bodySmall,
+                        color = themeColors.foreground,
                     )
                 }
                 Slider(
@@ -270,14 +303,27 @@ internal fun ReaderFontControlsSection(
                         onPersistSettingsChange { current -> current.copy(lineHeight = pendingLineHeight) }
                     },
                     valueRange = 1.0f..2.0f,
+                    colors = androidx.compose.material3.SliderDefaults.colors(
+                        thumbColor = themeColors.primary,
+                        activeTrackColor = themeColors.primary,
+                        inactiveTrackColor = themeColors.foreground.copy(alpha = 0.2f)
+                    ),
                     modifier = Modifier.semantics { contentDescription = "Reader Line Height Slider" },
                 )
             }
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Padding", style = MaterialTheme.typography.labelSmall)
-                    Text("${pendingHorizontalPadding}dp", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        "Padding", 
+                        style = MaterialTheme.typography.labelSmall,
+                        color = themeColors.variantForeground
+                    )
+                    Text(
+                        "${pendingHorizontalPadding}dp", 
+                        style = MaterialTheme.typography.bodySmall,
+                        color = themeColors.foreground
+                    )
                 }
                 Slider(
                     value = pendingHorizontalPadding.toFloat(),
@@ -291,7 +337,14 @@ internal fun ReaderFontControlsSection(
                         onPersistSettingsChange { current -> current.copy(horizontalPadding = pendingHorizontalPadding) }
                     },
                     valueRange = 0f..32f,
-                    modifier = Modifier.semantics { contentDescription = "Reader Horizontal Padding Slider" },
+                    colors = androidx.compose.material3.SliderDefaults.colors(
+                        thumbColor = themeColors.primary,
+                        activeTrackColor = themeColors.primary,
+                        inactiveTrackColor = themeColors.foreground.copy(alpha = 0.2f)
+                    ),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .semantics { contentDescription = "Reader Horizontal Padding Slider" },
                 )
             }
         }
@@ -320,6 +373,7 @@ internal fun ReaderFontControlsSection(
     ReaderControlsSection(
         title = "Font Family",
         testTag = "reader_controls_section_font_family",
+        themeColors = themeColors,
     ) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
@@ -333,6 +387,20 @@ internal fun ReaderFontControlsSection(
                         onPersistSettingsChange { current -> current.copy(fontType = font) }
                     },
                     label = { Text(font.replaceFirstChar { it.uppercase() }) },
+                    colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Color.Transparent,
+                        selectedLabelColor = themeColors.primary,
+                        labelColor = themeColors.foreground,
+                        containerColor = Color.Transparent
+                    ),
+                    border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = settings.fontType == font,
+                        borderColor = themeColors.foreground.copy(alpha = 0.2f),
+                        selectedBorderColor = themeColors.primary,
+                        borderWidth = 1.dp,
+                        selectedBorderWidth = 2.dp,
+                    )
                 )
             }
         }
@@ -344,10 +412,12 @@ internal fun ReaderThemeControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
     isVisible: Boolean,
+    themeColors: ReaderTheme,
 ) {
     ReaderControlsSection(
         title = "Theme",
         testTag = "reader_controls_section_theme",
+        themeColors = themeColors,
     ) {
         val themeOptions = availableThemeOptions(settings.customThemes)
         val listState = rememberLazyListState()
@@ -373,14 +443,14 @@ internal fun ReaderThemeControlsSection(
             modifier = Modifier.fillMaxWidth(),
             state = listState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp)
         ) {
             itemsIndexed(themeOptions) { _, option ->
-                ReaderThemeButton(
+                ReaderThemeMiniSpecimen(
                     name = option.name,
-                    bg = Color(option.palette.readerBackground),
-                    fg = Color(option.palette.readerForeground),
+                    palette = option.palette,
                     selected = settings.theme == option.id,
-                    label = themeButtonLabel(option.name, option.id),
+                    themeColors = themeColors,
                 ) {
                     onSettingsChange { current -> current.copy(theme = option.id) }
                 }
@@ -393,15 +463,18 @@ internal fun ReaderThemeControlsSection(
 internal fun ReaderReadingControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
+    themeColors: ReaderTheme,
 ) {
     ReaderControlsSection(
         title = "Reading",
         testTag = "reader_controls_section_reading",
+        themeColors = themeColors,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             ReaderGeneralToggleRow(
                 label = "Show Scrubber",
                 checked = settings.showScrubber,
+                themeColors = themeColors,
                 onCheckedChange = { showScrubber ->
                     onSettingsChange { current -> current.copy(showScrubber = showScrubber) }
                 },
@@ -409,6 +482,7 @@ internal fun ReaderReadingControlsSection(
             ReaderGeneralToggleRow(
                 label = "Show Scroll-to-Top",
                 checked = settings.showScrollToTop,
+                themeColors = themeColors,
                 onCheckedChange = { show ->
                     onSettingsChange { it.copy(showScrollToTop = show) }
                 },
@@ -416,6 +490,7 @@ internal fun ReaderReadingControlsSection(
             ReaderGeneralToggleRow(
                 label = "Selectable Text",
                 checked = settings.selectableText,
+                themeColors = themeColors,
                 onCheckedChange = { selectableText ->
                     onSettingsChange { current -> current.copy(selectableText = selectableText) }
                 },
@@ -436,22 +511,29 @@ internal fun ReaderOtherControlsSection(
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
     isVisible: Boolean,
+    themeColors: ReaderTheme,
 ) {
     ReaderControlsSection(
         title = "Others",
         testTag = "reader_controls_section_others",
+        themeColors = themeColors,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             ReaderGeneralToggleRow(
                 label = "Show System Bar",
                 checked = settings.showSystemBar,
+                themeColors = themeColors,
                 onCheckedChange = { showSystemBar ->
                     onSettingsChange { current -> current.copy(showSystemBar = showSystemBar) }
                 },
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Translate To", style = MaterialTheme.typography.labelSmall)
+                Text(
+                    "Translate To", 
+                    style = MaterialTheme.typography.labelSmall,
+                    color = themeColors.variantForeground
+                )
                 val languages = listOf(
                     "ar" to "العربية",
                     "en" to "English",
@@ -490,6 +572,20 @@ internal fun ReaderOtherControlsSection(
                                 onSettingsChange { it.copy(targetTranslationLanguage = code) }
                             },
                             label = { Text(name) },
+                            colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Color.Transparent,
+                                selectedLabelColor = themeColors.primary,
+                                labelColor = themeColors.foreground,
+                                containerColor = Color.Transparent
+                            ),
+                            border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
+                                enabled = true,
+                                selected = settings.targetTranslationLanguage == code,
+                                borderColor = themeColors.foreground.copy(alpha = 0.2f),
+                                selectedBorderColor = themeColors.primary,
+                                borderWidth = 1.dp,
+                                selectedBorderWidth = 2.dp,
+                            )
                         )
                     }
                 }

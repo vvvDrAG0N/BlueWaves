@@ -71,6 +71,8 @@ internal fun ReaderTopBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = themeColors.background.copy(alpha = 0.95f),
             titleContentColor = themeColors.foreground,
+            navigationIconContentColor = themeColors.foreground,
+            actionIconContentColor = themeColors.foreground,
         ),
     )
 }
@@ -80,6 +82,7 @@ internal fun BoxScope.ReaderScrollToTopFab(
     listState: androidx.compose.foundation.lazy.LazyListState,
     showControls: Boolean,
     isSettingEnabled: Boolean,
+    themeColors: ReaderTheme,
 ) {
     val scope = rememberCoroutineScope()
     var isScrollingUp by remember { mutableStateOf(false) }
@@ -117,8 +120,8 @@ internal fun BoxScope.ReaderScrollToTopFab(
     ) {
         FloatingActionButton(
             onClick = { scope.launch { listState.animateScrollToItem(0) } },
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            containerColor = themeColors.foreground,
+            contentColor = themeColors.background,
         ) {
             Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Scroll to top")
         }

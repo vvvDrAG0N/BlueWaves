@@ -120,6 +120,10 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(if (isAppearance) PaddingValues(0.dp) else padding),
         ) {
+            val currentPalette = themePaletteSeed(settings.theme, settings.customThemes)
+            val themePrimary = androidx.compose.ui.graphics.Color(currentPalette.primary)
+            val themeOnSurface = androidx.compose.ui.graphics.Color(currentPalette.systemForeground)
+
             when (currentSection) {
                 null -> SettingsMenuList(settings = settings, onNavigate = { activeSection = it })
                 SettingsSection.Appearance -> AppearanceTab(
@@ -131,18 +135,39 @@ fun SettingsScreen(
                     onDeleteTheme = { themeToDelete = it },
                     onBack = { activeSection = null },
                 )
-                SettingsSection.Interface -> InterfaceTab(settings = settings, scope = scope, settingsManager = settingsManager)
-                SettingsSection.Interaction -> InteractionTab(settings = settings, scope = scope, settingsManager = settingsManager)
-                SettingsSection.Library -> LibraryTab(settings = settings, scope = scope, settingsManager = settingsManager)
+                SettingsSection.Interface -> InterfaceTab(
+                    settings = settings,
+                    scope = scope,
+                    settingsManager = settingsManager,
+                    primaryColor = themePrimary,
+                    onSurfaceColor = themeOnSurface,
+                )
+                SettingsSection.Interaction -> InteractionTab(
+                    settings = settings,
+                    scope = scope,
+                    settingsManager = settingsManager,
+                    primaryColor = themePrimary,
+                    onSurfaceColor = themeOnSurface,
+                )
+                SettingsSection.Library -> LibraryTab(
+                    settings = settings,
+                    scope = scope,
+                    settingsManager = settingsManager,
+                    primaryColor = themePrimary,
+                    onSurfaceColor = themeOnSurface,
+                )
             }
         }
     }
 
     editorSession?.let { session ->
+        val currentPalette = themePaletteSeed(settings.theme, settings.customThemes)
         CustomThemeEditorDialog(
             session = session,
             activeThemeId = settings.theme,
             existingThemes = settings.customThemes,
+            primaryColor = androidx.compose.ui.graphics.Color(currentPalette.primary),
+            onSurfaceColor = androidx.compose.ui.graphics.Color(currentPalette.systemForeground),
             onDismiss = { editorSession = null },
             onSave = { theme, shouldActivate ->
                 scope.launch {

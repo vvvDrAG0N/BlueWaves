@@ -60,6 +60,8 @@ internal fun CustomThemeEditorDialog(
     session: ThemeEditorSession,
     activeThemeId: String,
     existingThemes: List<CustomTheme>,
+    primaryColor: Color,
+    onSurfaceColor: Color,
     onDismiss: () -> Unit,
     onSave: (CustomTheme, Boolean) -> Unit,
     onDelete: () -> Unit = {},
@@ -125,20 +127,27 @@ internal fun CustomThemeEditorDialog(
                     Switch(
                         checked = draft.isAdvanced,
                         onCheckedChange = { draft = draft.copy(isAdvanced = it) },
+                        colors = androidx.compose.material3.SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                            checkedTrackColor = MaterialTheme.colorScheme.primary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                            uncheckedTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                            uncheckedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                        ),
                     )
                 }
 
-                ThemeColorField("Primary", draft.primary, { draft = draft.copy(primary = it) }, "custom_theme_primary")
-                ThemeColorField("Background", draft.background, { draft = draft.copy(background = it) }, "custom_theme_background")
+                ThemeColorField("Primary", draft.primary, primaryColor, onSurfaceColor, { draft = draft.copy(primary = it) }, "custom_theme_primary")
+                ThemeColorField("Background", draft.background, primaryColor, onSurfaceColor, { draft = draft.copy(background = it) }, "custom_theme_background")
 
                 if (draft.isAdvanced) {
-                    ThemeColorField("Secondary", draft.secondary, { draft = draft.copy(secondary = it) }, "custom_theme_secondary")
-                    ThemeColorField("Surface", draft.surface, { draft = draft.copy(surface = it) }, "custom_theme_surface")
-                    ThemeColorField("Surface Variant", draft.surfaceVariant, { draft = draft.copy(surfaceVariant = it) }, "custom_theme_surface_variant")
-                    ThemeColorField("Outline", draft.outline, { draft = draft.copy(outline = it) }, "custom_theme_outline")
-                    ThemeColorField("Reader Background", draft.readerBackground, { draft = draft.copy(readerBackground = it) }, "custom_theme_reader_background")
-                    ThemeColorField("Reader Text", draft.readerForeground, { draft = draft.copy(readerForeground = it) }, "custom_theme_reader_foreground")
-                    ThemeColorField("System Text", draft.systemForeground, { draft = draft.copy(systemForeground = it) }, "custom_theme_system_foreground")
+                    ThemeColorField("Secondary", draft.secondary, primaryColor, onSurfaceColor, { draft = draft.copy(secondary = it) }, "custom_theme_secondary")
+                    ThemeColorField("Surface", draft.surface, primaryColor, onSurfaceColor, { draft = draft.copy(surface = it) }, "custom_theme_surface")
+                    ThemeColorField("Surface Variant", draft.surfaceVariant, primaryColor, onSurfaceColor, { draft = draft.copy(surfaceVariant = it) }, "custom_theme_surface_variant")
+                    ThemeColorField("Outline", draft.outline, primaryColor, onSurfaceColor, { draft = draft.copy(outline = it) }, "custom_theme_outline")
+                    ThemeColorField("Reader Background", draft.readerBackground, primaryColor, onSurfaceColor, { draft = draft.copy(readerBackground = it) }, "custom_theme_reader_background")
+                    ThemeColorField("Reader Text", draft.readerForeground, primaryColor, onSurfaceColor, { draft = draft.copy(readerForeground = it) }, "custom_theme_reader_foreground")
+                    ThemeColorField("System Text", draft.systemForeground, primaryColor, onSurfaceColor, { draft = draft.copy(systemForeground = it) }, "custom_theme_system_foreground")
                 }
             }
         },
@@ -166,6 +175,8 @@ internal fun CustomThemeEditorDialog(
 private fun ThemeColorField(
     label: String,
     value: String,
+    primaryColor: Color,
+    onSurfaceColor: Color,
     onValueChange: (String) -> Unit,
     testTag: String,
 ) {
@@ -267,6 +278,11 @@ private fun ThemeColorField(
                         onValueChange = { updatePickerColor(hue = it) },
                         valueRange = 0f..360f,
                         modifier = Modifier.testTag("${testTag}_picker_hue"),
+                        colors = androidx.compose.material3.SliderDefaults.colors(
+                            thumbColor = primaryColor,
+                            activeTrackColor = primaryColor,
+                            inactiveTrackColor = onSurfaceColor.copy(alpha = 0.2f),
+                        ),
                     )
                     Text("Saturation", style = MaterialTheme.typography.labelSmall)
                     Slider(
@@ -274,6 +290,11 @@ private fun ThemeColorField(
                         onValueChange = { updatePickerColor(saturation = it) },
                         valueRange = 0f..1f,
                         modifier = Modifier.testTag("${testTag}_picker_saturation"),
+                        colors = androidx.compose.material3.SliderDefaults.colors(
+                            thumbColor = primaryColor,
+                            activeTrackColor = primaryColor,
+                            inactiveTrackColor = onSurfaceColor.copy(alpha = 0.2f),
+                        ),
                     )
                     Text("Brightness", style = MaterialTheme.typography.labelSmall)
                     Slider(
@@ -281,6 +302,11 @@ private fun ThemeColorField(
                         onValueChange = { updatePickerColor(valueBrightness = it) },
                         valueRange = 0f..1f,
                         modifier = Modifier.testTag("${testTag}_picker_value"),
+                        colors = androidx.compose.material3.SliderDefaults.colors(
+                            thumbColor = primaryColor,
+                            activeTrackColor = primaryColor,
+                            inactiveTrackColor = onSurfaceColor.copy(alpha = 0.2f),
+                        ),
                     )
                 }
             }

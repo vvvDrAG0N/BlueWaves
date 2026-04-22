@@ -156,6 +156,7 @@ fun ReaderControls(
                         settings = settings,
                         onSettingsChange = persistSettingsChange,
                         isVisible = isVisible,
+                        themeColors = themeColors,
                     )
                     HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderFontControlsSection(
@@ -163,17 +164,20 @@ fun ReaderControls(
                         onPreviewSettingsChange = previewSettingsChange,
                         onPersistSettingsChange = persistSettingsChange,
                         isVisible = isVisible,
+                        themeColors = themeColors,
                     )
                     HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderReadingControlsSection(
                         settings = settings,
                         onSettingsChange = persistSettingsChange,
+                        themeColors = themeColors,
                     )
                     HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
                     ReaderOtherControlsSection(
                         settings = settings,
                         onSettingsChange = persistSettingsChange,
                         isVisible = isVisible,
+                        themeColors = themeColors,
                     )
                 }
             }

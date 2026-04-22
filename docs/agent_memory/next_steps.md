@@ -15,3 +15,5 @@
 - Starting docs/files: `docs/legacy/PDF_review.md`, `docs/app_shell_navigation.md`, `docs/epub_parsing.md`, `app/AppNavigation.kt`, `data/parser/PdfLegacyBridge.kt`
 - Risks: Re-enabling broken shell paths, progress persistence mismatch, conversion-state staleness, memory pressure.
 - Verification target: Explicit design decision plus targeted parser/shell tests before any runtime reactivation.
+
+

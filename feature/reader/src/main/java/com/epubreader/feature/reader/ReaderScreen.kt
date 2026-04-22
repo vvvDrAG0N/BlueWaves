@@ -125,6 +125,19 @@ fun ReaderScreen(
     val density = LocalDensity.current
     val overscrollThreshold = with(density) { 80.dp.toPx() }
 
+    // Performance-optimized auto-hide for overscroll notifications.
+    // Uses debounce to prevent coroutine churn during fluid swipes.
+    LaunchedEffect(Unit) {
+        snapshotFlow { verticalOverscroll }
+            .debounce(200.milliseconds)
+            .collectLatest { value ->
+                if (value != 0f) {
+                    delay(1000)
+                    verticalOverscroll = 0f
+                }
+            }
+    }
+
     // 1. Initial State Sync: Runs once per book to find the last read chapter.
     LaunchedEffect(book.id) {
         if (currentChapterIndex == -1) {

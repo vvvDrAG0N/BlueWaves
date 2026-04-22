@@ -178,6 +178,7 @@ private fun ReaderContentSurface(
             listState = state.listState,
             showControls = state.showControls,
             isSettingEnabled = state.settings.showScrollToTop,
+            themeColors = state.themeColors,
         )
 
         ReaderStatusOverlay(

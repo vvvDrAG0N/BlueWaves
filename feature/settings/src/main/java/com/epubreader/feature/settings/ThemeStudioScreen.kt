@@ -22,6 +22,8 @@ import com.epubreader.core.model.*
 import com.epubreader.core.ui.KarlaFont
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
+import androidx.compose.runtime.snapshotFlow
 
 // Performance Tokens: Pure OLED Efficiency
 private val PureBlack = Color(0xFF000000)
@@ -48,12 +50,18 @@ fun ThemeStudioScreen(
     
     val pagerState = rememberPagerState(initialPage = initialPage) { InfinitePageCount }
     
-    LaunchedEffect(pagerState.currentPage) {
-        val actualIndex = pagerState.currentPage % allThemes.size
-        val themeId = allThemes[actualIndex].id
-        if (themeId != settings.theme) {
-            settingsManager.setActiveTheme(themeId)
-        }
+    // Robust settlement detection: Only update global theme when scrolling stops
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.isScrollInProgress to pagerState.currentPage }
+            .collect { (inProgress, page) ->
+                if (!inProgress) {
+                    val actualIndex = page % allThemes.size
+                    val themeId = allThemes[actualIndex].id
+                    if (themeId != settings.theme) {
+                        settingsManager.setActiveTheme(themeId)
+                    }
+                }
+            }
     }
 
     Box(
@@ -63,6 +71,10 @@ fun ThemeStudioScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             StudioHeader(onBack)
+
+            // Calculate visual active index for responsive border/indicator feedback
+            val visualActiveIndex = pagerState.currentPage % allThemes.size
+            val visualActiveThemeId = allThemes[visualActiveIndex].id
 
             HorizontalPager(
                 state = pagerState,
@@ -74,8 +86,10 @@ fun ThemeStudioScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) { page ->
                 val actualIndex = page % allThemes.size
+                val theme = allThemes[actualIndex]
                 ContextualSpecimenCard(
-                    theme = allThemes[actualIndex],
+                    theme = theme,
+                    isActive = theme.id == visualActiveThemeId, // Follows swipe visually
                     fontSize = settings.fontSize,
                     lineHeight = settings.lineHeight,
                     horizontalPadding = settings.horizontalPadding
@@ -84,7 +98,7 @@ fun ThemeStudioScreen(
 
             ThemeIndicators(
                 count = allThemes.size,
-                currentIndex = pagerState.currentPage % allThemes.size
+                currentIndex = visualActiveIndex
             )
             
             Spacer(modifier = Modifier.height(60.dp))
@@ -95,12 +109,16 @@ fun ThemeStudioScreen(
 @Composable
 private fun ContextualSpecimenCard(
     theme: CustomTheme,
+    isActive: Boolean,
     fontSize: Int,
     lineHeight: Float,
     horizontalPadding: Int
 ) {
     val p = theme.palette
     
+    val borderColor = if (isActive) Color(p.primary) else Color(p.outline).copy(alpha = 0.2f)
+    val borderThickness = if (isActive) 3.dp else 1.dp
+
     // Scale settings for the large specimen card context
     val baseLineHeight = 8.dp * (fontSize.toFloat() / 18f)
     val spacingBetweenLines = baseLineHeight * (lineHeight - 1f) + 8.dp
@@ -114,6 +132,7 @@ private fun ContextualSpecimenCard(
             .height(540.dp)
             .clip(RoundedCornerShape(32.dp))
             .background(Color(p.background))
+            .border(borderThickness, borderColor, RoundedCornerShape(32.dp))
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -123,7 +142,7 @@ private fun ContextualSpecimenCard(
                 .fillMaxSize()
                 .clip(RoundedCornerShape(24.dp))
                 .background(Color(p.readerBackground))
-                .border(1.dp, Color(p.outline).copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+                .border(borderThickness, borderColor, RoundedCornerShape(24.dp))
         ) {
             // 1. System Representation (Stable UI Zone)
             SystemBarMock(p)

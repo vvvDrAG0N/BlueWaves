@@ -89,7 +89,7 @@ fun RecentlyViewedStrip(
                         )
                     } else {
                         Box(
-                            Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceVariant),
+                            Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -153,11 +153,6 @@ fun BookItem(
         book.displayCoverPath(globalSettings.allowBlankCovers)
     }
 
-    val themePalette = remember(globalSettings.theme, globalSettings.customThemes) {
-        themePaletteSeed(globalSettings.theme, globalSettings.customThemes)
-    }
-    val readerForegroundColor = remember(themePalette) { Color(themePalette.readerForeground) }
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isCompact) 0.dp else 2.dp),
@@ -211,32 +206,24 @@ fun BookItem(
                     }
                 }
             } else {
+                // No cover state: Use pure semantic M3 tokens for a clean, integrated look
                 Box(
-                    Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceVariant),
+                    Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         Icons.Default.Book,
                         null,
-                        modifier = Modifier.size(if (isCompact) 32.dp else 48.dp).alpha(0.2f),
-                        tint = MaterialTheme.colorScheme.primary
+                        modifier = Modifier.size(if (isCompact) 32.dp else 48.dp).alpha(0.6f),
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
                     )
                 }
-
-                Box(
-                    modifier = Modifier.fillMaxSize().background(
-                        Brush.verticalGradient(
-                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-                            startY = if (isCompact) 100f else 250f
-                        )
-                    )
-                )
 
                 Column(modifier = Modifier.align(Alignment.BottomStart).padding(if (isCompact) 4.dp else 8.dp)) {
                     Text(
                         text = book.title,
                         style = if (isCompact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelLarge,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold,
@@ -247,7 +234,7 @@ fun BookItem(
                         Text(
                             text = book.author,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.7f),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             fontSize = 10.sp
@@ -256,7 +243,7 @@ fun BookItem(
                         Text(
                             text = progressLabel,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 10.sp
                         )

@@ -1,4 +1,5 @@
 package com.epubreader.feature.reader
+import androidx.compose.foundation.ExperimentalFoundationApi
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
@@ -38,44 +40,172 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.basicMarquee
 import com.epubreader.core.ui.KarlaFont
+import com.epubreader.core.model.ThemePalette
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ReaderThemeButton(
+fun ReaderThemeMiniSpecimen(
     name: String,
-    bg: Color,
-    fg: Color,
+    palette: ThemePalette,
     selected: Boolean,
-    label: String = "A",
+    themeColors: ReaderTheme,
     onClick: () -> Unit,
 ) {
-    Box(
+    val scale by animateFloatAsState(
+        targetValue = if (selected) 1.08f else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "scale"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .size(48.dp)
+            .width(72.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            )
             .semantics {
                 contentDescription = "Theme $name"
                 this.selected = selected
             }
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
-            .clip(CircleShape)
-            .clickable { onClick() }
-            .padding(3.dp),
-        contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .clip(CircleShape)
-                .background(bg)
+                .size(width = 56.dp, height = 76.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(palette.readerBackground))
                 .border(
                     width = if (selected) 2.dp else 1.dp,
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
-                    shape = CircleShape,
-                ),
-            contentAlignment = Alignment.Center,
+                    color = if (selected) themeColors.primary else Color(palette.outline).copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(12.dp)
+                )
         ) {
-            Text(label, color = fg, fontWeight = FontWeight.Bold)
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val w = size.width
+                val h = size.height
+                val p = palette
+                
+                // 1. System Bar Mock (Top)
+                val sysAlpha = 0.4f
+                drawRect(
+                    color = Color(p.systemForeground).copy(alpha = sysAlpha),
+                    topLeft = Offset(8.dp.toPx(), 6.dp.toPx()),
+                    size = Size(8.dp.toPx(), 2.dp.toPx())
+                )
+                drawRect(
+                    color = Color(p.systemForeground).copy(alpha = sysAlpha),
+                    topLeft = Offset(w - 16.dp.toPx(), 6.dp.toPx()),
+                    size = Size(8.dp.toPx(), 2.dp.toPx())
+                )
+
+                // 2. Reader Content Simulation (Center)
+                val contentY = 16.dp.toPx()
+                val foreground = Color(p.readerForeground)
+                
+                // Page Header/Title bar (Name or similar)
+                drawRoundRect(
+                    color = foreground.copy(alpha = 0.25f),
+                    topLeft = Offset(8.dp.toPx(), contentY),
+                    size = Size(w * 0.45f, 4.dp.toPx()),
+                    cornerRadius = CornerRadius(2.dp.toPx())
+                )
+                
+                // Main Text Lines
+                val line1Y = contentY + 10.dp.toPx()
+                drawRoundRect(
+                    color = foreground.copy(alpha = 0.1f),
+                    topLeft = Offset(8.dp.toPx(), line1Y),
+                    size = Size(w - 16.dp.toPx(), 3.dp.toPx()),
+                    cornerRadius = CornerRadius(1.5.dp.toPx())
+                )
+                
+                // Highlighted Line (reflecting global preview primary highlight)
+                val line2Y = line1Y + 7.dp.toPx()
+                drawRoundRect(
+                    color = foreground.copy(alpha = 0.1f),
+                    topLeft = Offset(8.dp.toPx(), line2Y),
+                    size = Size(w * 0.3f, 3.dp.toPx()),
+                    cornerRadius = CornerRadius(1.5.dp.toPx())
+                )
+                drawRoundRect(
+                    color = Color(p.primary).copy(alpha = 0.8f),
+                    topLeft = Offset(8.dp.toPx() + w * 0.35f, line2Y),
+                    size = Size(w * 0.25f, 3.dp.toPx()),
+                    cornerRadius = CornerRadius(1.5.dp.toPx())
+                )
+                drawRoundRect(
+                    color = foreground.copy(alpha = 0.1f),
+                    topLeft = Offset(8.dp.toPx() + w * 0.65f, line2Y),
+                    size = Size(w * 0.15f, 3.dp.toPx()),
+                    cornerRadius = CornerRadius(1.5.dp.toPx())
+                )
+
+                // 3. Surface UI Simulation (Bottom)
+                val surfaceY = h - 26.dp.toPx()
+                drawRoundRect(
+                    color = Color(p.surface),
+                    topLeft = Offset(6.dp.toPx(), surfaceY),
+                    size = Size(w - 12.dp.toPx(), 20.dp.toPx()),
+                    cornerRadius = CornerRadius(4.dp.toPx())
+                )
+                
+                // Mini Action Buttons in the simulated surface
+                val btnY = surfaceY + 12.dp.toPx()
+                // Secondary Button (Stroke)
+                drawRect(
+                    color = Color(p.secondary).copy(alpha = 0.4f),
+                    topLeft = Offset(w - 24.dp.toPx(), btnY),
+                    size = Size(6.dp.toPx(), 4.dp.toPx()),
+                    style = Stroke(width = 1.dp.toPx())
+                )
+                // Primary Button (Fill)
+                drawRoundRect(
+                    color = Color(p.primary),
+                    topLeft = Offset(w - 14.dp.toPx(), btnY),
+                    size = Size(6.dp.toPx(), 4.dp.toPx()),
+                    cornerRadius = CornerRadius(1.dp.toPx())
+                )
+            }
         }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = name,
+            style = MaterialTheme.typography.labelSmall,
+            color = if (selected) themeColors.primary else themeColors.foreground.copy(alpha = 0.7f),
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .basicMarquee(
+                    iterations = Int.MAX_VALUE
+                )
+                .padding(horizontal = 2.dp)
+        )
     }
 }
 
@@ -155,7 +285,7 @@ private fun TextSelectionActionButton(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = themeColors.foreground.copy(alpha = 0.8f),
+            color = themeColors.variantForeground,
             maxLines = 1,
         )
     }
@@ -191,16 +321,29 @@ internal fun readerFontFamily(fontType: String): FontFamily {
 internal fun ReaderGeneralToggleRow(
     label: String,
     checked: Boolean,
+    themeColors: ReaderTheme,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Text(
+            label, 
+            style = MaterialTheme.typography.bodyMedium, 
+            modifier = Modifier.weight(1f),
+            color = themeColors.foreground
+        )
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
+            colors = androidx.compose.material3.SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                checkedTrackColor = themeColors.primary,
+                uncheckedThumbColor = themeColors.foreground.copy(alpha = 0.4f),
+                uncheckedTrackColor = themeColors.foreground.copy(alpha = 0.12f),
+                uncheckedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+            )
         )
     }
 }

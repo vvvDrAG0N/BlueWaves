@@ -27,11 +27,16 @@ fun ReaderStatusSettingsRow(
     isReaderUI: Boolean = false,
     isSystemBarVisible: Boolean = false,
     showHeader: Boolean = true,
+    primaryColor: androidx.compose.ui.graphics.Color? = null,
+    onSurfaceColor: androidx.compose.ui.graphics.Color? = null,
 ) {
     val readerStatusUi = settings.readerStatusUi
     val enabled = readerStatusUi.isEnabled
     val isInteractionDisabled = isSystemBarVisible
     val alpha = if (isInteractionDisabled) 0.3f else if (enabled) 1f else 0.5f
+
+    val effectivePrimary = primaryColor ?: MaterialTheme.colorScheme.primary
+    val effectiveOnSurface = onSurfaceColor ?: MaterialTheme.colorScheme.onSurface
 
     Column(
         modifier = modifier
@@ -50,12 +55,13 @@ fun ReaderStatusSettingsRow(
                     } else {
                         MaterialTheme.typography.titleMedium
                     },
+                    color = effectiveOnSurface,
                 )
                 if (showHeader) {
                     Text(
                         text = "Minimal reading info overlay at the bottom.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = effectiveOnSurface.copy(alpha = 0.6f),
                     )
                 }
             }
@@ -67,6 +73,13 @@ fun ReaderStatusSettingsRow(
                     }
                 },
                 enabled = !isInteractionDisabled,
+                colors = androidx.compose.material3.SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                    checkedTrackColor = effectivePrimary,
+                    uncheckedThumbColor = effectiveOnSurface.copy(alpha = 0.4f),
+                    uncheckedTrackColor = effectiveOnSurface.copy(alpha = 0.12f),
+                    uncheckedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                )
             )
         }
 
@@ -80,6 +93,21 @@ fun ReaderStatusSettingsRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val chipColors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                labelColor = effectiveOnSurface.copy(alpha = 0.5f),
+                selectedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                selectedLabelColor = effectivePrimary,
+            )
+            val chipBorder = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
+                enabled = enabled && !isInteractionDisabled,
+                selected = true,
+                borderColor = effectiveOnSurface.copy(alpha = 0.1f),
+                selectedBorderColor = effectivePrimary,
+                borderWidth = 1.dp,
+                selectedBorderWidth = 2.dp,
+            )
+
             FilterChip(
                 selected = readerStatusUi.showClock,
                 onClick = {
@@ -89,6 +117,15 @@ fun ReaderStatusSettingsRow(
                 },
                 label = { Text("Time") },
                 enabled = enabled && !isInteractionDisabled,
+                colors = chipColors,
+                border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
+                    enabled = enabled && !isInteractionDisabled,
+                    selected = readerStatusUi.showClock,
+                    borderColor = effectiveOnSurface.copy(alpha = 0.1f),
+                    selectedBorderColor = effectivePrimary,
+                    borderWidth = 1.dp,
+                    selectedBorderWidth = 2.dp,
+                ),
             )
 
             FilterChip(
@@ -100,6 +137,15 @@ fun ReaderStatusSettingsRow(
                 },
                 label = { Text("Battery") },
                 enabled = enabled && !isInteractionDisabled,
+                colors = chipColors,
+                border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
+                    enabled = enabled && !isInteractionDisabled,
+                    selected = readerStatusUi.showBattery,
+                    borderColor = effectiveOnSurface.copy(alpha = 0.1f),
+                    selectedBorderColor = effectivePrimary,
+                    borderWidth = 1.dp,
+                    selectedBorderWidth = 2.dp,
+                ),
             )
 
             FilterChip(
@@ -115,6 +161,15 @@ fun ReaderStatusSettingsRow(
                 },
                 label = { Text("Chapter") },
                 enabled = enabled && !isInteractionDisabled,
+                colors = chipColors,
+                border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
+                    enabled = enabled && !isInteractionDisabled,
+                    selected = readerStatusUi.showChapterNumber,
+                    borderColor = effectiveOnSurface.copy(alpha = 0.1f),
+                    selectedBorderColor = effectivePrimary,
+                    borderWidth = 1.dp,
+                    selectedBorderWidth = 2.dp,
+                ),
             )
 
             FilterChip(
@@ -130,6 +185,15 @@ fun ReaderStatusSettingsRow(
                 },
                 label = { Text("Progress") },
                 enabled = enabled && !isInteractionDisabled,
+                colors = chipColors,
+                border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
+                    enabled = enabled && !isInteractionDisabled,
+                    selected = readerStatusUi.showChapterProgress,
+                    borderColor = effectiveOnSurface.copy(alpha = 0.1f),
+                    selectedBorderColor = effectivePrimary,
+                    borderWidth = 1.dp,
+                    selectedBorderWidth = 2.dp,
+                ),
             )
         }
     }

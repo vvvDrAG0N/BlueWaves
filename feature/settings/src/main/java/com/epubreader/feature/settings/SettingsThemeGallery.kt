@@ -6,6 +6,10 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -107,51 +111,96 @@ internal fun ThemeGalleryOverlay(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .fillMaxHeight(0.85f),
-            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                .fillMaxHeight(0.85f)
+                .graphicsLayer {
+                    shadowElevation = 24.dp.toPx()
+                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+                    clip = true
+                },
             color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 1.dp,
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                Row(
+                // 1. Antigravity Floating Header
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(horizontal = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    if (isSelectionMode) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = onCloseSelectionMode) {
-                                Icon(Icons.Default.Close, contentDescription = "Exit selection")
-                            }
-                            Text(
-                                text = "${selectedIds.size} Selected",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(start = 4.dp),
+                        .height(72.dp)
+                        .drawBehind {
+                            // Bottom separator line
+                            val strokeWidth = 1.dp.toPx()
+                            drawLine(
+                                color = Color.LightGray.copy(alpha = 0.2f),
+                                start = androidx.compose.ui.geometry.Offset(0f, size.height),
+                                end = androidx.compose.ui.geometry.Offset(size.width, size.height),
+                                strokeWidth = strokeWidth
+                            )
+                            
+                            // Interaction pill (Grabber)
+                            val pillWidth = 32.dp.toPx()
+                            val pillHeight = 4.dp.toPx()
+                            val pillY = 12.dp.toPx()
+                            drawRoundRect(
+                                color = Color.Gray.copy(alpha = 0.3f),
+                                topLeft = androidx.compose.ui.geometry.Offset((size.width - pillWidth) / 2, pillY),
+                                size = androidx.compose.ui.geometry.Size(pillWidth, pillHeight),
+                                cornerRadius = androidx.compose.ui.geometry.CornerRadius(pillHeight / 2)
                             )
                         }
-                        Row {
-                            IconButton(onClick = onBulkExport, enabled = selectedIds.isNotEmpty()) {
-                                Icon(Icons.Default.Inventory2, contentDescription = "Export pack")
+                        .padding(top = 12.dp) // Space for grabber
+                ) {
+                    AnimatedContent(
+                        targetState = isSelectionMode,
+                        transitionSpec = { fadeIn() togetherWith fadeOut() },
+                        label = "headerContent"
+                    ) { selectionActive ->
+                        if (selectionActive) {
+                            Row(
+                                modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    IconButton(onClick = onCloseSelectionMode) {
+                                        Icon(Icons.Default.Close, contentDescription = "Exit selection")
+                                    }
+                                    Text(
+                                        text = "${selectedIds.size} Selected",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        modifier = Modifier.padding(start = 4.dp),
+                                    )
+                                }
+                                Row {
+                                    IconButton(onClick = onBulkExport, enabled = selectedIds.isNotEmpty()) {
+                                        Icon(Icons.Default.Inventory2, contentDescription = "Export pack")
+                                    }
+                                    IconButton(onClick = onBulkDelete, enabled = selectedIds.isNotEmpty()) {
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = "Delete selected",
+                                            tint = if (selectedIds.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                }
                             }
-                            IconButton(onClick = onBulkDelete, enabled = selectedIds.isNotEmpty()) {
-                                Icon(
-                                    Icons.Default.Delete,
-                                    contentDescription = "Delete selected",
-                                    tint = if (selectedIds.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                        } else {
+                            Box(
+                                modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                Text(
+                                    "Theme Gallery",
+                                    style = MaterialTheme.typography.headlineSmall.copy(
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                    )
                                 )
+                                
+                                TextButton(
+                                    onClick = onDismiss,
+                                    modifier = Modifier.align(Alignment.CenterEnd)
+                                ) {
+                                    Text("Done", style = MaterialTheme.typography.labelLarge)
+                                }
                             }
-                        }
-                    } else {
-                        Text(
-                            "Theme Gallery",
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(start = 12.dp),
-                        )
-                        TextButton(onClick = onDismiss, modifier = Modifier.padding(end = 8.dp)) {
-                            Text("Done")
                         }
                     }
                 }
@@ -244,7 +293,7 @@ private fun ThemePreviewCard(
     val borderColor by animateColorAsState(
         targetValue = when {
             isSelected -> Color(theme.palette.primary)
-            isActive && !isSelectionMode -> Color(theme.palette.primary).copy(alpha = 0.5f)
+            isActive && !isSelectionMode -> Color(theme.palette.primary)
             else -> Color.Transparent
         },
         animationSpec = tween(400),
@@ -276,7 +325,7 @@ private fun ThemePreviewCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(theme.palette.background)),
-                border = BorderStroke(2.dp, borderColor),
+                border = BorderStroke(3.dp, borderColor),
                 elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 6.dp else 2.dp),
             ) {
                 Column {

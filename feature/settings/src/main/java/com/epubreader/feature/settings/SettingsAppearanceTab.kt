@@ -132,6 +132,7 @@ internal fun AppearanceTab(
         }
     }
 
+    // Sync global theme when pager settles
     LaunchedEffect(pagerState.settledPage, allThemes) {
         val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
         val themeId = allThemes[safeIndex].id
@@ -175,74 +176,30 @@ internal fun AppearanceTab(
     }
 
     val dashboardBgModifier = Modifier.drawBehind {
-        val total = allThemes.size
-        if (total == 0) return@drawBehind
-        val rawPage = pagerState.currentPage
-        val floor = rawPage.toInt().coerceIn(0, total - 1)
-        val ceil = (floor + 1).coerceIn(0, total - 1)
-        val fraction = (rawPage - floor).toFloat()
-        drawRect(
-            lerp(
-                Color(allThemes[floor].palette.background),
-                Color(allThemes[ceil].palette.background),
-                fraction,
-            ),
-        )
+        val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+        drawRect(Color(allThemes[safeIndex].palette.background))
     }
     val getSysFg = remember(allThemes, pagerState) {
         {
-            val total = allThemes.size
-            if (total == 0) {
-                Color.Transparent
-            } else {
-                val rawPage = pagerState.currentPage
-                val floor = rawPage.toInt().coerceIn(0, total - 1)
-                val ceil = (floor + 1).coerceIn(0, total - 1)
-                val fraction = (rawPage - floor).toFloat()
-                lerp(
-                    Color(allThemes[floor].palette.systemForeground),
-                    Color(allThemes[ceil].palette.systemForeground),
-                    fraction,
-                )
-            }
+            val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+            Color(allThemes[safeIndex].palette.systemForeground)
         }
     }
     val getPrimary = remember(allThemes, pagerState) {
         {
-            val total = allThemes.size
-            if (total == 0) {
-                Color.Transparent
-            } else {
-                val rawPage = pagerState.currentPage
-                val floor = rawPage.toInt().coerceIn(0, total - 1)
-                val ceil = (floor + 1).coerceIn(0, total - 1)
-                val fraction = (rawPage - floor).toFloat()
-                lerp(
-                    Color(allThemes[floor].palette.primary),
-                    Color(allThemes[ceil].palette.primary),
-                    fraction,
-                )
-            }
+            val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+            Color(allThemes[safeIndex].palette.primary)
         }
     }
 
-    LaunchedEffect(pagerState.settledPage, allThemes) {
-        delay(600)
-        val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
-        val themeId = allThemes[safeIndex].id
-        if (themeId != settings.theme) {
-            settingsManager.setActiveTheme(themeId)
-        }
-    }
+    // Removed redundant delayed theme switch
 
     SideEffect {
         val window = (context as? android.app.Activity)?.window ?: return@SideEffect
         if (allThemes.isNotEmpty()) {
-            val rawPage = pagerState.currentPage
-            val floor = rawPage.toInt().coerceIn(0, allThemes.lastIndex)
-            val ceil = (floor + 1).coerceIn(0, allThemes.lastIndex)
-            val dominantTheme = if ((rawPage - floor) < 0.5f) allThemes[floor] else allThemes[ceil]
-            val isDark = Color(dominantTheme.palette.background).luminance() < 0.5f
+            val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+            val theme = allThemes[safeIndex]
+            val isDark = Color(theme.palette.background).luminance() < 0.5f
             WindowCompat.getInsetsController(window, window.decorView).apply {
                 isAppearanceLightStatusBars = !isDark
                 isAppearanceLightNavigationBars = !isDark
@@ -299,6 +256,7 @@ internal fun AppearanceTab(
                         theme = allThemes[page],
                         fontFamily = readerFontFamily,
                         geometry = carouselGeometry,
+                        isActive = page == pagerState.settledPage,
                         isMarqueeActive = { isFocused },
                     )
                 }
