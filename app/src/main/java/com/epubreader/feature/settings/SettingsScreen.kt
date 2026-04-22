@@ -27,7 +27,10 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,20 +50,31 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.MarqueeAnimationMode
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.outlined.FormatSize
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Settings
@@ -98,7 +112,13 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -112,8 +132,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -141,8 +166,13 @@ import com.epubreader.core.ui.getStaticWindowInsets
 import com.epubreader.feature.reader.KarlaFont
 import com.epubreader.feature.reader.ReaderStatusSettingsRow
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.FilterChipDefaults
@@ -154,6 +184,7 @@ import org.json.JSONObject
 import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -400,6 +431,7 @@ private fun NetworkPlaceholderTab() {
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppearanceTab(
     settings: GlobalSettings,
@@ -411,6 +443,12 @@ private fun AppearanceTab(
 ) {
     val context = LocalContext.current
     var themeToExport by remember { mutableStateOf<CustomTheme?>(null) }
+    
+    // --- GALLERY & SELECTION STATE ---
+    var isGalleryOpen by remember { mutableStateOf(false) }
+    var isSelectionMode by remember { mutableStateOf(false) }
+    var selectedThemeIds by remember { mutableStateOf(setOf<String>()) }
+    var showBulkDeleteConfirm by remember { mutableStateOf(false) }
 
     // --- REFACTORED LOGIC HELPERS ---
     fun normalizeThemeName(name: String): String = name.trim().lowercase(Locale.US).replace(Regex("\\s+"), " ")
@@ -589,6 +627,52 @@ private fun AppearanceTab(
         }
     }
 
+    val bulkExportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
+        uri?.let { exportUri ->
+            // [PHASE 4: SNAPSHOT EXPORT] - Use an immutable snapshot of themes
+            val themesToPack = settings.customThemes.filter { it.id in selectedThemeIds }
+            if (themesToPack.isEmpty()) return@let
+            
+            scope.launch {
+                withContext(Dispatchers.IO) {
+                    try {
+                        context.contentResolver.openOutputStream(exportUri)?.use { output ->
+                            ZipOutputStream(output).use { zos ->
+                                themesToPack.forEach { theme ->
+                                    val json = JSONObject().apply {
+                                        put("name", theme.name)
+                                        put("primary", formatThemeColor(theme.palette.primary))
+                                        put("secondary", formatThemeColor(theme.palette.secondary))
+                                        put("background", formatThemeColor(theme.palette.background))
+                                        put("surface", formatThemeColor(theme.palette.surface))
+                                        put("surfaceVariant", formatThemeColor(theme.palette.surfaceVariant))
+                                        put("outline", formatThemeColor(theme.palette.outline))
+                                        put("readerBackground", formatThemeColor(theme.palette.readerBackground))
+                                        put("readerForeground", formatThemeColor(theme.palette.readerForeground))
+                                        put("systemForeground", formatThemeColor(theme.palette.systemForeground))
+                                    }
+                                    val entry = ZipEntry("${theme.name.replace(Regex("[^a-zA-Z0-9]"), "_")}.json")
+                                    zos.putNextEntry(entry)
+                                    zos.write(json.toString(4).toByteArray())
+                                    zos.closeEntry()
+                                }
+                            }
+                        }
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Exported ${themesToPack.size} themes", Toast.LENGTH_SHORT).show()
+                            isSelectionMode = false
+                            selectedThemeIds = emptySet()
+                        }
+                    } catch (_: Exception) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Export failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // --- DASHBOARD UI ---
     val allThemes = remember(settings.customThemes) {
         BuiltInThemeOptions.map { CustomTheme(it.id, it.name, it.palette) } + settings.customThemes
@@ -621,6 +705,7 @@ private fun AppearanceTab(
     var localFontSize by remember(settings.fontSize) { mutableIntStateOf(settings.fontSize) }
     var localLineHeight by remember(settings.lineHeight) { mutableFloatStateOf(settings.lineHeight) }
     var localPadding by remember(settings.horizontalPadding) { mutableIntStateOf(settings.horizontalPadding) }
+    val readerFontFamily = getFontFamily(settings.fontType)
 
     // THEME ANIMATION: Gradual color transition for the dashboard
     val currentTheme = allThemes[pagerState.currentPage.coerceIn(allThemes.indices)]
@@ -628,12 +713,13 @@ private fun AppearanceTab(
     val animSysFg by animateColorAsState(Color(currentTheme.palette.systemForeground), tween(600), label = "sys")
     val animPrimary by animateColorAsState(Color(currentTheme.palette.primary), tween(600), label = "pri")
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(animBg)
-            .verticalScroll(rememberScrollState())
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(animBg)
+                .verticalScroll(rememberScrollState())
+        ) {
         // 1. Landscape Gallery
         Spacer(Modifier.height(16.dp))
         HorizontalPager(
@@ -642,12 +728,15 @@ private fun AppearanceTab(
             contentPadding = PaddingValues(horizontal = 48.dp),
             pageSpacing = 16.dp
         ) { page ->
+            // Stability Check: Only marquee if settled and not currently dragging
+            val isFocused = pagerState.settledPage == page && !pagerState.isScrollInProgress
             LandscapeSpecimenCard(
                 theme = allThemes[page],
                 fontFamily = getFontFamily(settings.fontType),
                 fontSize = localFontSize,
                 lineHeight = localLineHeight,
-                horizontalPadding = localPadding
+                horizontalPadding = localPadding,
+                isMarqueeActive = isFocused
             )
         }
 
@@ -676,7 +765,8 @@ private fun AppearanceTab(
                 onExport = { 
                     themeToExport = currentTheme
                     exportLauncher.launch("theme_${currentTheme.name}.json")
-                }
+                },
+                onGallery = { isGalleryOpen = true }
             )
         }
 
@@ -701,6 +791,66 @@ private fun AppearanceTab(
         )
         
         Spacer(Modifier.height(32.dp))
+
+        }
+
+        // 4. Overlays & Dialogs
+        AnimatedVisibility(
+            visible = isGalleryOpen,
+            enter = fadeIn() + slideInVertically { it },
+            exit = fadeOut() + slideOutVertically { it }
+        ) {
+            ThemeGalleryOverlay(
+                allThemes = allThemes,
+                activeThemeId = settings.theme,
+                isSelectionMode = isSelectionMode,
+                selectedIds = selectedThemeIds,
+                onThemeSelect = { theme ->
+                    scope.launch { settingsManager.setActiveTheme(theme.id) }
+                    isGalleryOpen = false
+                },
+                onToggleSelection = { id ->
+                    selectedThemeIds = if (selectedThemeIds.contains(id)) {
+                        selectedThemeIds - id
+                    } else {
+                        selectedThemeIds + id
+                    }
+                },
+                onEnterSelectionMode = { id ->
+                    isSelectionMode = true
+                    selectedThemeIds = setOf(id)
+                },
+                onBulkDelete = { showBulkDeleteConfirm = true },
+                onBulkExport = { bulkExportLauncher.launch("themes_pack_${System.currentTimeMillis()}.zip") },
+                onCloseSelectionMode = {
+                    isSelectionMode = false
+                    selectedThemeIds = emptySet()
+                },
+                fontFamily = readerFontFamily,
+                fontSize = localFontSize,
+                lineHeight = localLineHeight,
+                horizontalPadding = localPadding,
+                onDismiss = { 
+                    isGalleryOpen = false 
+                    isSelectionMode = false
+                    selectedThemeIds = emptySet()
+                }
+            )
+        }
+
+        if (showBulkDeleteConfirm) {
+            val customTargets = selectedThemeIds.filter { it.startsWith(CustomThemeIdPrefix) }
+            BulkDeleteConfirmationDialog(
+                count = customTargets.size,
+                onConfirm = {
+                    scope.launch { settingsManager.deleteCustomThemes(customTargets.toSet()) }
+                    showBulkDeleteConfirm = false
+                    isSelectionMode = false
+                    selectedThemeIds = emptySet()
+                },
+                onDismiss = { showBulkDeleteConfirm = false }
+            )
+        }
     }
 }
 
@@ -713,7 +863,8 @@ private fun ThemeControlHub(
     onData: () -> Unit,
     onModify: () -> Unit,
     onDelete: () -> Unit,
-    onExport: () -> Unit
+    onExport: () -> Unit,
+    onGallery: () -> Unit
 ) {
     val isCustom = currentTheme.id.startsWith(CustomThemeIdPrefix)
     var showDataMenu by remember { mutableStateOf(false) }
@@ -724,11 +875,25 @@ private fun ThemeControlHub(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // CREATE
-        HubButton(Icons.Default.Add, "Create", animSysFg, animPrimary, onCreate)
+        HubButton(
+            icon = Icons.Default.Add, 
+            label = "Create", 
+            animSysFg = animSysFg, 
+            animPrimary = animPrimary
+        ) { 
+            onCreate() 
+        }
 
         // DATA (Import/Export)
         Box {
-            HubButton(Icons.Default.DataUsage, "Data", animSysFg, animPrimary) { showDataMenu = true }
+            HubButton(
+                icon = Icons.Default.DataUsage, 
+                label = "Data", 
+                animSysFg = animSysFg, 
+                animPrimary = animPrimary
+            ) { 
+                showDataMenu = true 
+            }
             DropdownMenu(expanded = showDataMenu, onDismissRequest = { showDataMenu = false }) {
                 DropdownMenuItem(
                     text = { Text("Import Themes") },
@@ -746,22 +911,49 @@ private fun ThemeControlHub(
         }
 
         // MODIFY (Edit/Delete)
-        HubButton(Icons.Default.Edit, "Modify", animSysFg, animPrimary) { 
+        HubButton(
+            icon = Icons.Default.Edit, 
+            label = "Modify", 
+            animSysFg = animSysFg, 
+            animPrimary = animPrimary,
+            enabled = isCustom
+        ) { 
             onModify()
+        }
+
+        // GALLERY
+        HubButton(
+            icon = Icons.Default.GridView, 
+            label = "Gallery", 
+            animSysFg = animSysFg, 
+            animPrimary = animPrimary
+        ) {
+            onGallery()
         }
     }
 }
 
 @Composable
-private fun HubButton(icon: ImageVector, label: String, animSysFg: Color, animPrimary: Color, onClick: () -> Unit) {
+private fun HubButton(
+    icon: ImageVector, 
+    label: String, 
+    animSysFg: Color, 
+    animPrimary: Color, 
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    val alpha = if (enabled) 0.8f else 0.2f
+    val labelAlpha = if (enabled) 0.4f else 0.15f
+    
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         IconButton(
             onClick = onClick,
+            enabled = enabled,
             modifier = Modifier.size(48.dp).clip(CircleShape).background(animSysFg.copy(alpha = 0.05f))
         ) {
-            Icon(icon, contentDescription = label, tint = animSysFg.copy(alpha = 0.8f))
+            Icon(icon, contentDescription = label, tint = animSysFg.copy(alpha = alpha))
         }
-        Text(label, style = MaterialTheme.typography.labelSmall, color = animSysFg.copy(alpha = 0.4f), fontSize = 10.sp)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = animSysFg.copy(alpha = labelAlpha), fontSize = 10.sp)
     }
 }
 
@@ -771,133 +963,160 @@ private fun LandscapeSpecimenCard(
     fontFamily: FontFamily,
     fontSize: Int,
     lineHeight: Float,
-    horizontalPadding: Int
+    horizontalPadding: Int,
+    isMarqueeActive: Boolean
 ) {
-    val p = theme.palette
-    
-    // Scale settings for the preview card context
-    val baseLineHeight = 4.dp * (fontSize.toFloat() / 18f)
-    val spacingBetweenLines = baseLineHeight * (lineHeight - 1f) + 4.dp
-    val internalPadding = 16.dp * (horizontalPadding.toFloat() / 16f)
-    val constrainedPadding = if (internalPadding > 32.dp) 32.dp else internalPadding
-
     Card(
-        modifier = Modifier
-            .fillMaxSize()
-            .graphicsLayer {
-                val pageOffset = 0f
-                alpha = 1f
-            },
+        modifier = Modifier.fillMaxSize(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        // Inner App Simulation (Reader Background)
-        Column(
+        ThemeSpecimenContent(
+            theme = theme,
+            fontFamily = fontFamily,
+            fontSize = fontSize,
+            lineHeight = lineHeight,
+            horizontalPadding = horizontalPadding,
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color(p.readerBackground))
-                .border(1.dp, Color(p.outline).copy(alpha = 0.05f), RoundedCornerShape(16.dp))
-        ) {
-            // 1. System Bar Representation (Stable UI Zone)
-            SystemBarMock(p)
+                .border(1.dp, Color(theme.palette.outline).copy(alpha = 0.05f), RoundedCornerShape(16.dp)),
+            isMini = false,
+            isMarqueeActive = isMarqueeActive
+        )
+    }
+}
 
-            Row(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+@Composable
+private fun ThemeSpecimenContent(
+    theme: CustomTheme,
+    fontFamily: FontFamily,
+    fontSize: Int,
+    lineHeight: Float,
+    horizontalPadding: Int,
+    modifier: Modifier = Modifier,
+    isMini: Boolean = false,
+    isMarqueeActive: Boolean = true
+) {
+    val p = theme.palette
+    val scaleFactor = if (isMini) 0.65f else 1f
+    
+    // Scale settings for the preview card context
+    val baseLineHeight = (4.dp * (fontSize.toFloat() / 18f)) * scaleFactor
+    val spacingBetweenLines = (baseLineHeight * (lineHeight - 1f) + 4.dp) * scaleFactor
+    val internalPadding = (16.dp * (horizontalPadding.toFloat() / 16f)) * scaleFactor
+    val constrainedPadding = if (internalPadding > 32.dp * scaleFactor) 32.dp * scaleFactor else internalPadding
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(p.readerBackground))
+    ) {
+        // 1. System Bar Representation (Stable UI Zone)
+        SystemBarMock(p, isMini)
+
+        Row(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp * scaleFactor, vertical = 8.dp * scaleFactor),
+            horizontalArrangement = Arrangement.spacedBy(16.dp * scaleFactor)
+        ) {
+            // Left Side: Reader Preview Zone
+            Column(
+                modifier = Modifier
+                    .weight(1.2f)
+                    .padding(start = constrainedPadding)
             ) {
-                // Left Side: Reader Preview Zone (Affected by reader settings)
-                Column(
+                Text(
+                    text = theme.name,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color(p.readerForeground),
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = fontFamily,
+                    maxLines = 1,
+                    softWrap = false,
+                    fontSize = if (isMini) 8.sp else 12.sp,
                     modifier = Modifier
-                        .weight(1.2f)
-                        .padding(start = constrainedPadding) // Dynamic Padding
-                ) {
-                    // Stable Title (Interface Element)
-                    Text(
-                        text = theme.name,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = Color(p.readerForeground),
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = fontFamily,
-                        maxLines = 1,
-                        softWrap = false,
-                        modifier = Modifier.basicMarquee()
-                    )
-                    
-                    Spacer(Modifier.height(8.dp))
-                    
-                    // Reactive Reader Content
-                    Column(verticalArrangement = Arrangement.spacedBy(spacingBetweenLines)) {
-                        SkeletonLine(
-                            color = Color(p.readerForeground), 
-                            widthPercent = 0.9f,
-                            height = baseLineHeight
+                        .fillMaxWidth()
+                        .basicMarquee(
+                            iterations = if (isMarqueeActive) Int.MAX_VALUE else 0,
+                            animationMode = MarqueeAnimationMode.Immediately
                         )
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            SkeletonLine(
-                                color = Color(p.readerForeground).copy(alpha = 0.5f), 
-                                widthPercent = 0.3f,
-                                height = baseLineHeight
-                            )
-                            SkeletonLine(
-                                color = Color(p.primary), 
-                                widthPercent = 0.4f,
-                                height = baseLineHeight
-                            )
-                        }
+                )
+                
+                Spacer(Modifier.height(8.dp * scaleFactor))
+                
+                // Reactive Reader Content
+                Column(verticalArrangement = Arrangement.spacedBy(spacingBetweenLines)) {
+                    SkeletonLine(
+                        color = Color(p.readerForeground), 
+                        widthPercent = 0.9f,
+                        height = baseLineHeight
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp * scaleFactor)) {
                         SkeletonLine(
                             color = Color(p.readerForeground).copy(alpha = 0.5f), 
-                            widthPercent = 0.8f,
+                            widthPercent = 0.3f,
+                            height = baseLineHeight
+                        )
+                        SkeletonLine(
+                            color = Color(p.primary), 
+                            widthPercent = 0.4f,
                             height = baseLineHeight
                         )
                     }
+                    SkeletonLine(
+                        color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                        widthPercent = 0.8f,
+                        height = baseLineHeight
+                    )
                 }
+            }
 
-                // Right Side: UI Surface Mock (Stable UI Zone)
-                Box(modifier = Modifier.weight(1f).align(Alignment.Bottom)) {
-                    SurfaceMock(p)
-                }
+            // Right Side: UI Surface Mock
+            Box(modifier = Modifier.weight(1f).align(Alignment.Bottom)) {
+                SurfaceMock(p, isMini)
             }
         }
     }
 }
 
 @Composable
-private fun SystemBarMock(p: ThemePalette) {
+private fun SystemBarMock(p: ThemePalette, isMini: Boolean = false) {
+    val scaleFactor = if (isMini) 0.6f else 1f
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .padding(horizontal = 16.dp * scaleFactor, vertical = 6.dp * scaleFactor),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("12:00", fontSize = 8.sp, color = Color(p.systemForeground).copy(alpha = 0.6f))
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Box(modifier = Modifier.size(8.dp, 4.dp).background(Color(p.systemForeground).copy(alpha = 0.2f)))
-            Box(modifier = Modifier.size(8.dp, 4.dp).background(Color(p.systemForeground).copy(alpha = 0.6f)))
+        Text("12:00", fontSize = (8 * scaleFactor).sp, color = Color(p.systemForeground).copy(alpha = 0.6f))
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp * scaleFactor)) {
+            Box(modifier = Modifier.size(8.dp * scaleFactor, 4.dp * scaleFactor).background(Color(p.systemForeground).copy(alpha = 0.2f)))
+            Box(modifier = Modifier.size(8.dp * scaleFactor, 4.dp * scaleFactor).background(Color(p.systemForeground).copy(alpha = 0.6f)))
         }
     }
 }
 
 @Composable
-private fun SurfaceMock(p: ThemePalette) {
+private fun SurfaceMock(p: ThemePalette, isMini: Boolean = false) {
+    val scaleFactor = if (isMini) 0.6f else 1f
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(12.dp * scaleFactor))
             .background(Color(p.surface))
-            .border(1.dp, Color(p.outline).copy(alpha = 0.1f), RoundedCornerShape(12.dp))
-            .padding(8.dp)
+            .border(1.dp * scaleFactor, Color(p.outline).copy(alpha = 0.1f), RoundedCornerShape(12.dp * scaleFactor))
+            .padding(8.dp * scaleFactor)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(16.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .height(16.dp * scaleFactor)
+                .clip(RoundedCornerShape(4.dp * scaleFactor))
                 .background(Color(p.surfaceVariant))
         )
         
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp * scaleFactor))
         
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -905,15 +1124,15 @@ private fun SurfaceMock(p: ThemePalette) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(32.dp, 12.dp)
-                    .clip(RoundedCornerShape(2.dp))
-                    .border(0.5.dp, Color(p.secondary), RoundedCornerShape(2.dp))
+                    .size(32.dp * scaleFactor, 12.dp * scaleFactor)
+                    .clip(RoundedCornerShape(2.dp * scaleFactor))
+                    .border(0.5.dp * scaleFactor, Color(p.secondary), RoundedCornerShape(2.dp * scaleFactor))
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(4.dp * scaleFactor))
             Box(
                 modifier = Modifier
-                    .size(32.dp, 12.dp)
-                    .clip(RoundedCornerShape(2.dp))
+                    .size(32.dp * scaleFactor, 12.dp * scaleFactor)
+                    .clip(RoundedCornerShape(2.dp * scaleFactor))
                     .background(Color(p.primary))
             )
         }
@@ -922,12 +1141,16 @@ private fun SurfaceMock(p: ThemePalette) {
 
 @Composable
 private fun SkeletonLine(color: Color, widthPercent: Float, height: androidx.compose.ui.unit.Dp = 4.dp) {
-    Box(
+    Spacer(
         modifier = Modifier
             .fillMaxWidth(widthPercent)
             .height(height)
-            .clip(CircleShape)
-            .background(color.copy(alpha = 0.15f))
+            .drawBehind {
+                drawRoundRect(
+                    color = color,
+                    cornerRadius = CornerRadius(size.height / 2, size.height / 2)
+                )
+            }
     )
 }
 
@@ -1819,4 +2042,295 @@ private fun getFontFamily(fontType: String): FontFamily {
         "karla" -> KarlaFont
         else -> FontFamily.Default
     }
+}
+
+@Composable
+private fun ThemeGalleryOverlay(
+    allThemes: List<CustomTheme>,
+    activeThemeId: String,
+    isSelectionMode: Boolean,
+    selectedIds: Set<String>,
+    fontFamily: FontFamily,
+    fontSize: Int,
+    lineHeight: Float,
+    horizontalPadding: Int,
+    onThemeSelect: (CustomTheme) -> Unit,
+    onToggleSelection: (String) -> Unit,
+    onEnterSelectionMode: (String) -> Unit,
+    onBulkDelete: () -> Unit,
+    onBulkExport: () -> Unit,
+    onCloseSelectionMode: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    // [PHASE 5: NAVIGATION LOCK] - authoritative back handler
+    BackHandler {
+        if (isSelectionMode) onCloseSelectionMode() else onDismiss()
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Scrim
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.32f))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    if (isSelectionMode) onCloseSelectionMode() else onDismiss()
+                }
+        )
+
+        // Sheet Surface
+        Surface(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .fillMaxHeight(0.85f),
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 1.dp
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // Unified Header (Fixed 56dp height to prevent layout shifts)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(horizontal = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    if (isSelectionMode) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = onCloseSelectionMode) {
+                                Icon(Icons.Default.Close, contentDescription = "Exit selection")
+                            }
+                            Text(
+                                text = "${selectedIds.size} Selected",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
+                        Row {
+                            IconButton(
+                                onClick = onBulkExport,
+                                enabled = selectedIds.isNotEmpty()
+                            ) {
+                                Icon(Icons.Default.Inventory2, contentDescription = "Export pack")
+                            }
+                            IconButton(
+                                onClick = onBulkDelete,
+                                enabled = selectedIds.isNotEmpty()
+                            ) {
+                                Icon(Icons.Default.Delete, contentDescription = "Delete selected", tint = if (selectedIds.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
+                    } else {
+                        Text(
+                            "Theme Gallery", 
+                            style = MaterialTheme.typography.titleLarge, 
+                            modifier = Modifier.padding(start = 12.dp)
+                        )
+                        TextButton(
+                            onClick = onDismiss,
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) { Text("Done") }
+                    }
+                }
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    items(allThemes, key = { it.id }) { theme ->
+                        val isSelected = selectedIds.contains(theme.id)
+                        val isActive = theme.id == activeThemeId
+                        
+                        ThemePreviewCard(
+                            theme = theme,
+                            fontFamily = fontFamily,
+                            fontSize = fontSize,
+                            lineHeight = lineHeight,
+                            horizontalPadding = horizontalPadding,
+                            isActive = isActive,
+                            isSelected = isSelected,
+                            isSelectionMode = isSelectionMode,
+                            onClick = {
+                                if (isSelectionMode) {
+                                    // ONLY TOGGLE IF CUSTOM
+                                    if (theme.id.startsWith(CustomThemeIdPrefix)) {
+                                        onToggleSelection(theme.id)
+                                    }
+                                } else {
+                                    onThemeSelect(theme)
+                                }
+                            },
+                            onLongClick = {
+                                // ONLY ENTER IF CUSTOM
+                                if (!isSelectionMode && theme.id.startsWith(CustomThemeIdPrefix)) {
+                                    onEnterSelectionMode(theme.id)
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@Composable
+private fun ThemePreviewCard(
+    theme: CustomTheme,
+    fontFamily: FontFamily,
+    fontSize: Int,
+    lineHeight: Float,
+    horizontalPadding: Int,
+    isActive: Boolean,
+    isSelected: Boolean,
+    isSelectionMode: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) {
+    val auraColor = Color(theme.palette.primary).copy(alpha = 0.15f)
+    val isCustom = theme.id.startsWith(CustomThemeIdPrefix)
+    
+    // MANAGEMENT MODE: Dim built-ins to show they are read-only
+    val contentAlpha by animateFloatAsState(
+        targetValue = if (isSelectionMode && !isCustom) 0.38f else 1.0f,
+        label = "contentAlpha"
+    )
+
+    val cardScale by animateFloatAsState(
+        targetValue = if (isSelectionMode && isCustom) {
+            if (isSelected) 0.98f else 0.94f
+        } else 1.0f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow),
+        label = "cardScale"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> Color(theme.palette.primary)
+            isActive && !isSelectionMode -> Color(theme.palette.primary).copy(alpha = 0.5f)
+            else -> Color.Transparent
+        },
+        animationSpec = tween(400),
+        label = "borderColor"
+    )
+
+    Surface(
+        modifier = Modifier
+            .alpha(contentAlpha)
+            .scale(cardScale)
+            .clip(RoundedCornerShape(12.dp))
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
+            .drawBehind {
+                // [PHASE 5: AURA BLEED] - Soft glow behind the card
+                drawCircle(
+                    color = auraColor,
+                    radius = size.maxDimension * 0.8f,
+                    center = center,
+                    alpha = 0.6f * (if (isSelectionMode && !isSelected) 0.4f else 1f)
+                )
+            }
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(theme.palette.background)),
+                border = BorderStroke(2.dp, borderColor),
+                elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 6.dp else 2.dp)
+            ) {
+                Column {
+                    // Mini Page (Mirror)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.6f)
+                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    ) {
+                        ThemeSpecimenContent(
+                            theme = theme,
+                            fontFamily = fontFamily,
+                            fontSize = fontSize,
+                            lineHeight = lineHeight,
+                            horizontalPadding = horizontalPadding,
+                            isMini = true
+                        )
+                    }
+                    
+                    // Chrome / Info
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(Color(theme.palette.primary))
+                        )
+                    }
+                }
+            }
+
+            if (isSelectionMode) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isSelected) {
+                        Icon(
+                            Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BulkDeleteConfirmationDialog(
+    count: Int,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Delete Themes?") },
+        text = { Text("Are you sure you want to delete $count custom themes? This action cannot be undone.") },
+        confirmButton = {
+            TextButton(onClick = onConfirm, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
