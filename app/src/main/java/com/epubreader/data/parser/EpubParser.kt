@@ -783,16 +783,17 @@ class EpubParser internal constructor(
             return false
         }
 
+        // OPTIMIZED: Replaced O(N^2) sequence scan with O(1) direct zip.getEntry() lookups.
         val allSpineEntriesExist = runCatching {
             ZipFile(generatedEpub).use { zip ->
                 spineHrefs.all { cleanHref ->
                     zip.getEntry(cleanHref) != null ||
                         zip.getEntry("OEBPS/$cleanHref") != null ||
-                        zip.getEntry("OPS/$cleanHref") != null ||
-                        zip.entries().asSequence().any { it.name.endsWith(cleanHref) }
+                        zip.getEntry("OPS/$cleanHref") != null
                 }
             }
         }.getOrDefault(false)
+        
         if (!allSpineEntriesExist) {
             return false
         }

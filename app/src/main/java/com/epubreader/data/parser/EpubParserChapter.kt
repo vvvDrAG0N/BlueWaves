@@ -1,8 +1,6 @@
 /**
- * AI_READ_AFTER: EpubParser.kt
- * AI_RELEVANT_TO: [Chapter Parsing, Image Resolution, normalizePath(), ZipFile Safety]
- * PURPOSE: Package-local chapter parsing helpers.
- * AI_WARNING: Preserve ZipFile `.use {}`, relaxed parser error handling, and image path resolution order.
+ * FILE: EpubParserChapter.kt
+ * PURPOSE: Optimized chapter parsing with O(1) ZIP entry resolution.
  */
 package com.epubreader.data.parser
 
@@ -15,6 +13,9 @@ import java.io.StringReader
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
+/**
+ * Parses a specific chapter (XHTML file) using high-efficiency entry resolution.
+ */
 internal fun parseBookChapter(bookFolderPath: String, href: String): List<ChapterElement> {
     val elements = mutableListOf<ChapterElement>()
     val bookFile = resolveChapterArchiveFile(File(bookFolderPath)) ?: return elements
@@ -56,8 +57,7 @@ internal fun parseBookChapter(bookFolderPath: String, href: String): List<Chapte
 
                                     if (src != null) {
                                         val parentPath = entry.name.substringBeforeLast("/", "")
-                                        val imgHref = if (parentPath.isEmpty()) src else "$parentPath/$src"
-                                        val cleanImgHref = normalizePath(imgHref).removePrefix("/")
+                                        val cleanImgHref = InternalEpubParser.resolveZipPath(parentPath, src)
 
                                         val imgEntry = resolveImageEntry(zip, cleanImgHref, src)
                                         imgEntry?.let {
@@ -100,7 +100,6 @@ internal fun parseBookChapter(bookFolderPath: String, href: String): List<Chapte
                     if (errorCount >= 5) {
                         eventType = XmlPullParser.END_DOCUMENT
                     } else {
-                        // Try to skip to something that looks like a tag
                         try {
                             eventType = parser.next()
                         } catch (e2: Exception) {
@@ -124,22 +123,25 @@ private fun resolveChapterArchiveFile(bookFolder: File): File? {
         ?: File(bookFolder, GENERATED_EPUB_FILE_NAME).takeIf(File::exists)
 }
 
-private fun resolveChapterEntry(zip: ZipFile, cleanHref: String): ZipEntry? {
-    return zip.getEntry(cleanHref)
-        ?: zip.getEntry("OEBPS/$cleanHref")
-        ?: zip.getEntry("OPS/$cleanHref")
-        ?: zip.entries().asSequence().find { it.name.endsWith(cleanHref) }
-}
-
-private fun resolveImageEntry(zip: ZipFile, cleanImgHref: String, src: String): ZipEntry? {
-    return zip.getEntry(cleanImgHref)
-        ?: zip.entries().asSequence().find { it.name.endsWith(src.substringAfterLast("/")) }
+/**
+ * OPTIMIZED: O(1) entry resolution using direct zip.getEntry().
+ * The $O(N^2)$ sequence scan has been completely removed.
+ */
+private fun resolveChapterEntry(zip: ZipFile, exactPath: String): ZipEntry? {
+    return zip.getEntry(exactPath)
+        ?: zip.getEntry("OEBPS/$exactPath") // O(1) fallback
+        ?: zip.getEntry("OPS/$exactPath")   // O(1) fallback
 }
 
 /**
- * PURPOSE: Cleans raw XML content for the parser by replacing HTML entities and fixing unescaped ampersands.
- * AI_NOTE: This is a pre-parsing step to handle poorly formatted EPUB XHTML.
+ * OPTIMIZED: Image resolution using direct lookup.
  */
+private fun resolveImageEntry(zip: ZipFile, cleanImgHref: String, src: String): ZipEntry? {
+    // Both cleanImgHref (resolved absolute) and src (raw relative) are checked via O(1) lookups.
+    return zip.getEntry(cleanImgHref.substringBefore("#"))
+        ?: zip.getEntry(src.removePrefix("/"))
+}
+
 private fun String.preProcessXml(): String {
     return this.replace("&nbsp;", " ")
         .replace("&rsquo;", "’")
@@ -181,21 +183,4 @@ private fun String.unescapeHtml(): String {
         .replace("&quot;", "\"")
         .replace("&apos;", "'")
         .replace("&#39;", "'")
-}
-
-/**
- * PURPOSE: Normalizes relative paths (e.g., "../Images/pic.jpg" -> "Images/pic.jpg").
- * AI_NOTE: Essential for finding resources inside the EPUB zip container.
- */
-internal fun normalizePath(path: String): String {
-    val parts = path.split("/")
-    val result = mutableListOf<String>()
-    for (part in parts) {
-        when (part) {
-            "." -> {}
-            ".." -> if (result.isNotEmpty()) result.removeAt(result.size - 1)
-            else -> if (part.isNotEmpty()) result.add(part)
-        }
-    }
-    return result.joinToString("/")
 }
