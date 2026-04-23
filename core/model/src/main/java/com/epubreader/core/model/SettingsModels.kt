@@ -332,7 +332,7 @@ fun isThemeNameUnique(
     customThemes: List<CustomTheme>
 ): Boolean {
     val normalizedProposed = proposedName.trim().lowercase(Locale.US).replace(Regex("\\s+"), " ")
-    if (normalizedProposed.isEmpty()) return false
+    if (normalizedProposed.isEmpty()) return true
     
     // Check built-ins
     val builtInConflict = BuiltInThemeOptions.any {
@@ -346,4 +346,23 @@ fun isThemeNameUnique(
     }
     
     return !customConflict
+}
+
+/**
+ * Suggests the next available name for a new theme, incrementing "New Theme X"
+ * if the base name already exists.
+ */
+fun suggestNextThemeName(customThemes: List<CustomTheme>): String {
+    val base = "New Theme"
+    var candidate = base
+    var index = 2
+    
+    val allExistingNames = BuiltInThemeOptions.map { it.name } + customThemes.map { it.name }
+    val normalizedExisting = allExistingNames.map { it.trim().lowercase(Locale.US).replace(Regex("\\s+"), " ") }
+    
+    while (normalizedExisting.contains(candidate.trim().lowercase(Locale.US).replace(Regex("\\s+"), " "))) {
+        candidate = "$base $index"
+        index++
+    }
+    return candidate
 }

@@ -96,6 +96,9 @@ internal fun ThemeGalleryOverlay(
     selectedIds: Set<String>,
     fontFamily: FontFamily,
     geometry: SpecimenGeometry,
+    gallerySessionKey: Long,
+    galleryGridState: androidx.compose.foundation.lazy.grid.LazyGridState,
+    isGalleryOpen: Boolean,
     onThemeSelect: (CustomTheme) -> Unit,
     onToggleSelection: (String) -> Unit,
     onEnterSelectionMode: (String) -> Unit,
@@ -105,8 +108,6 @@ internal fun ThemeGalleryOverlay(
     onDismiss: () -> Unit,
 ) {
     val density = LocalDensity.current
-    val scope = rememberCoroutineScope()
-    val sheetOffsetY = remember { Animatable(0f) }
 
     BackHandler {
         if (isSelectionMode) onCloseSelectionMode() else onDismiss()
@@ -116,12 +117,9 @@ internal fun ThemeGalleryOverlay(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .drawBehind {
-                    // GPU-Accelerated dimming (Zero Recomposition)
-                    val alphaProgress = (1f - (sheetOffsetY.value / 1000f)).coerceIn(0f, 1f)
-                    drawRect(color = Color.Black, alpha = 0.32f * alphaProgress)
-                }
+                .background(Color.Black.copy(alpha = 0.45f))
                 .clickable(
+                    enabled = isGalleryOpen,
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                 ) {
@@ -131,13 +129,12 @@ internal fun ThemeGalleryOverlay(
 
         Surface(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(0.85f)
+                .align(Alignment.Center)
+                .fillMaxWidth(0.95f)
+                .fillMaxHeight(0.9f)
                 .graphicsLayer {
-                    translationY = sheetOffsetY.value
-                    shadowElevation = with(density) { 24.dp.toPx() }
-                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+                    shadowElevation = if (isGalleryOpen) with(density) { 32.dp.toPx() } else 0f
+                    shape = RoundedCornerShape(32.dp)
                     clip = true
                 },
             color = MaterialTheme.colorScheme.surface,
@@ -148,28 +145,6 @@ internal fun ThemeGalleryOverlay(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(72.dp)
-                        .pointerInput(Unit) {
-                            val velocityTracker = VelocityTracker()
-                            detectVerticalDragGestures(
-                                onDragEnd = {
-                                    val velocity = velocityTracker.calculateVelocity().y
-                                    scope.launch {
-                                        if (sheetOffsetY.value > 300f || velocity > 1500f) {
-                                            onDismiss()
-                                        } else {
-                                            sheetOffsetY.animateTo(0f, spring(stiffness = Spring.StiffnessMediumLow))
-                                        }
-                                    }
-                                },
-                                onVerticalDrag = { change, dragAmount ->
-                                    change.consume()
-                                    velocityTracker.addPosition(change.uptimeMillis, change.position)
-                                    scope.launch {
-                                        sheetOffsetY.snapTo((sheetOffsetY.value + dragAmount).coerceAtLeast(0f))
-                                    }
-                                }
-                            )
-                        }
                         .drawBehind {
                             // Bottom separator line
                             val strokeWidth = 1.dp.toPx()
@@ -179,19 +154,7 @@ internal fun ThemeGalleryOverlay(
                                 end = Offset(size.width, size.height),
                                 strokeWidth = strokeWidth
                             )
-                            
-                            // Interaction pill (Grabber)
-                            val pillWidth = 32.dp.toPx()
-                            val pillHeight = 4.dp.toPx()
-                            val pillY = 12.dp.toPx()
-                            drawRoundRect(
-                                color = Color.Gray.copy(alpha = 0.3f),
-                                topLeft = Offset((size.width - pillWidth) / 2, pillY),
-                                size = Size(pillWidth, pillHeight),
-                                cornerRadius = CornerRadius(pillHeight / 2, pillHeight / 2)
-                            )
                         }
-                        .padding(top = 12.dp) // Space for grabber
                 ) {
                     AnimatedContent(
                         targetState = isSelectionMode,
@@ -250,10 +213,9 @@ internal fun ThemeGalleryOverlay(
                     }
                 }
 
-                val gallerySessionKey = remember { System.currentTimeMillis() }
-
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
+                    state = galleryGridState,
                     contentPadding = PaddingValues(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -270,6 +232,7 @@ internal fun ThemeGalleryOverlay(
                             isActive = theme.id == activeThemeId,
                             isSelected = isSelected,
                             isSelectionMode = isSelectionMode,
+                            isGalleryOpen = isGalleryOpen,
                             onClick = {
                                 if (isSelectionMode) {
                                     if (theme.id.startsWith(CustomThemeIdPrefix)) onToggleSelection(theme.id)
@@ -292,7 +255,7 @@ internal fun ThemeGalleryOverlay(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ThemePreviewCard(
+internal fun ThemePreviewCard(
     theme: CustomTheme,
     staggerIndex: Int,
     gallerySessionKey: Long,
@@ -301,6 +264,7 @@ private fun ThemePreviewCard(
     isActive: Boolean,
     isSelected: Boolean,
     isSelectionMode: Boolean,
+    isGalleryOpen: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -371,10 +335,10 @@ private fun ThemePreviewCard(
                 scaleX = cardScale * (0.95f + 0.05f * entryProgress)
                 scaleY = cardScale * (0.95f + 0.05f * entryProgress)
                 translationY = with(density) { (1f - entryProgress) * 64.dp.toPx() }
-                rotationX = (1f - entryProgress) * 10f
+                rotationX = if (isGalleryOpen) (1f - entryProgress) * 10f else 0f
                 
-                // Spatial depth
-                shadowElevation = elevation
+                // Spatial depth: Zero out when gallery is closed to prevent RenderThread issues
+                shadowElevation = if (isGalleryOpen) elevation else 0f
                 shape = RoundedCornerShape(16.dp)
                 clip = true
             }

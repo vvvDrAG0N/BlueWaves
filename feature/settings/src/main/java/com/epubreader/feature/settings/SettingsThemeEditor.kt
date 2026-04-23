@@ -1,51 +1,42 @@
 package com.epubreader.feature.settings
 
-import android.graphics.Color as AndroidColor
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.CustomThemeIdPrefix
 import com.epubreader.core.model.ThemePalette
@@ -53,6 +44,7 @@ import com.epubreader.core.model.formatThemeColor
 import com.epubreader.core.model.generatePaletteFromBase
 import com.epubreader.core.model.isThemeNameUnique
 import com.epubreader.core.model.parseThemeColorOrNull
+import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.core.ui.KarlaFont
 
 @Composable
@@ -66,7 +58,8 @@ internal fun CustomThemeEditorDialog(
     onSave: (CustomTheme, Boolean) -> Unit,
     onDelete: () -> Unit = {},
 ) {
-    var draft by remember(session) { mutableStateOf(session.draft) }
+    val draftState = remember(session) { mutableStateOf(session.draft) }
+    val draft = draftState.value
 
     LaunchedEffect(draft.primary, draft.background, draft.isAdvanced) {
         if (!draft.isAdvanced) {
@@ -74,7 +67,7 @@ internal fun CustomThemeEditorDialog(
             val b = parseThemeColorOrNull(draft.background)
             if (p != null && b != null) {
                 val generated = generatePaletteFromBase(p, b)
-                draft = draft.copy(
+                draftState.value = draft.copy(
                     secondary = formatThemeColor(generated.secondary),
                     surface = formatThemeColor(generated.surface),
                     surfaceVariant = formatThemeColor(generated.surfaceVariant),
@@ -88,247 +81,284 @@ internal fun CustomThemeEditorDialog(
     }
 
     val parsedTheme = remember(draft, session.themeId) { draft.toCustomTheme(session.themeId) }
-    val nameConflict = !isThemeNameUnique(draft.name, session.themeId, existingThemes)
+    val nameConflict = remember(draft.name, session.themeId, existingThemes) { 
+        !isThemeNameUnique(draft.name, session.themeId, existingThemes) 
+    }
     val isValid = parsedTheme != null && draft.name.trim().isNotEmpty() && !nameConflict
     val shouldActivate = session.isNew || activeThemeId == session.themeId
 
-    AlertDialog(
+    // Live specimen state
+    val previewTheme = remember(draft) { 
+        val palette = draft.toCustomTheme(session.themeId)?.palette 
+            ?: themePaletteSeed(activeThemeId, existingThemes)
+            
+        CustomTheme(
+            id = session.themeId,
+            name = draft.name.ifBlank { "" },
+            palette = palette,
+            isAdvanced = draft.isAdvanced
+        )
+    }
+
+    Dialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (session.isNew) "Create Custom Theme" else "Edit Custom Theme") },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                OutlinedTextField(
-                    value = draft.name,
-                    onValueChange = { draft = draft.copy(name = it) },
-                    label = { Text("Theme Name") },
-                    singleLine = true,
-                    isError = draft.name.trim().isEmpty() || nameConflict,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("custom_theme_name"),
-                )
-                if (nameConflict) {
-                    Text(
-                        text = "Theme names must be unique.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text("Advanced Mode", style = MaterialTheme.typography.bodyMedium)
-                    Switch(
-                        checked = draft.isAdvanced,
-                        onCheckedChange = { draft = draft.copy(isAdvanced = it) },
-                        colors = androidx.compose.material3.SwitchDefaults.colors(
-                            checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                            checkedTrackColor = MaterialTheme.colorScheme.primary,
-                            uncheckedThumbColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                            uncheckedTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                            uncheckedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
-                        ),
-                    )
-                }
-
-                ThemeColorField("Primary", draft.primary, primaryColor, onSurfaceColor, { draft = draft.copy(primary = it) }, "custom_theme_primary")
-                ThemeColorField("Background", draft.background, primaryColor, onSurfaceColor, { draft = draft.copy(background = it) }, "custom_theme_background")
-
-                if (draft.isAdvanced) {
-                    ThemeColorField("Secondary", draft.secondary, primaryColor, onSurfaceColor, { draft = draft.copy(secondary = it) }, "custom_theme_secondary")
-                    ThemeColorField("Surface", draft.surface, primaryColor, onSurfaceColor, { draft = draft.copy(surface = it) }, "custom_theme_surface")
-                    ThemeColorField("Surface Variant", draft.surfaceVariant, primaryColor, onSurfaceColor, { draft = draft.copy(surfaceVariant = it) }, "custom_theme_surface_variant")
-                    ThemeColorField("Outline", draft.outline, primaryColor, onSurfaceColor, { draft = draft.copy(outline = it) }, "custom_theme_outline")
-                    ThemeColorField("Reader Background", draft.readerBackground, primaryColor, onSurfaceColor, { draft = draft.copy(readerBackground = it) }, "custom_theme_reader_background")
-                    ThemeColorField("Reader Text", draft.readerForeground, primaryColor, onSurfaceColor, { draft = draft.copy(readerForeground = it) }, "custom_theme_reader_foreground")
-                    ThemeColorField("System Text", draft.systemForeground, primaryColor, onSurfaceColor, { draft = draft.copy(systemForeground = it) }, "custom_theme_system_foreground")
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(enabled = isValid, onClick = { parsedTheme?.let { onSave(it, shouldActivate) } }) {
-                Text(if (session.isNew) "Create Theme" else "Save Theme")
-            }
-        },
-        dismissButton = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (!session.isNew && session.themeId.startsWith(CustomThemeIdPrefix)) {
-                    TextButton(onClick = onDelete) {
-                        Text("Delete", color = MaterialTheme.colorScheme.error)
-                    }
-                }
-                TextButton(onClick = onDismiss) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
-                }
-            }
-        },
-    )
-}
-
-@Composable
-private fun ThemeColorField(
-    label: String,
-    value: String,
-    primaryColor: Color,
-    onSurfaceColor: Color,
-    onValueChange: (String) -> Unit,
-    testTag: String,
-) {
-    val parsedColor = parseThemeColorOrNull(value)
-    var pickerExpanded by remember { mutableStateOf(false) }
-    var pickerHue by remember { mutableFloatStateOf(0f) }
-    var pickerSaturation by remember { mutableFloatStateOf(0f) }
-    var pickerValue by remember { mutableFloatStateOf(1f) }
-
-    fun openPicker() {
-        val hsv = (parsedColor ?: DefaultPickerColor).toHsvColor()
-        pickerHue = hsv.hue
-        pickerSaturation = hsv.saturation
-        pickerValue = hsv.value
-        pickerExpanded = true
-    }
-
-    fun updatePickerColor(
-        hue: Float = pickerHue,
-        saturation: Float = pickerSaturation,
-        valueBrightness: Float = pickerValue,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        pickerHue = hue
-        pickerSaturation = saturation
-        pickerValue = valueBrightness
-        onValueChange(formatThemeColor(HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong()))
-    }
-
-    val previewColor = Color(HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong())
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box {
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.45f))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onDismiss
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Surface(
                 modifier = Modifier
-                    .size(36.dp)
-                    .testTag("${testTag}_swatch")
-                    .semantics { contentDescription = "Open color picker for $label" }
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
-                    .clip(CircleShape)
-                    .clickable(onClick = ::openPicker)
-                    .padding(3.dp),
-                contentAlignment = Alignment.Center,
+                    .fillMaxWidth(0.95f)
+                    .fillMaxHeight(0.9f)
+                    .clickable(enabled = false) {}
+                    .graphicsLayer {
+                        shadowElevation = 32.dp.toPx()
+                        shape = RoundedCornerShape(32.dp)
+                        clip = true
+                    },
+                color = MaterialTheme.colorScheme.surface,
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                        .background(parsedColor?.let(::Color) ?: MaterialTheme.colorScheme.surfaceVariant)
-                        .border(1.dp, MaterialTheme.colorScheme.surface, CircleShape),
-                )
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(14.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        Icons.Default.Palette,
-                        contentDescription = null,
-                        modifier = Modifier.size(9.dp),
-                        tint = MaterialTheme.colorScheme.primary,
+                Column(modifier = Modifier.fillMaxSize()) {
+                    StudioHeader(
+                        isNew = session.isNew,
+                        isValid = isValid,
+                        onDismiss = onDismiss,
+                        onSave = { parsedTheme?.let { onSave(it, shouldActivate) } },
+                        onDelete = onDelete,
+                        showDelete = !session.isNew && session.themeId.startsWith(CustomThemeIdPrefix)
                     )
-                }
-            }
 
-            DropdownMenu(
-                expanded = pickerExpanded,
-                onDismissRequest = { pickerExpanded = false },
-            ) {
-                Column(
-                    modifier = Modifier
-                        .widthIn(min = 240.dp, max = 280.dp)
-                        .padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Text("$label Color", style = MaterialTheme.typography.titleSmall)
-                    Text(
-                        text = formatThemeColor(HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong()),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Box(
+                    // Derive canonical geometry for a BALANCED preview (match Carousel)
+                    val settings = session.settings
+                    val previewGeometry = remember(settings.fontSize, settings.lineHeight, settings.horizontalPadding) {
+                        val scale = 1.0f // Standard Carousel Scale
+                        val baseLineHeight = (4.dp * (settings.fontSize.toFloat() / 18f)) * scale
+                        val spacingBetweenLines = (baseLineHeight * (settings.lineHeight - 1f) + 4.dp) * scale
+                        val internalPadding = (16.dp * (settings.horizontalPadding.toFloat() / 16f)) * scale
+                        val constrainedPadding = if (internalPadding > 32.dp * scale) 32.dp * scale else internalPadding
+                        SpecimenGeometry(
+                            lineHeight = baseLineHeight,
+                            spacing = spacingBetweenLines,
+                            padding = constrainedPadding,
+                            fontSize = settings.fontSize.sp,
+                            scale = scale,
+                        )
+                    }
+
+                    // 1. Sticky Studio Area (Balanced Preview + Identity)
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(40.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                            .background(previewColor)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
-                    )
-                    Text("Hue", style = MaterialTheme.typography.labelSmall)
-                    Slider(
-                        value = pickerHue,
-                        onValueChange = { updatePickerColor(hue = it) },
-                        valueRange = 0f..360f,
-                        modifier = Modifier.testTag("${testTag}_picker_hue"),
-                        colors = androidx.compose.material3.SliderDefaults.colors(
-                            thumbColor = primaryColor,
-                            activeTrackColor = primaryColor,
-                            inactiveTrackColor = onSurfaceColor.copy(alpha = 0.2f),
-                        ),
-                    )
-                    Text("Saturation", style = MaterialTheme.typography.labelSmall)
-                    Slider(
-                        value = pickerSaturation,
-                        onValueChange = { updatePickerColor(saturation = it) },
-                        valueRange = 0f..1f,
-                        modifier = Modifier.testTag("${testTag}_picker_saturation"),
-                        colors = androidx.compose.material3.SliderDefaults.colors(
-                            thumbColor = primaryColor,
-                            activeTrackColor = primaryColor,
-                            inactiveTrackColor = onSurfaceColor.copy(alpha = 0.2f),
-                        ),
-                    )
-                    Text("Brightness", style = MaterialTheme.typography.labelSmall)
-                    Slider(
-                        value = pickerValue,
-                        onValueChange = { updatePickerColor(valueBrightness = it) },
-                        valueRange = 0f..1f,
-                        modifier = Modifier.testTag("${testTag}_picker_value"),
-                        colors = androidx.compose.material3.SliderDefaults.colors(
-                            thumbColor = primaryColor,
-                            activeTrackColor = primaryColor,
-                            inactiveTrackColor = onSurfaceColor.copy(alpha = 0.2f),
-                        ),
-                    )
+                            .padding(horizontal = 20.dp, vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // High-Fidelity Specimen
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(140.dp)
+                                .graphicsLayer {
+                                    clip = true
+                                    shape = RoundedCornerShape(16.dp)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Box(modifier = Modifier.fillMaxWidth(0.75f)) {
+                                ThemePreviewCard(
+                                    theme = previewTheme,
+                                    staggerIndex = 0,
+                                    gallerySessionKey = 0L,
+                                    fontFamily = FontFamily.Default,
+                                    geometry = previewGeometry,
+                                    isActive = true,
+                                    isSelectionMode = false,
+                                    isSelected = false,
+                                    isGalleryOpen = true,
+                                    onClick = {},
+                                    onLongClick = {}
+                                )
+                            }
+                        }
+
+                        // Theme Name (Moved down from side-by-side)
+                        StudioTextField(
+                            value = draft.name,
+                            onValueChange = { draftState.value = draftState.value.copy(name = it) },
+                            label = "Theme Name",
+                            isError = draft.name.trim().isEmpty() || nameConflict,
+                            errorText = when {
+                                draft.name.trim().isEmpty() -> "Name required"
+                                nameConflict -> "Taken"
+                                else -> null
+                            }
+                        )
+                        
+                        Divider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
+                            thickness = 0.5.dp
+                        )
+                    }
+
+                    // 2. Scrollable Detail Area (Control Grid)
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        var activePickerKey by remember { mutableStateOf<String?>(null) }
+                        
+                        // A. Core Row (Primary + BG)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                StudioColorCell("Primary", draft.primary) { activePickerKey = "Primary" }
+                            }
+                            Box(modifier = Modifier.weight(1f)) {
+                                StudioColorCell("Background", draft.background) { activePickerKey = "Background" }
+                            }
+                        }
+
+                        // B. Advanced Toggle (Full Width)
+                        StudioToggleCell(
+                            label = "Advanced Studio",
+                            checked = draft.isAdvanced,
+                            onCheckedChange = { draftState.value = draftState.value.copy(isAdvanced = it) }
+                        )
+                        
+                        // C. Advanced Colors (Chunked Grid)
+                        val allColors = remember {
+                            listOf(
+                                "Primary" to { draftState.value.primary } to { c: String -> draftState.value = draftState.value.copy(primary = c) },
+                                "Background" to { draftState.value.background } to { c: String -> draftState.value = draftState.value.copy(background = c) },
+                                "Secondary" to { draftState.value.secondary } to { c: String -> draftState.value = draftState.value.copy(secondary = c) },
+                                "Surface" to { draftState.value.surface } to { c: String -> draftState.value = draftState.value.copy(surface = c) },
+                                "Surface Variant" to { draftState.value.surfaceVariant } to { c: String -> draftState.value = draftState.value.copy(surfaceVariant = c) },
+                                "Outline" to { draftState.value.outline } to { c: String -> draftState.value = draftState.value.copy(outline = c) },
+                                "Reader Background" to { draftState.value.readerBackground } to { c: String -> draftState.value = draftState.value.copy(readerBackground = c) },
+                                "Reader Text" to { draftState.value.readerForeground } to { c: String -> draftState.value = draftState.value.copy(readerForeground = c) },
+                                "System Text" to { draftState.value.systemForeground } to { c: String -> draftState.value = draftState.value.copy(systemForeground = c) }
+                            )
+                        }
+
+                        if (draft.isAdvanced) {
+                            val secondarySet = remember(allColors) { allColors.drop(2) }
+                            val rows = remember(secondarySet) { secondarySet.chunked(2) }
+                            
+                            rows.forEach { rowPairs ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    rowPairs.forEach { item ->
+                                        val (pair, _) = item
+                                        val (label, getter) = pair
+                                        Box(modifier = Modifier.weight(1f)) {
+                                            StudioColorCell(label, getter()) { activePickerKey = label }
+                                        }
+                                    }
+                                    if (rowPairs.size == 1) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                    }
+                                }
+                            }
+                        }
+
+                        // Pickers
+                        allColors.forEach { (pair, setter) ->
+                            val (label, value) = pair
+                            if (activePickerKey == label) {
+                                ColorPickerOverlay(
+                                    label = label,
+                                    initialValue = value(),
+                                    primaryColor = primaryColor,
+                                    onSurfaceColor = onSurfaceColor,
+                                    onDismiss = { activePickerKey = null },
+                                    onValueChange = setter
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
                 }
             }
         }
-
-        Spacer(Modifier.width(12.dp))
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            label = { Text(label) },
-            singleLine = true,
-            isError = parsedColor == null,
-            supportingText = {
-                if (parsedColor == null) {
-                    Text("Use a hex color like #F4ECD8")
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(testTag),
-        )
     }
+}
+
+@Composable
+private fun ColorPickerOverlay(
+    label: String,
+    initialValue: String,
+    primaryColor: Color,
+    onSurfaceColor: Color,
+    onDismiss: () -> Unit,
+    onValueChange: (String) -> Unit
+) {
+    val parsedColor = remember(initialValue) { parseThemeColorOrNull(initialValue) }
+    val initialHsv = remember(parsedColor) { (parsedColor ?: DefaultPickerColor).toHsvColor() }
+    var pickerHue by remember { mutableFloatStateOf(initialHsv.hue) }
+    var pickerSaturation by remember { mutableFloatStateOf(initialHsv.saturation) }
+    var pickerValue by remember { mutableFloatStateOf(initialHsv.value) }
+
+    // Throttled update to parent to maintain high-performance live preview
+    LaunchedEffect(pickerHue, pickerSaturation, pickerValue) {
+        val newColor = HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong()
+        onValueChange(formatThemeColor(newColor))
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = { TextButton(onClick = onDismiss) { Text("Done") } },
+        title = { Text("$label Color") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                // Local preview box (recomposes at 60fps)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong()))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+                )
+                
+                Text("Hue", style = MaterialTheme.typography.labelSmall)
+                Slider(
+                    value = pickerHue, 
+                    onValueChange = { pickerHue = it }, 
+                    valueRange = 0f..360f
+                )
+                
+                Text("Saturation", style = MaterialTheme.typography.labelSmall)
+                Slider(
+                    value = pickerSaturation, 
+                    onValueChange = { pickerSaturation = it }, 
+                    valueRange = 0f..1f
+                )
+                
+                Text("Brightness", style = MaterialTheme.typography.labelSmall)
+                Slider(
+                    value = pickerValue, 
+                    onValueChange = { pickerValue = it }, 
+                    valueRange = 0f..1f
+                )
+            }
+        }
+    )
 }
 
 private const val DefaultPickerColor = 0xFFFFFFFFL
@@ -338,27 +368,25 @@ private data class HsvColor(
     val saturation: Float,
     val value: Float,
 ) {
+    fun toHsvColor(): HsvColor = this // Identity for easier logic in picker
+
     fun toColorLong(): Long {
-        return AndroidColor.HSVToColor(
-            floatArrayOf(
-                hue.coerceIn(0f, 360f),
-                saturation.coerceIn(0f, 1f),
-                value.coerceIn(0f, 1f),
-            ),
-        ).toLong() and 0xFFFFFFFFL
+        val hsv = floatArrayOf(hue, saturation, value)
+        return android.graphics.Color.HSVToColor(hsv).toLong() and 0xFFFFFFFFL
     }
 }
 
 private fun Long.toHsvColor(): HsvColor {
     val hsv = FloatArray(3)
-    AndroidColor.colorToHSV(this.toInt(), hsv)
-    return HsvColor(hue = hsv[0], saturation = hsv[1], value = hsv[2])
+    android.graphics.Color.colorToHSV(this.toInt(), hsv)
+    return HsvColor(hsv[0], hsv[1], hsv[2])
 }
 
 internal data class ThemeEditorSession(
     val themeId: String,
     val isNew: Boolean,
     val draft: ThemeEditorDraft,
+    val settings: com.epubreader.core.model.GlobalSettings
 )
 
 internal data class ThemeEditorDraft(
@@ -385,7 +413,7 @@ internal data class ThemeEditorDraft(
         val parsedReaderForeground = parseThemeColorOrNull(readerForeground) ?: return null
         val parsedSystemForeground = parseThemeColorOrNull(systemForeground) ?: return null
         val trimmedName = name.trim()
-        if (trimmedName.isEmpty()) return null
+        // We allow empty name in this mapper to support Live Preview while typing
 
         return CustomTheme(
             id = themeId,

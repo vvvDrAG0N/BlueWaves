@@ -25,9 +25,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -42,6 +45,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.epubreader.core.model.BuiltInThemeOptions
@@ -51,6 +61,7 @@ import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,6 +77,20 @@ internal fun AppearanceTab(
     val context = androidx.compose.ui.platform.LocalContext.current
     var themeToExport by remember { mutableStateOf<CustomTheme?>(null) }
     var isGalleryOpen by remember { mutableStateOf(false) }
+    var renderGalleryOverlay by remember { mutableStateOf(false) }
+    LaunchedEffect(isGalleryOpen) {
+        if (isGalleryOpen) {
+            renderGalleryOverlay = true
+        } else if (renderGalleryOverlay) {
+            // Drop the heavy layered grid after the close animation settles.
+            delay(220)
+            renderGalleryOverlay = false
+        }
+    }
+
+    val gallerySessionKey = remember { System.currentTimeMillis() }
+    val galleryGridState = androidx.compose.foundation.lazy.grid.rememberLazyGridState()
+
     var isSelectionMode by remember { mutableStateOf(false) }
     var selectedThemeIds by remember { mutableStateOf(setOf<String>()) }
     var showBulkDeleteConfirm by remember { mutableStateOf(false) }
@@ -125,19 +150,32 @@ internal fun AppearanceTab(
     }
     val pagerState = rememberPagerState(initialPage = initialPage) { allThemes.size }
 
-    LaunchedEffect(settings.theme) {
+    var isProgrammaticScroll by remember { mutableStateOf(false) }
+
+    LaunchedEffect(settings.theme, allThemes) {
         val targetPage = allThemes.indexOfFirst { it.id == settings.theme }
-        if (targetPage >= 0 && pagerState.settledPage != targetPage && !pagerState.isScrollInProgress) {
-            pagerState.animateScrollToPage(targetPage)
+        if (targetPage >= 0 && pagerState.settledPage != targetPage) {
+            isProgrammaticScroll = true
+            try {
+                // Wait for any existing scroll to finish, then animate to target
+                androidx.compose.runtime.snapshotFlow { pagerState.isScrollInProgress }.first { !it }
+                pagerState.animateScrollToPage(targetPage)
+            } finally {
+                isProgrammaticScroll = false
+            }
         }
     }
 
     // Sync global theme when pager settles
-    LaunchedEffect(pagerState.settledPage, allThemes) {
-        val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
-        val themeId = allThemes[safeIndex].id
-        if (themeId != settings.theme) {
-            settingsManager.setActiveTheme(themeId)
+    LaunchedEffect(pagerState.settledPage) {
+        if (allThemes.isEmpty()) return@LaunchedEffect
+        // Only sync if the pager has actually settled and we aren't mid-scroll
+        if (!pagerState.isScrollInProgress) {
+            val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+            val themeId = allThemes[safeIndex].id
+            if (themeId != settings.theme) {
+                settingsManager.setActiveTheme(themeId)
+            }
         }
     }
 
@@ -175,29 +213,43 @@ internal fun AppearanceTab(
         )
     }
 
+    val settingsThemeIndex = remember(settings.theme, allThemes) {
+        allThemes.indexOfFirst { it.id == settings.theme }.coerceIn(allThemes.indices)
+    }
+
+    // Performance-first visual index: Follows currentPage during drag, jumps to target during programmatic scroll
+    val visualIndex by remember(pagerState, isProgrammaticScroll, settingsThemeIndex) {
+        derivedStateOf {
+            if (isProgrammaticScroll) {
+                settingsThemeIndex
+            } else {
+                pagerState.currentPage
+            }
+        }
+    }
+
     val dashboardBgModifier = Modifier.drawBehind {
-        val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+        val safeIndex = visualIndex.coerceIn(allThemes.indices)
         drawRect(Color(allThemes[safeIndex].palette.background))
     }
-    val getSysFg = remember(allThemes, pagerState) {
+    val getSysFg = remember(allThemes, visualIndex) {
         {
-            val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+            val safeIndex = visualIndex.coerceIn(allThemes.indices)
             Color(allThemes[safeIndex].palette.systemForeground)
         }
     }
-    val getPrimary = remember(allThemes, pagerState) {
+    val getPrimary = remember(allThemes, visualIndex) {
         {
-            val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+            val safeIndex = visualIndex.coerceIn(allThemes.indices)
             Color(allThemes[safeIndex].palette.primary)
         }
     }
 
-    // Removed redundant delayed theme switch
-
-    SideEffect {
-        val window = (context as? android.app.Activity)?.window ?: return@SideEffect
+    // High-performance system bar management
+    LaunchedEffect(visualIndex, allThemes) {
+        val window = (context as? android.app.Activity)?.window ?: return@LaunchedEffect
         if (allThemes.isNotEmpty()) {
-            val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
+            val safeIndex = visualIndex.coerceIn(allThemes.indices)
             val theme = allThemes[safeIndex]
             val isDark = Color(theme.palette.background).luminance() < 0.5f
             WindowCompat.getInsetsController(window, window.decorView).apply {
@@ -207,8 +259,8 @@ internal fun AppearanceTab(
         }
     }
 
-    val currentTheme = remember(pagerState.settledPage, allThemes) {
-        if (allThemes.isEmpty()) null else allThemes[pagerState.settledPage.coerceIn(allThemes.indices)]
+    val currentTheme = remember(visualIndex, allThemes) {
+        if (allThemes.isEmpty()) null else allThemes[visualIndex.coerceIn(allThemes.indices)]
     }
 
     Box(modifier = Modifier.fillMaxSize().then(dashboardBgModifier)) {
@@ -250,13 +302,14 @@ internal fun AppearanceTab(
                 beyondViewportPageCount = 1,
                 key = { index -> if (index < allThemes.size) allThemes[index].id else index },
             ) { page ->
+                // Marquee remains tied to settled state for stability
                 val isFocused = pagerState.settledPage == page && !pagerState.isScrollInProgress
                 Box(modifier = Modifier.graphicsLayer { clip = false }) {
                     LandscapeSpecimenCard(
                         theme = allThemes[page],
                         fontFamily = readerFontFamily,
                         geometry = carouselGeometry,
-                        isActive = page == pagerState.settledPage,
+                        isActive = page == visualIndex,
                         isMarqueeActive = { isFocused },
                     )
                 }
@@ -270,7 +323,7 @@ internal fun AppearanceTab(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 androidx.compose.material3.Text(
-                    text = "${pagerState.settledPage + 1} / ${allThemes.size}",
+                    text = "${visualIndex + 1} / ${allThemes.size}",
                     style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
                     color = getSysFg().copy(alpha = 0.5f),
                     letterSpacing = 1.sp,
@@ -330,55 +383,99 @@ internal fun AppearanceTab(
             Spacer(Modifier.height(32.dp))
         }
 
-        AnimatedVisibility(
-            visible = isGalleryOpen,
-            enter = fadeIn() + slideInVertically { it },
-            exit = fadeOut() + slideOutVertically { it },
-        ) {
-            ThemeGalleryOverlay(
-                allThemes = allThemes,
-                activeThemeId = settings.theme,
-                isSelectionMode = isSelectionMode,
-                selectedIds = selectedThemeIds,
-                fontFamily = readerFontFamily,
-                geometry = galleryGeometry,
-                onThemeSelect = { theme ->
-                    scope.launch { settingsManager.setActiveTheme(theme.id) }
-                    isGalleryOpen = false
-                },
-                onToggleSelection = { id ->
-                    selectedThemeIds = if (selectedThemeIds.contains(id)) selectedThemeIds - id else selectedThemeIds + id
-                },
-                onEnterSelectionMode = { id ->
-                    isSelectionMode = true
-                    selectedThemeIds = setOf(id)
-                },
-                onBulkDelete = { showBulkDeleteConfirm = true },
-                onBulkExport = { bulkExportLauncher.launch("themes_pack_${System.currentTimeMillis()}.zip") },
-                onCloseSelectionMode = {
-                    isSelectionMode = false
-                    selectedThemeIds = emptySet()
-                },
-                onDismiss = {
-                    isGalleryOpen = false
-                    isSelectionMode = false
-                    selectedThemeIds = emptySet()
-                },
+        if (renderGalleryOverlay) {
+            val galleryAlpha by animateFloatAsState(
+                targetValue = if (isGalleryOpen) 1f else 0f,
+                animationSpec = spring(
+                    stiffness = if (isGalleryOpen) Spring.StiffnessLow else Spring.StiffnessMedium,
+                    visibilityThreshold = 0.001f
+                ),
+                label = "galleryAlpha"
             )
-        }
+            val galleryScale by animateFloatAsState(
+                targetValue = if (isGalleryOpen) 1f else 0.92f,
+                animationSpec = spring(
+                    stiffness = if (isGalleryOpen) Spring.StiffnessLow else Spring.StiffnessMedium,
+                    visibilityThreshold = 0.001f
+                ),
+                label = "galleryScale"
+            )
 
-        if (showBulkDeleteConfirm) {
-            val customTargets = selectedThemeIds.filter { it.startsWith(CustomThemeIdPrefix) }
-            BulkDeleteConfirmationDialog(
-                count = customTargets.size,
-                onConfirm = {
-                    scope.launch { settingsManager.deleteCustomThemes(customTargets.toSet()) }
-                    showBulkDeleteConfirm = false
-                    isSelectionMode = false
-                    selectedThemeIds = emptySet()
-                },
-                onDismiss = { showBulkDeleteConfirm = false },
-            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                // Interaction Shield: Blocks dashboard touches while gallery is visible or animating
+                if (galleryAlpha > 0.01f) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { /* Block touches during animation */ }
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            alpha = galleryAlpha
+                            scaleX = galleryScale
+                            scaleY = galleryScale
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    ThemeGalleryOverlay(
+                        allThemes = allThemes,
+                        activeThemeId = settings.theme,
+                        isSelectionMode = isSelectionMode,
+                        selectedIds = selectedThemeIds,
+                        fontFamily = readerFontFamily,
+                        geometry = galleryGeometry,
+                        gallerySessionKey = gallerySessionKey,
+                        galleryGridState = galleryGridState,
+                        isGalleryOpen = isGalleryOpen,
+                        onThemeSelect = { theme ->
+                            scope.launch { settingsManager.setActiveTheme(theme.id) }
+                            isGalleryOpen = false
+                        },
+                        onToggleSelection = { id ->
+                            selectedThemeIds = if (selectedThemeIds.contains(id)) selectedThemeIds - id else selectedThemeIds + id
+                        },
+                        onEnterSelectionMode = { id ->
+                            isSelectionMode = true
+                            selectedThemeIds = setOf(id)
+                        },
+                        onBulkDelete = { showBulkDeleteConfirm = true },
+                        onBulkExport = { bulkExportLauncher.launch("themes_pack_${System.currentTimeMillis()}.zip") },
+                        onCloseSelectionMode = {
+                            isSelectionMode = false
+                            selectedThemeIds = emptySet()
+                        },
+                        onDismiss = {
+                            isGalleryOpen = false
+                            isSelectionMode = false
+                            selectedThemeIds = emptySet()
+                        },
+                    )
+                }
+            }
         }
+    }
+
+    if (showBulkDeleteConfirm) {
+        val customTargets = selectedThemeIds.filter { it.startsWith(CustomThemeIdPrefix) }
+        BulkDeleteConfirmationDialog(
+            count = customTargets.size,
+            onConfirm = {
+                scope.launch { settingsManager.deleteCustomThemes(customTargets.toSet()) }
+                showBulkDeleteConfirm = false
+                isSelectionMode = false
+                selectedThemeIds = emptySet()
+            },
+            onDismiss = { showBulkDeleteConfirm = false },
+        )
     }
 }

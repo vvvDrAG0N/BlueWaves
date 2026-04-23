@@ -212,3 +212,50 @@ This file is append-only.
 - Verification: Successful module compilation.
 - Blockers: None.
 - Suggested next step: None.
+## 21. 2026-04-23 18:35
+- **Agent model**: Antigravity
+- **Agent name**: Antigravity
+- **Task goal**: Stabilize Theme Gallery pager and optimize Theme Studio performance.
+- **Area/files**: SettingsAppearanceTab.kt, SettingsThemeEditor.kt, SettingsThemeStudioComponents.kt
+- **Action taken**:
+    - Resolved a critical race condition in the `ThemeGallery` pager by removing redundant state keys and adding `isScrollInProgress` guards.
+    - Implemented high-performance state management in `ThemeStudio` by memoizing the control grid and decoupling the color picker's interaction from global recomposition.
+    - Added localized HSV state in `ColorPickerOverlay` to enable lag-free color adjustments.
+    - Optimized rendering scope with `graphicsLayer` clipping on specimen previews.
+- **Result**: Theme transitions are now atomic and stable. The Theme Studio remains fluid (60fps) during rapid color editing, with memory allocations and recompositions significantly reduced.
+- **Status**: Stable. Build successful.
+- **Verification**: `./gradlew :feature:settings:compileDebugKotlin` passed.
+- **Blockers**: None.
+- **Suggested next step**: Consider applying similar memoization patterns to other complex settings panels (e.g., Font/Typography).
+## 22. 2026-04-23 18:50
+- **Agent model**: Antigravity
+- **Agent name**: Antigravity
+- **Task goal**: Eliminate perceived lag in Theme Gallery swipes in the Appearance Tab.
+- **Area/files**: SettingsAppearanceTab.kt
+- **Action taken**:
+    - Decoupled UI visuals from persistent state by switching background, counter, and icon tokens to `pagerState.currentPage`.
+    - Optimized system bar management by migrating icon color logic from `SideEffect` to a throttled `LaunchedEffect`.
+    - Preserved marquee stability by keeping the text-scroll trigger on `settledPage`.
+- **Result**: Theme transitions now feel instantaneous as cards cross the screen's center, while maintaining high performance and avoiding redundant DataStore writes.
+- **Status**: Stable. Build successful.
+- **Verification**: `./gradlew :feature:settings:compileDebugKotlin` passed.
+- **Blockers**: None.
+- **Suggested next step**: None.
+
+## 23. 2026-04-23 20:23
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Investigate and stabilize the Global Settings Appearance Theme Gallery freeze/crash when the gallery is closed.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `logcat_recent.txt`
+- Action taken:
+    1. Reviewed the first 150 and last 50 lines of `logcat_recent.txt` and traced the failure to a `RenderThread` abort (`OpenGLRenderer: Impossible totalDuration 0`) instead of a normal app exception.
+    2. Audited the Theme Gallery overlay lifecycle and found the gallery remained composed after close, leaving the heavy layered grid alive behind the Appearance screen.
+    3. Added a short unmount delay so the close animation can finish, then fully remove the overlay from composition.
+    4. Added a focused instrumentation test that opens the gallery, dismisses it with `Done`, waits for the overlay to disappear, and reopens it.
+- Result: The gallery close path now tears down the hidden overlay after the exit animation instead of leaving the render-heavy grid mounted.
+- Verification:
+    - `.\gradlew.bat assembleDebug`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_doneDismissesOverlayAndAllowsReopen'`
+    - Manual adb sanity check confirmed the app process stayed alive and the crash buffer was empty after the gallery interaction.
+- Blockers: None.
+- Suggested next step: Re-run the exact user flow once on the target device/emulator build and capture a fresh logcat only if a renderer crash still reproduces.

@@ -46,6 +46,7 @@ import com.epubreader.core.model.BuiltInThemeOptions
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.CustomThemeIdPrefix
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.suggestNextThemeName
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.core.ui.getStaticWindowInsets
 import com.epubreader.data.settings.SettingsManager
@@ -76,10 +77,11 @@ fun SettingsScreen(
             themeId = "$CustomThemeIdPrefix${UUID.randomUUID()}",
             isNew = true,
             draft = ThemeEditorDraft.fromPalette(
-                name = "",
+                name = suggestNextThemeName(settings.customThemes),
                 palette = themePaletteSeed(settings.theme, settings.customThemes),
                 isAdvanced = false,
             ),
+            settings = settings,
         )
     }
 
@@ -88,6 +90,7 @@ fun SettingsScreen(
             themeId = theme.id,
             isNew = false,
             draft = ThemeEditorDraft.fromTheme(theme),
+            settings = settings,
         )
     }
 
@@ -160,7 +163,8 @@ fun SettingsScreen(
         }
     }
 
-    editorSession?.let { session ->
+    val session = editorSession
+    if (session != null) {
         val currentPalette = themePaletteSeed(settings.theme, settings.customThemes)
         CustomThemeEditorDialog(
             session = session,
@@ -180,7 +184,7 @@ fun SettingsScreen(
                     settingsManager.deleteCustomTheme(session.themeId)
                     editorSession = null
                 }
-            },
+            }
         )
     }
 

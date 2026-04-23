@@ -136,6 +136,20 @@ class SettingsScreenPersistenceTest {
     }
 
     @Test
+    fun themeGallery_doneDismissesOverlayAndAllowsReopen() {
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+
+        openThemeGallery()
+        composeRule.onNodeWithText("Done").performClick()
+        composeRule.waitUntil(10_000) { !tagExists("theme_gallery_preview_light") }
+
+        openThemeGallery()
+        composeRule.onNodeWithTag("theme_gallery_preview_light").assertIsDisplayed()
+    }
+
+    @Test
     fun showSystemBar_persistsAcrossScreenReopenAndActivityRecreation() {
         launchSettingsScreen()
         waitUntilDisplayed("Settings")

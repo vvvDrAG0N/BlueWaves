@@ -247,7 +247,7 @@ internal fun ThemeSpecimenContent(
                     fontFamily = fontFamily,
                     maxLines = 1,
                     softWrap = false,
-                    fontSize = if (isMini) 8.sp else 12.sp,
+                    fontSize = if (isMini) 11.sp else 18.sp,
                     modifier = Modifier
                         .fillMaxWidth()
                         .basicMarquee(
@@ -269,31 +269,35 @@ internal fun ThemeSpecimenContent(
                     val readerFg = Color(p.readerForeground)
                     val primaryColor = Color(p.primary)
 
+                    val lineH = h * 0.6f
+                    val yOffset = (h - lineH) / 2
+                    
                     drawRoundRect(
                         color = readerFg,
-                        size = androidx.compose.ui.geometry.Size(size.width * 0.9f, h),
+                        topLeft = androidx.compose.ui.geometry.Offset(0f, yOffset),
+                        size = androidx.compose.ui.geometry.Size(size.width * 0.9f, lineH),
                         cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r),
                     )
 
-                    val y2 = h + s
+                    val y2Base = h + s
                     drawRoundRect(
                         color = readerFg.copy(alpha = 0.5f),
-                        topLeft = androidx.compose.ui.geometry.Offset(0f, y2),
-                        size = androidx.compose.ui.geometry.Size(size.width * 0.3f, h),
+                        topLeft = androidx.compose.ui.geometry.Offset(0f, y2Base + yOffset),
+                        size = androidx.compose.ui.geometry.Size(size.width * 0.3f, lineH),
                         cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r),
                     )
                     drawRoundRect(
                         color = primaryColor,
-                        topLeft = androidx.compose.ui.geometry.Offset(size.width * 0.3f + 4.dp.toPx(), y2),
-                        size = androidx.compose.ui.geometry.Size(size.width * 0.4f, h),
+                        topLeft = androidx.compose.ui.geometry.Offset(size.width * 0.3f + 4.dp.toPx(), y2Base + yOffset - 1.dp.toPx()),
+                        size = androidx.compose.ui.geometry.Size(size.width * 0.4f, lineH + 2.dp.toPx()),
                         cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r),
                     )
 
-                    val y3 = (h + s) * 2
+                    val y3Base = (h + s) * 2
                     drawRoundRect(
                         color = readerFg.copy(alpha = 0.5f),
-                        topLeft = androidx.compose.ui.geometry.Offset(0f, y3),
-                        size = androidx.compose.ui.geometry.Size(size.width * 0.8f, h),
+                        topLeft = androidx.compose.ui.geometry.Offset(0f, y3Base + yOffset),
+                        size = androidx.compose.ui.geometry.Size(size.width * 0.8f, lineH),
                         cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r),
                     )
                 }
