@@ -4,78 +4,89 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.compose.ui.platform.LocalHapticFeedback
 import com.epubreader.app.AppNavigation
+import com.epubreader.app.AppWarmUpScreen
+import com.epubreader.app.StartupPhase
 import com.epubreader.core.model.CustomTheme
+import com.epubreader.core.model.DarkThemeId
+import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.ThemePalette
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.settings.SettingsManager
-import com.epubreader.feature.settings.ThemeStudioScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 /**
  * Entry point of the application.
  * Keeps app bootstrap concerns separate from the navigation and feature UI code.
  */
 class MainActivity : ComponentActivity() {
+    private var keepNativeSplashVisible = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        splashScreen.setKeepOnScreenCondition { keepNativeSplashVisible }
         enableEdgeToEdge()
         val settingsManager = SettingsManager(this)
 
         setContent {
-            val globalSettingsState = settingsManager.globalSettings.collectAsState(initial = null)
-            val globalSettings = globalSettingsState.value
+            SideEffect {
+                keepNativeSplashVisible = false
+            }
+            val globalSettings by settingsManager.globalSettings.collectAsState(initial = null)
 
-            if (globalSettings != null) {
-                MaterialTheme(
-                    colorScheme = appColorScheme(
-                        theme = globalSettings.theme,
-                        customThemes = globalSettings.customThemes,
-                    )
-                ) {
-                    val defaultHaptics = LocalHapticFeedback.current
-                    val haptics = if (globalSettings.hapticFeedback) {
-                        defaultHaptics
-                    } else {
-                        object : HapticFeedback {
-                            override fun performHapticFeedback(hapticFeedbackType: HapticFeedbackType) {}
-                        }
-                    }
+            if (globalSettings == null) {
+                val fallbackTheme = if (isSystemInDarkTheme()) DarkThemeId else LightThemeId
+                MaterialTheme(colorScheme = appColorScheme(fallbackTheme)) {
+                    AppWarmUpScreen(phase = StartupPhase.WaitingForSettings)
+                }
+                return@setContent
+            }
+            val loadedGlobalSettings = globalSettings ?: return@setContent
 
-                    // Disable view-level haptics for the root window when the setting is off.
-                    // This catches system gestures like back-swipes that the OS triggers.
-                    LaunchedEffect(globalSettings.hapticFeedback) {
-                        window.decorView.isHapticFeedbackEnabled = globalSettings.hapticFeedback
-                    }
-
-                    CompositionLocalProvider(LocalHapticFeedback provides haptics) {
-                        AppNavigation(
-                            settingsManager = settingsManager,
-                            globalSettings = globalSettings
-                        )
+            MaterialTheme(
+                colorScheme = appColorScheme(
+                    theme = loadedGlobalSettings.theme,
+                    customThemes = loadedGlobalSettings.customThemes,
+                )
+            ) {
+                val defaultHaptics = LocalHapticFeedback.current
+                val haptics = if (loadedGlobalSettings.hapticFeedback) {
+                    defaultHaptics
+                } else {
+                    object : HapticFeedback {
+                        override fun performHapticFeedback(hapticFeedbackType: HapticFeedbackType) {}
                     }
                 }
-            } else {
-                Box(Modifier.fillMaxSize().background(Color.Black))
+
+                // Disable view-level haptics for the root window when the setting is off.
+                // This catches system gestures like back-swipes that the OS triggers.
+                LaunchedEffect(loadedGlobalSettings.hapticFeedback) {
+                    window.decorView.isHapticFeedbackEnabled = loadedGlobalSettings.hapticFeedback
+                }
+
+                CompositionLocalProvider(LocalHapticFeedback provides haptics) {
+                    AppNavigation(
+                        settingsManager = settingsManager,
+                        globalSettings = loadedGlobalSettings
+                    )
+                }
             }
         }
     }

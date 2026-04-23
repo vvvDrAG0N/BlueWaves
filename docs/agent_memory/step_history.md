@@ -259,3 +259,105 @@ This file is append-only.
     - Manual adb sanity check confirmed the app process stayed alive and the crash buffer was empty after the gallery interaction.
 - Blockers: None.
 - Suggested next step: Re-run the exact user flow once on the target device/emulator build and capture a fresh logcat only if a renderer crash still reproduces.
+
+## 24. 2026-04-23 21:27
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Implement the keep-alive Theme Gallery crash fix so the gallery stays mounted for the `AppearanceTab` session while hidden-state rendering becomes safer.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeGallery.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`
+- Action taken:
+    1. Replaced the temporary delayed teardown host with a one-way `hasGalleryBeenOpened` gate so the gallery stays composed until `AppearanceTab` leaves composition.
+    2. Kept the close/open animation host in `AppearanceTab`, but left cleanup bound to leaving Appearance instead of each gallery close.
+    3. Hardened the hidden gallery state by disabling back handling, scrolling, selection clicks, and elevated layer shadows whenever `isGalleryOpen` is false.
+    4. Added a stable gallery grid test tag and converted the instrumentation coverage to keep-alive expectations: hidden theme updates appear on reopen, scroll position survives close/reopen in the same Appearance session, and leaving Appearance resets the gallery session.
+    5. Switched the leave-Appearance instrumentation path to a real back action and used swipe-based grid traversal so the tests match preserved scroll state instead of teardown semantics.
+- Result: Theme Gallery now stays warm for the life of the Appearance tab, reopens without a cold rebuild, and the renderer-crash signature did not reproduce in the verified emulator flow after the fix.
+- Verification:
+    - `.\gradlew.bat assembleDebug`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_hiddenThemeUpdates_appearOnReopen,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_closeAndReopen_preservesScrollPositionWithinAppearanceSession,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_leavingAppearance_resetsGallerySession"`
+    - `.\gradlew.bat installDebug`
+    - Manual adb QA on `emulator-5554`: launched app, opened Settings > Appearance > Gallery, closed the flow, confirmed the process stayed alive, `adb logcat -b crash -d` was empty, and no fresh `OpenGLRenderer: Impossible totalDuration 0` / fatal `RenderThread` abort appeared in logcat.
+- Blockers:
+    - `uiautomator dump` could not reach an idle state while the gallery was open or immediately after the close tap in the emulator, even though the app stayed alive and recovered after backing out of Appearance. If the user still sees a device-specific freeze, capture a fresh post-fix logcat from that device.
+- Suggested next step:
+    - Validate the same open/close path once on the target device build. Only remove the outer gallery scale animation if the renderer crash or visible freeze still reproduces there.
+
+## 25. 2026-04-23 22:02
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the post-dismiss Appearance touch lock where closing Theme Gallery left the Appearance tab visually visible but non-interactive.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeGallery.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`
+- Action taken:
+    1. Investigated the keep-alive overlay host and confirmed the hidden gallery remained mounted above the Appearance content after dismiss.
+    2. Updated the Appearance overlay host to push the kept-alive gallery behind the dashboard once the close animation is effectively finished, while keeping it mounted for session reuse.
+    3. Replaced hidden-state `clickable` / `combinedClickable` usage with conditional modifiers so the backdrop and preview cards stop attaching pointer input handlers when the gallery is hidden.
+    4. Added a focused regression test that opens the gallery, dismisses it with `Done`, then taps `Create` on the Appearance screen and confirms the theme editor opens.
+- Result: Closing Theme Gallery no longer leaves an invisible touch-shadow layer over the Appearance tab; the user can interact with Appearance controls again without leaving the section.
+- Verification:
+    - `.\gradlew.bat assembleDebug`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_doneDismiss_restoresAppearanceInteractions,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_hiddenThemeUpdates_appearOnReopen,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_closeAndReopen_preservesScrollPositionWithinAppearanceSession,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_leavingAppearance_resetsGallerySession"`
+    - `adb -s emulator-5554 logcat -b crash -d` returned no crash entries after the targeted run.
+- Blockers: None in the targeted emulator verification.
+- Suggested next step: Recheck the exact close path on the user's device only if they still observe a visible freeze or dead-touch state after this build.
+
+## 26. 2026-04-23 22:34
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the intermittent Theme Gallery stale-selection sync after closing the gallery, switching themes in Appearance, and reopening the gallery.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`
+- Action taken:
+    1. Traced the mismatch to the keep-alive gallery using a session-local active theme id that only updated on the settled/persisted path, while the Appearance visuals could move sooner with the pager.
+    2. Updated `AppearanceTab` so `selectedThemeId` also tracks user-driven pager transitions while the pager is moving, not just `settings.theme` and the settled-page callback.
+    3. Replaced the first flaky swipe-based regression attempt with a stable instrumentation test that changes the active theme while the gallery is hidden, then reopens the gallery and verifies the selected preview stays in sync.
+- Result: Reopening Theme Gallery now reflects the current Appearance theme selection more reliably instead of occasionally highlighting the previously active theme.
+- Verification:
+    - `.\gradlew.bat assembleDebug`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_closeSwitchThemeAndReopen_syncsSelectedTheme,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_doneDismiss_restoresAppearanceInteractions,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_hiddenThemeUpdates_appearOnReopen,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_closeAndReopen_preservesScrollPositionWithinAppearanceSession,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_leavingAppearance_resetsGallerySession"`
+- Blockers:
+    - The exact swipe-driven pager repro was flaky in module-level Compose instrumentation, so the automated regression validates hidden-state theme sync rather than the precise gesture timing window.
+- Suggested next step:
+    - Only if the user still sees stale selection after a fast swipe-and-reopen flow on a device, do one targeted manual device repro and add a more direct pager interaction hook later.
+
+## 27. 2026-04-23 23:18
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the intermittent Appearance swipe-selection persistence gap where the carousel preview changes, but leaving Appearance can drop the theme change before it reaches global settings.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceVisuals.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`
+- Action taken:
+    1. Traced the bug to `AppearanceTab` only persisting theme changes from `pagerState.settledPage`, while the swipe preview/background update earlier from the live pager page.
+    2. Added a pending-theme flush when leaving Appearance so the current carousel selection is committed before the section closes, while keeping the settle-based write path for normal in-tab scrolling performance.
+    3. Scoped the new back handling so Theme Gallery back behavior still closes the gallery first, and tagged the pager/specimen cards for direct gesture-state instrumentation.
+    4. Added a focused instrumentation regression that swipes the carousel, exits Appearance before the pager fully settles, and verifies the selected theme still persists as the global theme.
+- Result: Fast swipe-and-exit from Appearance now persists the intended theme instead of occasionally reverting once the user returns to global settings, library, or other screens.
+- Verification:
+    - `.\gradlew.bat :feature:settings:compileDebugKotlin :feature:settings:compileDebugAndroidTestKotlin`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#appearanceSwipe_backOutOfSection_persistsPendingThemeSelection"`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#changingControls_persistsAcrossScreenReopen"`
+    - `.\gradlew.bat :data:settings:testDebugUnitTest --tests com.epubreader.data.settings.SettingsManagerThemePersistenceTest`
+- Blockers:
+    - The full `SettingsScreenPersistenceTest` class is still red in the current worktree because several older cases expect previous Appearance UI hooks such as a text `Done` action and `custom_theme_name` editor tag.
+- Suggested next step:
+    - Refresh the older settings instrumentation cases to match the current gallery/editor UI so the whole class can run green again.
+
+## 28. 2026-04-23 23:56
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Remove the Appearance exit flicker after swipe-based theme changes and make Theme Gallery chrome/selection follow the live Appearance theme instead of the delayed persisted app theme.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeGallery.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`
+- Action taken:
+    1. Changed `AppearanceTab` exit behavior so leaving the section after a swipe waits for `setActiveTheme()` and the matching `globalSettings` emission before closing the section, removing the visible lag/flicker window on the Settings header.
+    2. Added an `isClosingAppearance` guard so repeated back taps do not race the pending theme write while the section is closing.
+    3. Rethemed `ThemeGalleryOverlay` chrome from the live Appearance theme palette (`surface`, `systemForeground`, `outline`, `primary`) instead of the app-level `MaterialTheme` colors tied to the old persisted theme.
+    4. Tagged the gallery panel with the live chrome theme id and added a focused instrumentation regression that swipes the Appearance pager, opens Theme Gallery before persistence catches up, and verifies both the selected preview and gallery chrome theme id stay on `sepia`.
+    5. Updated the shared `ThemePreviewCard` signature so Theme Gallery and Theme Editor can both supply explicit chrome colors without relying on stale ambient theme state.
+- Result: Swiping to a theme and backing out of Appearance now closes into the new theme cleanly without the delayed header flicker, and Theme Gallery selection/chrome stay aligned with the theme currently shown in the Appearance carousel.
+- Verification:
+    - `.\gradlew.bat :feature:settings:compileDebugKotlin :feature:settings:compileDebugAndroidTestKotlin`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#appearanceSwipe_backOutOfSection_persistsPendingThemeSelection"`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_afterSwipe_usesLiveAppearanceThemeForSelectionAndChrome"`
+    - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#changingControls_persistsAcrossScreenReopen"`
+    - `adb -s emulator-5554 logcat -b crash -d` returned no crash entries after the targeted runs.
+- Blockers:
+    - The broader `SettingsScreenPersistenceTest` refresh remains separate follow-up work; several older cases still target the previous gallery/editor UI affordances.
+- Suggested next step:
+    - Keep `Settings Appearance Test Refresh` as the next explicit cleanup task so the full settings instrumentation suite matches the current UI contract.

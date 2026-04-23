@@ -3,6 +3,7 @@ package com.epubreader.feature.settings
 import android.content.Context
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
@@ -16,16 +17,23 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.swipe
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.epubreader.core.model.CustomTheme
 import com.epubreader.MainActivity
 import com.epubreader.core.model.CustomThemeIdPrefix
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.formatThemeColor
+import com.epubreader.core.model.generatePaletteFromBase
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -86,6 +94,64 @@ class SettingsScreenPersistenceTest {
     }
 
     @Test
+    fun appearanceSwipe_backOutOfSection_persistsPendingThemeSelection() {
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+
+        composeRule.mainClock.autoAdvance = false
+        try {
+            composeRule.onNodeWithTag("appearance_theme_pager").performTouchInput {
+                swipe(
+                    start = Offset(width * 0.85f, height / 2f),
+                    end = Offset(width * 0.1f, height / 2f),
+                    durationMillis = 250,
+                )
+            }
+            composeRule.mainClock.advanceTimeByFrame()
+            composeRule.onNodeWithTag("appearance_theme_card_sepia").assertIsSelected()
+
+            pressBack()
+        } finally {
+            composeRule.mainClock.autoAdvance = true
+        }
+
+        composeRule.waitUntil(10_000) {
+            runBlocking { settingsManager.globalSettings.first().theme } == "sepia"
+        }
+        waitUntilTagExists("settings_section_appearance")
+    }
+
+    @Test
+    fun themeGallery_afterSwipe_usesLiveAppearanceThemeForSelectionAndChrome() {
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+
+        composeRule.mainClock.autoAdvance = false
+        try {
+            composeRule.onNodeWithTag("appearance_theme_pager").performTouchInput {
+                swipe(
+                    start = Offset(width * 0.85f, height / 2f),
+                    end = Offset(width * 0.1f, height / 2f),
+                    durationMillis = 250,
+                )
+            }
+            composeRule.mainClock.advanceTimeByFrame()
+            composeRule.onNodeWithTag("appearance_theme_card_sepia").assertIsSelected()
+
+            composeRule.onNodeWithContentDescription("Gallery").performClick()
+            composeRule.mainClock.advanceTimeBy(500)
+            composeRule.waitForIdle()
+
+            composeRule.onNodeWithTag("theme_gallery_preview_sepia").assertIsSelected()
+            composeRule.onNodeWithTag("theme_gallery_panel_sepia").assertIsDisplayed()
+        } finally {
+            composeRule.mainClock.autoAdvance = true
+        }
+    }
+
+    @Test
     fun customTheme_creationSelectsThemeAndPersistsAcrossScreenReopen() {
         launchSettingsScreen()
         waitUntilDisplayed("Settings")
@@ -136,17 +202,107 @@ class SettingsScreenPersistenceTest {
     }
 
     @Test
-    fun themeGallery_doneDismissesOverlayAndAllowsReopen() {
+    fun themeGallery_hiddenThemeUpdates_appearOnReopen() {
         launchSettingsScreen()
         waitUntilDisplayed("Settings")
         openAppearanceSection()
 
         openThemeGallery()
         composeRule.onNodeWithText("Done").performClick()
-        composeRule.waitUntil(10_000) { !tagExists("theme_gallery_preview_light") }
+        composeRule.waitForIdle()
+
+        val createdTheme = sampleCustomThemes(count = 1).first().copy(name = "Ocean")
+        runBlocking {
+            settingsManager.saveCustomTheme(createdTheme, activate = false)
+        }
+        composeRule.waitForIdle()
 
         openThemeGallery()
-        composeRule.onNodeWithTag("theme_gallery_preview_light").assertIsDisplayed()
+        assertTrue(
+            scrollGalleryUntilTagDisplayed(galleryThemeTag(createdTheme.id)),
+        )
+    }
+
+    @Test
+    fun themeGallery_doneDismiss_restoresAppearanceInteractions() {
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+
+        openThemeGallery()
+        composeRule.onNodeWithText("Done").performClick()
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag("create_custom_theme_button").performClick()
+        waitUntilDisplayed("Theme Name")
+
+        pressBack()
+        waitUntilTagExists("create_custom_theme_button")
+    }
+
+    @Test
+    fun themeGallery_closeSwitchThemeAndReopen_syncsSelectedTheme() {
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+
+        openThemeGallery()
+        composeRule.onNodeWithTag("theme_gallery_preview_light").assertIsSelected()
+        composeRule.onNodeWithText("Done").performClick()
+        composeRule.waitForIdle()
+
+        runBlocking {
+            settingsManager.setActiveTheme("sepia")
+        }
+        composeRule.waitUntil(10_000) {
+            runBlocking { settingsManager.globalSettings.first().theme } == "sepia"
+        }
+
+        openThemeGallery()
+        composeRule.onNodeWithTag("theme_gallery_preview_sepia").assertIsSelected()
+    }
+
+    @Test
+    fun themeGallery_closeAndReopen_preservesScrollPositionWithinAppearanceSession() {
+        val customThemes = sampleCustomThemes(count = 8)
+        val targetTheme = customThemes.last()
+        runBlocking { resetSettings(customThemes = customThemes) }
+
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+
+        openThemeGallery()
+        assertTrue(scrollGalleryUntilTagDisplayed(galleryThemeTag(targetTheme.id)))
+        composeRule.onNodeWithText("Done").performClick()
+        composeRule.waitForIdle()
+
+        openThemeGallery()
+        composeRule.onNodeWithTag(galleryThemeTag(targetTheme.id)).assertIsDisplayed()
+    }
+
+    @Test
+    fun themeGallery_leavingAppearance_resetsGallerySession() {
+        val customThemes = sampleCustomThemes(count = 8)
+        val targetTheme = customThemes.last()
+        runBlocking { resetSettings(customThemes = customThemes) }
+
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+
+        openThemeGallery()
+        assertTrue(scrollGalleryUntilTagDisplayed(galleryThemeTag(targetTheme.id)))
+        composeRule.onNodeWithText("Done").performClick()
+        composeRule.waitForIdle()
+
+        pressBack()
+        waitUntilTagExists("settings_section_appearance")
+
+        openAppearanceSection()
+        openThemeGallery()
+        assertFalse(tagIsDisplayed(galleryThemeTag(targetTheme.id)))
+        assertTrue(scrollGalleryUntilTagDisplayed(galleryThemeTag(targetTheme.id)))
     }
 
     @Test
@@ -210,13 +366,13 @@ class SettingsScreenPersistenceTest {
         composeRule.onNodeWithTag("allow_blank_covers_switch").assertIsOn()
     }
 
-    private suspend fun resetSettings() {
+    private suspend fun resetSettings(customThemes: List<CustomTheme> = emptyList()) {
         settingsManager.updateGlobalSettings(
             GlobalSettings(
                 fontSize = 18,
                 fontType = "serif",
                 theme = "light",
-                customThemes = emptyList(),
+                customThemes = customThemes,
                 lineHeight = 1.6f,
                 horizontalPadding = 16,
                 showScrubber = false,
@@ -283,8 +439,10 @@ class SettingsScreenPersistenceTest {
 
     private fun openThemeGallery() {
         composeRule.onNodeWithContentDescription("Gallery").performClick()
-        waitUntilTagExists("theme_gallery_preview_light")
+        waitUntilTagDisplayed("theme_gallery_grid")
     }
+
+    private fun galleryThemeTag(themeId: String): String = "theme_gallery_preview_$themeId"
 
     private fun setSliderProgress(tag: String, value: Float) {
         composeRule.onNodeWithTag(tag)
@@ -308,11 +466,44 @@ class SettingsScreenPersistenceTest {
         composeRule.waitUntil(timeoutMillis) { tagExists(tag) }
     }
 
+    private fun waitUntilTagDisplayed(tag: String, timeoutMillis: Long = 10_000) {
+        composeRule.waitUntil(timeoutMillis) {
+            try {
+                composeRule.onNodeWithTag(tag).assertIsDisplayed()
+                true
+            } catch (_: AssertionError) {
+                false
+            }
+        }
+    }
+
     private fun tagExists(tag: String): Boolean {
         return runCatching {
             composeRule.onNodeWithTag(tag).fetchSemanticsNode()
             true
         }.getOrDefault(false)
+    }
+
+    private fun tagIsDisplayed(tag: String): Boolean {
+        return runCatching {
+            composeRule.onNodeWithTag(tag).assertIsDisplayed()
+            true
+        }.getOrDefault(false)
+    }
+
+    private fun scrollGalleryUntilTagDisplayed(tag: String, maxSwipes: Int = 12): Boolean {
+        repeat(maxSwipes) {
+            if (tagIsDisplayed(tag)) return true
+            composeRule.onNodeWithTag("theme_gallery_grid").performTouchInput {
+                swipe(
+                    start = Offset(width / 2f, height * 0.82f),
+                    end = Offset(width / 2f, height * 0.22f),
+                    durationMillis = 250,
+                )
+            }
+            composeRule.waitForIdle()
+        }
+        return tagIsDisplayed(tag)
     }
 
     private fun waitUntilSystemBarSwitchState(expected: Boolean, timeoutMillis: Long = 10_000) {
@@ -328,6 +519,21 @@ class SettingsScreenPersistenceTest {
             } catch (_: AssertionError) {
                 false
             }
+        }
+    }
+
+    private fun sampleCustomThemes(count: Int): List<CustomTheme> {
+        return (1..count).map { index ->
+            val primary = 0xFF000000L or
+                ((0x30 + ((index * 17) % 160)).toLong() shl 16) or
+                ((0x50 + ((index * 23) % 120)).toLong() shl 8) or
+                (0x70 + ((index * 29) % 80)).toLong()
+            val background = if (index % 2 == 0) 0xFF0F172AL else 0xFFF8FAFCL
+            CustomTheme(
+                id = "$CustomThemeIdPrefix-scroll-$index",
+                name = "Scroll Theme $index",
+                palette = generatePaletteFromBase(primary = primary, background = background),
+            )
         }
     }
 }

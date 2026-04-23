@@ -1,6 +1,7 @@
 package com.epubreader.app
 
 import com.epubreader.Screen
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -8,9 +9,23 @@ import org.junit.Test
 class AppNavigationContractsTest {
 
     @Test
-    fun shouldRefreshLibraryOnEntry_onlyWhenLibraryIsVisibleAndDataIsMissing() {
-        assertTrue(shouldRefreshLibraryOnEntry(Screen.Library, hasBooks = false))
-        assertFalse(shouldRefreshLibraryOnEntry(Screen.Library, hasBooks = true))
-        assertFalse(shouldRefreshLibraryOnEntry(Screen.Settings, hasBooks = false))
+    fun resolveStartupPhaseAfterEvaluation_routesColdLaunchThroughLibraryWarmUp() {
+        assertEquals(StartupPhase.LoadingLibrary, resolveStartupPhaseAfterEvaluation(Screen.Library))
+        assertEquals(StartupPhase.Ready, resolveStartupPhaseAfterEvaluation(Screen.Settings))
+    }
+
+    @Test
+    fun shouldRunInitialLibraryRefresh_onlyWhileStartupOwnsTheColdLaunchLoad() {
+        assertTrue(shouldRunInitialLibraryRefresh(Screen.Library, AppStartupState(StartupPhase.LoadingLibrary)))
+        assertFalse(shouldRunInitialLibraryRefresh(Screen.Library, AppStartupState(StartupPhase.EvaluatingStartup)))
+        assertFalse(shouldRunInitialLibraryRefresh(Screen.Library, AppStartupState(StartupPhase.Ready)))
+        assertFalse(shouldRunInitialLibraryRefresh(Screen.Settings, AppStartupState(StartupPhase.LoadingLibrary)))
+    }
+
+    @Test
+    fun appStartupState_hidesWarmUpOnlyAfterReady() {
+        assertTrue(AppStartupState(StartupPhase.WaitingForSettings).isWarmUpVisible)
+        assertTrue(AppStartupState(StartupPhase.LoadingLibrary).isWarmUpVisible)
+        assertFalse(AppStartupState(StartupPhase.Ready).isWarmUpVisible)
     }
 }

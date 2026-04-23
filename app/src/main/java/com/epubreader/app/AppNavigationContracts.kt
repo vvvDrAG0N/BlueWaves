@@ -44,13 +44,6 @@ internal data class LibraryScreenState(
     val folderDrawer: FolderDrawerUiState,
 )
 
-internal fun shouldRefreshLibraryOnEntry(
-    currentScreen: Screen,
-    hasBooks: Boolean,
-): Boolean {
-    return currentScreen == Screen.Library && !hasBooks
-}
-
 internal data class BookSelectionUiState(
     val isBookSelectionMode: Boolean,
     val selectedBookIds: Set<String>,

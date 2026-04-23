@@ -76,6 +76,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     var selectedBook by remember { mutableStateOf<EpubBook?>(null) }
     var editingBook by remember { mutableStateOf<EpubBook?>(null) }
     var currentScreen by remember { mutableStateOf(Screen.Library) }
+    var startupState by remember { mutableStateOf(AppStartupState(phase = StartupPhase.EvaluatingStartup)) }
     var asyncState by remember { mutableStateOf(LibraryAsyncUiState()) }
 
     var editBookSaveInFlight by remember { mutableStateOf(false) }
@@ -108,9 +109,10 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     var showFirstTimeNote by remember { mutableStateOf(false) }
     var changelogToShow by remember { mutableStateOf<List<JSONObject>>(emptyList()) }
     var detectedVersionCode by remember { mutableIntStateOf(0) }
+    var pendingStartupDecision by remember { mutableStateOf<AppShellStartupDecision?>(null) }
 
     // Shell-owned refresh. Keep scanning here so screen transitions and dialogs share one source.
-    fun refreshLibrary() {
+    fun refreshLibrary(onComplete: (() -> Unit)? = null) {
         if (asyncState.libraryRefresh) return // Guard: Don't stack parallel scans
         
         scope.launch {
@@ -119,8 +121,16 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
                 books = withContext(Dispatchers.IO) { scanLibrary(parser) }
             } finally {
                 asyncState = asyncState.copy(libraryRefresh = false)
+                onComplete?.invoke()
             }
         }
+    }
+
+    fun commitPendingStartupDecision() {
+        val decision = pendingStartupDecision ?: return
+        showFirstTimeNote = decision.showFirstTimeNote
+        changelogToShow = decision.changelogEntries
+        pendingStartupDecision = null
     }
 
     fun clearBookSelection() {
@@ -199,14 +209,27 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
 
     AppNavigationStartupEffect(
         context = context,
-        currentScreen = currentScreen,
         globalSettings = globalSettings,
         settingsManager = settingsManager,
-        onDetectedVersionCode = { detectedVersionCode = it },
-        onShowFirstTimeNoteChange = { showFirstTimeNote = it },
-        onChangelogChange = { changelogToShow = it },
-        onRefreshLibrary = ::refreshLibrary,
+        onStartupEvaluated = { decision ->
+            detectedVersionCode = decision.detectedVersionCode
+            pendingStartupDecision = decision
+            startupState = AppStartupState(
+                phase = resolveStartupPhaseAfterEvaluation(currentScreen),
+            )
+        },
     )
+
+    LaunchedEffect(startupState.phase, currentScreen) {
+        if (shouldRunInitialLibraryRefresh(currentScreen, startupState)) {
+            refreshLibrary {
+                startupState = AppStartupState(phase = StartupPhase.Ready)
+                commitPendingStartupDecision()
+            }
+        } else if (startupState.phase == StartupPhase.Ready) {
+            commitPendingStartupDecision()
+        }
+    }
 
     AppNavigationSideEffects(
         view = view,
@@ -218,7 +241,6 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
         parser = parser,
         lifecycleOwner = lifecycleOwner,
         scope = scope,
-        onRefreshLibrary = ::refreshLibrary,
         onClearFolderSelection = ::clearFolderSelection,
         onMovingModeChange = { isMovingMode = it },
         onBookUpdated = ::applyUpdatedBook,
@@ -441,6 +463,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
 
     AppNavigationScreenHost(
         currentScreen = currentScreen,
+        startupState = startupState,
         editingBook = editingBook,
         selectedBook = selectedBook,
         settingsManager = settingsManager,

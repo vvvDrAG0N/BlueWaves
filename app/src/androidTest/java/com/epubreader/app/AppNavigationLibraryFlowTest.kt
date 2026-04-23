@@ -11,8 +11,10 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
@@ -23,6 +25,7 @@ import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.appColorScheme
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -125,6 +128,42 @@ class AppNavigationLibraryFlowTest {
         waitUntilDisplayed("Flow Book Two")
     }
 
+    @Test
+    fun coldLaunchWarmUp_dismissesIntoLibraryContent() = runBlocking {
+        repeat(48) { index ->
+            createLibraryBook("Warm Up Book ${index + 1}")
+        }
+
+        composeRule.mainClock.autoAdvance = false
+        launchAppShell()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag(AppWarmUpScreenTag).assertIsDisplayed()
+        composeRule.mainClock.autoAdvance = true
+        waitUntilDisplayed("Warm Up Book 1")
+        waitUntilWarmUpGone()
+    }
+
+    @Test
+    fun changelogDialog_appearsAfterWarmUpDismisses() = runBlocking {
+        repeat(36) { index ->
+            createLibraryBook("Changelog Book ${index + 1}")
+        }
+        settingsManager.updateGlobalSettings(
+            GlobalSettings(
+                firstTime = true,
+                lastSeenVersionCode = 0,
+            ),
+        )
+
+        composeRule.mainClock.autoAdvance = false
+        launchAppShell()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag(AppWarmUpScreenTag).assertIsDisplayed()
+        composeRule.mainClock.autoAdvance = true
+        waitUntilDisplayed("What's New")
+        waitUntilWarmUpGone()
+    }
+
     private suspend fun resetSettings() {
         settingsManager.updateGlobalSettings(
             GlobalSettings(
@@ -138,10 +177,21 @@ class AppNavigationLibraryFlowTest {
         composeRule.runOnUiThread {
             composeRule.activity.setContent {
                 val globalSettings by settingsManager.globalSettings.collectAsState(initial = GlobalSettings())
-                MaterialTheme {
+                MaterialTheme(
+                    colorScheme = appColorScheme(
+                        theme = globalSettings.theme,
+                        customThemes = globalSettings.customThemes,
+                    ),
+                ) {
                     AppNavigation(settingsManager, globalSettings)
                 }
             }
+        }
+    }
+
+    private fun waitUntilWarmUpGone(timeoutMillis: Long = 15_000) {
+        composeRule.waitUntil(timeoutMillis) {
+            composeRule.onAllNodesWithTag(AppWarmUpScreenTag).fetchSemanticsNodes().isEmpty()
         }
     }
 

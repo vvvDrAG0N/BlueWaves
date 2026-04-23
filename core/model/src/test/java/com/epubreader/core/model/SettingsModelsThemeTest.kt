@@ -13,7 +13,7 @@ class SettingsModelsThemeTest {
         val options = availableThemeOptions(listOf(customTheme))
 
         assertEquals(
-            listOf(LightThemeId, SepiaThemeId, DarkThemeId, OledThemeId, "custom-ocean"),
+            listOf(LightThemeId, SepiaThemeId, DarkThemeId, OledThemeId, ForestThemeId, "custom-ocean"),
             options.map { it.id },
         )
     }

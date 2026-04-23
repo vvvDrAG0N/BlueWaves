@@ -84,6 +84,24 @@ class AppNavigationStartupTest {
         assertEquals(missingChangelogVersion, decision.versionCodeToMarkSeen)
     }
 
+    @Test
+    fun upToDateInstall_skipsDialogsAndVersionWrites() = runBlocking {
+        val context = RuntimeEnvironment.getApplication()
+        clearBooksDir(context)
+
+        val currentVersion = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode.toInt()
+        val decision = evaluateAppShellStartup(
+            context = context,
+            globalSettings = GlobalSettings(firstTime = false, lastSeenVersionCode = currentVersion),
+        )
+
+        assertFalse(decision.showFirstTimeNote)
+        assertFalse(decision.shouldClearFirstTime)
+        assertTrue(decision.changelogEntries.isEmpty())
+        assertEquals(currentVersion, decision.detectedVersionCode)
+        assertNull(decision.versionCodeToMarkSeen)
+    }
+
     private fun clearBooksDir(context: android.content.Context) {
         context.cacheDir.resolve("books").deleteRecursively()
     }

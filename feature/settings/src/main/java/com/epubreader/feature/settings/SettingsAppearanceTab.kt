@@ -1,14 +1,15 @@
 package com.epubreader.feature.settings
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,10 +26,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -37,22 +36,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import com.epubreader.core.model.BuiltInThemeOptions
 import com.epubreader.core.model.CustomTheme
@@ -60,7 +52,6 @@ import com.epubreader.core.model.CustomThemeIdPrefix
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -77,14 +68,10 @@ internal fun AppearanceTab(
     val context = androidx.compose.ui.platform.LocalContext.current
     var themeToExport by remember { mutableStateOf<CustomTheme?>(null) }
     var isGalleryOpen by remember { mutableStateOf(false) }
-    var renderGalleryOverlay by remember { mutableStateOf(false) }
+    var hasGalleryBeenOpened by remember { mutableStateOf(false) }
     LaunchedEffect(isGalleryOpen) {
         if (isGalleryOpen) {
-            renderGalleryOverlay = true
-        } else if (renderGalleryOverlay) {
-            // Drop the heavy layered grid after the close animation settles.
-            delay(220)
-            renderGalleryOverlay = false
+            hasGalleryBeenOpened = true
         }
     }
 
@@ -149,8 +136,29 @@ internal fun AppearanceTab(
         allThemes.indexOfFirst { it.id == settings.theme }.coerceAtLeast(0)
     }
     val pagerState = rememberPagerState(initialPage = initialPage) { allThemes.size }
+    var selectedThemeId by remember(settings.theme) { mutableStateOf(settings.theme) }
 
     var isProgrammaticScroll by remember { mutableStateOf(false) }
+    var isClosingAppearance by remember { mutableStateOf(false) }
+
+    LaunchedEffect(settings.theme) {
+        selectedThemeId = settings.theme
+    }
+
+    LaunchedEffect(
+        pagerState.currentPage,
+        pagerState.settledPage,
+        pagerState.isScrollInProgress,
+        isProgrammaticScroll,
+        allThemes,
+    ) {
+        if (allThemes.isEmpty() || isProgrammaticScroll) return@LaunchedEffect
+        val isUserDrivenThemeTransition = pagerState.isScrollInProgress || pagerState.currentPage != pagerState.settledPage
+        if (isUserDrivenThemeTransition) {
+            val safeIndex = pagerState.currentPage.coerceIn(allThemes.indices)
+            selectedThemeId = allThemes[safeIndex].id
+        }
+    }
 
     LaunchedEffect(settings.theme, allThemes) {
         val targetPage = allThemes.indexOfFirst { it.id == settings.theme }
@@ -166,6 +174,32 @@ internal fun AppearanceTab(
         }
     }
 
+    val pendingThemeId = if (allThemes.isEmpty()) {
+        settings.theme
+    } else if (isProgrammaticScroll) {
+        selectedThemeId
+    } else {
+        allThemes[pagerState.currentPage.coerceIn(allThemes.indices)].id
+    }
+
+    fun closeAppearanceTab() {
+        if (isClosingAppearance) return
+        if (pendingThemeId == settings.theme) {
+            onBack()
+            return
+        }
+        isClosingAppearance = true
+        scope.launch {
+            settingsManager.setActiveTheme(pendingThemeId)
+            settingsManager.globalSettings.first { it.theme == pendingThemeId }
+            onBack()
+        }
+    }
+
+    BackHandler(enabled = !isGalleryOpen && !isClosingAppearance) {
+        closeAppearanceTab()
+    }
+
     // Sync global theme when pager settles
     LaunchedEffect(pagerState.settledPage) {
         if (allThemes.isEmpty()) return@LaunchedEffect
@@ -173,6 +207,7 @@ internal fun AppearanceTab(
         if (!pagerState.isScrollInProgress) {
             val safeIndex = pagerState.settledPage.coerceIn(allThemes.indices)
             val themeId = allThemes[safeIndex].id
+            selectedThemeId = themeId
             if (themeId != settings.theme) {
                 settingsManager.setActiveTheme(themeId)
             }
@@ -262,6 +297,12 @@ internal fun AppearanceTab(
     val currentTheme = remember(visualIndex, allThemes) {
         if (allThemes.isEmpty()) null else allThemes[visualIndex.coerceIn(allThemes.indices)]
     }
+    val galleryTheme = currentTheme ?: allThemes.firstOrNull()
+    val galleryThemeId = galleryTheme?.id ?: pendingThemeId
+    val galleryContainerColor = Color(galleryTheme?.palette?.surface ?: 0xFF121212)
+    val galleryOnSurfaceColor = Color(galleryTheme?.palette?.systemForeground ?: 0xFFFFFFFF)
+    val galleryOutlineColor = Color(galleryTheme?.palette?.outline ?: 0xFF808080)
+    val galleryPrimaryColor = Color(galleryTheme?.palette?.primary ?: 0xFFFFFFFF)
 
     Box(modifier = Modifier.fillMaxSize().then(dashboardBgModifier)) {
         Column(
@@ -278,7 +319,10 @@ internal fun AppearanceTab(
                     .padding(horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                androidx.compose.material3.IconButton(onClick = onBack) {
+                androidx.compose.material3.IconButton(
+                    onClick = ::closeAppearanceTab,
+                    enabled = !isClosingAppearance,
+                ) {
                     androidx.compose.material3.Icon(
                         androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
@@ -296,7 +340,10 @@ internal fun AppearanceTab(
             Spacer(Modifier.height(16.dp))
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxWidth().height(200.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .testTag("appearance_theme_pager"),
                 contentPadding = PaddingValues(horizontal = 48.dp),
                 pageSpacing = 16.dp,
                 beyondViewportPageCount = 1,
@@ -383,11 +430,12 @@ internal fun AppearanceTab(
             Spacer(Modifier.height(32.dp))
         }
 
-        if (renderGalleryOverlay) {
+        if (hasGalleryBeenOpened) {
             val galleryAlpha by animateFloatAsState(
                 targetValue = if (isGalleryOpen) 1f else 0f,
                 animationSpec = spring(
-                    stiffness = if (isGalleryOpen) Spring.StiffnessLow else Spring.StiffnessMedium,
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = if (isGalleryOpen) Spring.StiffnessMediumLow else Spring.StiffnessMedium,
                     visibilityThreshold = 0.001f
                 ),
                 label = "galleryAlpha"
@@ -395,18 +443,22 @@ internal fun AppearanceTab(
             val galleryScale by animateFloatAsState(
                 targetValue = if (isGalleryOpen) 1f else 0.92f,
                 animationSpec = spring(
+                    dampingRatio = if (isGalleryOpen) 0.75f else Spring.DampingRatioNoBouncy, // Subtle overshoot on open
                     stiffness = if (isGalleryOpen) Spring.StiffnessLow else Spring.StiffnessMedium,
                     visibilityThreshold = 0.001f
                 ),
                 label = "galleryScale"
             )
+            val galleryShouldStayOnTop = isGalleryOpen || galleryAlpha > 0.01f
 
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(if (galleryShouldStayOnTop) 1f else -1f),
                 contentAlignment = Alignment.Center
             ) {
                 // Interaction Shield: Blocks dashboard touches while gallery is visible or animating
-                if (galleryAlpha > 0.01f) {
+                if (galleryShouldStayOnTop) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -417,50 +469,47 @@ internal fun AppearanceTab(
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            alpha = galleryAlpha
-                            scaleX = galleryScale
-                            scaleY = galleryScale
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    ThemeGalleryOverlay(
-                        allThemes = allThemes,
-                        activeThemeId = settings.theme,
-                        isSelectionMode = isSelectionMode,
-                        selectedIds = selectedThemeIds,
-                        fontFamily = readerFontFamily,
-                        geometry = galleryGeometry,
-                        gallerySessionKey = gallerySessionKey,
-                        galleryGridState = galleryGridState,
-                        isGalleryOpen = isGalleryOpen,
-                        onThemeSelect = { theme ->
-                            scope.launch { settingsManager.setActiveTheme(theme.id) }
-                            isGalleryOpen = false
-                        },
-                        onToggleSelection = { id ->
-                            selectedThemeIds = if (selectedThemeIds.contains(id)) selectedThemeIds - id else selectedThemeIds + id
-                        },
-                        onEnterSelectionMode = { id ->
-                            isSelectionMode = true
-                            selectedThemeIds = setOf(id)
-                        },
-                        onBulkDelete = { showBulkDeleteConfirm = true },
-                        onBulkExport = { bulkExportLauncher.launch("themes_pack_${System.currentTimeMillis()}.zip") },
-                        onCloseSelectionMode = {
-                            isSelectionMode = false
-                            selectedThemeIds = emptySet()
-                        },
-                        onDismiss = {
-                            isGalleryOpen = false
-                            isSelectionMode = false
-                            selectedThemeIds = emptySet()
-                        },
-                    )
-                }
+                ThemeGalleryOverlay(
+                    allThemes = allThemes,
+                    activeThemeId = galleryThemeId,
+                    chromeThemeId = galleryThemeId,
+                    containerColor = galleryContainerColor,
+                    onSurfaceColor = galleryOnSurfaceColor,
+                    outlineColor = galleryOutlineColor,
+                    primaryColor = galleryPrimaryColor,
+                    isSelectionMode = isSelectionMode,
+                    selectedIds = selectedThemeIds,
+                    fontFamily = readerFontFamily,
+                    geometry = galleryGeometry,
+                    gallerySessionKey = gallerySessionKey,
+                    galleryGridState = galleryGridState,
+                    isGalleryOpen = isGalleryOpen,
+                    transitionAlpha = galleryAlpha,
+                    transitionScale = galleryScale,
+                    onThemeSelect = { theme ->
+                        selectedThemeId = theme.id
+                        scope.launch { settingsManager.setActiveTheme(theme.id) }
+                        isGalleryOpen = false
+                    },
+                    onToggleSelection = { id ->
+                        selectedThemeIds = if (selectedThemeIds.contains(id)) selectedThemeIds - id else selectedThemeIds + id
+                    },
+                    onEnterSelectionMode = { id ->
+                        isSelectionMode = true
+                        selectedThemeIds = if (id == null) emptySet() else setOf(id)
+                    },
+                    onBulkDelete = { showBulkDeleteConfirm = true },
+                    onBulkExport = { bulkExportLauncher.launch("themes_pack_${System.currentTimeMillis()}.zip") },
+                    onCloseSelectionMode = {
+                        isSelectionMode = false
+                        selectedThemeIds = emptySet()
+                    },
+                    onDismiss = {
+                        isGalleryOpen = false
+                        isSelectionMode = false
+                        selectedThemeIds = emptySet()
+                    },
+                )
             }
         }
     }

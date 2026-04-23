@@ -1,25 +1,16 @@
 package com.epubreader.feature.settings
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.Animatable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.util.VelocityTracker
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -47,6 +38,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Inventory2
@@ -65,16 +58,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
@@ -92,6 +81,11 @@ import kotlinx.coroutines.delay
 internal fun ThemeGalleryOverlay(
     allThemes: List<CustomTheme>,
     activeThemeId: String,
+    chromeThemeId: String,
+    containerColor: Color,
+    onSurfaceColor: Color,
+    outlineColor: Color,
+    primaryColor: Color,
     isSelectionMode: Boolean,
     selectedIds: Set<String>,
     fontFamily: FontFamily,
@@ -99,45 +93,59 @@ internal fun ThemeGalleryOverlay(
     gallerySessionKey: Long,
     galleryGridState: androidx.compose.foundation.lazy.grid.LazyGridState,
     isGalleryOpen: Boolean,
+    transitionAlpha: Float,
+    transitionScale: Float,
     onThemeSelect: (CustomTheme) -> Unit,
     onToggleSelection: (String) -> Unit,
-    onEnterSelectionMode: (String) -> Unit,
+    onEnterSelectionMode: (String?) -> Unit,
     onBulkDelete: () -> Unit,
     onBulkExport: () -> Unit,
     onCloseSelectionMode: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val density = LocalDensity.current
+    val dismissBackdropModifier = if (isGalleryOpen) {
+        Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+        ) {
+            if (isSelectionMode) onCloseSelectionMode() else onDismiss()
+        }
+    } else {
+        Modifier
+    }
 
-    BackHandler {
+    BackHandler(enabled = isGalleryOpen) {
         if (isSelectionMode) onCloseSelectionMode() else onDismiss()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        // 1. Static Backdrop (Only fades)
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .graphicsLayer { alpha = transitionAlpha }
                 .background(Color.Black.copy(alpha = 0.45f))
-                .clickable(
-                    enabled = isGalleryOpen,
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                ) {
-                    if (isSelectionMode) onCloseSelectionMode() else onDismiss()
-                },
+                .then(dismissBackdropModifier),
         )
 
+        // 2. Scaling Panel (Fades and scales)
         Surface(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth(0.95f)
                 .fillMaxHeight(0.9f)
+                .testTag("theme_gallery_panel_$chromeThemeId")
                 .graphicsLayer {
+                    alpha = transitionAlpha
+                    scaleX = transitionScale
+                    scaleY = transitionScale
                     shadowElevation = if (isGalleryOpen) with(density) { 32.dp.toPx() } else 0f
                     shape = RoundedCornerShape(32.dp)
                     clip = true
                 },
-            color = MaterialTheme.colorScheme.surface,
+            color = containerColor,
+            contentColor = onSurfaceColor,
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 // 1. Antigravity Floating Header with Optimized Drag Support
@@ -149,7 +157,7 @@ internal fun ThemeGalleryOverlay(
                             // Bottom separator line
                             val strokeWidth = 1.dp.toPx()
                             drawLine(
-                                color = Color.LightGray.copy(alpha = 0.2f),
+                                color = outlineColor.copy(alpha = 0.2f),
                                 start = Offset(0f, size.height),
                                 end = Offset(size.width, size.height),
                                 strokeWidth = strokeWidth
@@ -168,7 +176,10 @@ internal fun ThemeGalleryOverlay(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    IconButton(onClick = onCloseSelectionMode) {
+                                    IconButton(
+                                        onClick = onCloseSelectionMode,
+                                        enabled = isGalleryOpen,
+                                    ) {
                                         Icon(Icons.Default.Close, contentDescription = "Exit selection")
                                     }
                                     Text(
@@ -178,22 +189,29 @@ internal fun ThemeGalleryOverlay(
                                     )
                                 }
                                 Row {
-                                    IconButton(onClick = onBulkExport, enabled = selectedIds.isNotEmpty()) {
+                                    IconButton(
+                                        onClick = onBulkExport,
+                                        enabled = isGalleryOpen && selectedIds.isNotEmpty(),
+                                    ) {
                                         Icon(Icons.Default.Inventory2, contentDescription = "Export pack")
                                     }
-                                    IconButton(onClick = onBulkDelete, enabled = selectedIds.isNotEmpty()) {
+                                    IconButton(
+                                        onClick = onBulkDelete,
+                                        enabled = isGalleryOpen && selectedIds.isNotEmpty(),
+                                    ) {
                                         Icon(
                                             Icons.Default.Delete,
                                             contentDescription = "Delete selected",
-                                            tint = if (selectedIds.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            tint = if (selectedIds.isNotEmpty()) MaterialTheme.colorScheme.error else onSurfaceColor.copy(alpha = 0.45f),
                                         )
                                     }
                                 }
                             }
                         } else {
-                            Box(
-                                modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
-                                contentAlignment = Alignment.CenterStart
+                            Row(
+                                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
                                     "Theme Gallery",
@@ -202,11 +220,20 @@ internal fun ThemeGalleryOverlay(
                                     )
                                 )
                                 
-                                TextButton(
-                                    onClick = onDismiss,
-                                    modifier = Modifier.align(Alignment.CenterEnd)
-                                ) {
-                                    Text("Done", style = MaterialTheme.typography.labelLarge)
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    IconButton(
+                                        onClick = { onEnterSelectionMode(null) },
+                                        enabled = isGalleryOpen
+                                    ) {
+                                        Icon(Icons.Default.Checklist, contentDescription = "Selection mode")
+                                    }
+                                    
+                                    IconButton(
+                                        onClick = onDismiss,
+                                        enabled = isGalleryOpen
+                                    ) {
+                                        Icon(Icons.Default.Check, contentDescription = "Done")
+                                    }
                                 }
                             }
                         }
@@ -216,10 +243,13 @@ internal fun ThemeGalleryOverlay(
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     state = galleryGridState,
+                    userScrollEnabled = isGalleryOpen,
                     contentPadding = PaddingValues(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("theme_gallery_grid"),
                 ) {
                     itemsIndexed(allThemes, key = { _, theme -> theme.id }) { index, theme ->
                         val isSelected = selectedIds.contains(theme.id)
@@ -229,6 +259,9 @@ internal fun ThemeGalleryOverlay(
                             gallerySessionKey = gallerySessionKey,
                             fontFamily = fontFamily,
                             geometry = geometry,
+                            containerColor = containerColor,
+                            outlineColor = outlineColor,
+                            primaryColor = primaryColor,
                             isActive = theme.id == activeThemeId,
                             isSelected = isSelected,
                             isSelectionMode = isSelectionMode,
@@ -261,6 +294,9 @@ internal fun ThemePreviewCard(
     gallerySessionKey: Long,
     fontFamily: FontFamily,
     geometry: SpecimenGeometry,
+    containerColor: Color,
+    outlineColor: Color,
+    primaryColor: Color,
     isActive: Boolean,
     isSelected: Boolean,
     isSelectionMode: Boolean,
@@ -326,6 +362,14 @@ internal fun ThemePreviewCard(
         animationSpec = tween(400),
         label = "borderColor",
     )
+    val interactionModifier = if (isGalleryOpen) {
+        Modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick,
+        )
+    } else {
+        Modifier
+    }
 
     Surface(
         modifier = Modifier
@@ -347,7 +391,7 @@ internal fun ThemePreviewCard(
                 contentDescription = "Theme ${theme.name}"
                 selected = isActive
             }
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .then(interactionModifier)
             .drawBehind {
                 // Background aura "Glow"
                 drawCircle(
@@ -407,15 +451,15 @@ internal fun ThemePreviewCard(
                         .padding(8.dp)
                         .size(24.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
+                        .background(containerColor.copy(alpha = 0.8f))
+                        .border(1.dp, outlineColor.copy(alpha = 0.9f), CircleShape),
                     contentAlignment = Alignment.Center,
                 ) {
                     if (isSelected) {
                         Icon(
                             Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = primaryColor,
                             modifier = Modifier.size(24.dp),
                         )
                     }

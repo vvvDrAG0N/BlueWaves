@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -195,6 +196,8 @@ internal fun LandscapeSpecimenCard(
             fontFamily = fontFamily,
             geometry = geometry,
             modifier = Modifier
+                .testTag("appearance_theme_card_${theme.id}")
+                .semantics { selected = isActive }
                 .fillMaxSize()
                 .drawBehind {
                     drawRoundRect(

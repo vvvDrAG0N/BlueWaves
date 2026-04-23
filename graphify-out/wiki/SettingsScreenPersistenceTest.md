@@ -1,6 +1,6 @@
 # SettingsScreenPersistenceTest
 
-> God node · 22 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
+> God node · 32 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 
 ## Connections by Relation
 
@@ -13,6 +13,11 @@
 - [[.changingControls_persistsAcrossScreenReopen()]] `EXTRACTED`
 - [[.customTheme_creationSelectsThemeAndPersistsAcrossScreenReopen()]] `EXTRACTED`
 - [[.customThemeColorPicker_updatesHexFieldAndSavedPalette()]] `EXTRACTED`
+- [[.themeGallery_hiddenThemeUpdates_appearOnReopen()]] `EXTRACTED`
+- [[.themeGallery_doneDismiss_restoresAppearanceInteractions()]] `EXTRACTED`
+- [[.themeGallery_closeSwitchThemeAndReopen_syncsSelectedTheme()]] `EXTRACTED`
+- [[.themeGallery_closeAndReopen_preservesScrollPositionWithinAppearanceSession()]] `EXTRACTED`
+- [[.themeGallery_leavingAppearance_resetsGallerySession()]] `EXTRACTED`
 - [[.showSystemBar_persistsAcrossScreenReopenAndActivityRecreation()]] `EXTRACTED`
 - [[.showSystemBar_rowAndSwitchApplyEveryRapidToggle()]] `EXTRACTED`
 - [[.allowBlankCovers_persistsAcrossScreenReopen()]] `EXTRACTED`
@@ -23,11 +28,6 @@
 - [[.openAppearanceSection()]] `EXTRACTED`
 - [[.openInterfaceSection()]] `EXTRACTED`
 - [[.openLibrarySection()]] `EXTRACTED`
-- [[.openThemeGallery()]] `EXTRACTED`
-- [[.setSliderProgress()]] `EXTRACTED`
-- [[.waitUntilTextContains()]] `EXTRACTED`
-- [[.waitUntilTagExists()]] `EXTRACTED`
-- [[.tagExists()]] `EXTRACTED`
 
 ---
 

@@ -12,9 +12,9 @@ class MainActivityThemeTest {
     fun appColorScheme_returnsSepiaPaletteForSepiaTheme() {
         val colorScheme = appColorScheme("sepia")
 
-        assertEquals(Color(0xFFF4ECD8), colorScheme.background)
+        assertEquals(Color(0xFFFDF6E3), colorScheme.background)
         assertEquals(Color(0xFF5B4636), colorScheme.onBackground)
-        assertEquals(Color(0xFFEADDC6), colorScheme.surfaceContainerHigh)
+        assertEquals(Color(0xFFF9F3E0), colorScheme.surfaceContainerHigh)
     }
 
     @Test

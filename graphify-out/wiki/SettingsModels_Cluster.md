@@ -1,10 +1,10 @@
 # SettingsModels Cluster
 
-> 20 nodes · cohesion 0.10
+> 21 nodes · cohesion 0.10
 
 ## Key Concepts
 
-- **SettingsModels.kt** (19 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
+- **SettingsModels.kt** (20 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
 - **availableThemeOptions()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
 - **BookProgress** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
 - **calculateLuminance()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
@@ -20,6 +20,7 @@
 - **normalizeThemeSelection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
 - **parseThemeColorOrNull()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
 - **ReaderStatusUiState** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
+- **suggestNextThemeName()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
 - **themeButtonLabel()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
 - **ThemeOption** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
 - **ThemePalette** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\SettingsModels.kt`
@@ -35,7 +36,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 38 (100%)
+- EXTRACTED: 40 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

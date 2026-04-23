@@ -24,6 +24,7 @@ import com.epubreader.feature.settings.SettingsScreen
 @Composable
 internal fun AppNavigationScreenHost(
     currentScreen: Screen,
+    startupState: AppStartupState,
     editingBook: EpubBook?,
     selectedBook: EpubBook?,
     settingsManager: SettingsManager,
@@ -91,6 +92,13 @@ internal fun AppNavigationScreenHost(
             state = dialogState,
             actions = dialogActions,
         )
+
+        if (startupState.isWarmUpVisible) {
+            AppWarmUpScreen(
+                phase = startupState.phase,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 
     val shellBackAction = resolveShellBackAction(

@@ -32,7 +32,6 @@ internal fun AppNavigationSideEffects(
     parser: EpubParser,
     lifecycleOwner: LifecycleOwner,
     scope: CoroutineScope,
-    onRefreshLibrary: () -> Unit,
     onClearFolderSelection: () -> Unit,
     onMovingModeChange: (Boolean) -> Unit,
     onBookUpdated: (EpubBook) -> Unit,
@@ -80,15 +79,6 @@ internal fun AppNavigationSideEffects(
             } else {
                 windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
             }
-        }
-    }
-
-    LaunchedEffect(currentScreen) {
-        if (shouldRefreshLibraryOnEntry(currentScreen, books.isNotEmpty()).not()) {
-            return@LaunchedEffect
-        }
-        if (currentScreen == Screen.Library) {
-            onRefreshLibrary()
         }
     }
 
