@@ -66,7 +66,7 @@ The project uses a modular single-activity shell with state-based navigation.
 ## Planned Roadmap
 
 - Selectable Text follow-up
-  - Stabilize selection behavior and add define/translate integrations without breaking reader controls.
+  - Stabilize selection behavior and keep the in-app WebView define/translate flow without breaking reader controls.
 - Infinite Scroll Reader Mode
   - Keep behind the performance/stability and reader-safety boundary.
 - PDF / format support later

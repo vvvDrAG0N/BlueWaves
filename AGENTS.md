@@ -205,7 +205,9 @@ Graph maintenance:
 - `Codex` is the primary implementation and verification agent for this repo.
 - `Gemini` is a secondary planning/review agent when the user wants that split.
 - If multiple agents are involved, keep one clear implementation owner.
+- If agents are working in parallel, keep file ownership disjoint whenever possible and avoid touching files another active agent is using unless the user explicitly wants overlap.
 - Durable decisions belong in `AGENTS.md`, canonical root docs, or the structured `docs/agent_memory/` history.
+- Planning or review agents must not let stale roadmap text in `README.md`, `TODO`, or older notes override current code, explicit user direction, or newer recorded decisions.
 
 For substantial handoffs or follow-up notes, spell out:
 

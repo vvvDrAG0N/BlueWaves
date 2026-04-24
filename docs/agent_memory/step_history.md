@@ -1004,3 +1004,92 @@ This file is append-only.
     - None. The chrome/polish pass and the related settings regression coverage are green on `emulator-5554`.
 - Suggested next step:
     - Have the user visually confirm the calmer borders and the now-correct editor chrome against the exact dark custom-theme case they reported, then only do another pass if the remaining feel issue is aesthetic rather than behavioral.
+
+## 57. 2026-04-25 01:59
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Run a release-like, real-device performance audit of the `Settings -> Appearance` flows with the same immediate-vs-delayed startup framing used in the reader lag investigation, then follow flagged scenarios with targeted Perfetto traces.
+- Area/files: `scripts/run_theme_perf_release_live.ps1`, `scripts/run_theme_perf_flagged_trace.ps1`, `scripts/reader_lag_trace_config.pbtxt`, `scripts/summarize_reader_lag_trace.py`, `logs/theme-perf-release-live-20260425-013425/summary.md`, `logs/theme-perf-trace-followup-20260425-015711/summary.md`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+    1. Built and installed the release APK signed with the local debug keystore over the phone’s existing `com.epubreader` install, then verified the package no longer exposed the `DEBUGGABLE` package flag before measuring.
+    2. Added a new release-live harness for the Appearance audit and stabilized it against the real phone’s quirks: preflight normalization to `Paper White`, changelog-safe waits, gallery open retries, and a corrected `gallery-switch-return` flow after discovering that gallery theme selection auto-closes the gallery on this release-like build.
+    3. Ran the full `24`-run matrix on the real phone across `appearance-open`, `appearance-pager-swipe-return`, `gallery-open-close`, and `gallery-switch-return`, each with `immediate` and `delayed` startup conditions and `3` iterations per scenario.
+    4. Applied the plan’s trace follow-up to the flagged scenarios by adding a small Perfetto harness and capturing targeted traces for `appearance-open` immediate and `appearance-pager-swipe-return` delayed, then summarized both traces with the existing local Perfetto SQL summarizer.
+    5. Preserved all raw evidence under `logs/`, including per-run `gfxinfo`, `logcat`, UI XML dumps, pulled `.pftrace` files, and markdown/json trace summaries.
+- Result:
+    - `appearance-open` showed only a modest startup sensitivity: average `High input latency` improved from `31.67` immediate to `26.67` delayed, but both paths stayed janky by percentage (`14.62%` and `12.99%`), so the problem is not mainly “post-library startup overlap.”
+    - `appearance-pager-swipe-return` did not benefit from waiting; delayed was worse on `High input latency` (`32 -> 53.33`) and both startup conditions stayed just over the `5%` jank threshold.
+    - `gallery-open-close` and `gallery-switch-return` had much higher `High input latency` counts but very low `Janky %`, so those flows look input-heavy rather than visibly frame-janky; waiting `15s` did not materially help either.
+    - Perfetto follow-up narrowed the real cost centers: `appearance-open` is dominated by first-frame Compose/layout/render work (`traversal`, `draw-VRI`, `AndroidOwner:measureAndLayout`, `Recomposer`) plus first-use JIT/GC; the delayed pager trace is dominated by `animation`, `Recomposer:recompose`, `Compose:recompose`, input handling, and a first-use JIT compile of `SettingsAppearanceTabKt.AppearanceTab`, not by parser/library background work.
+- Verification:
+    - `./gradlew.bat :app:assembleRelease --console=plain`
+    - `powershell -ExecutionPolicy Bypass -File scripts/run_theme_perf_release_live.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" -SmokeOnly`
+    - `powershell -ExecutionPolicy Bypass -File scripts/run_theme_perf_release_live.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp"`
+    - `powershell -ExecutionPolicy Bypass -File scripts/run_theme_perf_flagged_trace.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp"`
+- Blockers:
+    - None. The audit completed end to end, and the remaining question is product prioritization rather than missing evidence.
+- Suggested next step:
+    - Treat any Appearance follow-up as optional polish. If the user wants to shrink the first-use jank, focus on first-entry Compose/layout/render pressure and first-use JIT exposure in `SettingsAppearanceTab`, not on library-startup waiting logic.
+
+## 57. 2026-04-25 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Align selectable-text roadmap docs with the shipped in-app lookup approach and record the durable product decision.
+- Area/files: `TODO`, `README.md`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+    1. Updated roadmap and follow-up docs so they no longer describe installed-app `Define`/`Translate` integrations.
+    2. Recorded the current product decision that selectable-text lookups should remain in the in-app WebView flow.
+    3. Captured the reason for that decision: prior installed-app integration attempts were not reliable enough because of Android permission/package-resolution friction.
+- Result:
+    - The repo's visible planning docs now agree with the current implementation direction for selectable text.
+    - Future agents have an explicit history entry stating that WebView is the intended lookup path and that installed-app integration should not be reintroduced casually.
+- Verification:
+    - Manual doc sweep for outdated phrases including `installed apps`, `Google Translate or Google`, and older selectable-text follow-up wording.
+- Blockers:
+    - None.
+- Suggested next step:
+    - When selectable-text work resumes, focus on selection stability, control/restoration coexistence, and WebView lookup quality rather than app-intent integration.
+
+## 58. 2026-04-25 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Harden repo guidance so Gemini-style planning passes respect current code, recent decisions, and parallel-agent boundaries more reliably.
+- Area/files: `GEMINI.md`, `AGENTS.md`, `docs/agent_memory/step_history.md`, `graphify-out/`
+- Action taken:
+    1. Expanded `GEMINI.md` with an explicit decision-precedence order that puts current user instructions, `AGENTS.md`, canonical docs, current code, and targeted recent history above roadmap-only docs such as `README.md` and `TODO`.
+    2. Added Gemini-specific anti-drift guardrails covering stale roadmap conflicts, already-shipped behavior, rejected prior approaches, and when to consult only the relevant recent `step_history.md` or `next_steps.md` entry.
+    3. Added a small collaboration clarification in `AGENTS.md` so parallel agents keep file ownership disjoint and planning/review agents do not let stale roadmap text override newer decisions.
+    4. Rebuilt graphify after the meaningful documentation update.
+- Result:
+    - The repo now states more plainly how planning agents should resolve source-of-truth conflicts and how they should behave when another agent is active in parallel.
+    - Future Gemini-style passes have less room to resurrect stale roadmap ideas as current product direction.
+- Verification:
+    - Manual readback of `GEMINI.md` and `AGENTS.md`
+    - `python scripts/check_graph_staleness.py --rebuild`
+- Blockers:
+    - None.
+- Suggested next step:
+    - If another model still drifts after this, tighten the handoff template further by requiring an explicit `files to avoid` and `superseded options` section in multi-agent prompts.
+
+## 59. 2026-04-25 02:35
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Run a release-like, real-device performance audit for book open and book close flows, comparing immediate library entry against a 15-second delayed start for two prepared mid-book states.
+- Area/files: `scripts/run_book_open_close_release_live.ps1`, `logs/book-open-close-release-live-20260425-023012/summary.md`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+    1. Added a new release-live adb harness that validates the live library state, dismisses changelog dialogs before measurement, measures open and close as separate `gfxinfo` windows, and captures per-run `logcat` plus UI XML dumps.
+    2. Smoke-tested the harness on the phone with one iteration first, fixed an early PowerShell parser issue in the run-id expression, then reran the smoke pass to confirm the saved-state selectors and the system-back close path worked cleanly.
+    3. Ran the full `12`-run matrix on the connected phone against `Shadow Slave (1435 / 2927 ch)` and `The Saga of Tanya the Evil, Vol. 6 (light novel) (11 / 45 ch)` in both `immediate` and `delayed` startup modes with `3` iterations each.
+    4. Preserved the full evidence set under `logs/`, including separate open/close `gfxinfo` captures, separate open/close `logcat` dumps, and library/reader UI dumps before open, after open, and after close.
+- Result:
+    - `Shadow Slave` did not show a helpful delayed-start effect for open or close. Open `High input latency` was actually worse after waiting (`19.33 -> 29`), while close stayed flat at `34 -> 34`.
+    - `The Saga of Tanya the Evil, Vol. 6 (light novel)` showed a small absolute improvement on open after waiting (`6.33 -> 4.33`) and a modest close improvement (`34 -> 24`), but the open numbers were already very low in both cases.
+    - The close path looked notably consistent across most runs: the library return animation measured in a narrow band, which suggests the release-like exit flow is stable and not showing a strong startup-overlap problem.
+    - Both books still reported average `Janky %` above the plan's `5%` follow-up threshold, but in this dataset the absolute open/close `High input latency` values were low enough that the results look more like optional polish than a clear user-facing regression.
+- Verification:
+    - `powershell -ExecutionPolicy Bypass -File scripts/run_book_open_close_release_live.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" -Iterations 1`
+    - `powershell -ExecutionPolicy Bypass -File scripts/run_book_open_close_release_live.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp"`
+- Blockers:
+    - None. The full matrix completed on the phone and produced decision-useful logs and summaries.
+- Suggested next step:
+    - Treat book open/close performance as acceptable on the release-like build unless a user can still feel a delay. If follow-up is needed later, do one narrow trace pass only on the specific open or close scenario that still feels rough instead of broadening the matrix further.

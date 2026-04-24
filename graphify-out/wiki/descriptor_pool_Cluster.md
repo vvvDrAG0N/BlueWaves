@@ -1,6 +1,6 @@
 # descriptor_pool Cluster
 
-> 89 nodes · cohesion 0.04
+> 94 nodes · cohesion 0.04
 
 ## Key Concepts
 
@@ -29,7 +29,7 @@
 - **._MakeMethodDescriptor()** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\descriptor_pool.py`
 - **._SetFieldType()** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\descriptor_pool.py`
 - **._TryLoadExtensionFromDB()** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\descriptor_pool.py`
-- *... and 64 more nodes in this community*
+- *... and 69 more nodes in this community*
 
 ## Relationships
 
@@ -38,11 +38,12 @@
 ## Source Files
 
 - `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\descriptor_pool.py`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\proto_json.py`
 
 ## Audit Trail
 
-- EXTRACTED: 319 (98%)
-- INFERRED: 5 (2%)
+- EXTRACTED: 327 (97%)
+- INFERRED: 9 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

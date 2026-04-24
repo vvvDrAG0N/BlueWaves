@@ -21,7 +21,7 @@ Execution Order
 - Fix chapter-info contrast on book covers when light reader foreground colors are active.
 
 4. Selectable Text follow-up
-- Add Define/Translate overlay integrations using installed apps such as Google Translate or Google.
+- Stabilize selectable text and keep Define/Translate in the in-app WebView flow, avoiding installed-app integrations and related Android permission/package-resolution issues.
 
 5. Theme and settings expansion
 - Add support for bulk theme import via `.zip` or multi-select.
