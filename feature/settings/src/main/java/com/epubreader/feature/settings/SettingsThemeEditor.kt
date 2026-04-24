@@ -1,49 +1,43 @@
 package com.epubreader.feature.settings
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.CustomThemeIdPrefix
-import com.epubreader.core.model.ThemePalette
-import com.epubreader.core.model.formatThemeColor
-import com.epubreader.core.model.generatePaletteFromBase
 import com.epubreader.core.model.isThemeNameUnique
-import com.epubreader.core.model.parseThemeColorOrNull
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.core.ui.KarlaFont
 
@@ -52,68 +46,184 @@ internal fun CustomThemeEditorDialog(
     session: ThemeEditorSession,
     activeThemeId: String,
     existingThemes: List<CustomTheme>,
-    primaryColor: Color,
-    onSurfaceColor: Color,
     onDismiss: () -> Unit,
     onSave: (CustomTheme, Boolean) -> Unit,
     onDelete: () -> Unit = {},
 ) {
-    val draftState = remember(session) { mutableStateOf(session.draft) }
-    val draft = draftState.value
-
-    LaunchedEffect(draft.primary, draft.background, draft.isAdvanced) {
-        if (!draft.isAdvanced) {
-            val p = parseThemeColorOrNull(draft.primary)
-            val b = parseThemeColorOrNull(draft.background)
-            if (p != null && b != null) {
-                val generated = generatePaletteFromBase(p, b)
-                draftState.value = draft.copy(
-                    secondary = formatThemeColor(generated.secondary),
-                    surface = formatThemeColor(generated.surface),
-                    surfaceVariant = formatThemeColor(generated.surfaceVariant),
-                    outline = formatThemeColor(generated.outline),
-                    readerBackground = formatThemeColor(generated.readerBackground),
-                    readerForeground = formatThemeColor(generated.readerForeground),
-                    systemForeground = formatThemeColor(generated.systemForeground),
-                )
-            }
-        }
-    }
+    var draft by remember(session) { mutableStateOf(session.draft) }
+    var activePicker by remember { mutableStateOf<ThemeEditorPickerSession?>(null) }
 
     val parsedTheme = remember(draft, session.themeId) { draft.toCustomTheme(session.themeId) }
-    val nameConflict = remember(draft.name, session.themeId, existingThemes) { 
-        !isThemeNameUnique(draft.name, session.themeId, existingThemes) 
+    val nameConflict = remember(draft.name, session.themeId, existingThemes) {
+        !isThemeNameUnique(draft.name, session.themeId, existingThemes)
     }
     val isValid = parsedTheme != null && draft.name.trim().isNotEmpty() && !nameConflict
     val shouldActivate = session.isNew || activeThemeId == session.themeId
-
-    // Live specimen state
-    val previewTheme = remember(draft) { 
-        val palette = draft.toCustomTheme(session.themeId)?.palette 
-            ?: themePaletteSeed(activeThemeId, existingThemes)
-            
-        CustomTheme(
+    val previewTheme = remember(draft, parsedTheme, session.themeId, activeThemeId, existingThemes) {
+        parsedTheme ?: CustomTheme(
             id = session.themeId,
-            name = draft.name.ifBlank { "" },
-            palette = palette,
-            isAdvanced = draft.isAdvanced
+            name = draft.name,
+            palette = themePaletteSeed(activeThemeId, existingThemes),
+            isAdvanced = draft.legacyIsAdvanced,
+        )
+    }
+    val previewGeometry = remember(
+        session.settings.fontSize,
+        session.settings.lineHeight,
+        session.settings.horizontalPadding,
+    ) {
+        val scale = 1f
+        val baseLineHeight = (4.dp * (session.settings.fontSize.toFloat() / 18f)) * scale
+        val spacingBetweenLines = (baseLineHeight * (session.settings.lineHeight - 1f) + 4.dp) * scale
+        val internalPadding = (16.dp * (session.settings.horizontalPadding.toFloat() / 16f)) * scale
+        val constrainedPadding = if (internalPadding > 32.dp * scale) 32.dp * scale else internalPadding
+        SpecimenGeometry(
+            lineHeight = baseLineHeight,
+            spacing = spacingBetweenLines,
+            padding = constrainedPadding,
+            fontSize = session.settings.fontSize.sp,
+            scale = scale,
         )
     }
 
+    fun updateGuidedDraft(transform: (ThemeEditorDraft) -> ThemeEditorDraft) {
+        val updated = transform(draft)
+        draft = updated.rebalanceGuidedFields() ?: updated
+    }
+
+    fun colorField(
+        key: String,
+        label: String,
+        value: String,
+        guided: Boolean,
+        setter: (String) -> ThemeEditorDraft,
+    ): ThemeEditorColorField {
+                return ThemeEditorColorField(
+                    label = label,
+                    value = value,
+                    testTagPrefix = themeEditorColorTestTag(key),
+                    onClick = {
+                        activePicker = ThemeEditorPickerSession(
+                            label = label,
+                            initialValue = value,
+                            testTagPrefix = themeEditorColorTestTag(key),
+                            isGuided = guided,
+                            onColorChange = { nextValue ->
+                                val result = draft.applyColorEdit(
+                                    fieldKey = key,
+                                    rawHex = nextValue,
+                                    guided = guided,
+                                )
+                                draft = result.updatedDraft
+                                result
+                            },
+                        )
+                    },
+                )
+            }
+
+    val basicFields = listOf(
+        colorField("accent", "Accent", draft.accent, guided = true) { draft.copy(accent = it) },
+        colorField("app_background", "App Background", draft.appBackground, guided = true) {
+            draft.copy(appBackground = it)
+        },
+    )
+    val extendedAppFields = listOf(
+        colorField("accent", "Accent", draft.accent, guided = true) { draft.copy(accent = it) },
+        colorField("chrome_accent", "Chrome Accent", draft.chromeAccent, guided = true) {
+            draft.copy(chromeAccent = it)
+        },
+        colorField("app_background", "App Background", draft.appBackground, guided = true) {
+            draft.copy(appBackground = it)
+        },
+        colorField("app_surface", "Card / Surface", draft.appSurface, guided = true) {
+            draft.copy(appSurface = it)
+        },
+        colorField("app_foreground", "App Text", draft.appForeground, guided = true) {
+            draft.copy(appForeground = it)
+        },
+        colorField("app_foreground_muted", "Muted Text", draft.appForegroundMuted, guided = true) {
+            draft.copy(appForegroundMuted = it)
+        },
+    )
+    val extendedReaderFields = listOf(
+        colorField("reader_background", "Reader Page", draft.readerBackground, guided = true) {
+            draft.copy(readerBackground = it)
+        },
+        colorField("reader_foreground", "Reader Text", draft.readerForeground, guided = true) {
+            draft.copy(readerForeground = it)
+        },
+    )
+    val advancedAppFields = listOf(
+        colorField("accent", "Accent", draft.accent, guided = false) { draft.copy(accent = it) },
+        colorField("chrome_accent", "Chrome Accent", draft.chromeAccent, guided = false) {
+            draft.copy(chromeAccent = it)
+        },
+        colorField("app_background", "App Background", draft.appBackground, guided = false) {
+            draft.copy(appBackground = it)
+        },
+        colorField("app_surface", "Card / Surface", draft.appSurface, guided = false) {
+            draft.copy(appSurface = it)
+        },
+        colorField("app_surface_variant", "Surface Depth", draft.appSurfaceVariant, guided = false) {
+            draft.copy(appSurfaceVariant = it)
+        },
+        colorField("app_outline", "App Outline", draft.appOutline, guided = false) {
+            draft.copy(appOutline = it)
+        },
+        colorField("app_foreground", "App Text", draft.appForeground, guided = false) {
+            draft.copy(appForeground = it)
+        },
+        colorField("app_foreground_muted", "Muted Text", draft.appForegroundMuted, guided = false) {
+            draft.copy(appForegroundMuted = it)
+        },
+    )
+    val advancedReaderFields = listOf(
+        colorField("reader_background", "Reader Page", draft.readerBackground, guided = false) {
+            draft.copy(readerBackground = it)
+        },
+        colorField("reader_foreground", "Reader Text", draft.readerForeground, guided = false) {
+            draft.copy(readerForeground = it)
+        },
+        colorField("reader_foreground_muted", "Reader Muted Text", draft.readerForegroundMuted, guided = false) {
+            draft.copy(readerForegroundMuted = it)
+        },
+        colorField("reader_accent", "Reader Accent", draft.readerAccent, guided = false) {
+            draft.copy(readerAccent = it)
+        },
+    )
+    val overlayField = colorField("overlay_scrim", "Overlay Backdrop", draft.overlayScrim, guided = draft.mode != ThemeEditorMode.ADVANCED) {
+        draft.copy(overlayScrim = it)
+    }
+    val advancedLibraryFields = listOf(
+        colorField("startup_background", "Startup Background", draft.startupBackground, guided = false) {
+            draft.copy(startupBackground = it)
+        },
+        colorField("startup_foreground", "Startup Foreground", draft.startupForeground, guided = false) {
+            draft.copy(startupForeground = it)
+        },
+        colorField("favorite_accent", "Favorite Accent", draft.favoriteAccent, guided = false) {
+            draft.copy(favoriteAccent = it)
+        },
+        colorField("cover_overlay_scrim", "Cover Overlay", draft.coverOverlayScrim, guided = false) {
+            draft.copy(coverOverlayScrim = it)
+        },
+    )
+
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.45f))
+                .background(Color(previewTheme.palette.overlayScrim).copy(alpha = 0.45f))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = onDismiss
+                    onClick = onDismiss,
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Surface(
                 modifier = Modifier
@@ -134,34 +244,15 @@ internal fun CustomThemeEditorDialog(
                         onDismiss = onDismiss,
                         onSave = { parsedTheme?.let { onSave(it, shouldActivate) } },
                         onDelete = onDelete,
-                        showDelete = !session.isNew && session.themeId.startsWith(CustomThemeIdPrefix)
+                        showDelete = !session.isNew && session.themeId.startsWith(CustomThemeIdPrefix),
                     )
 
-                    // Derive canonical geometry for a BALANCED preview (match Carousel)
-                    val settings = session.settings
-                    val previewGeometry = remember(settings.fontSize, settings.lineHeight, settings.horizontalPadding) {
-                        val scale = 1.0f // Standard Carousel Scale
-                        val baseLineHeight = (4.dp * (settings.fontSize.toFloat() / 18f)) * scale
-                        val spacingBetweenLines = (baseLineHeight * (settings.lineHeight - 1f) + 4.dp) * scale
-                        val internalPadding = (16.dp * (settings.horizontalPadding.toFloat() / 16f)) * scale
-                        val constrainedPadding = if (internalPadding > 32.dp * scale) 32.dp * scale else internalPadding
-                        SpecimenGeometry(
-                            lineHeight = baseLineHeight,
-                            spacing = spacingBetweenLines,
-                            padding = constrainedPadding,
-                            fontSize = settings.fontSize.sp,
-                            scale = scale,
-                        )
-                    }
-
-                    // 1. Sticky Studio Area (Balanced Preview + Identity)
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp, vertical = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        // High-Fidelity Specimen
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -170,7 +261,7 @@ internal fun CustomThemeEditorDialog(
                                     clip = true
                                     shape = RoundedCornerShape(16.dp)
                                 },
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Box(modifier = Modifier.fillMaxWidth(0.75f)) {
                                 ThemePreviewCard(
@@ -187,109 +278,90 @@ internal fun CustomThemeEditorDialog(
                                     isSelected = false,
                                     isGalleryOpen = true,
                                     onClick = {},
-                                    onLongClick = {}
+                                    onLongClick = {},
                                 )
                             }
                         }
 
-                        // Theme Name (Moved down from side-by-side)
                         StudioTextField(
                             value = draft.name,
-                            onValueChange = { draftState.value = draftState.value.copy(name = it) },
+                            onValueChange = { draft = draft.copy(name = it) },
                             label = "Theme Name",
                             isError = draft.name.trim().isEmpty() || nameConflict,
                             errorText = when {
                                 draft.name.trim().isEmpty() -> "Name required"
                                 nameConflict -> "Taken"
                                 else -> null
-                            }
-                        )
-                        
-                        Divider(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
-                            thickness = 0.5.dp
+                            },
+                            testTag = "custom_theme_name",
                         )
                     }
 
-                    // 2. Scrollable Detail Area (Control Grid)
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .verticalScroll(rememberScrollState())
+                            .testTag("theme_editor_scroll_content")
                             .padding(horizontal = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        var activePickerKey by remember { mutableStateOf<String?>(null) }
-                        
-                        // A. Core Row (Primary + BG)
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Box(modifier = Modifier.weight(1f)) {
-                                StudioColorCell("Primary", draft.primary) { activePickerKey = "Primary" }
-                            }
-                            Box(modifier = Modifier.weight(1f)) {
-                                StudioColorCell("Background", draft.background) { activePickerKey = "Background" }
-                            }
-                        }
-
-                        // B. Advanced Toggle (Full Width)
-                        StudioToggleCell(
-                            label = "Advanced Studio",
-                            checked = draft.isAdvanced,
-                            onCheckedChange = { draftState.value = draftState.value.copy(isAdvanced = it) }
+                        ThemeEditorControlsSection(
+                            mode = draft.mode,
+                            onModeChange = { draft = draft.copy(mode = it) },
+                            onRebalance = { draft = draft.rebalanceGuidedFields() ?: draft },
                         )
-                        
-                        // C. Advanced Colors (Chunked Grid)
-                        val allColors = remember {
-                            listOf(
-                                "Primary" to { draftState.value.primary } to { c: String -> draftState.value = draftState.value.copy(primary = c) },
-                                "Background" to { draftState.value.background } to { c: String -> draftState.value = draftState.value.copy(background = c) },
-                                "Secondary" to { draftState.value.secondary } to { c: String -> draftState.value = draftState.value.copy(secondary = c) },
-                                "Surface" to { draftState.value.surface } to { c: String -> draftState.value = draftState.value.copy(surface = c) },
-                                "Surface Variant" to { draftState.value.surfaceVariant } to { c: String -> draftState.value = draftState.value.copy(surfaceVariant = c) },
-                                "Outline" to { draftState.value.outline } to { c: String -> draftState.value = draftState.value.copy(outline = c) },
-                                "Reader Background" to { draftState.value.readerBackground } to { c: String -> draftState.value = draftState.value.copy(readerBackground = c) },
-                                "Reader Text" to { draftState.value.readerForeground } to { c: String -> draftState.value = draftState.value.copy(readerForeground = c) },
-                                "System Text" to { draftState.value.systemForeground } to { c: String -> draftState.value = draftState.value.copy(systemForeground = c) }
-                            )
-                        }
 
-                        if (draft.isAdvanced) {
-                            val secondarySet = remember(allColors) { allColors.drop(2) }
-                            val rows = remember(secondarySet) { secondarySet.chunked(2) }
-                            
-                            rows.forEach { rowPairs ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    rowPairs.forEach { item ->
-                                        val (pair, _) = item
-                                        val (label, getter) = pair
-                                        Box(modifier = Modifier.weight(1f)) {
-                                            StudioColorCell(label, getter()) { activePickerKey = label }
-                                        }
-                                    }
-                                    if (rowPairs.size == 1) {
-                                        Spacer(modifier = Modifier.weight(1f))
-                                    }
-                                }
+                        when (draft.mode) {
+                            ThemeEditorMode.BASIC -> {
+                                ThemeEditorSection(
+                                    title = "Quick Theme",
+                                    subtitle = "Choose an accent and a background. The rest is generated automatically.",
+                                    fields = basicFields,
+                                )
                             }
-                        }
 
-                        // Pickers
-                        allColors.forEach { (pair, setter) ->
-                            val (label, value) = pair
-                            if (activePickerKey == label) {
-                                ColorPickerOverlay(
-                                    label = label,
-                                    initialValue = value(),
-                                    primaryColor = primaryColor,
-                                    onSurfaceColor = onSurfaceColor,
-                                    onDismiss = { activePickerKey = null },
-                                    onValueChange = setter
+                            ThemeEditorMode.EXTENDED -> {
+                                ThemeEditorSection(
+                                    title = "App",
+                                    subtitle = "Shape the main shell with the most visible roles.",
+                                    fields = extendedAppFields,
+                                )
+                                StudioToggleCell(
+                                    label = "Link Reader To App",
+                                    checked = draft.readerLinked,
+                                    onCheckedChange = { linked ->
+                                        updateGuidedDraft { draft.copy(readerLinked = linked) }
+                                    },
+                                    testTag = "theme_editor_reader_link_toggle",
+                                )
+                                if (draft.readerLinked) {
+                                    Text(
+                                        text = "Reader colors currently follow the app theme. Turn linking off to tune the page separately.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                } else {
+                                    ThemeEditorSection(
+                                        title = "Reader",
+                                        subtitle = "Set the reading page and text directly.",
+                                        fields = extendedReaderFields,
+                                    )
+                                }
+                                ThemeEditorSection(
+                                    title = "Overlays",
+                                    subtitle = "Control full-screen backdrops without touching every low-level token.",
+                                    fields = listOf(overlayField),
+                                )
+                            }
+
+                            ThemeEditorMode.ADVANCED -> {
+                                ThemeEditorSection(title = "App", fields = advancedAppFields)
+                                ThemeEditorSection(title = "Reader", fields = advancedReaderFields)
+                                ThemeEditorSection(title = "Overlays", fields = listOf(overlayField))
+                                ThemeEditorSection(
+                                    title = "Library & Startup",
+                                    subtitle = "Fine-tune launch, favorites, and cover overlays directly.",
+                                    fields = advancedLibraryFields,
                                 )
                             }
                         }
@@ -300,166 +372,16 @@ internal fun CustomThemeEditorDialog(
             }
         }
     }
-}
 
-@Composable
-private fun ColorPickerOverlay(
-    label: String,
-    initialValue: String,
-    primaryColor: Color,
-    onSurfaceColor: Color,
-    onDismiss: () -> Unit,
-    onValueChange: (String) -> Unit
-) {
-    val parsedColor = remember(initialValue) { parseThemeColorOrNull(initialValue) }
-    val initialHsv = remember(parsedColor) { (parsedColor ?: DefaultPickerColor).toHsvColor() }
-    var pickerHue by remember { mutableFloatStateOf(initialHsv.hue) }
-    var pickerSaturation by remember { mutableFloatStateOf(initialHsv.saturation) }
-    var pickerValue by remember { mutableFloatStateOf(initialHsv.value) }
-
-    // Throttled update to parent to maintain high-performance live preview
-    LaunchedEffect(pickerHue, pickerSaturation, pickerValue) {
-        val newColor = HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong()
-        onValueChange(formatThemeColor(newColor))
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Done") } },
-        title = { Text("$label Color") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                // Local preview box (recomposes at 60fps)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong()))
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
-                )
-                
-                Text("Hue", style = MaterialTheme.typography.labelSmall)
-                Slider(
-                    value = pickerHue, 
-                    onValueChange = { pickerHue = it }, 
-                    valueRange = 0f..360f
-                )
-                
-                Text("Saturation", style = MaterialTheme.typography.labelSmall)
-                Slider(
-                    value = pickerSaturation, 
-                    onValueChange = { pickerSaturation = it }, 
-                    valueRange = 0f..1f
-                )
-                
-                Text("Brightness", style = MaterialTheme.typography.labelSmall)
-                Slider(
-                    value = pickerValue, 
-                    onValueChange = { pickerValue = it }, 
-                    valueRange = 0f..1f
-                )
-            }
-        }
-    )
-}
-
-private const val DefaultPickerColor = 0xFFFFFFFFL
-
-private data class HsvColor(
-    val hue: Float,
-    val saturation: Float,
-    val value: Float,
-) {
-    fun toHsvColor(): HsvColor = this // Identity for easier logic in picker
-
-    fun toColorLong(): Long {
-        val hsv = floatArrayOf(hue, saturation, value)
-        return android.graphics.Color.HSVToColor(hsv).toLong() and 0xFFFFFFFFL
-    }
-}
-
-private fun Long.toHsvColor(): HsvColor {
-    val hsv = FloatArray(3)
-    android.graphics.Color.colorToHSV(this.toInt(), hsv)
-    return HsvColor(hsv[0], hsv[1], hsv[2])
-}
-
-internal data class ThemeEditorSession(
-    val themeId: String,
-    val isNew: Boolean,
-    val draft: ThemeEditorDraft,
-    val settings: com.epubreader.core.model.GlobalSettings
-)
-
-internal data class ThemeEditorDraft(
-    val name: String,
-    val primary: String,
-    val secondary: String,
-    val background: String,
-    val surface: String,
-    val surfaceVariant: String,
-    val outline: String,
-    val readerBackground: String,
-    val readerForeground: String,
-    val systemForeground: String,
-    val isAdvanced: Boolean = true,
-) {
-    fun toCustomTheme(themeId: String): CustomTheme? {
-        val parsedPrimary = parseThemeColorOrNull(primary) ?: return null
-        val parsedSecondary = parseThemeColorOrNull(secondary) ?: return null
-        val parsedBackground = parseThemeColorOrNull(background) ?: return null
-        val parsedSurface = parseThemeColorOrNull(surface) ?: return null
-        val parsedSurfaceVariant = parseThemeColorOrNull(surfaceVariant) ?: return null
-        val parsedOutline = parseThemeColorOrNull(outline) ?: return null
-        val parsedReaderBackground = parseThemeColorOrNull(readerBackground) ?: return null
-        val parsedReaderForeground = parseThemeColorOrNull(readerForeground) ?: return null
-        val parsedSystemForeground = parseThemeColorOrNull(systemForeground) ?: return null
-        val trimmedName = name.trim()
-        // We allow empty name in this mapper to support Live Preview while typing
-
-        return CustomTheme(
-            id = themeId,
-            name = trimmedName,
-            palette = ThemePalette(
-                primary = parsedPrimary,
-                secondary = parsedSecondary,
-                background = parsedBackground,
-                surface = parsedSurface,
-                surfaceVariant = parsedSurfaceVariant,
-                outline = parsedOutline,
-                readerBackground = parsedReaderBackground,
-                readerForeground = parsedReaderForeground,
-                systemForeground = parsedSystemForeground,
-            ),
-            isAdvanced = isAdvanced,
+    activePicker?.let { field ->
+        ThemeColorPickerOverlay(
+            label = field.label,
+            initialValue = field.initialValue,
+            testTagPrefix = field.testTagPrefix,
+            isGuided = field.isGuided,
+            onDismiss = { activePicker = null },
+            onValueChange = field.onColorChange,
         )
-    }
-
-    companion object {
-        fun fromTheme(theme: CustomTheme): ThemeEditorDraft {
-            return fromPalette(theme.name, theme.palette, theme.isAdvanced)
-        }
-
-        fun fromPalette(
-            name: String,
-            palette: ThemePalette,
-            isAdvanced: Boolean = true,
-        ): ThemeEditorDraft {
-            return ThemeEditorDraft(
-                name = name,
-                primary = formatThemeColor(palette.primary),
-                secondary = formatThemeColor(palette.secondary),
-                background = formatThemeColor(palette.background),
-                surface = formatThemeColor(palette.surface),
-                surfaceVariant = formatThemeColor(palette.surfaceVariant),
-                outline = formatThemeColor(palette.outline),
-                readerBackground = formatThemeColor(palette.readerBackground),
-                readerForeground = formatThemeColor(palette.readerForeground),
-                systemForeground = formatThemeColor(palette.systemForeground),
-                isAdvanced = isAdvanced,
-            )
-        }
     }
 }
 

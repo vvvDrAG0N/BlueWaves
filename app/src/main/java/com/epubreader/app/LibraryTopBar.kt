@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.core.ui.getStaticWindowInsets
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,6 +27,9 @@ internal fun LibraryTopBar(
     state: LibraryScreenState,
     actions: LibraryScreenActions,
 ) {
+    val favoriteAccent = Color(
+        themePaletteSeed(state.globalSettings.theme, state.globalSettings.customThemes).favoriteAccent
+    )
     if (state.selection.isBookSelectionMode) {
         TopAppBar(
             windowInsets = getStaticWindowInsets(),
@@ -69,7 +73,7 @@ internal fun LibraryTopBar(
                     Icon(
                         imageVector = if (isFavorite) Icons.Default.Star else Icons.Default.StarOutline,
                         contentDescription = "Favorite",
-                        tint = if (isFavorite) Color(0xFFFFD700) else LocalContentColor.current,
+                        tint = if (isFavorite) favoriteAccent else LocalContentColor.current,
                     )
                 }
                 IconButton(onClick = actions.onShowSortMenu) {

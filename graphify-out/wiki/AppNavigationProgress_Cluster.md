@@ -1,0 +1,27 @@
+# AppNavigationProgress Cluster
+
+> 3 nodes · cohesion 0.67
+
+## Key Concepts
+
+- **AppNavigationProgress.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationProgress.kt`
+- **rememberLibraryProgressByBookId()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationProgress.kt`
+- **shouldObserveLibraryProgress()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationProgress.kt`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationProgress.kt`
+
+## Audit Trail
+
+- EXTRACTED: 4 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [[index]] to navigate.*

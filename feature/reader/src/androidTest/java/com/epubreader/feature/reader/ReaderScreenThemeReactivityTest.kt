@@ -8,15 +8,18 @@ import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.MainActivity
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.LightThemeId
+import com.epubreader.core.model.SepiaThemeId
 import com.epubreader.core.model.ThemePalette
+import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.runBlocking
@@ -32,6 +35,7 @@ import java.util.UUID
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.math.roundToInt
 
 @RunWith(AndroidJUnit4::class)
 class ReaderScreenThemeReactivityTest {
@@ -43,6 +47,8 @@ class ReaderScreenThemeReactivityTest {
     private val parser by lazy { EpubParser.create(composeRule.activity) }
     private val createdBookIds = mutableListOf<String>()
     private val createdFolders = mutableListOf<File>()
+    private val lightReaderBackground = Color(themePaletteSeed(LightThemeId, emptyList()).readerBackground)
+    private val sepiaReaderBackground = Color(themePaletteSeed(SepiaThemeId, emptyList()).readerBackground)
 
     @Before
     fun setUp() = runBlocking {
@@ -83,15 +89,15 @@ class ReaderScreenThemeReactivityTest {
             }
         }
 
-        waitUntilDisplayed("Theme Paragraph 0")
-        assertBackgroundColor(Color.White)
+        waitForReaderReady()
+        waitForBackgroundColor(lightReaderBackground, "initial light theme")
 
         settingsManager.updateGlobalSettings(GlobalSettings(theme = "sepia"))
 
-        composeRule.waitUntil(10_000) { backgroundMatches(Color(0xFFF4ECD8)) }
+        waitForBackgroundColor(sepiaReaderBackground, "updated sepia theme")
 
         composeRule.onNodeWithText("Theme Paragraph 0").assertIsDisplayed()
-        assertBackgroundColor(Color(0xFFF4ECD8))
+        assertBackgroundColor(sepiaReaderBackground, "confirmed sepia theme")
     }
 
     @Test
@@ -134,8 +140,8 @@ class ReaderScreenThemeReactivityTest {
             }
         }
 
-        waitUntilDisplayed("Theme Paragraph 0")
-        assertBackgroundColor(Color.White)
+        waitForReaderReady()
+        waitForBackgroundColor(lightReaderBackground, "initial light theme")
 
         settingsManager.updateGlobalSettings(
             GlobalSettings(
@@ -144,10 +150,10 @@ class ReaderScreenThemeReactivityTest {
             ),
         )
 
-        composeRule.waitUntil(10_000) { backgroundMatches(Color(0xFFEEF8FF)) }
+        waitForBackgroundColor(Color(customTheme.palette.readerBackground), "updated custom reader theme")
 
         composeRule.onNodeWithText("Theme Paragraph 0").assertIsDisplayed()
-        assertBackgroundColor(Color(0xFFEEF8FF))
+        assertBackgroundColor(Color(customTheme.palette.readerBackground), "confirmed custom reader theme")
     }
 
     private fun waitUntilDisplayed(text: String, timeoutMillis: Long = 15_000) {
@@ -161,16 +167,70 @@ class ReaderScreenThemeReactivityTest {
         }
     }
 
-    private fun assertBackgroundColor(expected: Color) {
+    private fun waitForReaderReady() {
+        waitUntilDisplayed("Theme Paragraph 0")
+        composeRule.waitForIdle()
+    }
+
+    private fun waitForBackgroundColor(
+        expected: Color,
+        phase: String,
+        timeoutMillis: Long = 10_000,
+    ) {
+        val matched = runCatching {
+            composeRule.waitUntil(timeoutMillis) { backgroundMatches(expected) }
+            true
+        }.getOrDefault(false)
+        check(matched) {
+            "Timed out waiting for reader background to match ${expected.toArgb()} during $phase. " +
+                sampledBackgroundDebugString()
+        }
+        composeRule.waitForIdle()
+        assertBackgroundColor(expected, phase)
+    }
+
+    private fun assertBackgroundColor(expected: Color, phase: String) {
         check(backgroundMatches(expected)) {
-            "Reader background did not match expected color ${expected.toArgb()}."
+            "Reader background did not match expected color ${expected.toArgb()} during $phase. " +
+                sampledBackgroundDebugString()
         }
     }
 
     private fun backgroundMatches(expected: Color): Boolean {
-        val image = composeRule.onRoot().captureToImage()
-        val pixel = image.toPixelMap()[8, 8]
-        return pixel.closeTo(expected)
+        return captureBackgroundSamples().all { sample ->
+            sample.color.closeTo(expected)
+        }
+    }
+
+    private fun captureBackgroundSamples(): List<BackgroundSample> {
+        val pixelMap = composeRule.onNodeWithTag("reader_content_surface")
+            .captureToImage()
+            .toPixelMap()
+        val width = pixelMap.width
+        val height = pixelMap.height
+        val sampleXs = listOf(
+            (width / 48f).roundToInt(),
+            (width / 32f).roundToInt(),
+        ).map { it.coerceIn(1, width - 2) }.distinct()
+        val sampleYs = listOf(0.18f, 0.34f, 0.52f, 0.68f)
+            .map { fraction -> (height * fraction).roundToInt().coerceIn(1, height - 2) }
+
+        return buildList {
+            sampleXs.forEach { x ->
+                sampleYs.forEach { y ->
+                    add(BackgroundSample(x = x, y = y, color = pixelMap[x, y]))
+                }
+            }
+        }
+    }
+
+    private fun sampledBackgroundDebugString(): String {
+        return captureBackgroundSamples().joinToString(
+            prefix = "Samples: ",
+            separator = ", ",
+        ) { sample ->
+            "(${sample.x},${sample.y})=${sample.color.toArgb()}"
+        }
     }
 
     private fun Color.closeTo(other: Color, tolerance: Float = 0.03f): Boolean {
@@ -178,6 +238,12 @@ class ReaderScreenThemeReactivityTest {
             kotlin.math.abs(green - other.green) <= tolerance &&
             kotlin.math.abs(blue - other.blue) <= tolerance
     }
+
+    private data class BackgroundSample(
+        val x: Int,
+        val y: Int,
+        val color: Color,
+    )
 
     private fun createThemeBook(): EpubBook {
         val rootDir = File(composeRule.activity.cacheDir, "androidTest-books").apply { mkdirs() }

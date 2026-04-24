@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import com.epubreader.Screen
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import com.epubreader.feature.editbook.EditBookScreen
@@ -96,6 +97,7 @@ internal fun AppNavigationScreenHost(
         if (startupState.isWarmUpVisible) {
             AppWarmUpScreen(
                 phase = startupState.phase,
+                palette = themePaletteSeed(globalSettings.theme, globalSettings.customThemes),
                 modifier = Modifier.fillMaxSize(),
             )
         }

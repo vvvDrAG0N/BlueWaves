@@ -11,21 +11,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,20 +28,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.epubreader.R
+import com.epubreader.core.model.ThemePalette
 
 internal const val AppWarmUpScreenTag = "app_warm_up_screen"
 
 @Composable
 internal fun AppWarmUpScreen(
     phase: StartupPhase,
+    palette: ThemePalette,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
     val interactionSource = remember { MutableInteractionSource() }
+    val backgroundColor = Color(palette.startupBackground)
+    val titleColor = Color(palette.startupForeground)
+    val messageColor = Color(palette.startupForeground).copy(alpha = 0.72f)
+    val progressColor = Color(palette.accent)
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(colorScheme.background)
+            .background(backgroundColor)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -54,89 +54,46 @@ internal fun AppWarmUpScreen(
             )
             .testTag(AppWarmUpScreenTag),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            colorScheme.primary.copy(alpha = 0.08f),
-                            colorScheme.background,
-                        ),
-                    ),
-                ),
-        )
-        Box(
-            modifier = Modifier
-                .size(280.dp)
-                .offset(x = 140.dp, y = (-60).dp)
-                .clip(CircleShape)
-                .background(colorScheme.primary.copy(alpha = 0.12f)),
-        )
-        Box(
-            modifier = Modifier
-                .size(220.dp)
-                .align(Alignment.BottomStart)
-                .offset(x = (-72).dp, y = 48.dp)
-                .clip(CircleShape)
-                .background(colorScheme.secondary.copy(alpha = 0.08f)),
-        )
-
-        Surface(
+        Column(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()
                 .padding(horizontal = 28.dp),
-            shape = RoundedCornerShape(30.dp),
-            color = colorScheme.surface.copy(alpha = 0.94f),
-            tonalElevation = 10.dp,
-            shadowElevation = 8.dp,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 28.dp, vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(28.dp),
-                    color = colorScheme.primaryContainer.copy(alpha = 0.82f),
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_warm_up_mark),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(88.dp)
-                            .padding(14.dp),
-                    )
-                }
+            Image(
+                painter = painterResource(id = R.drawable.app_icon_og),
+                contentDescription = null,
+                modifier = Modifier.size(88.dp),
+            )
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colorScheme.onSurface,
-                )
+            Text(
+                text = stringResource(id = R.string.app_name),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = titleColor,
+            )
 
-                Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-                CircularProgressIndicator(
-                    modifier = Modifier.size(28.dp),
-                    strokeWidth = 3.dp,
-                )
+            Text(
+                text = warmUpStatusText(phase),
+                style = MaterialTheme.typography.bodyLarge,
+                color = messageColor,
+                textAlign = TextAlign.Center,
+            )
 
-                Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(22.dp))
 
-                Text(
-                    text = warmUpStatusText(phase),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
-            }
+            CircularProgressIndicator(
+                modifier = Modifier.size(28.dp),
+                strokeWidth = 3.dp,
+                color = progressColor,
+                trackColor = Color.Transparent,
+            )
         }
     }
 }

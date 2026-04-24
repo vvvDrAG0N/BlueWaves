@@ -139,8 +139,8 @@ class AppNavigationLibraryFlowTest {
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag(AppWarmUpScreenTag).assertIsDisplayed()
         composeRule.mainClock.autoAdvance = true
-        waitUntilDisplayed("Warm Up Book 1")
         waitUntilWarmUpGone()
+        waitUntilContentDescriptionExists("Folder My Library")
     }
 
     @Test
@@ -160,8 +160,8 @@ class AppNavigationLibraryFlowTest {
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag(AppWarmUpScreenTag).assertIsDisplayed()
         composeRule.mainClock.autoAdvance = true
-        waitUntilDisplayed("What's New")
         waitUntilWarmUpGone()
+        waitUntilDisplayed("What's New")
     }
 
     private suspend fun resetSettings() {

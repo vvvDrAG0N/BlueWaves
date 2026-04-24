@@ -49,7 +49,6 @@ import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -57,7 +56,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -92,8 +90,10 @@ fun ReaderScreen(
     // AI_STATE_OWNER: ReaderScreen (Extracted from EPUB, used for LazyColumn rendering)
     var chapterElements by remember(book.id) { mutableStateOf<List<ChapterElement>>(emptyList()) }
     var isLoadingChapter by remember { mutableStateOf(false) }
+    var isChapterSettleComplete by remember(book.id) { mutableStateOf(false) }
     var isInitialScrollDone by remember(book.id) { mutableStateOf(false) }
     var isRestoringPosition by remember { mutableStateOf(false) }
+    var hasReaderUserInteracted by remember(book.id) { mutableStateOf(false) }
     var skipRestoration by remember { mutableStateOf(false) }
     var isGestureNavigation by remember { mutableStateOf(false) }
     var shouldScrollToBottom by remember { mutableStateOf(false) }
@@ -156,28 +156,18 @@ fun ReaderScreen(
         }
     }
 
-    // Load Chapter: Fetches content for currentChapterIndex and pre-fetches neighbors.
-    // [AI_NOTE] Pre-fetching is done on Dispatchers.IO to prevent UI stutter during rapid navigation.
-    LaunchedEffect(currentChapterIndex) {
-        if (currentChapterIndex == -1 || currentChapterIndex >= book.spineHrefs.size) return@LaunchedEffect
-
-        isLoadingChapter = true
-        val href = book.spineHrefs[currentChapterIndex]
-        val elements = withContext(Dispatchers.IO) {
-            parser.parseChapter(book.rootPath, href)
-        }
-        chapterElements = elements
-        isLoadingChapter = false
-
-        launch(Dispatchers.IO) {
-            if (currentChapterIndex > 0) {
-                parser.parseChapter(book.rootPath, book.spineHrefs[currentChapterIndex - 1])
-            }
-            if (currentChapterIndex < book.spineHrefs.size - 1) {
-                parser.parseChapter(book.rootPath, book.spineHrefs[currentChapterIndex + 1])
-            }
-        }
-    }
+    ReaderChapterLoadingEffect(
+        book = book,
+        parser = parser,
+        currentChapterIndex = currentChapterIndex,
+        hasChapterElements = chapterElements.isNotEmpty(),
+        isLoadingChapter = isLoadingChapter,
+        isChapterSettleComplete = isChapterSettleComplete,
+        hasReaderUserInteracted = hasReaderUserInteracted,
+        onLoadingChapterChange = { isLoadingChapter = it },
+        onChapterElementsChange = { chapterElements = it },
+        onChapterSettleCompleteChange = { isChapterSettleComplete = it },
+    )
 
     LaunchedEffect(globalSettings, settingsDraft) {
         val draft = settingsDraft ?: return@LaunchedEffect
@@ -207,6 +197,7 @@ fun ReaderScreen(
                 skipRestoration = false
                 isInitialScrollDone = true
                 isRestoringPosition = false
+                isChapterSettleComplete = true
                 isGestureNavigation = false
                 shouldScrollToBottom = false
             } else if (isGestureNavigation) {
@@ -224,6 +215,7 @@ fun ReaderScreen(
                 delay(100)
                 isInitialScrollDone = true
                 isRestoringPosition = false
+                isChapterSettleComplete = true
                 isGestureNavigation = false
                 shouldScrollToBottom = false
             } else if (!isInitialScrollDone) {
@@ -252,6 +244,7 @@ fun ReaderScreen(
                 delay(100)
                 isInitialScrollDone = true
                 isRestoringPosition = false
+                isChapterSettleComplete = true
             } else if (shouldScrollToBottom) {
                 isRestoringPosition = true
                 snapshotFlow { listState.layoutInfo.visibleItemsInfo }
@@ -262,6 +255,7 @@ fun ReaderScreen(
                 delay(100)
                 shouldScrollToBottom = false
                 isRestoringPosition = false
+                isChapterSettleComplete = true
             }
         }
     }
@@ -284,6 +278,15 @@ fun ReaderScreen(
                         ),
                         representation = BookRepresentation.EPUB,
                     )
+                }
+            }
+    }
+
+    LaunchedEffect(book.id) {
+        snapshotFlow { listState.isScrollInProgress && isInitialScrollDone && !isRestoringPosition }
+            .collectLatest { hasUserDrivenScroll ->
+                if (hasUserDrivenScroll) {
+                    hasReaderUserInteracted = true
                 }
             }
     }
@@ -325,6 +328,7 @@ fun ReaderScreen(
 
     fun jumpToChapter(targetIndex: Int) {
         showControls = false
+        hasReaderUserInteracted = true
         if (targetIndex != currentChapterIndex) {
             skipRestoration = true
             isInitialScrollDone = false
@@ -337,6 +341,7 @@ fun ReaderScreen(
     }
 
     fun selectTocChapter(targetIndex: Int) {
+        hasReaderUserInteracted = true
         if (targetIndex != currentChapterIndex) {
             shouldScrollToBottom = false
             skipRestoration = true
@@ -352,6 +357,7 @@ fun ReaderScreen(
 
     fun navigateNext() {
         if (currentChapterIndex < book.spineHrefs.size - 1) {
+            hasReaderUserInteracted = true
             shouldScrollToBottom = false
             isGestureNavigation = true
             isInitialScrollDone = true 
@@ -362,6 +368,7 @@ fun ReaderScreen(
 
     fun navigatePrev(toBottom: Boolean = true) {
         if (currentChapterIndex > 0) {
+            hasReaderUserInteracted = true
             shouldScrollToBottom = toBottom
             isGestureNavigation = true
             isInitialScrollDone = true 
@@ -381,6 +388,7 @@ fun ReaderScreen(
 
     fun handleMainScrubberDragStart() {
         showControls = false
+        hasReaderUserInteracted = true
         scope.launch { drawerState.close() }
         isInitialScrollDone = true
         isRestoringPosition = false

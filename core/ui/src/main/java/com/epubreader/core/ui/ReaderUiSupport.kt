@@ -28,12 +28,9 @@ fun getThemeColors(
     val palette = themePaletteSeed(theme, customThemes)
     val background = Color(palette.readerBackground)
     val foreground = Color(palette.readerForeground)
-    val primary = Color(palette.primary)
-    
-    // Derive secondary foreground color (onSurfaceVariant equivalent)
-    // We use a 70% alpha of the foreground to ensure tonal harmony
-    val variantForeground = foreground.copy(alpha = 0.7f)
-    
+    val primary = Color(palette.readerAccent)
+    val variantForeground = Color(palette.readerForegroundMuted)
+
     return ReaderTheme(
         background = background,
         foreground = foreground,

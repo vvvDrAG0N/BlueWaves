@@ -1,17 +1,19 @@
 # SettingsManagerContractsTest Cluster
 
-> 11 nodes · cohesion 0.18
+> 13 nodes · cohesion 0.15
 
 ## Key Concepts
 
-- **SettingsManagerContractsTest** (10 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
+- **SettingsManagerContractsTest** (12 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **SettingsManagerContractsTest.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toBookProgress_fallsBackToLegacyKeysForEpubRepresentation()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toBookProgress_keepsPdfRepresentationIsolatedFromLegacyEpubKeys()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toBookProgress_readsValuesForRequestedBookOnly()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toBookProgress_returnsDefaultsForEmptyPreferences()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
+- **.toCustomThemesJson_writesLegacyAndSemanticThemeKeys()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toGlobalSettings_fallsBackToLightWhenStoredThemeDoesNotExist()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toGlobalSettings_readsCustomThemesAndKeepsKnownCustomSelection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
+- **.toGlobalSettings_readsSemanticThemeKeysAndExpandedRoles()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toGlobalSettings_readsShowSystemBarWhenPresent()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toGlobalSettings_returnsDefaultsForEmptyPreferences()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
 - **.toGlobalSettings_usesDefaultsForMissingKeysWhenPreferencesArePartial()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\test\java\com\epubreader\data\settings\SettingsManagerContractsTest.kt`
@@ -26,7 +28,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 20 (100%)
+- EXTRACTED: 24 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

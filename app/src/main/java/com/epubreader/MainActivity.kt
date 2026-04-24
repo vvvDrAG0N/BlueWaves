@@ -53,8 +53,12 @@ class MainActivity : ComponentActivity() {
 
             if (globalSettings == null) {
                 val fallbackTheme = if (isSystemInDarkTheme()) DarkThemeId else LightThemeId
+                val fallbackPalette = themePaletteSeed(fallbackTheme, emptyList())
                 MaterialTheme(colorScheme = appColorScheme(fallbackTheme)) {
-                    AppWarmUpScreen(phase = StartupPhase.WaitingForSettings)
+                    AppWarmUpScreen(
+                        phase = StartupPhase.WaitingForSettings,
+                        palette = fallbackPalette,
+                    )
                 }
                 return@setContent
             }
@@ -111,13 +115,14 @@ private fun customAppColorScheme(theme: CustomTheme): ColorScheme {
 }
 
 private fun colorSchemeFromPalette(palette: ThemePalette): ColorScheme {
-    val primary = Color(palette.primary)
-    val secondary = Color(palette.secondary)
-    val background = Color(palette.background)
-    val surface = Color(palette.surface)
-    val surfaceVariant = Color(palette.surfaceVariant)
-    val outline = Color(palette.outline)
-    val systemForeground = Color(palette.systemForeground)
+    val primary = Color(palette.accent)
+    val secondary = Color(palette.chromeAccent)
+    val background = Color(palette.appBackground)
+    val surface = Color(palette.appSurface)
+    val surfaceVariant = Color(palette.appSurfaceVariant)
+    val outline = Color(palette.appOutline)
+    val systemForeground = Color(palette.appForeground)
+    val mutedForeground = Color(palette.appForegroundMuted)
     val isDarkPalette = averageLuminance(
         background = background,
         surface = surface,
@@ -147,7 +152,7 @@ private fun colorSchemeFromPalette(palette: ThemePalette): ColorScheme {
             surface = surface,
             onSurface = systemForeground,
             surfaceVariant = surfaceVariant,
-            onSurfaceVariant = systemForeground,
+            onSurfaceVariant = mutedForeground,
             outline = outline,
             outlineVariant = lerp(surfaceVariant, outline, 0.35f),
         )
@@ -170,7 +175,7 @@ private fun colorSchemeFromPalette(palette: ThemePalette): ColorScheme {
             surface = surface,
             onSurface = systemForeground,
             surfaceVariant = surfaceVariant,
-            onSurfaceVariant = systemForeground,
+            onSurfaceVariant = mutedForeground,
             outline = outline,
             outlineVariant = lerp(surfaceVariant, outline, 0.35f),
         )

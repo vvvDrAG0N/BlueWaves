@@ -68,6 +68,7 @@ private fun ReaderContentSurface(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .testTag("reader_content_surface")
             .background(state.themeColors.background)
             .nestedScroll(state.nestedScrollConnection)
             .pointerInput(Unit) {
@@ -125,7 +126,7 @@ private fun ReaderContentSurface(
         ReaderOverscrollOverlay(
             verticalOverscrollState = state.verticalOverscrollState,
             overscrollThreshold = state.overscrollThreshold,
-            color = state.themeColors.foreground,
+            themeColors = state.themeColors,
         )
 
         AnimatedVisibility(
@@ -197,7 +198,7 @@ private fun ReaderContentSurface(
 private fun BoxScope.ReaderOverscrollOverlay(
     verticalOverscrollState: State<Float>,
     overscrollThreshold: Float,
-    color: Color,
+    themeColors: ReaderTheme,
 ) {
     val verticalOverscroll = verticalOverscrollState.value
 
@@ -211,7 +212,7 @@ private fun BoxScope.ReaderOverscrollOverlay(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 100.dp),
-            color = color,
+            themeColors = themeColors,
         )
     } else if (verticalOverscroll < 0) {
         OverscrollIndicator(
@@ -223,7 +224,7 @@ private fun BoxScope.ReaderOverscrollOverlay(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 100.dp),
-            color = color,
+            themeColors = themeColors,
         )
     }
 }

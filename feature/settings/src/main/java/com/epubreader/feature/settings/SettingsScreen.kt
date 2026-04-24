@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Settings
@@ -46,6 +46,7 @@ import com.epubreader.core.model.BuiltInThemeOptions
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.CustomThemeIdPrefix
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.generatePaletteFromBase
 import com.epubreader.core.model.suggestNextThemeName
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.core.ui.getStaticWindowInsets
@@ -73,13 +74,18 @@ fun SettingsScreen(
     var themeToDelete by remember { mutableStateOf<CustomTheme?>(null) }
 
     fun openCreateThemeEditor() {
+        val seedPalette = themePaletteSeed(settings.theme, settings.customThemes)
         editorSession = ThemeEditorSession(
             themeId = "$CustomThemeIdPrefix${UUID.randomUUID()}",
             isNew = true,
             draft = ThemeEditorDraft.fromPalette(
                 name = suggestNextThemeName(settings.customThemes),
-                palette = themePaletteSeed(settings.theme, settings.customThemes),
-                isAdvanced = false,
+                palette = generatePaletteFromBase(
+                    primary = seedPalette.accent,
+                    background = seedPalette.appBackground,
+                ),
+                mode = ThemeEditorMode.BASIC,
+                legacyIsAdvanced = false,
             ),
             settings = settings,
         )
@@ -165,13 +171,10 @@ fun SettingsScreen(
 
     val session = editorSession
     if (session != null) {
-        val currentPalette = themePaletteSeed(settings.theme, settings.customThemes)
         CustomThemeEditorDialog(
             session = session,
             activeThemeId = settings.theme,
             existingThemes = settings.customThemes,
-            primaryColor = androidx.compose.ui.graphics.Color(currentPalette.primary),
-            onSurfaceColor = androidx.compose.ui.graphics.Color(currentPalette.systemForeground),
             onDismiss = { editorSession = null },
             onSave = { theme, shouldActivate ->
                 scope.launch {
@@ -235,7 +238,7 @@ private fun SettingsMenuList(
         SectionEntry(SettingsSection.Appearance, Icons.Outlined.Palette, "Themes · ${settings.fontSize}sp · ${settings.fontType}"),
         SectionEntry(SettingsSection.Interface, Icons.Outlined.Settings, "Scrubber · System Bars · Status"),
         SectionEntry(SettingsSection.Interaction, Icons.Default.TouchApp, "Selection · Haptics · Translation"),
-        SectionEntry(SettingsSection.Library, Icons.Default.MenuBook, "Book covers & management"),
+        SectionEntry(SettingsSection.Library, Icons.AutoMirrored.Filled.MenuBook, "Book covers & management"),
     )
 
     Column(modifier = Modifier.fillMaxSize()) {

@@ -1,17 +1,8 @@
-/**
- * FILE: AppNavigation.kt
- * PURPOSE: High-level UI orchestration for library, reader, and settings navigation.
- * RESPONSIBILITIES:
- *  - Manages screen transitions using [Screen].
- *  - Coordinates library organization, folder management, and drag-and-drop.
- *  - Bridges app-level state between persistence, parser, and UI features.
- */
 package com.epubreader.app
 
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -40,28 +31,13 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 /**
- * AI_LOAD_STRATEGY
- * - Read this file when you need app-shell state ownership, startup/version effects, or screen routing.
- * - Read `AppNavigationContracts.kt` when you need the app-shell state or callback contract map.
- * - Read `AppNavigationStartup.kt` for first-run/version/changelog evaluation.
- * - Read `AppNavigationOperations.kt` for import/delete/last-read side effects.
- * - Read `AppNavigationLibraryData.kt` for folder derivation, sorting, or drag-preview helpers.
- * - Read `AppNavigationLibrary.kt` for drawer/top bar/grid rendering.
- * - Read `AppNavigationDialogs.kt` for sort sheet and confirmation/welcome dialogs.
- */
-
-/**
  * AI_ENTRY_POINT
  * AI_READ_FIRST
  * AI_RELEVANT_TO: [App Navigation, Library Management, Folder Drag-and-Drop]
  * AI_STATE_OWNER: AppNavigation owns [books, selectedBook, selectedFolderName].
  *
- * PURPOSE: High-level navigation and state container for the entire app.
- * RESPONSIBILITIES:
- *  - Orchestrates transitions between Library, Reader, and Settings.
- *  - Owns transient app-shell state and coordinates package-local helper files.
- *  - Keeps folder and sorting derivation, startup decisions, and side-effect operations wired together.
- * AI_CRITICAL: This is the "Brain" of the app. Adding UI here often requires corresponding
+ * High-level app shell state container for Library, Reader, and Settings.
+ * AI_CRITICAL: This is the app-shell brain. Adding UI here often requires matching
  * state logic updates in [SettingsManager].
  */
 @Composable
@@ -294,14 +270,12 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     )
 
     val lastOpenedBook = remember(books) { findLastOpenedBook(books) }
-    val progressTargets = remember(libraryItems, lastOpenedBook) {
-        buildLibraryProgressTargets(
-            libraryItems = libraryItems,
-            lastOpenedBook = lastOpenedBook,
-        )
-    }
-    val progressByBookId by settingsManager.observeBookProgresses(progressTargets)
-        .collectAsState(initial = emptyMap())
+    val progressByBookId = rememberLibraryProgressByBookId(
+        settingsManager = settingsManager,
+        currentScreen = currentScreen,
+        libraryItems = libraryItems,
+        lastOpenedBook = lastOpenedBook,
+    )
     val selectedEditableBook = remember(books, selectedBookIds) {
         findSelectedEditableBook(
             books = books,

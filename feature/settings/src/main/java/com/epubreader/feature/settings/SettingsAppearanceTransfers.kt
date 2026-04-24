@@ -5,8 +5,10 @@ import android.net.Uri
 import com.epubreader.core.model.BuiltInThemeOptions
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.CustomThemeIdPrefix
+import com.epubreader.core.model.GuidedThemePaletteInput
 import com.epubreader.core.model.ThemePalette
 import com.epubreader.core.model.formatThemeColor
+import com.epubreader.core.model.generatePaletteFromGuidedInput
 import com.epubreader.core.model.parseThemeColorOrNull
 import com.epubreader.data.settings.SettingsManager
 import java.util.Locale
@@ -111,6 +113,14 @@ private suspend fun importSingleThemeJson(
     settingsManager: SettingsManager,
 ): String? {
     val colorKeys = listOf(
+        "accent",
+        "chromeAccent",
+        "appBackground",
+        "appSurface",
+        "appSurfaceVariant",
+        "appOutline",
+        "appForeground",
+        "appForegroundMuted",
         "primary",
         "secondary",
         "background",
@@ -120,26 +130,43 @@ private suspend fun importSingleThemeJson(
         "readerBackground",
         "readerForeground",
         "readerText",
+        "readerForegroundMuted",
+        "readerAccent",
+        "overlayScrim",
+        "startupBackground",
+        "startupForeground",
+        "favoriteAccent",
+        "coverOverlayScrim",
     )
     if (colorKeys.count(json::has) < 3) return null
 
-    val readerBg = parseThemeColorOrNull(json.optString("readerBackground")) ?: 0xFFFFFFFF
-    val readerFg = parseThemeColorOrNull(json.optString("readerForeground"))
-        ?: parseThemeColorOrNull(json.optString("readerText"))
-        ?: 0xFF000000
-    val bg = parseThemeColorOrNull(json.optString("background")) ?: 0xFFFFFFFF
-    val pri = parseThemeColorOrNull(json.optString("primary")) ?: 0xFF6200EE
-
-    val palette = ThemePalette(
-        primary = pri,
-        secondary = parseThemeColorOrNull(json.optString("secondary")) ?: pri,
-        background = bg,
-        surface = parseThemeColorOrNull(json.optString("surface")) ?: bg,
-        surfaceVariant = parseThemeColorOrNull(json.optString("surfaceVariant")) ?: bg,
-        outline = parseThemeColorOrNull(json.optString("outline")) ?: 0xFF757575,
-        readerBackground = readerBg,
-        readerForeground = readerFg,
-        systemForeground = parseThemeColorOrNull(json.optString("systemForeground")) ?: 0xFF000000,
+    val accent = json.parseColorFromKeys("accent", "primary") ?: 0xFF6200EE
+    val appBackground = json.parseColorFromKeys("appBackground", "background") ?: 0xFFFFFFFF
+    val readerBackground = json.parseColorFromKeys("readerBackground")
+    val readerForeground = json.parseColorFromKeys("readerForeground", "readerText")
+    val basePalette = generatePaletteFromGuidedInput(
+        GuidedThemePaletteInput(
+            accent = accent,
+            appBackground = appBackground,
+            chromeAccent = json.parseColorFromKeys("chromeAccent", "secondary"),
+            appSurface = json.parseColorFromKeys("appSurface", "surface"),
+            appForeground = json.parseColorFromKeys("appForeground", "systemForeground"),
+            appForegroundMuted = json.parseColorFromKeys("appForegroundMuted"),
+            readerBackground = readerBackground,
+            readerForeground = readerForeground,
+            overlayScrim = json.parseColorFromKeys("overlayScrim"),
+            readerLinked = readerBackground == null && readerForeground == null,
+        ),
+    )
+    val palette = basePalette.copy(
+        surfaceVariant = json.parseColorFromKeys("appSurfaceVariant", "surfaceVariant") ?: basePalette.surfaceVariant,
+        outline = json.parseColorFromKeys("appOutline", "outline") ?: basePalette.outline,
+        readerForegroundMuted = json.parseColorFromKeys("readerForegroundMuted") ?: basePalette.readerForegroundMuted,
+        readerAccent = json.parseColorFromKeys("readerAccent") ?: basePalette.readerAccent,
+        startupBackground = json.parseColorFromKeys("startupBackground") ?: basePalette.startupBackground,
+        startupForeground = json.parseColorFromKeys("startupForeground") ?: basePalette.startupForeground,
+        favoriteAccent = json.parseColorFromKeys("favoriteAccent") ?: basePalette.favoriteAccent,
+        coverOverlayScrim = json.parseColorFromKeys("coverOverlayScrim") ?: basePalette.coverOverlayScrim,
     )
     if (seenPalettes.contains(palette)) return null
 
@@ -174,18 +201,7 @@ internal suspend fun exportThemeToUri(
     theme: CustomTheme,
 ): Boolean = withContext(Dispatchers.IO) {
     runCatching {
-        val json = JSONObject().apply {
-            put("name", theme.name)
-            put("primary", formatThemeColor(theme.palette.primary))
-            put("secondary", formatThemeColor(theme.palette.secondary))
-            put("background", formatThemeColor(theme.palette.background))
-            put("surface", formatThemeColor(theme.palette.surface))
-            put("surfaceVariant", formatThemeColor(theme.palette.surfaceVariant))
-            put("outline", formatThemeColor(theme.palette.outline))
-            put("readerBackground", formatThemeColor(theme.palette.readerBackground))
-            put("readerForeground", formatThemeColor(theme.palette.readerForeground))
-            put("systemForeground", formatThemeColor(theme.palette.systemForeground))
-        }
+        val json = theme.toPortableThemeJson()
         context.contentResolver.openOutputStream(exportUri)?.use { it.write(json.toString(4).toByteArray()) }
     }.isSuccess
 }
@@ -199,18 +215,7 @@ internal suspend fun exportThemesPackToUri(
         context.contentResolver.openOutputStream(exportUri)?.use { output ->
             ZipOutputStream(output).use { zos ->
                 themes.forEach { theme ->
-                    val json = JSONObject().apply {
-                        put("name", theme.name)
-                        put("primary", formatThemeColor(theme.palette.primary))
-                        put("secondary", formatThemeColor(theme.palette.secondary))
-                        put("background", formatThemeColor(theme.palette.background))
-                        put("surface", formatThemeColor(theme.palette.surface))
-                        put("surfaceVariant", formatThemeColor(theme.palette.surfaceVariant))
-                        put("outline", formatThemeColor(theme.palette.outline))
-                        put("readerBackground", formatThemeColor(theme.palette.readerBackground))
-                        put("readerForeground", formatThemeColor(theme.palette.readerForeground))
-                        put("systemForeground", formatThemeColor(theme.palette.systemForeground))
-                    }
+                    val json = theme.toPortableThemeJson()
                     val entry = ZipEntry("${theme.name.replace(Regex("[^a-zA-Z0-9]"), "_")}.json")
                     zos.putNextEntry(entry)
                     zos.write(json.toString(4).toByteArray())
@@ -219,4 +224,40 @@ internal suspend fun exportThemesPackToUri(
             }
         }
     }.isSuccess
+}
+
+private fun JSONObject.parseColorFromKeys(vararg keys: String): Long? {
+    return keys.firstNotNullOfOrNull { key ->
+        optString(key).takeIf { it.isNotBlank() }?.let(::parseThemeColorOrNull)
+    }
+}
+
+private fun CustomTheme.toPortableThemeJson(): JSONObject {
+    return JSONObject().apply {
+        put("name", name)
+        put("primary", formatThemeColor(palette.primary))
+        put("secondary", formatThemeColor(palette.secondary))
+        put("background", formatThemeColor(palette.background))
+        put("surface", formatThemeColor(palette.surface))
+        put("surfaceVariant", formatThemeColor(palette.surfaceVariant))
+        put("outline", formatThemeColor(palette.outline))
+        put("readerBackground", formatThemeColor(palette.readerBackground))
+        put("readerForeground", formatThemeColor(palette.readerForeground))
+        put("systemForeground", formatThemeColor(palette.systemForeground))
+        put("accent", formatThemeColor(palette.accent))
+        put("chromeAccent", formatThemeColor(palette.chromeAccent))
+        put("appBackground", formatThemeColor(palette.appBackground))
+        put("appSurface", formatThemeColor(palette.appSurface))
+        put("appSurfaceVariant", formatThemeColor(palette.appSurfaceVariant))
+        put("appOutline", formatThemeColor(palette.appOutline))
+        put("appForeground", formatThemeColor(palette.appForeground))
+        put("appForegroundMuted", formatThemeColor(palette.appForegroundMuted))
+        put("readerForegroundMuted", formatThemeColor(palette.readerForegroundMuted))
+        put("readerAccent", formatThemeColor(palette.readerAccent))
+        put("overlayScrim", formatThemeColor(palette.overlayScrim))
+        put("startupBackground", formatThemeColor(palette.startupBackground))
+        put("startupForeground", formatThemeColor(palette.startupForeground))
+        put("favoriteAccent", formatThemeColor(palette.favoriteAccent))
+        put("coverOverlayScrim", formatThemeColor(palette.coverOverlayScrim))
+    }
 }

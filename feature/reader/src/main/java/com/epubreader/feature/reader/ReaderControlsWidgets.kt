@@ -292,15 +292,19 @@ private fun TextSelectionActionButton(
 }
 
 @Composable
-fun OverscrollIndicator(text: String, modifier: Modifier, color: Color) {
+fun OverscrollIndicator(
+    text: String,
+    modifier: Modifier,
+    themeColors: ReaderTheme,
+) {
     Surface(
         modifier = modifier,
-        color = Color.Black.copy(alpha = 0.6f),
+        color = themeColors.foreground.copy(alpha = 0.92f),
         shape = CircleShape,
     ) {
         Text(
             text = text,
-            color = Color.White,
+            color = themeColors.background,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             style = MaterialTheme.typography.labelMedium,
         )

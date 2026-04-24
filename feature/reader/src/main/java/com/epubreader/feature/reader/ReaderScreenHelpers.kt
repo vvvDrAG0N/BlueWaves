@@ -7,9 +7,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.BookRepresentation
+import com.epubreader.core.model.EpubBook
+import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
@@ -79,6 +83,55 @@ internal suspend fun scrollReaderTocToCurrentChapter(
             }
             delay(1)
             tocListState.animateScrollToItem(index = tocIndex, scrollOffset = -250)
+        }
+    }
+}
+
+internal suspend fun loadReaderChapterElements(
+    parser: EpubParser,
+    book: EpubBook,
+    chapterIndex: Int,
+): List<ChapterElement> {
+    if (chapterIndex !in book.spineHrefs.indices) {
+        return emptyList()
+    }
+
+    return withContext(Dispatchers.IO) {
+        parser.parseChapter(book.rootPath, book.spineHrefs[chapterIndex])
+    }
+}
+
+internal fun shouldPrefetchAdjacentReaderChapters(
+    currentChapterIndex: Int,
+    spineSize: Int,
+    hasChapterElements: Boolean,
+    isLoadingChapter: Boolean,
+    isChapterSettleComplete: Boolean,
+    hasReaderUserInteracted: Boolean,
+): Boolean {
+    return currentChapterIndex in 0 until spineSize &&
+        spineSize > 1 &&
+        hasChapterElements &&
+        !isLoadingChapter &&
+        isChapterSettleComplete &&
+        hasReaderUserInteracted
+}
+
+internal suspend fun prefetchAdjacentReaderChapters(
+    parser: EpubParser,
+    book: EpubBook,
+    chapterIndex: Int,
+) {
+    if (chapterIndex !in book.spineHrefs.indices) {
+        return
+    }
+
+    withContext(Dispatchers.IO) {
+        if (chapterIndex > 0) {
+            parser.parseChapter(book.rootPath, book.spineHrefs[chapterIndex - 1])
+        }
+        if (chapterIndex < book.spineHrefs.size - 1) {
+            parser.parseChapter(book.rootPath, book.spineHrefs[chapterIndex + 1])
         }
     }
 }

@@ -46,15 +46,11 @@ internal fun BoxScope.BookSelectionActionBar(
             .fillMaxWidth(),
     ) {
         Surface(
-            color = if (state.theme == "oled") Color.Black else MaterialTheme.colorScheme.background,
+            color = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(24.dp),
-            tonalElevation = if (state.theme == "oled") 0.dp else 8.dp,
+            tonalElevation = 8.dp,
             shadowElevation = 6.dp,
-            border = if (state.theme == "oled") {
-                BorderStroke(1.dp, Color.White.copy(alpha = 0.15f))
-            } else {
-                BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-            },
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.22f)),
             modifier = Modifier.fillMaxWidth(),
         ) {
             Row(

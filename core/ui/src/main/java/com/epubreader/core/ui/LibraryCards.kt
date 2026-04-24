@@ -35,9 +35,11 @@ import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.themePaletteSeed
-import java.io.File
-
 private const val PdfSupportDisabledLibraryLabel = "PDF support disabled"
+private val RecentlyViewedCoverWidth = 30.dp
+private val RecentlyViewedCoverHeight = 40.dp
+private val BookGridCoverWidth = 160.dp
+private val BookGridCoverHeight = 228.dp
 
 @Composable
 fun RecentlyViewedStrip(
@@ -74,15 +76,22 @@ fun RecentlyViewedStrip(
                 modifier = Modifier.padding(vertical = 4.dp).height(40.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val coverModel = displayCoverPath?.let { path ->
+                    rememberLibraryCoverModel(
+                        coverPath = path,
+                        width = RecentlyViewedCoverWidth,
+                        height = RecentlyViewedCoverHeight,
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .width(30.dp)
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(4.dp))
                 ) {
-                    if (displayCoverPath != null) {
+                    if (coverModel != null) {
                         AsyncImage(
-                            model = File(displayCoverPath),
+                            model = coverModel,
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
@@ -149,8 +158,20 @@ fun BookItem(
     isSelected: Boolean = false,
 ) {
     val progressLabel = remember(progress, book) { formatReadingProgress(book, progress) }
+    val themePalette = remember(globalSettings.theme, globalSettings.customThemes) {
+        themePaletteSeed(globalSettings.theme, globalSettings.customThemes)
+    }
+    val coverOverlayScrim = Color(themePalette.coverOverlayScrim)
+    val coverOverlayForeground = Color(themePalette.coverOverlayForeground)
     val displayCoverPath = remember(book, globalSettings.allowBlankCovers) {
         book.displayCoverPath(globalSettings.allowBlankCovers)
+    }
+    val coverModel = displayCoverPath?.let { path ->
+        rememberLibraryCoverModel(
+            coverPath = path,
+            width = BookGridCoverWidth,
+            height = BookGridCoverHeight,
+        )
     }
 
     Card(
@@ -160,9 +181,9 @@ fun BookItem(
         border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
     ) {
         Box(modifier = Modifier.fillMaxWidth().aspectRatio(0.7f)) {
-            if (displayCoverPath != null) {
+            if (coverModel != null) {
                 AsyncImage(
-                    model = File(displayCoverPath),
+                    model = coverModel,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -172,7 +193,7 @@ fun BookItem(
                     Box(
                         modifier = Modifier.fillMaxSize().background(
                             Brush.verticalGradient(
-                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
+                                listOf(Color.Transparent, coverOverlayScrim),
                                 startY = 300f
                             )
                         )
@@ -181,7 +202,7 @@ fun BookItem(
                         Text(
                             text = book.title,
                             style = MaterialTheme.typography.labelLarge,
-                            color = Color.White,
+                            color = coverOverlayForeground,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             fontWeight = FontWeight.Bold,
@@ -190,7 +211,7 @@ fun BookItem(
                         Text(
                             text = book.author,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.7f),
+                            color = coverOverlayForeground.copy(alpha = 0.72f),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             fontSize = 10.sp
@@ -199,7 +220,7 @@ fun BookItem(
                         Text(
                             text = progressLabel,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color.White,
+                            color = coverOverlayForeground,
                             fontWeight = FontWeight.Bold,
                             fontSize = 10.sp
                         )
@@ -260,12 +281,12 @@ fun BookItem(
                 Icon(
                     Icons.Default.CheckCircle,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = coverOverlayForeground,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(8.dp)
                         .size(24.dp)
-                        .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                        .background(coverOverlayScrim.copy(alpha = 0.92f), CircleShape)
                 )
             }
         }

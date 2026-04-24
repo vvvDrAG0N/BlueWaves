@@ -32,6 +32,7 @@ class MainActivityThemeTest {
                 readerBackground = 0xFFEEF8FF,
                 readerForeground = 0xFF10212D,
                 systemForeground = 0xFF000000,
+                appForegroundMuted = 0xFF516577,
             ),
         )
 
@@ -43,5 +44,6 @@ class MainActivityThemeTest {
         assertEquals(Color(0xFF2A6F97), colorScheme.primary)
         assertEquals(Color(0xFFF4FAFF), colorScheme.background)
         assertEquals(Color(0xFFFFFFFF), colorScheme.surface)
+        assertEquals(Color(0xFF516577), colorScheme.onSurfaceVariant)
     }
 }

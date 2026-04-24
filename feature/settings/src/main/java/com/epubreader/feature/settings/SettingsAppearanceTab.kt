@@ -4,12 +4,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,7 +39,6 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import com.epubreader.core.model.BuiltInThemeOptions
 import com.epubreader.core.model.CustomTheme
@@ -299,10 +293,6 @@ internal fun AppearanceTab(
     }
     val galleryTheme = currentTheme ?: allThemes.firstOrNull()
     val galleryThemeId = galleryTheme?.id ?: pendingThemeId
-    val galleryContainerColor = Color(galleryTheme?.palette?.surface ?: 0xFF121212)
-    val galleryOnSurfaceColor = Color(galleryTheme?.palette?.systemForeground ?: 0xFFFFFFFF)
-    val galleryOutlineColor = Color(galleryTheme?.palette?.outline ?: 0xFF808080)
-    val galleryPrimaryColor = Color(galleryTheme?.palette?.primary ?: 0xFFFFFFFF)
 
     Box(modifier = Modifier.fillMaxSize().then(dashboardBgModifier)) {
         Column(
@@ -430,88 +420,42 @@ internal fun AppearanceTab(
             Spacer(Modifier.height(32.dp))
         }
 
-        if (hasGalleryBeenOpened) {
-            val galleryAlpha by animateFloatAsState(
-                targetValue = if (isGalleryOpen) 1f else 0f,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = if (isGalleryOpen) Spring.StiffnessMediumLow else Spring.StiffnessMedium,
-                    visibilityThreshold = 0.001f
-                ),
-                label = "galleryAlpha"
-            )
-            val galleryScale by animateFloatAsState(
-                targetValue = if (isGalleryOpen) 1f else 0.92f,
-                animationSpec = spring(
-                    dampingRatio = if (isGalleryOpen) 0.75f else Spring.DampingRatioNoBouncy, // Subtle overshoot on open
-                    stiffness = if (isGalleryOpen) Spring.StiffnessLow else Spring.StiffnessMedium,
-                    visibilityThreshold = 0.001f
-                ),
-                label = "galleryScale"
-            )
-            val galleryShouldStayOnTop = isGalleryOpen || galleryAlpha > 0.01f
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .zIndex(if (galleryShouldStayOnTop) 1f else -1f),
-                contentAlignment = Alignment.Center
-            ) {
-                // Interaction Shield: Blocks dashboard touches while gallery is visible or animating
-                if (galleryShouldStayOnTop) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { /* Block touches during animation */ }
-                    )
-                }
-
-                ThemeGalleryOverlay(
-                    allThemes = allThemes,
-                    activeThemeId = galleryThemeId,
-                    chromeThemeId = galleryThemeId,
-                    containerColor = galleryContainerColor,
-                    onSurfaceColor = galleryOnSurfaceColor,
-                    outlineColor = galleryOutlineColor,
-                    primaryColor = galleryPrimaryColor,
-                    isSelectionMode = isSelectionMode,
-                    selectedIds = selectedThemeIds,
-                    fontFamily = readerFontFamily,
-                    geometry = galleryGeometry,
-                    gallerySessionKey = gallerySessionKey,
-                    galleryGridState = galleryGridState,
-                    isGalleryOpen = isGalleryOpen,
-                    transitionAlpha = galleryAlpha,
-                    transitionScale = galleryScale,
-                    onThemeSelect = { theme ->
-                        selectedThemeId = theme.id
-                        scope.launch { settingsManager.setActiveTheme(theme.id) }
-                        isGalleryOpen = false
-                    },
-                    onToggleSelection = { id ->
-                        selectedThemeIds = if (selectedThemeIds.contains(id)) selectedThemeIds - id else selectedThemeIds + id
-                    },
-                    onEnterSelectionMode = { id ->
-                        isSelectionMode = true
-                        selectedThemeIds = if (id == null) emptySet() else setOf(id)
-                    },
-                    onBulkDelete = { showBulkDeleteConfirm = true },
-                    onBulkExport = { bulkExportLauncher.launch("themes_pack_${System.currentTimeMillis()}.zip") },
-                    onCloseSelectionMode = {
-                        isSelectionMode = false
-                        selectedThemeIds = emptySet()
-                    },
-                    onDismiss = {
-                        isGalleryOpen = false
-                        isSelectionMode = false
-                        selectedThemeIds = emptySet()
-                    },
-                )
-            }
-        }
+        AppearanceGalleryHost(
+            hasGalleryBeenOpened = hasGalleryBeenOpened,
+            isGalleryOpen = isGalleryOpen,
+            allThemes = allThemes,
+            galleryThemeId = galleryThemeId,
+            galleryTheme = galleryTheme,
+            isSelectionMode = isSelectionMode,
+            selectedThemeIds = selectedThemeIds,
+            fontFamily = readerFontFamily,
+            geometry = galleryGeometry,
+            gallerySessionKey = gallerySessionKey,
+            galleryGridState = galleryGridState,
+            onThemeSelect = { theme ->
+                selectedThemeId = theme.id
+                scope.launch { settingsManager.setActiveTheme(theme.id) }
+                isGalleryOpen = false
+            },
+            onToggleSelection = { id ->
+                selectedThemeIds = if (selectedThemeIds.contains(id)) selectedThemeIds - id else selectedThemeIds + id
+            },
+            onEnterSelectionMode = { id ->
+                isSelectionMode = true
+                selectedThemeIds = if (id == null) emptySet() else setOf(id)
+            },
+            onBulkDelete = { showBulkDeleteConfirm = true },
+            onBulkExport = { bulkExportLauncher.launch("themes_pack_${System.currentTimeMillis()}.zip") },
+            onCloseSelectionMode = {
+                isSelectionMode = false
+                selectedThemeIds = emptySet()
+            },
+            onDismiss = {
+                isGalleryOpen = false
+                isSelectionMode = false
+                selectedThemeIds = emptySet()
+            },
+        )
     }
 
     if (showBulkDeleteConfirm) {

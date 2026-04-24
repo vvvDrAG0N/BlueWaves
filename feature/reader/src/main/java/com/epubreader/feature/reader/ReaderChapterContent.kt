@@ -86,6 +86,7 @@ import androidx.webkit.WebViewFeature
 import coil.compose.AsyncImage
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.themePaletteSeed
 import java.io.File
 
 @Composable
@@ -111,6 +112,9 @@ internal fun ReaderChapterContent(
     val textSelectionScope = rememberCoroutineScope()
     val selectionActiveChangeState = rememberUpdatedState(onSelectionActiveChange)
     val density = LocalDensity.current
+    val overlayScrim = remember(settings.theme, settings.customThemes) {
+        Color(themePaletteSeed(settings.theme, settings.customThemes).overlayScrim).copy(alpha = 0.45f)
+    }
 
     val internalClipboard = remember {
         object : ClipboardManager {
@@ -314,6 +318,7 @@ internal fun ReaderChapterContent(
         pendingWebLookup?.let { action ->
             WebViewBottomSheet(
                 url = action.url,
+                scrimColor = overlayScrim,
                 onDismiss = { pendingWebLookup = null },
             )
         }
@@ -374,6 +379,7 @@ private fun ReaderChapterImage(
 @Composable
 private fun WebViewBottomSheet(
     url: String,
+    scrimColor: Color,
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -384,7 +390,7 @@ private fun WebViewBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = sheetBg,
-        scrimColor = Color.Black.copy(alpha = 0.4f),
+        scrimColor = scrimColor,
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         dragHandle = {
             Box(

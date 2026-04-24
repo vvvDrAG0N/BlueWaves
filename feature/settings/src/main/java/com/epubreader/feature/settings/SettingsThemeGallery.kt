@@ -82,6 +82,7 @@ internal fun ThemeGalleryOverlay(
     allThemes: List<CustomTheme>,
     activeThemeId: String,
     chromeThemeId: String,
+    scrimColor: Color,
     containerColor: Color,
     onSurfaceColor: Color,
     outlineColor: Color,
@@ -125,7 +126,7 @@ internal fun ThemeGalleryOverlay(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer { alpha = transitionAlpha }
-                .background(Color.Black.copy(alpha = 0.45f))
+                .background(scrimColor.copy(alpha = 0.45f))
                 .then(dismissBackdropModifier),
         )
 

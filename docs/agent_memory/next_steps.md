@@ -1,12 +1,12 @@
 # Next Steps
 
-## Settings Appearance Test Refresh
-- Goal: Bring the older `SettingsScreenPersistenceTest` cases back in sync with the current Appearance UI so the full settings instrumentation suite runs green again.
-- Why now: The new swipe-exit persistence regression passes, but the full class still has older failures tied to stale selectors and assumptions like a text `Done` button and legacy theme-editor tags.
+## Reader Cold-Open Scroll Lag Optional Polish
+- Goal: Decide whether the new reader-prefetch gating polish is enough, or whether one more release-live verification pass is worth doing after parallel theme work settles.
+- Why now: A narrow reader-only polish is now in place: adjacent chapter prefetch waits until the reader session has actually been touched, which should reduce cold-open overlap without changing the broader investigation result that release-like builds already felt smooth.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/test_checklist.md`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeGallery.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`
-- Risks: Cementing stale test behavior, missing a real regression under the current gallery/editor flows, or weakening coverage while adapting tests to new UI hooks.
-- Verification target: `SettingsScreenPersistenceTest` full class green on the emulator, plus a quick spot-check of the custom-theme create/edit path.
+- Starting docs/files: `AGENTS.md`, `docs/reader_screen.md`, `docs/ai_mental_model.md`, `docs/epub_parsing.md`, `docs/test_checklist.md`, `scripts/run_reader_lag_release_live.ps1`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreen.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenEffects.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenHelpers.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderScreenPrefetchTest.kt`, `logs/reader-lag-release-live-20260424-090627/summary.md`
+- Risks: Over-tuning an already acceptable release-like experience, slightly delaying adjacent-cache warmup for the first untouched chapter in a session, and conflating this small reader polish with unrelated theme-cleanup changes if verification is not sequenced carefully.
+- Verification target: After theme cleanup settles, optionally rerun the small release-live matrix to see whether the immediate-vs-delayed gap narrows further. If the user still feels no lag, stop here and close the topic.
 
 ## Theme Gallery Post-Fix QA
 - Goal: Re-run the Theme Gallery flow on the target device only if the user still sees a visible freeze, dead-touch layer, renderer issue, or stale selected-theme highlight after a fast close/switch/reopen cycle.
@@ -31,3 +31,11 @@
 - Starting docs/files: `docs/legacy/PDF_review.md`, `docs/app_shell_navigation.md`, `docs/epub_parsing.md`, `app/AppNavigation.kt`, `data/parser/PdfLegacyBridge.kt`
 - Risks: Re-enabling broken shell paths, progress persistence mismatch, conversion-state staleness, memory pressure.
 - Verification target: Explicit design decision plus targeted parser/shell tests before any runtime reactivation.
+
+## Parked PDF Theme Debt
+- Goal: If PDF support is ever revived, replace the parked white page surface with an explicit PDF page token before exposing that runtime again.
+- Why now: After the semantic coverage pass, the audit’s only remaining production bypass is the parked PDF page card.
+- Suggested owner/model: Codex / GPT-5.
+- Starting docs/files: `AGENTS.md`, `docs/legacy/PDF_review.md`, `logs/ui_theme_color_audit.md`, `feature/pdf-legacy/src/main/java/com/epubreader/feature/pdf/legacy/PdfReaderScreen.kt`
+- Risks: Spending time on a parked runtime prematurely, or reviving PDF visuals without the rest of the PDF shell/runtime contract being ready.
+- Verification target: Only if PDF is reactivated: targeted PDF UI checks plus explicit audit refresh.

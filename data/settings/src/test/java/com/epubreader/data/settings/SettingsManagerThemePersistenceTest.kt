@@ -77,6 +77,23 @@ class SettingsManagerThemePersistenceTest {
         assertTrue(settings.customThemes.isEmpty())
     }
 
+    @Test
+    fun saveCustomTheme_preservesExpandedSemanticPaletteRoles() = runBlocking {
+        val theme = customTheme()
+
+        settingsManager.saveCustomTheme(theme, activate = false)
+
+        val storedTheme = settingsManager.globalSettings.first().customThemes.single()
+        assertEquals(theme.palette.appForegroundMuted, storedTheme.palette.appForegroundMuted)
+        assertEquals(theme.palette.readerForegroundMuted, storedTheme.palette.readerForegroundMuted)
+        assertEquals(theme.palette.readerAccent, storedTheme.palette.readerAccent)
+        assertEquals(theme.palette.overlayScrim, storedTheme.palette.overlayScrim)
+        assertEquals(theme.palette.startupBackground, storedTheme.palette.startupBackground)
+        assertEquals(theme.palette.startupForeground, storedTheme.palette.startupForeground)
+        assertEquals(theme.palette.favoriteAccent, storedTheme.palette.favoriteAccent)
+        assertEquals(theme.palette.coverOverlayScrim, storedTheme.palette.coverOverlayScrim)
+    }
+
     private suspend fun resetDataStore() {
         context.settingsDataStore.edit { preferences ->
             preferences.clear()
@@ -97,6 +114,14 @@ class SettingsManagerThemePersistenceTest {
                 readerBackground = 0xFFEEF8FF,
                 readerForeground = 0xFF10212D,
                 systemForeground = 0xFF000000,
+                appForegroundMuted = 0xFF516577,
+                readerForegroundMuted = 0xFF4B6476,
+                readerAccent = 0xFF1D5F84,
+                overlayScrim = 0xFF0A1420,
+                startupBackground = 0xFF0F1B28,
+                startupForeground = 0xFFF8FBFF,
+                favoriteAccent = 0xFFFFC857,
+                coverOverlayScrim = 0xFF060D14,
             ),
         )
     }

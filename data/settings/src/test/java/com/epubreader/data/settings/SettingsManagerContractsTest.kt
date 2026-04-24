@@ -7,9 +7,10 @@ import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.ThemePalette
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.json.JSONArray
 
 class SettingsManagerContractsTest {
 
@@ -100,6 +101,63 @@ class SettingsManagerContractsTest {
     }
 
     @Test
+    fun toGlobalSettings_readsSemanticThemeKeysAndExpandedRoles() {
+        val settings = preferencesOf(
+            SettingsPreferenceKeys.theme to "custom-dawn",
+            SettingsPreferenceKeys.customThemes to """
+                [
+                  {
+                    "id": "custom-dawn",
+                    "name": "Dawn",
+                    "accent": "#7C3AED",
+                    "chromeAccent": "#A855F7",
+                    "appBackground": "#111827",
+                    "appSurface": "#1F2937",
+                    "appSurfaceVariant": "#374151",
+                    "appOutline": "#6B7280",
+                    "appForeground": "#F9FAFB",
+                    "appForegroundMuted": "#CBD5E1",
+                    "readerBackground": "#F4ECD8",
+                    "readerForeground": "#5B4636",
+                    "readerForegroundMuted": "#8C7767",
+                    "readerAccent": "#8B5E3C",
+                    "overlayScrim": "#0F172A",
+                    "startupBackground": "#101826",
+                    "startupForeground": "#F8FAFC",
+                    "favoriteAccent": "#FFC857",
+                    "coverOverlayScrim": "#09111C"
+                  }
+                ]
+            """.trimIndent(),
+        ).toGlobalSettings()
+
+        assertEquals("custom-dawn", settings.theme)
+        assertEquals(1, settings.customThemes.size)
+        assertEquals(
+            ThemePalette(
+                primary = 0xFF7C3AED,
+                secondary = 0xFFA855F7,
+                background = 0xFF111827,
+                surface = 0xFF1F2937,
+                surfaceVariant = 0xFF374151,
+                outline = 0xFF6B7280,
+                readerBackground = 0xFFF4ECD8,
+                readerForeground = 0xFF5B4636,
+                systemForeground = 0xFFF9FAFB,
+                appForegroundMuted = 0xFFCBD5E1,
+                readerForegroundMuted = 0xFF8C7767,
+                readerAccent = 0xFF8B5E3C,
+                overlayScrim = 0xFF0F172A,
+                startupBackground = 0xFF101826,
+                startupForeground = 0xFFF8FAFC,
+                favoriteAccent = 0xFFFFC857,
+                coverOverlayScrim = 0xFF09111C,
+            ),
+            settings.customThemes.single().palette,
+        )
+    }
+
+    @Test
     fun toGlobalSettings_fallsBackToLightWhenStoredThemeDoesNotExist() {
         val settings = preferencesOf(
             SettingsPreferenceKeys.theme to "custom-missing",
@@ -127,6 +185,52 @@ class SettingsManagerContractsTest {
         assertEquals(0, progress.scrollIndex)
         assertEquals(0, progress.scrollOffset)
         assertNull(progress.lastChapterHref)
+    }
+
+    @Test
+    fun toCustomThemesJson_writesLegacyAndSemanticThemeKeys() {
+        val json = listOf(
+            CustomTheme(
+                id = "custom-dawn",
+                name = "Dawn",
+                palette = ThemePalette(
+                    primary = 0xFF7C3AED,
+                    secondary = 0xFFA855F7,
+                    background = 0xFF111827,
+                    surface = 0xFF1F2937,
+                    surfaceVariant = 0xFF374151,
+                    outline = 0xFF6B7280,
+                    readerBackground = 0xFFF4ECD8,
+                    readerForeground = 0xFF5B4636,
+                    systemForeground = 0xFFF9FAFB,
+                    appForegroundMuted = 0xFFCBD5E1,
+                    readerForegroundMuted = 0xFF8C7767,
+                    readerAccent = 0xFF8B5E3C,
+                    overlayScrim = 0xFF0F172A,
+                    startupBackground = 0xFF101826,
+                    startupForeground = 0xFFF8FAFC,
+                    favoriteAccent = 0xFFFFC857,
+                    coverOverlayScrim = 0xFF09111C,
+                ),
+            ),
+        ).toCustomThemesJson()
+
+        val item = JSONArray(json).getJSONObject(0)
+
+        assertEquals("#7C3AED", item.getString("primary"))
+        assertEquals("#7C3AED", item.getString("accent"))
+        assertEquals("#111827", item.getString("background"))
+        assertEquals("#111827", item.getString("appBackground"))
+        assertEquals("#F9FAFB", item.getString("systemForeground"))
+        assertEquals("#F9FAFB", item.getString("appForeground"))
+        assertEquals("#CBD5E1", item.getString("appForegroundMuted"))
+        assertEquals("#8C7767", item.getString("readerForegroundMuted"))
+        assertEquals("#8B5E3C", item.getString("readerAccent"))
+        assertEquals("#0F172A", item.getString("overlayScrim"))
+        assertEquals("#101826", item.getString("startupBackground"))
+        assertEquals("#F8FAFC", item.getString("startupForeground"))
+        assertEquals("#FFC857", item.getString("favoriteAccent"))
+        assertEquals("#09111C", item.getString("coverOverlayScrim"))
     }
 
     @Test

@@ -47,6 +47,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.core.ui.getStaticWindowInsets
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -55,6 +56,9 @@ internal fun LibraryDrawerContent(
     state: LibraryScreenState,
     actions: FolderDrawerActions,
 ) {
+    val favoriteAccent = Color(
+        themePaletteSeed(state.globalSettings.theme, state.globalSettings.customThemes).favoriteAccent
+    )
     ModalDrawerSheet(windowInsets = getStaticWindowInsets()) {
         val allSelectableFolders = state.folderDrawer.folders.filter { it != RootLibraryName }
         Row(
@@ -178,7 +182,7 @@ internal fun LibraryDrawerContent(
                                     Icon(
                                         imageVector = Icons.Default.Star,
                                         contentDescription = null,
-                                        tint = Color(0xFFFFD700),
+                                        tint = favoriteAccent,
                                         modifier = Modifier.size(16.dp),
                                     )
                                 }

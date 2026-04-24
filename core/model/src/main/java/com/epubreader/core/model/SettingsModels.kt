@@ -35,7 +35,39 @@ data class ThemePalette(
     val readerBackground: Long,
     val readerForeground: Long,
     val systemForeground: Long,
-)
+    val appForegroundMuted: Long = deriveAppForegroundMuted(systemForeground, background),
+    val readerForegroundMuted: Long = deriveReaderForegroundMuted(readerForeground, readerBackground),
+    val readerAccent: Long = deriveReaderAccent(primary, readerBackground),
+    val overlayScrim: Long = deriveOverlayScrim(background),
+    val startupBackground: Long = deriveStartupBackground(background, surface),
+    val startupForeground: Long = deriveStartupForeground(startupBackground, systemForeground),
+    val favoriteAccent: Long = deriveFavoriteAccent(primary, background, surface),
+    val coverOverlayScrim: Long = deriveCoverOverlayScrim(overlayScrim),
+) {
+    val accent: Long
+        get() = primary
+
+    val chromeAccent: Long
+        get() = secondary
+
+    val appBackground: Long
+        get() = background
+
+    val appSurface: Long
+        get() = surface
+
+    val appSurfaceVariant: Long
+        get() = surfaceVariant
+
+    val appOutline: Long
+        get() = outline
+
+    val appForeground: Long
+        get() = systemForeground
+
+    val coverOverlayForeground: Long
+        get() = deriveCoverOverlayForeground(coverOverlayScrim)
+}
 
 @Immutable
 data class CustomTheme(
@@ -210,43 +242,6 @@ fun lerpColor(start: Long, stop: Long, fraction: Float): Long {
 
 fun contrastColor(background: Long): Long {
     return if (calculateLuminance(background) > 0.5f) 0xFF000000L else 0xFFFFFFFFL
-}
-
-fun generatePaletteFromBase(
-    primary: Long,
-    background: Long,
-): ThemePalette {
-    val isDark = calculateLuminance(background) < 0.5f
-    
-    // Derived colors
-    val secondary = lerpColor(primary, if (isDark) 0xFFFFFFFFL else 0xFF000000L, 0.2f)
-    val surface = background
-    val surfaceVariant = if (isDark) {
-        lerpColor(background, 0xFFFFFFFFL, 0.1f)
-    } else {
-        lerpColor(background, 0xFF000000L, 0.05f)
-    }
-    val outline = if (isDark) {
-        lerpColor(background, 0xFFFFFFFFL, 0.3f)
-    } else {
-        lerpColor(background, 0xFF000000L, 0.2f)
-    }
-    
-    val readerBackground = background
-    val readerForeground = contrastColor(readerBackground)
-    val systemForeground = contrastColor(surface)
-    
-    return ThemePalette(
-        primary = primary,
-        secondary = secondary,
-        background = background,
-        surface = surface,
-        surfaceVariant = surfaceVariant,
-        outline = outline,
-        readerBackground = readerBackground,
-        readerForeground = readerForeground,
-        systemForeground = systemForeground,
-    )
 }
 
 fun formatThemeColor(color: Long): String {

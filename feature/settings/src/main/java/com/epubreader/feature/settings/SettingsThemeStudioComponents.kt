@@ -19,6 +19,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,7 +76,8 @@ internal fun StudioTextField(
     onValueChange: (String) -> Unit,
     label: String,
     isError: Boolean,
-    errorText: String? = null
+    errorText: String? = null,
+    testTag: String? = null,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -82,7 +85,9 @@ internal fun StudioTextField(
             onValueChange = onValueChange,
             label = { Text(label) },
             isError = isError,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (testTag != null) Modifier.testTag(testTag) else Modifier),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
@@ -104,7 +109,8 @@ internal fun StudioTextField(
 internal fun StudioColorCell(
     label: String,
     value: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    testTagPrefix: String? = null,
 ) {
     val parsedColor = parseThemeColorOrNull(value) ?: 0xFF808080L
     
@@ -114,6 +120,7 @@ internal fun StudioColorCell(
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() }
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+            .then(if (testTagPrefix != null) Modifier.testTag("${testTagPrefix}_swatch") else Modifier)
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -132,7 +139,19 @@ internal fun StudioColorCell(
                 }
         )
 
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .then(
+                    if (testTagPrefix != null) {
+                        Modifier
+                            .testTag(testTagPrefix)
+                            .semantics(mergeDescendants = true) {}
+                    } else {
+                        Modifier
+                    },
+                ),
+        ) {
             Text(
                 label, 
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
@@ -154,7 +173,8 @@ internal fun StudioColorCell(
 internal fun StudioToggleCell(
     label: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    testTag: String? = null,
 ) {
     Row(
         modifier = Modifier
@@ -162,6 +182,7 @@ internal fun StudioToggleCell(
             .clip(RoundedCornerShape(16.dp))
             .clickable { onCheckedChange(!checked) }
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+            .then(if (testTag != null) Modifier.testTag(testTag) else Modifier)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

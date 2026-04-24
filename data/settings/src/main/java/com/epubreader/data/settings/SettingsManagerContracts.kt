@@ -14,10 +14,18 @@ import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.ThemePalette
+import com.epubreader.core.model.contrastColor
+import com.epubreader.core.model.deriveAppForegroundMuted
+import com.epubreader.core.model.deriveCoverOverlayScrim
+import com.epubreader.core.model.deriveFavoriteAccent
+import com.epubreader.core.model.deriveOverlayScrim
+import com.epubreader.core.model.deriveStartupBackground
+import com.epubreader.core.model.deriveStartupForeground
+import com.epubreader.core.model.deriveReaderAccent
+import com.epubreader.core.model.deriveReaderForegroundMuted
 import com.epubreader.core.model.formatThemeColor
 import com.epubreader.core.model.normalizeThemeSelection
 import com.epubreader.core.model.parseThemeColorOrNull
-import com.epubreader.core.model.contrastColor
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -200,7 +208,9 @@ internal fun GlobalSettingsSnapshot.toGlobalSettings(): GlobalSettings {
  * Each theme object contains:
  * - id: Unique identifier (String)
  * - name: Display name (String)
- * - primary, secondary, background, surface, surfaceVariant, outline: UI palette (Hex Strings)
+ * - primary, secondary, background, surface, surfaceVariant, outline: Legacy-compatible UI palette (Hex Strings)
+ * - systemForeground, appForegroundMuted, readerForegroundMuted, readerAccent, overlayScrim: Extended semantic roles
+ * - startupBackground, startupForeground, favoriteAccent, coverOverlayScrim: Narrow semantic exception roles
  * - readerBackground, readerForeground: Reader-specific colors (Hex Strings)
  * - isAdvanced: Flag for extended customization (Boolean)
  *
@@ -230,19 +240,21 @@ internal fun parseCustomThemes(raw: String?): List<CustomTheme> {
                 continue
             }
 
-            val primary = item.optString("primary").let(::parseThemeColorOrNull) ?: continue
-            val secondary = item.optString("secondary").let(::parseThemeColorOrNull) ?: continue
-            val background = item.optString("background").let(::parseThemeColorOrNull) ?: continue
-            val surface = item.optString("surface").let(::parseThemeColorOrNull) ?: continue
-            val surfaceVariant = item.optString("surfaceVariant").let(::parseThemeColorOrNull) ?: continue
-            val outline = item.optString("outline").let(::parseThemeColorOrNull) ?: continue
-            val readerBackground = item.optString("readerBackground").let(::parseThemeColorOrNull) ?: continue
-            val readerForeground = item.optString("readerForeground").let(::parseThemeColorOrNull) ?: continue
-            
-            // Fallback to contrastColor(surface) for older themes
-            val systemForeground = item.optString("systemForeground").let(::parseThemeColorOrNull) ?: contrastColor(surface)
-            
+            val primary = item.parseColorFromKeys("accent", "primary") ?: continue
+            val secondary = item.parseColorFromKeys("chromeAccent", "secondary") ?: continue
+            val background = item.parseColorFromKeys("appBackground", "background") ?: continue
+            val surface = item.parseColorFromKeys("appSurface", "surface") ?: continue
+            val surfaceVariant = item.parseColorFromKeys("appSurfaceVariant", "surfaceVariant") ?: continue
+            val outline = item.parseColorFromKeys("appOutline", "outline") ?: continue
+            val readerBackground = item.parseColorFromKeys("readerBackground") ?: continue
+            val readerForeground = item.parseColorFromKeys("readerForeground", "readerText") ?: continue
+            val systemForeground = item.parseColorFromKeys("appForeground", "systemForeground")
             val isAdvanced = item.optBoolean("isAdvanced", true)
+            val resolvedSystemForeground = systemForeground ?: contrastColor(surface)
+            val resolvedOverlayScrim = item.parseColorFromKeys("overlayScrim")
+                ?: deriveOverlayScrim(background)
+            val resolvedStartupBackground = item.parseColorFromKeys("startupBackground")
+                ?: deriveStartupBackground(background, surface)
 
             parsedThemes += CustomTheme(
                 id = id,
@@ -256,7 +268,21 @@ internal fun parseCustomThemes(raw: String?): List<CustomTheme> {
                     outline = outline,
                     readerBackground = readerBackground,
                     readerForeground = readerForeground,
-                    systemForeground = systemForeground,
+                    systemForeground = resolvedSystemForeground,
+                    appForegroundMuted = item.parseColorFromKeys("appForegroundMuted")
+                        ?: deriveAppForegroundMuted(resolvedSystemForeground, background),
+                    readerForegroundMuted = item.parseColorFromKeys("readerForegroundMuted")
+                        ?: deriveReaderForegroundMuted(readerForeground, readerBackground),
+                    readerAccent = item.parseColorFromKeys("readerAccent")
+                        ?: deriveReaderAccent(primary, readerBackground),
+                    overlayScrim = resolvedOverlayScrim,
+                    startupBackground = resolvedStartupBackground,
+                    startupForeground = item.parseColorFromKeys("startupForeground")
+                        ?: deriveStartupForeground(resolvedStartupBackground, resolvedSystemForeground),
+                    favoriteAccent = item.parseColorFromKeys("favoriteAccent")
+                        ?: deriveFavoriteAccent(primary, background, surface),
+                    coverOverlayScrim = item.parseColorFromKeys("coverOverlayScrim")
+                        ?: deriveCoverOverlayScrim(resolvedOverlayScrim),
                 ),
                 isAdvanced = isAdvanced,
             )
@@ -289,11 +315,32 @@ internal fun List<CustomTheme>.toCustomThemesJson(): String {
                     put("readerBackground", formatThemeColor(theme.palette.readerBackground))
                     put("readerForeground", formatThemeColor(theme.palette.readerForeground))
                     put("systemForeground", formatThemeColor(theme.palette.systemForeground))
+                    put("accent", formatThemeColor(theme.palette.accent))
+                    put("chromeAccent", formatThemeColor(theme.palette.chromeAccent))
+                    put("appBackground", formatThemeColor(theme.palette.appBackground))
+                    put("appSurface", formatThemeColor(theme.palette.appSurface))
+                    put("appSurfaceVariant", formatThemeColor(theme.palette.appSurfaceVariant))
+                    put("appOutline", formatThemeColor(theme.palette.appOutline))
+                    put("appForeground", formatThemeColor(theme.palette.appForeground))
+                    put("appForegroundMuted", formatThemeColor(theme.palette.appForegroundMuted))
+                    put("readerForegroundMuted", formatThemeColor(theme.palette.readerForegroundMuted))
+                    put("readerAccent", formatThemeColor(theme.palette.readerAccent))
+                    put("overlayScrim", formatThemeColor(theme.palette.overlayScrim))
+                    put("startupBackground", formatThemeColor(theme.palette.startupBackground))
+                    put("startupForeground", formatThemeColor(theme.palette.startupForeground))
+                    put("favoriteAccent", formatThemeColor(theme.palette.favoriteAccent))
+                    put("coverOverlayScrim", formatThemeColor(theme.palette.coverOverlayScrim))
                     put("isAdvanced", theme.isAdvanced)
                 }
             )
         }
     }.toString()
+}
+
+private fun JSONObject.parseColorFromKeys(vararg keys: String): Long? {
+    return keys.firstNotNullOfOrNull { key ->
+        optString(key).takeIf { it.isNotBlank() }?.let(::parseThemeColorOrNull)
+    }
 }
 
 internal fun Preferences.toBookProgress(

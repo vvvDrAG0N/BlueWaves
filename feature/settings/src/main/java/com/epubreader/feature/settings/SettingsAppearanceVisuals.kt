@@ -270,7 +270,7 @@ internal fun ThemeSpecimenContent(
                     val s = geometry.spacing.toPx()
                     val r = h / 2
                     val readerFg = Color(p.readerForeground)
-                    val primaryColor = Color(p.primary)
+                    val primaryColor = Color(p.readerAccent)
 
                     val lineH = h * 0.6f
                     val yOffset = (h - lineH) / 2

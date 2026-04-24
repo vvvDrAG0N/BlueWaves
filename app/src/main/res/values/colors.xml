@@ -2,5 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="launch_splash_background">#FFFAF9F6</color>
+    <color name="warm_up_message">#FF52606D</color>
+    <color name="warm_up_progress">#FF2A6F97</color>
+    <color name="warm_up_title">#FF102A43</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
