@@ -72,6 +72,25 @@ internal data class SpecimenGeometry(
     val scale: Float,
 )
 
+internal fun buildSpecimenGeometry(
+    fontSize: Int,
+    lineHeight: Float,
+    horizontalPadding: Int,
+    scale: Float,
+): SpecimenGeometry {
+    val baseLineHeight = (4.dp * (fontSize.toFloat() / 18f)) * scale
+    val spacingBetweenLines = (baseLineHeight * (lineHeight - 1f) + 4.dp) * scale
+    val internalPadding = (16.dp * (horizontalPadding.toFloat() / 16f)) * scale
+    val constrainedPadding = if (internalPadding > 32.dp * scale) 32.dp * scale else internalPadding
+    return SpecimenGeometry(
+        lineHeight = baseLineHeight,
+        spacing = spacingBetweenLines,
+        padding = constrainedPadding,
+        fontSize = fontSize.sp,
+        scale = scale,
+    )
+}
+
 @Composable
 internal fun ThemeControlHub(
     currentTheme: CustomTheme?,
@@ -206,9 +225,13 @@ internal fun LandscapeSpecimenCard(
                     )
                 }
                 .border(
-                    width = if (isActive) 3.dp else 1.dp,
-                    color = if (isActive) Color(p.primary) else Color(p.outline).copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(16.dp)
+                    width = 1.dp,
+                    color = if (isActive) {
+                        Color(p.primary).copy(alpha = 0.4f)
+                    } else {
+                        Color(p.primary).copy(alpha = 0.18f)
+                    },
+                    shape = RoundedCornerShape(16.dp),
                 ),
             isMini = false,
             isMarqueeActive = isMarqueeActive,
@@ -274,7 +297,7 @@ internal fun ThemeSpecimenContent(
 
                     val lineH = h * 0.6f
                     val yOffset = (h - lineH) / 2
-                    
+
                     drawRoundRect(
                         color = readerFg,
                         topLeft = androidx.compose.ui.geometry.Offset(0f, yOffset),
@@ -291,7 +314,10 @@ internal fun ThemeSpecimenContent(
                     )
                     drawRoundRect(
                         color = primaryColor,
-                        topLeft = androidx.compose.ui.geometry.Offset(size.width * 0.3f + 4.dp.toPx(), y2Base + yOffset - 1.dp.toPx()),
+                        topLeft = androidx.compose.ui.geometry.Offset(
+                            size.width * 0.3f + 4.dp.toPx(),
+                            y2Base + yOffset - 1.dp.toPx(),
+                        ),
                         size = androidx.compose.ui.geometry.Size(size.width * 0.4f, lineH + 2.dp.toPx()),
                         cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r),
                     )

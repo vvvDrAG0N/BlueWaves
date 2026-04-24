@@ -54,8 +54,8 @@ internal fun AppearanceTab(
     settings: GlobalSettings,
     scope: CoroutineScope,
     settingsManager: SettingsManager,
-    onOpenCreateThemeEditor: () -> Unit,
-    onOpenEditThemeEditor: (CustomTheme) -> Unit,
+    onOpenCreateThemeEditor: (String) -> Unit,
+    onOpenEditThemeEditor: (CustomTheme, String) -> Unit,
     onDeleteTheme: (CustomTheme) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -75,7 +75,6 @@ internal fun AppearanceTab(
     var isSelectionMode by remember { mutableStateOf(false) }
     var selectedThemeIds by remember { mutableStateOf(setOf<String>()) }
     var showBulkDeleteConfirm by remember { mutableStateOf(false) }
-
     val bulkImportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         if (uris.isEmpty()) return@rememberLauncherForActivityResult
         scope.launch {
@@ -214,34 +213,21 @@ internal fun AppearanceTab(
     val readerFontFamily = remember(settings.fontType) { getFontFamily(settings.fontType) }
 
     val carouselGeometry = remember(localFontSize, localLineHeight, localPadding) {
-        val scale = 1f
-        val baseLineHeight = (4.dp * (localFontSize.toFloat() / 18f)) * scale
-        val spacingBetweenLines = (baseLineHeight * (localLineHeight - 1f) + 4.dp) * scale
-        val internalPadding = (16.dp * (localPadding.toFloat() / 16f)) * scale
-        val constrainedPadding = if (internalPadding > 32.dp * scale) 32.dp * scale else internalPadding
-        SpecimenGeometry(
-            lineHeight = baseLineHeight,
-            spacing = spacingBetweenLines,
-            padding = constrainedPadding,
-            fontSize = localFontSize.sp,
-            scale = scale,
+        buildSpecimenGeometry(
+            fontSize = localFontSize,
+            lineHeight = localLineHeight,
+            horizontalPadding = localPadding,
+            scale = 1f,
         )
     }
     val galleryGeometry = remember(localFontSize, localLineHeight, localPadding) {
-        val scale = 0.65f
-        val baseLineHeight = (4.dp * (localFontSize.toFloat() / 18f)) * scale
-        val spacingBetweenLines = (baseLineHeight * (localLineHeight - 1f) + 4.dp) * scale
-        val internalPadding = (16.dp * (localPadding.toFloat() / 16f)) * scale
-        val constrainedPadding = if (internalPadding > 32.dp * scale) 32.dp * scale else internalPadding
-        SpecimenGeometry(
-            lineHeight = baseLineHeight,
-            spacing = spacingBetweenLines,
-            padding = constrainedPadding,
-            fontSize = localFontSize.sp,
-            scale = scale,
+        buildSpecimenGeometry(
+            fontSize = localFontSize,
+            lineHeight = localLineHeight,
+            horizontalPadding = localPadding,
+            scale = 0.65f,
         )
     }
-
     val settingsThemeIndex = remember(settings.theme, allThemes) {
         allThemes.indexOfFirst { it.id == settings.theme }.coerceIn(allThemes.indices)
     }
@@ -273,6 +259,12 @@ internal fun AppearanceTab(
             Color(allThemes[safeIndex].palette.primary)
         }
     }
+    val getBackground = remember(allThemes, visualIndex) {
+        {
+            val safeIndex = visualIndex.coerceIn(allThemes.indices)
+            Color(allThemes[safeIndex].palette.background)
+        }
+    }
 
     // High-performance system bar management
     LaunchedEffect(visualIndex, allThemes) {
@@ -298,41 +290,17 @@ internal fun AppearanceTab(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .navigationBarsPadding(),
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .height(64.dp)
-                    .padding(horizontal = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                androidx.compose.material3.IconButton(
-                    onClick = ::closeAppearanceTab,
-                    enabled = !isClosingAppearance,
-                ) {
-                    androidx.compose.material3.Icon(
-                        androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = getSysFg(),
-                    )
-                }
-                androidx.compose.material3.Text(
-                    text = "Appearance",
-                    style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 12.dp),
-                    color = getSysFg(),
-                )
-            }
-
+            Spacer(Modifier.height(64.dp))
             Spacer(Modifier.height(16.dp))
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(176.dp)
                     .testTag("appearance_theme_pager"),
                 contentPadding = PaddingValues(horizontal = 48.dp),
                 pageSpacing = 16.dp,
@@ -355,7 +323,7 @@ internal fun AppearanceTab(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 14.dp)
                     .graphicsLayer { clip = false },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -370,9 +338,9 @@ internal fun AppearanceTab(
                     currentTheme = currentTheme,
                     getSysFg = getSysFg,
                     getPrimary = getPrimary,
-                    onCreate = onOpenCreateThemeEditor,
+                    onCreate = { onOpenCreateThemeEditor(pendingThemeId) },
                     onData = { bulkImportLauncher.launch("*/*") },
-                    onModify = { currentTheme?.let(onOpenEditThemeEditor) },
+                    onModify = { currentTheme?.let { onOpenEditThemeEditor(it, pendingThemeId) } },
                     onDelete = { currentTheme?.let(onDeleteTheme) },
                     onExport = {
                         currentTheme?.let {
@@ -418,6 +386,34 @@ internal fun AppearanceTab(
             }
 
             Spacer(Modifier.height(32.dp))
+        }
+
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .fillMaxWidth()
+                .background(getBackground())
+                .statusBarsPadding()
+                .height(64.dp)
+                .padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            androidx.compose.material3.IconButton(
+                onClick = ::closeAppearanceTab,
+                enabled = !isClosingAppearance,
+            ) {
+                androidx.compose.material3.Icon(
+                    androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = getSysFg(),
+                )
+            }
+            androidx.compose.material3.Text(
+                text = "Appearance",
+                style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(start = 12.dp),
+                color = getSysFg(),
+            )
         }
 
         AppearanceGalleryHost(

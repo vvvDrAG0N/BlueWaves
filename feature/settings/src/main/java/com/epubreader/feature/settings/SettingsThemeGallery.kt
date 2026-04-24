@@ -319,17 +319,16 @@ internal fun ThemePreviewCard(
     val entryProgress by animateFloatAsState(
         targetValue = if (isRevealed) 1f else 0f,
         animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow),
-        label = "entryProgress"
+        label = "entryProgress",
     )
 
-    val auraColor = Color(theme.palette.primary).copy(alpha = 0.15f)
     val isCustom = theme.id.startsWith(CustomThemeIdPrefix)
-    
+
     val contentAlpha by animateFloatAsState(
         targetValue = if (isSelectionMode && !isCustom) 0.38f else 1f,
         label = "contentAlpha",
     )
-    
+
     val cardScale by animateFloatAsState(
         targetValue = if (isSelectionMode && isCustom) {
             if (isSelected) 1.0f else 0.92f
@@ -351,13 +350,13 @@ internal fun ThemePreviewCard(
                 else -> 2.dp.toPx()
             }
         },
-        label = "elevation"
+        label = "elevation",
     )
 
     val borderColor by animateColorAsState(
         targetValue = when {
-            isSelected -> Color(theme.palette.primary)
-            isActive && !isSelectionMode -> Color(theme.palette.primary).copy(alpha = 0.8f)
+            isSelected -> primaryColor.copy(alpha = 0.72f)
+            isActive && !isSelectionMode -> outlineColor.copy(alpha = 0.55f)
             else -> Color.Transparent
         },
         animationSpec = tween(400),
@@ -375,14 +374,11 @@ internal fun ThemePreviewCard(
     Surface(
         modifier = Modifier
             .graphicsLayer {
-                // Antigravity entry: cards fly in from below with a slight 3D tilt
                 alpha = entryProgress * contentAlpha
                 scaleX = cardScale * (0.95f + 0.05f * entryProgress)
                 scaleY = cardScale * (0.95f + 0.05f * entryProgress)
                 translationY = with(density) { (1f - entryProgress) * 64.dp.toPx() }
                 rotationX = if (isGalleryOpen) (1f - entryProgress) * 10f else 0f
-                
-                // Spatial depth: Zero out when gallery is closed to prevent RenderThread issues
                 shadowElevation = if (isGalleryOpen) elevation else 0f
                 shape = RoundedCornerShape(16.dp)
                 clip = true
@@ -392,26 +388,16 @@ internal fun ThemePreviewCard(
                 contentDescription = "Theme ${theme.name}"
                 selected = isActive
             }
-            .then(interactionModifier)
-            .drawBehind {
-                // Background aura "Glow"
-                drawCircle(
-                    color = auraColor,
-                    radius = size.maxDimension * 0.8f,
-                    center = center,
-                    alpha = 0.4f * entryProgress * (if (isSelectionMode && !isSelected) 0.4f else 1f),
-                )
-            },
-        color = Color.Transparent // Surface is just a transform shell now
+            .then(interactionModifier),
+        color = Color.Transparent,
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(theme.palette.background)),
-                border = BorderStroke(2.dp, borderColor),
-                // Elevation handled by parent graphicsLayer for better performance
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), 
+                border = BorderStroke(1.dp, borderColor),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             ) {
                 Column {
                     Box(

@@ -20,6 +20,7 @@ internal data class ThemeEditorSession(
     val themeId: String,
     val isNew: Boolean,
     val draft: ThemeEditorDraft,
+    val chromeThemeId: String,
     val settings: GlobalSettings,
 )
 

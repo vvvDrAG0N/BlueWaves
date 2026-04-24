@@ -112,20 +112,17 @@ private fun ContextualSpecimenCard(
     isActive: Boolean,
     fontSize: Int,
     lineHeight: Float,
-    horizontalPadding: Int
+    horizontalPadding: Int,
 ) {
     val p = theme.palette
-    
+
     val borderColor = if (isActive) Color(p.primary) else Color(p.outline).copy(alpha = 0.2f)
     val borderThickness = if (isActive) 3.dp else 1.dp
-
-    // Scale settings for the large specimen card context
     val baseLineHeight = 8.dp * (fontSize.toFloat() / 18f)
     val spacingBetweenLines = baseLineHeight * (lineHeight - 1f) + 8.dp
     val internalPadding = 24.dp * (horizontalPadding.toFloat() / 16f)
     val constrainedPadding = if (internalPadding > 40.dp) 40.dp else internalPadding
 
-    // Outer Container representing the 'Background' token (Stable UI Zone)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,72 +131,67 @@ private fun ContextualSpecimenCard(
             .background(Color(p.background))
             .border(borderThickness, borderColor, RoundedCornerShape(32.dp))
             .padding(16.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
-        // Inner "App" Simulation
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(24.dp))
                 .background(Color(p.readerBackground))
-                .border(borderThickness, borderColor, RoundedCornerShape(24.dp))
+                .border(borderThickness, borderColor, RoundedCornerShape(24.dp)),
         ) {
-            // 1. System Representation (Stable UI Zone)
             SystemBarMock(p)
 
             Column(
                 modifier = Modifier
                     .padding(vertical = 24.dp)
-                    .padding(horizontal = (constrainedPadding + 24.dp)) // Dynamic Padding
+                    .padding(horizontal = constrainedPadding + 24.dp),
             ) {
-                // 2. Reader Representation (Affected by reader settings)
-                
-                // Stable Title
                 Text(
                     text = theme.name,
                     style = MaterialTheme.typography.titleLarge,
                     color = Color(p.readerForeground),
                     fontWeight = FontWeight.Bold,
-                    fontFamily = KarlaFont
+                    fontFamily = KarlaFont,
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
-                // Reactive Reader Content
+
                 Column(verticalArrangement = Arrangement.spacedBy(spacingBetweenLines)) {
                     SkeletonLine(
-                        color = Color(p.readerForeground), 
+                        color = Color(p.readerForeground),
                         widthPercent = 0.8f,
-                        height = baseLineHeight
+                        height = baseLineHeight,
                     )
-                    // Highlighting a part of the "text" with Primary
-                    Row(modifier = Modifier.fillMaxWidth(1.0f), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
                         SkeletonLine(
-                            color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                            color = Color(p.readerForeground).copy(alpha = 0.5f),
                             widthPercent = 0.4f,
-                            height = baseLineHeight
+                            height = baseLineHeight,
                         )
                         SkeletonLine(
-                            color = Color(p.primary), 
+                            color = Color(p.primary),
                             widthPercent = 0.3f,
-                            height = baseLineHeight
+                            height = baseLineHeight,
                         )
                         SkeletonLine(
-                            color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                            color = Color(p.readerForeground).copy(alpha = 0.5f),
                             widthPercent = 0.2f,
-                            height = baseLineHeight
+                            height = baseLineHeight,
                         )
                     }
                     SkeletonLine(
-                        color = Color(p.readerForeground).copy(alpha = 0.5f), 
+                        color = Color(p.readerForeground).copy(alpha = 0.5f),
                         widthPercent = 0.9f,
-                        height = baseLineHeight
+                        height = baseLineHeight,
                     )
                 }
 
                 Spacer(modifier = Modifier.height(48.dp))
 
-                // 3. UI Layer Representation (Stable UI Zone)
                 SurfaceMock(p)
             }
         }
@@ -213,7 +205,7 @@ private fun SystemBarMock(p: ThemePalette) {
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text("12:00", fontSize = 10.sp, color = Color(p.systemForeground).copy(alpha = 0.7f))
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -231,7 +223,7 @@ private fun SurfaceMock(p: ThemePalette) {
             .clip(RoundedCornerShape(16.dp))
             .background(Color(p.surface))
             .border(1.dp, Color(p.outline).copy(alpha = 0.1f), RoundedCornerShape(16.dp))
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         Row(
             modifier = Modifier
@@ -240,31 +232,29 @@ private fun SurfaceMock(p: ThemePalette) {
                 .clip(RoundedCornerShape(8.dp))
                 .background(Color(p.surfaceVariant))
                 .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text("UI COMPONENT", fontSize = 8.sp, color = Color(p.systemForeground).copy(alpha = 0.4f))
         }
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
-            // Secondary Action
             Box(
                 modifier = Modifier
                     .size(60.dp, 24.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .border(1.dp, Color(p.secondary), RoundedCornerShape(4.dp))
+                    .border(1.dp, Color(p.secondary), RoundedCornerShape(4.dp)),
             )
             Spacer(modifier = Modifier.width(8.dp))
-            // Primary Action
             Box(
                 modifier = Modifier
                     .size(60.dp, 24.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(Color(p.primary))
+                    .background(Color(p.primary)),
             )
         }
     }
@@ -277,7 +267,7 @@ private fun SkeletonLine(color: Color, widthPercent: Float, height: androidx.com
             .fillMaxWidth(widthPercent)
             .height(height)
             .clip(CircleShape)
-            .background(color.copy(alpha = 0.2f))
+            .background(color.copy(alpha = 0.2f)),
     )
 }
 

@@ -73,8 +73,8 @@ fun SettingsScreen(
     var editorSession by remember { mutableStateOf<ThemeEditorSession?>(null) }
     var themeToDelete by remember { mutableStateOf<CustomTheme?>(null) }
 
-    fun openCreateThemeEditor() {
-        val seedPalette = themePaletteSeed(settings.theme, settings.customThemes)
+    fun openCreateThemeEditor(seedThemeId: String) {
+        val seedPalette = themePaletteSeed(seedThemeId, settings.customThemes)
         editorSession = ThemeEditorSession(
             themeId = "$CustomThemeIdPrefix${UUID.randomUUID()}",
             isNew = true,
@@ -87,15 +87,17 @@ fun SettingsScreen(
                 mode = ThemeEditorMode.BASIC,
                 legacyIsAdvanced = false,
             ),
+            chromeThemeId = seedThemeId,
             settings = settings,
         )
     }
 
-    fun openEditThemeEditor(theme: CustomTheme) {
+    fun openEditThemeEditor(theme: CustomTheme, chromeThemeId: String) {
         editorSession = ThemeEditorSession(
             themeId = theme.id,
             isNew = false,
             draft = ThemeEditorDraft.fromTheme(theme),
+            chromeThemeId = chromeThemeId,
             settings = settings,
         )
     }

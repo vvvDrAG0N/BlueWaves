@@ -902,3 +902,105 @@ This file is append-only.
     - None. The release-time guided snap code and the surrounding settings flows are green on `emulator-5554`.
 - Suggested next step:
     - Only revisit this picker behavior if the user wants a stronger post-release cue, a different commit trigger than release/`Done`, or more explicit UI education about why guided modes may still adjust certain colors.
+
+## 53. 2026-04-24 21:02
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Replace the legacy theme specimen previews with a semantic preview system that matches the expanded theme tokens across Appearance, Theme Gallery, and Edit/Create Theme.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceVisuals.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsScreen.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeGallery.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewModels.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewScenes.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewComposite.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewSceneComponents.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewOverlayScene.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeStudioScreen.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemePreviewSceneTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+    1. Added a new shared semantic preview layer inside `:feature:settings` with `ThemePreviewScene` (`APP`, `READER`, `OVERLAY`), shared geometry helpers, stable scene-chip test tags, and scene state descriptions that expose the active semantic token values.
+    2. Replaced the old in-file specimen rendering with reusable large preview scenes for Appearance and the theme editor, plus a compact composite mini preview for Theme Gallery so gallery tap/long-press behavior stayed unchanged.
+    3. Rewired `AppearanceTab` and `SettingsThemeEditor` to use the shared preview engine, each with local scene switching, while suppressing background preview semantics whenever the gallery or editor overlay is active to avoid duplicate test-hook collisions.
+    4. Pointed `ThemeStudioScreen` at the same preview primitives so the repo no longer has a separate legacy mock preview path drifting away from the semantic palette.
+    5. Added new instrumentation coverage for scene switching, gallery interaction preservation, and live editor preview updates, then updated the older persistence tests that still referenced the retired appearance-card specimen tags.
+    6. Split the shared preview helpers and overlay scene back out into `ThemePreviewSceneComponents.kt` and `ThemePreviewOverlayScene.kt` so the preview engine stayed under the repo’s 500-line Kotlin-file limit.
+- Result:
+    - Preview coverage is now semantically honest: the large previews can switch between app, reader, and overlay/startup roles, and the gallery cards show a compact composite snapshot instead of an outdated pseudo-reader-only sample.
+    - The redesign stayed within the repo size guard by extracting the preview engine into focused files instead of growing the already-large settings hosts.
+    - Existing settings persistence/editor flows remain green after updating the tests to follow the new preview semantics.
+- Verification:
+    - `./gradlew.bat :feature:settings:compileDebugKotlin :feature:settings:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemePreviewSceneTest" --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#appearanceSwipe_backOutOfSection_persistsPendingThemeSelection,com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_afterSwipe_usesLiveAppearanceThemeForSelectionAndChrome" --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest,com.epubreader.feature.settings.SettingsThemeEditorModeInferenceTest,com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest,com.epubreader.feature.settings.SettingsThemePreviewSceneTest" --console=plain`
+- Blockers:
+    - None. The semantic preview redesign and the related settings flows are green on `emulator-5554`.
+- Suggested next step:
+    - Only revisit this area if the user wants a further visual polish pass on the new scenes/composite balance or wants the same semantic preview system reused outside `:feature:settings`.
+
+## 54. 2026-04-24 22:12
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Simplify the just-added semantic preview system so it stops feeling cramped and over-designed, replacing scene switching with one calmer unified composite preview across Appearance, Theme Gallery, and Edit/Create Theme.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewModels.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewScenes.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewComposite.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemePreviewSceneComponents.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeStudioScreen.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemePreviewSceneTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+    1. Removed the scene-switching preview model and chips entirely, collapsing the preview contract down to a single unified semantic summary under `ThemePreviewContentTag`.
+    2. Rebuilt the shared preview artwork as one aligned composite composition used everywhere: a restrained header shell, one main app surface block, one reader band, and one integrated overlay/startup cue.
+    3. Simplified the gallery wrapper so it no longer adds extra decorative footer chrome; the gallery card now uses the shared composite artwork directly and remains the cleanest scanning surface.
+    4. Reduced vertical pressure in the hosts by cutting the Appearance preview height from `200.dp` to `176.dp`, the editor preview height from `140.dp` to `120.dp`, and removing the scene-chip rows entirely.
+    5. Removed the no-longer-needed scene-era preview files/paths and trimmed the helper surface down so the preview implementation stayed under the repo size guard.
+    6. Reworked the preview instrumentation to verify the new unified contract: no scene-chip tags, live preview-state updates for `accent`, `favoriteAccent`, `startupBackground`, and `coverOverlayScrim`, and unchanged gallery selection/long-press behavior.
+- Result:
+    - The preview system is materially calmer: fewer controls, fewer labels, less visual noise, and a single design language shared by Appearance, Gallery, and Edit Theme.
+    - The gallery-style composite is now the visual base everywhere instead of three different mini mockups.
+    - The settings preview tests now validate the simplified unified-preview behavior instead of the removed scene-switching model.
+- Verification:
+    - `./gradlew.bat :feature:settings:compileDebugKotlin :feature:settings:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemePreviewSceneTest" --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest,com.epubreader.feature.settings.SettingsThemeEditorModeInferenceTest,com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest,com.epubreader.feature.settings.SettingsThemePreviewSceneTest" --console=plain`
+- Blockers:
+    - None. The simplified preview system and the related settings flows are green on `emulator-5554`.
+- Suggested next step:
+    - Get direct visual feedback from the user on whether this simpler composite is now releaseable, and only then decide whether a final spacing/padding polish pass is needed.
+
+## 55. 2026-04-24 23:10
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Roll the settings preview system back to the `Stable 2` reader-first specimen baseline, fix new-theme creation so it seeds from the currently visible appearance theme, and restore strong live typography preview responsiveness.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceVisuals.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsScreen.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeGallery.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeStudioScreen.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemePreviewSpecimenTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+    1. Removed the uncommitted composite preview engine and restored the `Stable 2` reader specimen helpers (`SpecimenGeometry`, geometry builder, reader lines, and surface mock) inside the shared settings visuals layer.
+    2. Rewired `Appearance`, `Theme Gallery`, `Edit Theme`, and `ThemeStudioScreen` back onto the reader-first specimen path, including the old gallery preview card renderer and the larger editor preview shell.
+    3. Fixed the theme-creation seeding bug by changing the `AppearanceTab -> SettingsScreen` create callback to pass the currently visible/pending theme id, then seeding the new draft from that id instead of the last committed `settings.theme`.
+    4. Restored the older appearance-card semantics/tags so the rollback kept stable selection hooks for instrumentation and brought back direct live response to `fontSize`, `lineHeight`, and `horizontalPadding`.
+    5. Replaced the scene/composite preview instrumentation with a new specimen-focused settings test suite that covers create-from-visible-theme, live typography preview image changes, gallery selection/long-press behavior, and editor preview updates after accent edits.
+    6. Reinstated the few persistence assertions that relied on the old `appearance_theme_card_*` tags so the broader settings coverage matched the restored preview implementation again.
+- Result:
+    - The preview system is back to a reading-focused baseline that visibly reacts to typography controls and no longer tries to act as a semantic token artboard.
+    - Creating a new theme from `Appearance` now respects the theme the user is actually looking at, even if the pager selection has not fully persisted yet.
+    - The settings preview tests now guard the restored reader-specimen behavior instead of the abandoned composite preview experiment.
+- Verification:
+    - `./gradlew.bat :feature:settings:compileDebugKotlin --console=plain`
+    - `./gradlew.bat :feature:settings:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemePreviewSpecimenTest" --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest,com.epubreader.feature.settings.SettingsThemeEditorModeInferenceTest,com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest,com.epubreader.feature.settings.SettingsThemePreviewSpecimenTest" --console=plain`
+- Blockers:
+    - None. The rollback, the visible-theme seed fix, and the settings regression coverage are green on `emulator-5554`.
+- Suggested next step:
+    - Let the user visually confirm the restored `Stable 2` reader-first previews and only then decide if there is any small, targeted gallery-only polish worth reintroducing later.
+
+## 56. 2026-04-24 23:58
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Polish the restored reader-first theme editor by fixing stale theme chrome, removing unwanted editor preview entry animation, and calming the preview border treatment without changing the existing theme-editor logic.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceTab.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceVisuals.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsScreen.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeGallery.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorModels.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorChrome.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorPreviewCard.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemePreviewSpecimenTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+    1. Extended the editor session/open-flow so both `Create` and `Modify` capture the currently visible appearance theme id and carry it into the dialog as stable chrome context, instead of letting the sheet inherit stale global theme colors.
+    2. Added a feature-local chrome palette/color-scheme mapper for the editor dialog, then wrapped the dialog content and picker overlay in that captured chrome theme so the surrounding sheet stays visually consistent while only the preview live-updates from the draft.
+    3. Split the editor preview away from the animated gallery card path by introducing a static `ThemeEditorPreviewCard`, then rewired the editor to use that host so opening the dialog no longer plays gallery-style entry motion.
+    4. Calmed the reader preview framing by replacing the accent-heavy border treatment in the appearance/editor specimen cards with a simpler 1dp outline, and toned down the gallery selection border so selection remains readable without the odd corner-highlight feel.
+    5. Updated the specimen-focused instrumentation to verify the new behavior: create-after-swipe uses matching chrome, edit-after-swipe no longer reuses stale green/other shell colors, the editor preview host is static on open, and the preview still reacts after an accent edit.
+    6. Stabilized the new static-preview assertions by capturing the editor preview host from the unmerged semantics tree, which made the instrumentation reliable without changing runtime behavior.
+- Result:
+    - `Create/Edit Theme` now opens with shell chrome that matches the visible theme the user was actually looking at in `Appearance`, including custom themes, instead of falling back to the last committed global theme.
+    - The editor preview now appears immediately and statically, while the preview border treatment is noticeably calmer and the gallery selection framing is less visually noisy.
+    - The restored reader-first specimen baseline remains intact, including live typography responsiveness and the existing guided/basic/extended/advanced editor behavior.
+- Verification:
+    - `./gradlew.bat :feature:settings:compileDebugKotlin :feature:settings:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemePreviewSpecimenTest" --console=plain`
+    - `./gradlew.bat :feature:settings:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest,com.epubreader.feature.settings.SettingsThemeEditorModeInferenceTest,com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest,com.epubreader.feature.settings.SettingsThemePreviewSpecimenTest" --console=plain`
+- Blockers:
+    - None. The chrome/polish pass and the related settings regression coverage are green on `emulator-5554`.
+- Suggested next step:
+    - Have the user visually confirm the calmer borders and the now-correct editor chrome against the exact dark custom-theme case they reported, then only do another pass if the remaining feel issue is aesthetic rather than behavioral.
