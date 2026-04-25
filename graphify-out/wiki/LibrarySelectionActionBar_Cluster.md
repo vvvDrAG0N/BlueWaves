@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **LibrarySelectionActionBar.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\LibrarySelectionActionBar.kt`
-- **BookSelectionActionBar()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\LibrarySelectionActionBar.kt`
-- **SelectionActionButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\LibrarySelectionActionBar.kt`
+- **LibrarySelectionActionBar.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibrarySelectionActionBar.kt`
+- **BookSelectionActionBar()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibrarySelectionActionBar.kt`
+- **SelectionActionButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibrarySelectionActionBar.kt`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\LibrarySelectionActionBar.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibrarySelectionActionBar.kt`
 
 ## Audit Trail
 

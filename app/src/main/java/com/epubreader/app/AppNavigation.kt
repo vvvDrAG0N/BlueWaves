@@ -1,187 +1,60 @@
 package com.epubreader.app
 
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
-import com.epubreader.core.model.BookFormat
 import com.epubreader.Screen
-import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
-import com.epubreader.data.parser.EPUB_MIME_TYPE
-import com.epubreader.data.parser.ZIP_COMPRESSED_MIME_TYPE
-import com.epubreader.data.parser.ZIP_MIME_TYPE
 import com.epubreader.data.settings.SettingsManager
-import kotlinx.coroutines.Dispatchers
+import com.epubreader.feature.editbook.EditBookDependencies
+import com.epubreader.feature.editbook.EditBookEvent
+import com.epubreader.feature.editbook.EditBookRoute
+import com.epubreader.feature.library.LibraryDependencies
+import com.epubreader.feature.library.LibraryEvent
+import com.epubreader.feature.library.LibraryRoute
+import com.epubreader.feature.library.LibraryStartupPresentation
+import com.epubreader.feature.reader.ReaderDependencies
+import com.epubreader.feature.reader.ReaderEvent
+import com.epubreader.feature.reader.ReaderRoute
+import com.epubreader.feature.settings.SettingsDependencies
+import com.epubreader.feature.settings.SettingsEvent
+import com.epubreader.feature.settings.SettingsRoute
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
-/**
- * AI_ENTRY_POINT
- * AI_READ_FIRST
- * AI_RELEVANT_TO: [App Navigation, Library Management, Folder Drag-and-Drop]
- * AI_STATE_OWNER: AppNavigation owns [books, selectedBook, selectedFolderName].
- *
- * High-level app shell state container for Library, Reader, and Settings.
- * AI_CRITICAL: This is the app-shell brain. Adding UI here often requires matching
- * state logic updates in [SettingsManager].
- */
 @Composable
 fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettings) {
     val context = LocalContext.current
-    val haptics = LocalHapticFeedback.current
     val view = LocalView.current
     val scope = rememberCoroutineScope()
     val parser = remember { EpubParser.create(context) }
 
-    var books by remember { mutableStateOf(emptyList<EpubBook>()) }
-    var selectedBook by remember { mutableStateOf<EpubBook?>(null) }
-    var editingBook by remember { mutableStateOf<EpubBook?>(null) }
-    var currentScreen by remember { mutableStateOf(Screen.Library) }
+    var currentRoute by remember { mutableStateOf<AppRoute>(AppRoute.Library) }
     var startupState by remember { mutableStateOf(AppStartupState(phase = StartupPhase.EvaluatingStartup)) }
-    var asyncState by remember { mutableStateOf(LibraryAsyncUiState()) }
-
-    var editBookSaveInFlight by remember { mutableStateOf(false) }
-    var editBookErrorMessage by remember { mutableStateOf<String?>(null) }
-    var selectedBookIds by remember { mutableStateOf(emptySet<String>()) }
-    var isBookSelectionMode by remember { mutableStateOf(false) }
-    var isMovingMode by remember { mutableStateOf(false) }
-    var showBulkBookDeleteConfirm by remember { mutableStateOf(false) }
-    var showSortMenu by remember { mutableStateOf(false) }
-    var showCreateFolderDialog by remember { mutableStateOf(false) }
-    var folderToRename by remember { mutableStateOf<String?>(null) }
-    var folderToDelete by remember { mutableStateOf<String?>(null) }
-    var foldersToDelete by remember { mutableStateOf<Set<String>>(emptySet()) }
-    var isFolderSelectionMode by remember { mutableStateOf(false) }
-    var showBulkFolderDeleteConfirm by remember { mutableStateOf(false) }
-    val snackbarHostState = remember { androidx.compose.material3.SnackbarHostState() }
-
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-
-    var selectedFolderName by remember(globalSettings.favoriteLibrary) {
-        mutableStateOf(globalSettings.favoriteLibrary.ifEmpty { RootLibraryName })
-    }
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
-    var dragPreviewFolders by remember { mutableStateOf(emptyList<String>()) }
-    var pendingFolderOrder by remember { mutableStateOf<List<String>?>(null) }
-    var draggedFolderName by remember { mutableStateOf<String?>(null) }
-    var dragOffset by remember { mutableFloatStateOf(0f) }
-
-    var showFirstTimeNote by remember { mutableStateOf(false) }
-    var changelogToShow by remember { mutableStateOf<List<JSONObject>>(emptyList()) }
+    var startupPresentation by remember { mutableStateOf(LibraryStartupPresentation()) }
     var detectedVersionCode by remember { mutableIntStateOf(0) }
     var pendingStartupDecision by remember { mutableStateOf<AppShellStartupDecision?>(null) }
-
-    // Shell-owned refresh. Keep scanning here so screen transitions and dialogs share one source.
-    fun refreshLibrary(onComplete: (() -> Unit)? = null) {
-        if (asyncState.libraryRefresh) return // Guard: Don't stack parallel scans
-        
-        scope.launch {
-            asyncState = asyncState.copy(libraryRefresh = true)
-            try {
-                books = withContext(Dispatchers.IO) { scanLibrary(parser) }
-            } finally {
-                asyncState = asyncState.copy(libraryRefresh = false)
-                onComplete?.invoke()
-            }
-        }
-    }
+    var hasCompletedInitialLibraryRefresh by remember { mutableStateOf(false) }
 
     fun commitPendingStartupDecision() {
         val decision = pendingStartupDecision ?: return
-        showFirstTimeNote = decision.showFirstTimeNote
-        changelogToShow = decision.changelogEntries
+        startupPresentation = LibraryStartupPresentation(
+            showFirstTimeNote = decision.showFirstTimeNote,
+            changelogEntries = decision.changelogEntries,
+        )
         pendingStartupDecision = null
     }
 
-    fun clearBookSelection() {
-        isBookSelectionMode = false
-        selectedBookIds = emptySet()
-        isMovingMode = false
+    fun goToLibrary() {
+        currentRoute = AppRoute.Library
     }
-
-    fun clearFolderSelection() {
-        isFolderSelectionMode = false
-        foldersToDelete = emptySet()
-    }
-
-    fun openEditBook(book: EpubBook) {
-        if (book.sourceFormat != BookFormat.EPUB || editBookSaveInFlight) {
-            return
-        }
-        clearBookSelection()
-        editingBook = book
-        editBookErrorMessage = null
-        currentScreen = Screen.EditBook
-    }
-
-    fun exitEditBook() {
-        // Do not clear editingBook here; AnimatedContent needs it to render the outgoing exit transition.
-        editBookErrorMessage = null
-        editBookSaveInFlight = false
-        currentScreen = Screen.Library
-    }
-
-    fun applyUpdatedBook(updatedBook: EpubBook) {
-        var replaced = false
-        books = books.map { existing ->
-            if (existing.id == updatedBook.id) {
-                replaced = true
-                updatedBook
-            } else {
-                existing
-            }
-        }.let { currentBooks ->
-            if (replaced) currentBooks else currentBooks + updatedBook
-        }
-        if (selectedBook?.id == updatedBook.id) {
-            selectedBook = updatedBook
-        }
-    }
-
-    val openBook: (EpubBook) -> Unit = openBook@{ book ->
-        if (book.sourceFormat == BookFormat.PDF) {
-            scope.launch {
-                snackbarHostState.showSnackbar(PdfSupportDisabledSnackbarMessage)
-            }
-            return@openBook
-        }
-        if (asyncState.bookOpenInFlight != book.id) {
-            scope.launch {
-                asyncState = asyncState.copy(bookOpenInFlight = book.id)
-                try {
-                    val preparedBook = withContext(Dispatchers.IO) {
-                        parser.prepareBookForReading(book)
-                    }
-                    selectedBook = preparedBook
-                    currentScreen = Screen.Reader
-
-                    val updated = touchBookLastRead(parser, preparedBook)
-                    applyUpdatedBook(updated)
-                } finally {
-                    asyncState = asyncState.copy(bookOpenInFlight = null)
-                }
-            }
-        }
-    }
-
-    val openDrawer: () -> Unit = { scope.launch { drawerState.open() } }
-    val closeDrawer: () -> Unit = { scope.launch { drawerState.close() } }
 
     AppNavigationStartupEffect(
         context = context,
@@ -191,18 +64,19 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
             detectedVersionCode = decision.detectedVersionCode
             pendingStartupDecision = decision
             startupState = AppStartupState(
-                phase = resolveStartupPhaseAfterEvaluation(currentScreen),
+                phase = resolveStartupPhaseAfterEvaluation(
+                    currentScreen = currentRoute.screen,
+                    hasCompletedInitialLibraryRefresh = hasCompletedInitialLibraryRefresh,
+                ),
             )
+            if (currentRoute.screen != Screen.Library) {
+                commitPendingStartupDecision()
+            }
         },
     )
 
-    LaunchedEffect(startupState.phase, currentScreen) {
-        if (shouldRunInitialLibraryRefresh(currentScreen, startupState)) {
-            refreshLibrary {
-                startupState = AppStartupState(phase = StartupPhase.Ready)
-                commitPendingStartupDecision()
-            }
-        } else if (startupState.phase == StartupPhase.Ready) {
+    LaunchedEffect(startupState.phase, currentRoute.screen, pendingStartupDecision) {
+        if (startupState.phase == StartupPhase.Ready && pendingStartupDecision != null) {
             commitPendingStartupDecision()
         }
     }
@@ -210,279 +84,85 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     AppNavigationSideEffects(
         view = view,
         globalSettings = globalSettings,
-        drawerState = drawerState,
-        currentScreen = currentScreen,
-        books = books,
-        selectedBook = selectedBook,
-        parser = parser,
-        lifecycleOwner = lifecycleOwner,
-        scope = scope,
-        onClearFolderSelection = ::clearFolderSelection,
-        onMovingModeChange = { isMovingMode = it },
-        onBookUpdated = ::applyUpdatedBook,
-    )
-
-    // The derived models below are intentionally pure. They are the safest place to inspect
-    // folder/sort bugs before touching rendering code.
-    // GHOST PROTOCOL: Only parse library data if the library is visible.
-    // This eliminates background CPU jitter while swiping themes in Settings.
-    val libraryDerivedData by produceState(
-        initialValue = LibraryDerivedData(),
-        books,
-        globalSettings.bookGroups,
-        globalSettings.folderSorts,
-        globalSettings.folderOrder,
-        globalSettings.librarySort,
-        selectedFolderName,
-        currentScreen,
-    ) {
-        if (currentScreen == Screen.Library) {
-            value = withContext(Dispatchers.Default) {
-                buildLibraryDerivedData(
-                    books = books,
-                    bookGroupsRaw = globalSettings.bookGroups,
-                    folderSortsRaw = globalSettings.folderSorts,
-                    folderOrderRaw = globalSettings.folderOrder,
-                    librarySort = globalSettings.librarySort,
-                    selectedFolderName = selectedFolderName,
-                )
-            }
-        }
-    }
-    val bookGroups = libraryDerivedData.bookGroups
-    val currentSort = libraryDerivedData.currentSort
-    val folders = libraryDerivedData.folders
-    val libraryItems = libraryDerivedData.libraryItems
-    val bookFolderById = libraryDerivedData.bookFolderById
-
-    LaunchedEffect(folders, draggedFolderName, pendingFolderOrder) {
-        if (draggedFolderName == null && (pendingFolderOrder == null || folders == pendingFolderOrder)) {
-            dragPreviewFolders = folders
-            pendingFolderOrder = null
-        }
-    }
-
-    val displayedFolders = resolveDisplayedFolders(
-        folders = folders,
-        dragPreviewFolders = dragPreviewFolders,
-        draggedFolderName = draggedFolderName,
-        pendingFolderOrder = pendingFolderOrder,
-    )
-
-    val lastOpenedBook = remember(books) { findLastOpenedBook(books) }
-    val progressByBookId = rememberLibraryProgressByBookId(
-        settingsManager = settingsManager,
-        currentScreen = currentScreen,
-        libraryItems = libraryItems,
-        lastOpenedBook = lastOpenedBook,
-    )
-    val selectedEditableBook = remember(books, selectedBookIds) {
-        findSelectedEditableBook(
-            books = books,
-            selectedBookIds = selectedBookIds,
-        )
-    }
-
-    val launchBookImport = rememberBookImportLauncher(
-        books = books,
-        context = context,
-        parser = parser,
-        settingsManager = settingsManager,
-        selectedFolderName = selectedFolderName,
-        bookGroups = bookGroups,
-        snackbarHostState = snackbarHostState,
-        scope = scope,
-        onImportStateChange = { isImporting ->
-            asyncState = asyncState.copy(importInFlight = isImporting)
-        },
-        onBookImported = ::applyUpdatedBook,
-    )
-    val libraryMutations = buildAppNavigationLibraryMutations(
-        globalSettings = globalSettings,
-        haptics = haptics,
-        scope = scope,
-        settingsManager = settingsManager,
-        parser = parser,
-        selectedBookIds = selectedBookIds,
-        books = books,
-        folders = folders,
-        foldersToDelete = foldersToDelete,
-        selectedFolderName = selectedFolderName,
-        detectedVersionCode = detectedVersionCode,
-        dragPreviewFolders = dragPreviewFolders,
-        draggedFolderName = draggedFolderName,
-        dragOffset = dragOffset,
-        onPendingFolderOrderChange = { pendingFolderOrder = it },
-        onDraggedFolderNameChange = { draggedFolderName = it },
-        onDragOffsetChange = { dragOffset = it },
-        onDragPreviewFoldersChange = { dragPreviewFolders = it },
-        onSelectedFolderNameChange = { selectedFolderName = it },
-        onShowFirstTimeNoteChange = { showFirstTimeNote = it },
-        onChangelogChange = { changelogToShow = it },
-        onClearBookSelection = ::clearBookSelection,
-        onClearFolderSelection = ::clearFolderSelection,
-        onRefreshLibrary = ::refreshLibrary,
-        onCloseDrawer = { drawerState.close() },
-    )
-
-    // The bundled contracts below are the second-pass context reduction layer. They keep the
-    // rendering files small enough to inspect without replaying every shell variable by hand.
-    val libraryScreenState = buildLibraryScreenState(
-        globalSettings = globalSettings,
-        drawerState = drawerState,
-        snackbarHostState = snackbarHostState,
-        books = books,
-        libraryItems = libraryItems,
-        progressByBookId = progressByBookId,
-        bookFolderById = bookFolderById,
-        lastOpenedBook = lastOpenedBook,
-        selectedFolderName = selectedFolderName,
-        asyncState = asyncState,
-        isBookSelectionMode = isBookSelectionMode,
-        selectedBookIds = selectedBookIds,
-        folders = folders,
-        displayedFolders = displayedFolders,
-        isMovingMode = isMovingMode,
-        isFolderSelectionMode = isFolderSelectionMode,
-        foldersToDelete = foldersToDelete,
-        draggedFolderName = draggedFolderName,
-        dragOffset = dragOffset,
-    )
-    val folderDrawerActions = buildFolderDrawerActions(
-        folders = folders,
-        onCloseDrawer = closeDrawer,
-        onSelectFolder = { folderName ->
-            selectedFolderName = folderName
-            closeDrawer()
-        },
-        onMoveSelectedBooks = libraryMutations.moveSelectedBooksToFolder,
-        onEnterFolderSelectionMode = { isFolderSelectionMode = true },
-        onExitFolderSelectionMode = { clearFolderSelection() },
-        foldersToDelete = foldersToDelete,
-        onFoldersToDeleteChange = { foldersToDelete = it },
-        onRequestDeleteSelectedFolders = { showBulkFolderDeleteConfirm = true },
-        onShowCreateFolderDialog = { showCreateFolderDialog = true },
-        onRequestRenameFolder = { folderToRename = it },
-        onRequestDeleteFolder = { folderToDelete = it },
-        onStartFolderDrag = libraryMutations.startFolderDrag,
-        onDragFolder = libraryMutations.dragFolderBy,
-        onEndFolderDrag = libraryMutations.completeFolderDrag,
-        onCancelFolderDrag = libraryMutations.cancelFolderDrag,
-    )
-    val libraryScreenActions = buildLibraryScreenActions(
-        libraryItems = libraryItems,
-        selectedBookIds = selectedBookIds,
-        folders = folders,
-        globalSettings = globalSettings,
-        onAddBookClick = {
-            launchBookImport(arrayOf(EPUB_MIME_TYPE, ZIP_MIME_TYPE, ZIP_COMPRESSED_MIME_TYPE))
-        },
-        onRefreshLibrary = ::refreshLibrary,
-        onOpenDrawer = openDrawer,
-        onSetFavoriteFolder = { scope.launch { settingsManager.setFavoriteLibrary(selectedFolderName) } },
-        onShowSortMenu = { showSortMenu = true },
-        onOpenSettings = { currentScreen = Screen.Settings },
-        onClearBookSelection = ::clearBookSelection,
-        onOpenBook = openBook,
-        onSelectionModeChange = { isBookSelectionMode = it },
-        onSelectedBookIdsChange = { selectedBookIds = it },
-        onLongPressFeedback = { haptics.performHapticFeedback(HapticFeedbackType.LongPress) },
-        folderDrawerActions = folderDrawerActions,
-    )
-    val selectionBarState = buildSelectionBarState(
-        isBookSelectionMode = isBookSelectionMode,
-        isMovingMode = isMovingMode,
-        globalSettings = globalSettings,
-        selectedEditableBook = selectedEditableBook,
-    )
-    val selectionBarActions = buildSelectionBarActions(
-        selectedBookIds = selectedBookIds,
-        onShowBulkBookDeleteConfirm = { showBulkBookDeleteConfirm = true },
-        onEnterMovingMode = {
-            isMovingMode = true
-            openDrawer()
-        },
-        onEditSelectedBook = { selectedEditableBook?.let(::openEditBook) },
-    )
-    val dialogState = buildDialogState(
-        showSortMenu = showSortMenu,
-        currentSort = currentSort,
-        folders = folders,
-        showCreateFolderDialog = showCreateFolderDialog,
-        folderToRename = folderToRename,
-        folderToDelete = folderToDelete,
-        showBulkBookDeleteConfirm = showBulkBookDeleteConfirm,
-        selectedBookCount = selectedBookIds.size,
-        showBulkFolderDeleteConfirm = showBulkFolderDeleteConfirm,
-        selectedFolderCount = foldersToDelete.size,
-        showFirstTimeNote = showFirstTimeNote,
-        changelogToShow = changelogToShow,
-    )
-    val dialogActions = buildDialogActions(
-        onDismissSortMenu = { showSortMenu = false },
-        onSelectSort = { sort -> scope.launch { settingsManager.setLibrarySort(selectedFolderName, sort) } },
-        onDismissCreateFolder = { showCreateFolderDialog = false },
-        onCreateFolder = libraryMutations.createFolder,
-        onDismissRenameFolder = { folderToRename = null },
-        onRenameFolder = libraryMutations.renameFolder,
-        onDismissDeleteFolder = { folderToDelete = null },
-        onDeleteFolder = libraryMutations.deleteFolder,
-        onDismissDeleteBooks = { showBulkBookDeleteConfirm = false },
-        onDeleteBooks = libraryMutations.deleteSelectedBooksAction,
-        onDismissDeleteFolders = { showBulkFolderDeleteConfirm = false },
-        onDeleteFolders = libraryMutations.deleteSelectedFolders,
-        onDismissWelcome = libraryMutations.dismissFirstTimeNote,
-        onDismissChangelog = libraryMutations.dismissChangelog,
+        currentScreen = currentRoute.screen,
+        chromeSpec = AppFeatureRegistry.chromeSpecFor(currentRoute),
     )
 
     AppNavigationScreenHost(
-        currentScreen = currentScreen,
+        currentRoute = currentRoute,
         startupState = startupState,
-        editingBook = editingBook,
-        selectedBook = selectedBook,
-        settingsManager = settingsManager,
         globalSettings = globalSettings,
-        parser = parser,
-        libraryScreenState = libraryScreenState,
-        libraryScreenActions = libraryScreenActions,
-        selectionBarState = selectionBarState,
-        selectionBarActions = selectionBarActions,
-        dialogState = dialogState,
-        dialogActions = dialogActions,
-        editBookSaveInFlight = editBookSaveInFlight,
-        editBookErrorMessage = editBookErrorMessage,
-        onEditBookErrorDismiss = { editBookErrorMessage = null },
-        onExitEditBook = ::exitEditBook,
-        onSaveEditBook = { book ->
-            { request ->
-                if (!editBookSaveInFlight) {
-                    scope.launch {
-                        editBookSaveInFlight = true
-                        when (
-                            val result = editBookInLibrary(
-                                parser = parser,
-                                settingsManager = settingsManager,
-                                book = book,
-                                request = request,
-                            )
-                        ) {
-                            is EditBookResult.Updated -> {
-                                editBookErrorMessage = null
-                                applyUpdatedBook(result.book)
-                                exitEditBook()
-                            }
-                            is EditBookResult.Failed -> {
-                                editBookErrorMessage = result.message
-                                editBookSaveInFlight = false
-                            }
-                        }
+        libraryDependencies = LibraryDependencies(
+            settingsManager = settingsManager,
+            globalSettings = globalSettings,
+            parser = parser,
+            startupPresentation = startupPresentation,
+        ),
+        settingsDependencies = SettingsDependencies(
+            settingsManager = settingsManager,
+        ),
+        readerDependencies = ReaderDependencies(
+            parser = parser,
+            settingsManager = settingsManager,
+        ),
+        editBookDependencies = EditBookDependencies(
+            parser = parser,
+            settingsManager = settingsManager,
+        ),
+        settingsRoute = SettingsRoute,
+        libraryRoute = LibraryRoute,
+        onLibraryEvent = { event ->
+            when (event) {
+                LibraryEvent.InitialLibraryRefreshCompleted -> {
+                    hasCompletedInitialLibraryRefresh = true
+                    if (startupState.phase == StartupPhase.LoadingLibrary) {
+                        startupState = AppStartupState(phase = StartupPhase.Ready)
+                        commitPendingStartupDecision()
                     }
+                }
+
+                LibraryEvent.OpenSettings -> {
+                    currentRoute = AppRoute.Settings
+                }
+
+                LibraryEvent.DismissWelcome -> {
+                    scope.launch {
+                        settingsManager.setFirstTime(false)
+                        startupPresentation = startupPresentation.copy(showFirstTimeNote = false)
+                    }
+                }
+
+                LibraryEvent.DismissChangelog -> {
+                    scope.launch {
+                        settingsManager.setLastSeenVersionCode(detectedVersionCode)
+                        startupPresentation = startupPresentation.copy(changelogEntries = emptyList())
+                    }
+                }
+
+                is LibraryEvent.OpenReader -> {
+                    currentRoute = AppRoute.Reader(event.bookId)
+                }
+
+                is LibraryEvent.OpenEditBook -> {
+                    currentRoute = AppRoute.EditBook(event.bookId)
                 }
             }
         },
-        onGoToLibrary = { currentScreen = Screen.Library },
-        onClearFolderSelection = ::clearFolderSelection,
-        onCloseDrawer = closeDrawer,
-        onClearBookSelection = ::clearBookSelection,
+        onSettingsEvent = { event ->
+            when (event) {
+                SettingsEvent.Back -> goToLibrary()
+            }
+        },
+        onReaderEvent = { event ->
+            when (event) {
+                ReaderEvent.Back -> goToLibrary()
+            }
+        },
+        onEditBookEvent = { event ->
+            when (event) {
+                EditBookEvent.Back -> goToLibrary()
+                is EditBookEvent.Saved -> goToLibrary()
+            }
+        },
     )
 }

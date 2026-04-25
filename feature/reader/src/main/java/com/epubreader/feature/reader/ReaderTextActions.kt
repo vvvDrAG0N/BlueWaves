@@ -9,7 +9,7 @@
  *
  * No external intents or PackageManager queries are used.
  */
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.runtime.epub
 
 import android.net.Uri
 

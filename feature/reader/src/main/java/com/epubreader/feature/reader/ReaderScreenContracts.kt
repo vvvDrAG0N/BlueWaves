@@ -71,6 +71,13 @@ internal fun resolveReaderBackAction(
     }
 }
 
+internal fun shouldForceClearReaderSelectionSession(
+    selectableTextEnabled: Boolean,
+    isTextSelectionSessionActive: Boolean,
+): Boolean {
+    return !selectableTextEnabled && isTextSelectionSessionActive
+}
+
 val KarlaFont
     get() = com.epubreader.core.ui.KarlaFont
 
@@ -89,6 +96,7 @@ internal data class ReaderChromeState(
     val tocListState: LazyListState,
     val currentChapterIndex: Int,
     val chapterElements: List<ChapterElement>,
+    val renderedItemCount: Int,
     val isLoadingChapter: Boolean,
     val showControls: Boolean,
     val isTextSelectionSessionActive: Boolean,
@@ -98,13 +106,14 @@ internal data class ReaderChromeState(
     val overscrollThreshold: Float,
     val nestedScrollConnection: NestedScrollConnection,
     val progressPercentageState: State<Float>,
-    val selectionResetToken: Int,
+    val selectionSessionEpoch: Int,
 )
 
 @Stable
 internal data class ReaderChromeCallbacks(
     val onShowControlsChange: (Boolean) -> Unit,
-    val onTextSelectionActiveChange: (Boolean) -> Unit,
+    val onTextSelectionActiveChange: (Int, Boolean) -> Unit,
+    val onSelectionHandleDragChange: (Int, Boolean) -> Unit = { _, _ -> },
     val onClearTextSelection: () -> Unit,
     val onToggleTocSort: () -> Unit,
     val onReleaseOverscroll: () -> Unit,

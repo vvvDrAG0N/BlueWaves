@@ -14,7 +14,10 @@ Use this file to choose the smallest useful verification set. It is a coverage m
   - `com.epubreader.feature.reader.ReaderScreenRestorationTest`
   - `com.epubreader.feature.reader.ReaderScreenOverscrollTest`
   - `com.epubreader.feature.reader.ReaderScreenThemeReactivityTest`
-- App shell flows:
+  - `com.epubreader.feature.reader.ReaderChromeTapBehaviorTest`
+  - `com.epubreader.feature.reader.ReaderChapterSelectionHostTest`
+  - `com.epubreader.feature.reader.ReaderSelectableTextStructureTest`
+- App builder and feature flows:
   - `com.epubreader.app.AppNavigationLibraryFlowTest`
   - `com.epubreader.app.AppNavigationEditBookFlowTest`
 - Settings runtime:
@@ -24,10 +27,15 @@ Use this file to choose the smallest useful verification set. It is a coverage m
 
 ## Baseline JVM / Local Coverage Map
 
-- App shell and folder derivation:
-  - `AppNavigationLibraryDataTest`
+- Builder routing and shell seams:
+  - `AppNavigationBackHandlingTest`
+  - `AppNavigationContractsTest`
   - `AppNavigationStartupTest`
-  - `AppNavigationOperationsTest`
+  - `AppNavigationProgressTest`
+  - `AppNavigationEditProgressTest`
+- Library feature derivation:
+  - `AppNavigationLibraryDataTest`
+  - `LibraryFeatureDataTest`
 - Settings and themes:
   - `SettingsManagerContractsTest`
   - `SettingsManagerJsonTest`
@@ -36,11 +44,20 @@ Use this file to choose the smallest useful verification set. It is a coverage m
 - Parser and metadata helpers:
   - `EpubParserBooksTest`
   - `EpubParserChapterTest`
+  - `EpubParserImportTest`
   - `EpubParserFacadeTest`
-- Reader/theme helpers:
+  - `EpubParserLookupTest`
+- Reader and plugin helpers:
+  - `ReaderLegoPluginTest`
   - `ReaderScreenContractsTest`
-- Edit-book models:
+  - `ReaderChapterSectionsTest`
+  - `ReaderSelectionDocumentTest`
+  - `ReaderSelectionGeometryTest`
+  - `ReaderSelectionStateTest`
+- Edit-book and parked-PDF plugins:
   - `EditBookModelsTest`
+  - `EditBookLegoPluginTest`
+  - `PdfLegacyLegoPluginTest`
 
 ## Selection Rules
 
@@ -50,13 +67,16 @@ Use this file to choose the smallest useful verification set. It is a coverage m
   - run reader-focused tests and the three reader instrumentation suites.
 - Settings or DataStore shape change:
   - run settings JVM tests plus `SettingsScreenPersistenceTest`.
-- Library, folder, or edit-book shell flow change:
-  - run app-shell JVM/local tests plus the relevant app-shell instrumentation flow tests.
+- Builder route or feature-plugin boundary change:
+  - run builder JVM/local tests plus the relevant feature plugin tests.
+- Library, folder, or edit-book flow change:
+  - run library/edit-book JVM coverage plus the relevant app-shell instrumentation flow tests.
 
 ## Manual Acceptance
 
 - Import an EPUB, open it, reopen it, and confirm restoration.
 - Use TOC jump, next/prev, and overscroll navigation.
 - Change settings and themes, then confirm persistence.
+- Select text, dismiss selection, open reader controls, and confirm define/translate still behave.
 - Edit a book, save it, reopen it, and confirm metadata/chapter integrity.
 - Tap a PDF-origin entry and confirm the shell still blocks active PDF behavior.

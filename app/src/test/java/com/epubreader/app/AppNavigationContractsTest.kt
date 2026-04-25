@@ -10,8 +10,27 @@ class AppNavigationContractsTest {
 
     @Test
     fun resolveStartupPhaseAfterEvaluation_routesColdLaunchThroughLibraryWarmUp() {
-        assertEquals(StartupPhase.LoadingLibrary, resolveStartupPhaseAfterEvaluation(Screen.Library))
-        assertEquals(StartupPhase.Ready, resolveStartupPhaseAfterEvaluation(Screen.Settings))
+        assertEquals(
+            StartupPhase.LoadingLibrary,
+            resolveStartupPhaseAfterEvaluation(
+                currentScreen = Screen.Library,
+                hasCompletedInitialLibraryRefresh = false,
+            ),
+        )
+        assertEquals(
+            StartupPhase.Ready,
+            resolveStartupPhaseAfterEvaluation(
+                currentScreen = Screen.Library,
+                hasCompletedInitialLibraryRefresh = true,
+            ),
+        )
+        assertEquals(
+            StartupPhase.Ready,
+            resolveStartupPhaseAfterEvaluation(
+                currentScreen = Screen.Settings,
+                hasCompletedInitialLibraryRefresh = false,
+            ),
+        )
     }
 
     @Test

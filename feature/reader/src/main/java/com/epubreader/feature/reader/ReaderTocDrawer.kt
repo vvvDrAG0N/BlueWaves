@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -51,6 +51,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.epubreader.feature.reader.ReaderChromeCallbacks
+import com.epubreader.feature.reader.ReaderChromeState
+import com.epubreader.feature.reader.TocSort
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

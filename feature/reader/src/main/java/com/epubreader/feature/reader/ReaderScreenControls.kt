@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -31,6 +31,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.feature.reader.GlobalSettingsTransform
+import com.epubreader.feature.reader.ReaderTheme
 
 private const val ReaderControlsDismissVelocityThreshold = 1_600f
 

@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background

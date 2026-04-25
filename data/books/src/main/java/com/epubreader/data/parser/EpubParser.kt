@@ -228,31 +228,11 @@ class EpubParser internal constructor(
     fun scanBooks(): List<EpubBook> {
         return booksDir.listFiles()
             ?.filter(File::isDirectory)
-            ?.mapNotNull { folder ->
-                val cachedBook = loadBookMetadata(folder) ?: return@mapNotNull null
-                val book = healCachedBook(folder, cachedBook) ?: return@mapNotNull null
-                val storedFile = resolveStoredBookFile(book)
-                if (!storedFile.exists()) {
-                    AppLog.w(AppLog.PARSER) { "Skipping cached book ${folder.name} because ${storedFile.name} is missing" }
-                    return@mapNotNull null
-                }
-
-                if (book.format == BookFormat.PDF && book.pageCount <= 0) {
-                    AppLog.w(AppLog.PARSER) { "Rebuilding legacy PDF metadata for ${folder.name}" }
-                    return@mapNotNull rebuildPdfMetadata(
-                        folder,
-                        displayName = null,
-                        conversionStatus = book.conversionStatus,
-                        preferredFormat = book.format,
-                        conversionCompletedPages = book.conversionCompletedPages,
-                        conversionTotalPages = book.conversionTotalPages,
-                    )
-                }
-
-                book
-            }
+            ?.mapNotNull { folder -> loadStoredBookById(booksDir, folder.name) }
             ?: emptyList()
     }
+
+    fun loadBookById(bookId: String): EpubBook? = loadStoredBookById(booksDir, bookId)
 
     fun deleteBook(book: EpubBook) {
         // AI_MUTATION_POINT: Deletes files from disk.

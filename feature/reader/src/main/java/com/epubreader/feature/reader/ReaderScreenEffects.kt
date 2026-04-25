@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.shell
 
 import android.app.Activity
 import androidx.compose.runtime.Composable

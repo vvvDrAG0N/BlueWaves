@@ -298,7 +298,6 @@ data class GlobalSettings(
     val folderOrder: String = "[]",
     val targetTranslationLanguage: String = "ar",
     val showScrollToTop: Boolean = true,
-    val readerContentEngine: ReaderContentEngine = ReaderContentEngine.LEGACY,
     val readerStatusUi: ReaderStatusUiState = ReaderStatusUiState()
 )
 

@@ -22,7 +22,7 @@ Large architectural shifts, module graph changes, and DataStore schema changes r
 Blue Waves is a modular Android app:
 
 - `:app`
-  - bootstrap and shell assembly only
+  - bootstrap, builder routing, and shell assembly only
 - `:core:model`
   - shared pure models and theme contracts
 - `:core:ui`
@@ -48,6 +48,9 @@ Architecture rules:
 
 - Navigation stays state-based through `Screen` and `AppNavigation`.
 - Do not add Jetpack Navigation unless the user explicitly asks for that architectural change.
+- `:app` is the builder over compile-time feature lego/plugins. It carries route args, startup state, dependency bags, and plugin event handling only.
+- Each feature module should expose one root lego/plugin boundary with typed route, dependencies, and event contracts. Smaller legos stay internal to the feature.
+- Builder route state should carry stable IDs or lightweight flags, not full mutable feature data. Feature plugins own book loading, dialogs, derived state, and side effects.
 - `SettingsManager` remains the persisted source of truth for global settings and per-book progress.
 - `EpubParser` remains the public parser facade.
 - Dependency wiring stays manual. Do not introduce Hilt, Koin, or similar DI without explicit approval.
@@ -109,6 +112,7 @@ Placement rules:
 
 - `:app` assembles and routes only. It must not absorb reusable feature logic.
 - `:feature:*` owns feature-specific UI and orchestration.
+- Feature public APIs should usually be one domain-named root plugin plus typed route/dependencies/event contracts.
 - `:core:ui` owns cross-feature presentation primitives and shared Compose helpers.
 - `:core:model` owns shared pure models, contracts, and mappers.
 - `:data:*` owns persistence, parsing, storage, and runtime behavior.

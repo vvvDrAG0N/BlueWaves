@@ -12,16 +12,16 @@ class ReaderScreenContractsTest {
     fun getThemeColors_returnsLightThemeForUnknownTheme() {
         val theme = getThemeColors("custom")
 
-        assertEquals(Color.White, theme.background)
-        assertEquals(Color.Black, theme.foreground)
+        assertEquals(Color(0xFFFAF9F6), theme.background)
+        assertEquals(Color(0xFF18181B), theme.foreground)
     }
 
     @Test
     fun getThemeColors_returnsExpectedLightTheme() {
         val theme = getThemeColors("light")
 
-        assertEquals(Color.White, theme.background)
-        assertEquals(Color.Black, theme.foreground)
+        assertEquals(Color(0xFFFAF9F6), theme.background)
+        assertEquals(Color(0xFF18181B), theme.foreground)
     }
 
     @Test
@@ -29,22 +29,22 @@ class ReaderScreenContractsTest {
         val theme = getThemeColors("oled")
 
         assertEquals(Color.Black, theme.background)
-        assertEquals(Color.White, theme.foreground)
+        assertEquals(Color(0xFFF8FAFC), theme.foreground)
     }
 
     @Test
     fun getThemeColors_returnsExpectedDarkTheme() {
         val theme = getThemeColors("dark")
 
-        assertEquals(Color(0xFF121212), theme.background)
-        assertEquals(Color.White, theme.foreground)
+        assertEquals(Color(0xFF0F172A), theme.background)
+        assertEquals(Color(0xFFE2E8F0), theme.foreground)
     }
 
     @Test
     fun getThemeColors_returnsExpectedSepiaTheme() {
         val theme = getThemeColors("sepia")
 
-        assertEquals(Color(0xFFF4ECD8), theme.background)
+        assertEquals(Color(0xFFFDF6E3), theme.background)
         assertEquals(Color(0xFF5B4636), theme.foreground)
     }
 

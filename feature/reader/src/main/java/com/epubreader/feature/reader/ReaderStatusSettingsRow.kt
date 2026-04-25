@@ -1,8 +1,9 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.epubreader.core.model.GlobalSettings
+import com.epubreader.feature.reader.GlobalSettingsTransform
 
 @Composable
 fun ReaderStatusSettingsRow(

@@ -5,12 +5,12 @@ This note is legacy context only. It is not part of the active product surface.
 ## Current Status
 
 - The active shell imports and opens EPUB only.
-- `AppNavigation` blocks active PDF open/import flows.
+- The builder (`AppNavigation` plus `AppFeatureRegistry`) keeps active PDF open/import flows out of the live shell.
 - Existing PDF-origin library entries may still appear so they can be preserved for a future explicit refactor.
 
 ## Parked Runtime Files
 
-- `app/AppNavigationPdfLegacy.kt`
+- `feature/pdf/legacy/PdfLegacyLegoPlugin.kt`
 - `data/parser/PdfLegacyBridge.kt`
 - `data/pdf/legacy/PdfToEpubConverter.kt`
 - `data/pdf/legacy/PdfConversionWorker.kt`
@@ -25,6 +25,7 @@ This note is legacy context only. It is not part of the active product surface.
 ## Safe Starting Point For Future Work
 
 1. Re-check the active shell boundary in `AppNavigation.kt`.
-2. Re-check parser/runtime seams in `EpubParser.kt` and `PdfLegacyBridge.kt`.
-3. Decide whether PDF returns as a separate runtime surface or is removed entirely.
-4. Re-enable the shell only after import, fallback, progress, and memory behavior are verified together.
+2. Re-check the builder registry seam in `AppFeatureRegistry.kt`.
+3. Re-check parser/runtime seams in `EpubParser.kt` and `PdfLegacyBridge.kt`.
+4. Decide whether PDF returns as a separate runtime surface or is removed entirely.
+5. Re-enable the shell only after import, fallback, progress, and memory behavior are verified together.

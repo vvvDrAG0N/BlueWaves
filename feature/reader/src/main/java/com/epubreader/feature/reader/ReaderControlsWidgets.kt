@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 
 import androidx.compose.foundation.clickable
@@ -57,10 +57,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.basicMarquee
 import com.epubreader.core.ui.KarlaFont
 import com.epubreader.core.model.ThemePalette
+import com.epubreader.feature.reader.ReaderTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReaderThemeMiniSpecimen(
+    id: String,
     name: String,
     palette: ThemePalette,
     selected: Boolean,
@@ -77,6 +79,7 @@ fun ReaderThemeMiniSpecimen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .width(72.dp)
+            .testTag("reader_theme_chip_$id")
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,

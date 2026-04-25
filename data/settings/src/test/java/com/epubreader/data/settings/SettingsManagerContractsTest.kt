@@ -2,10 +2,10 @@ package com.epubreader.data.settings
 
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.preferencesOf
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.LightThemeId
-import com.epubreader.core.model.ReaderContentEngine
 import com.epubreader.core.model.ThemePalette
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -29,7 +29,6 @@ class SettingsManagerContractsTest {
         assertEquals(false, settings.showScrubber)
         assertEquals(false, settings.showSystemBar)
         assertEquals(false, settings.allowBlankCovers)
-        assertEquals(ReaderContentEngine.LEGACY, settings.readerContentEngine)
         assertTrue(settings.customThemes.isEmpty())
         assertEquals(DefaultLibrarySort, settings.librarySort)
         assertEquals(DefaultLibraryName, settings.favoriteLibrary)
@@ -181,21 +180,15 @@ class SettingsManagerContractsTest {
     }
 
     @Test
-    fun toGlobalSettings_readsReaderContentEngineFromStoredValue() {
+    fun toGlobalSettings_ignoresDeprecatedReaderContentEngineStoredValue() {
         val settings = preferencesOf(
-            SettingsPreferenceKeys.readerContentEngine to ReaderContentEngine.TEXT_VIEW.storageValue,
+            SettingsPreferenceKeys.theme to "dark",
+            stringPreferencesKey("reader_content_engine") to "text_view",
         ).toGlobalSettings()
 
-        assertEquals(ReaderContentEngine.TEXT_VIEW, settings.readerContentEngine)
-    }
-
-    @Test
-    fun toGlobalSettings_fallsBackToLegacyReaderContentEngineWhenStoredValueIsInvalid() {
-        val settings = preferencesOf(
-            SettingsPreferenceKeys.readerContentEngine to "broken",
-        ).toGlobalSettings()
-
-        assertEquals(ReaderContentEngine.LEGACY, settings.readerContentEngine)
+        assertEquals("dark", settings.theme)
+        assertEquals(18, settings.fontSize)
+        assertEquals(false, settings.allowBlankCovers)
     }
 
     @Test

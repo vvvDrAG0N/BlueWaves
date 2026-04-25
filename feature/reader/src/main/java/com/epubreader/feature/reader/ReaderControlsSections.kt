@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -56,6 +56,9 @@ import androidx.compose.ui.unit.dp
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.availableThemeOptions
 import com.epubreader.core.ui.ReaderStatusSettingsRow
+import com.epubreader.feature.reader.GlobalSettingsTransform
+import com.epubreader.feature.reader.ReaderTheme
+import com.epubreader.feature.reader.getThemeColors
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 
@@ -68,6 +71,7 @@ internal fun ReaderControlsDragHandle(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .testTag("reader_controls_drag_handle")
             .draggable(
                 orientation = Orientation.Vertical,
                 state = rememberDraggableState { delta -> onDragDelta(delta) },
@@ -268,6 +272,7 @@ internal fun ReaderFontControlsSection(
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 8.dp)
+                        .testTag("reader_font_size_slider")
                         .semantics { contentDescription = "Reader Font Size Slider" },
                 )
                 Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
@@ -387,6 +392,7 @@ internal fun ReaderFontControlsSection(
                         onPersistSettingsChange { current -> current.copy(fontType = font) }
                     },
                     label = { Text(font.replaceFirstChar { it.uppercase() }) },
+                    modifier = Modifier.testTag("reader_font_chip_$font"),
                     colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color.Transparent,
                         selectedLabelColor = themeColors.primary,
@@ -447,147 +453,13 @@ internal fun ReaderThemeControlsSection(
         ) {
             itemsIndexed(themeOptions) { _, option ->
                 ReaderThemeMiniSpecimen(
+                    id = option.id,
                     name = option.name,
                     palette = option.palette,
                     selected = settings.theme == option.id,
                     themeColors = themeColors,
                 ) {
                     onSettingsChange { current -> current.copy(theme = option.id) }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-internal fun ReaderReadingControlsSection(
-    settings: GlobalSettings,
-    onSettingsChange: (GlobalSettingsTransform) -> Unit,
-    themeColors: ReaderTheme,
-) {
-    ReaderControlsSection(
-        title = "Reading",
-        testTag = "reader_controls_section_reading",
-        themeColors = themeColors,
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            ReaderGeneralToggleRow(
-                label = "Show Scrubber",
-                checked = settings.showScrubber,
-                themeColors = themeColors,
-                onCheckedChange = { showScrubber ->
-                    onSettingsChange { current -> current.copy(showScrubber = showScrubber) }
-                },
-            )
-            ReaderGeneralToggleRow(
-                label = "Show Scroll-to-Top",
-                checked = settings.showScrollToTop,
-                themeColors = themeColors,
-                onCheckedChange = { show ->
-                    onSettingsChange { it.copy(showScrollToTop = show) }
-                },
-            )
-            ReaderGeneralToggleRow(
-                label = "Selectable Text",
-                checked = settings.selectableText,
-                themeColors = themeColors,
-                onCheckedChange = { selectableText ->
-                    onSettingsChange { current -> current.copy(selectableText = selectableText) }
-                },
-            )
-            ReaderStatusSettingsRow(
-                settings = settings,
-                onUpdateSettings = onSettingsChange,
-                isReaderUI = true,
-                isSystemBarVisible = settings.showSystemBar,
-                showHeader = false,
-            )
-        }
-    }
-}
-
-@Composable
-internal fun ReaderOtherControlsSection(
-    settings: GlobalSettings,
-    onSettingsChange: (GlobalSettingsTransform) -> Unit,
-    isVisible: Boolean,
-    themeColors: ReaderTheme,
-) {
-    ReaderControlsSection(
-        title = "Others",
-        testTag = "reader_controls_section_others",
-        themeColors = themeColors,
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            ReaderGeneralToggleRow(
-                label = "Show System Bar",
-                checked = settings.showSystemBar,
-                themeColors = themeColors,
-                onCheckedChange = { showSystemBar ->
-                    onSettingsChange { current -> current.copy(showSystemBar = showSystemBar) }
-                },
-            )
-
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    "Translate To", 
-                    style = MaterialTheme.typography.labelSmall,
-                    color = themeColors.variantForeground
-                )
-                val languages = listOf(
-                    "ar" to "العربية",
-                    "en" to "English",
-                    "es" to "Español",
-                    "fr" to "Français",
-                    "ja" to "日本語",
-                )
-                val langListState = rememberLazyListState()
-
-                LaunchedEffect(isVisible) {
-                    if (isVisible) {
-                        val index = languages.indexOfFirst { it.first == settings.targetTranslationLanguage }
-                        val layoutInfo = langListState.layoutInfo
-                        val itemInfo = layoutInfo.visibleItemsInfo.find { it.index == index }
-                        val isFullyVisible = if (itemInfo != null) {
-                            itemInfo.offset >= 0 && (itemInfo.offset + itemInfo.size) <= layoutInfo.viewportEndOffset
-                        } else {
-                            false
-                        }
-
-                        if (!isFullyVisible && index != -1) {
-                            langListState.scrollToItem(index)
-                        }
-                    }
-                }
-
-                LazyRow(
-                    state = langListState,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    items(languages) { (code, name) ->
-                        FilterChip(
-                            selected = settings.targetTranslationLanguage == code,
-                            onClick = {
-                                onSettingsChange { it.copy(targetTranslationLanguage = code) }
-                            },
-                            label = { Text(name) },
-                            colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color.Transparent,
-                                selectedLabelColor = themeColors.primary,
-                                labelColor = themeColors.foreground,
-                                containerColor = Color.Transparent
-                            ),
-                            border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
-                                enabled = true,
-                                selected = settings.targetTranslationLanguage == code,
-                                borderColor = themeColors.foreground.copy(alpha = 0.2f),
-                                selectedBorderColor = themeColors.primary,
-                                borderWidth = 1.dp,
-                                selectedBorderWidth = 2.dp,
-                            )
-                        )
-                    }
                 }
             }
         }

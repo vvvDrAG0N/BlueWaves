@@ -4,7 +4,7 @@
  * PURPOSE: Presentational shell for the reader once lifecycle state and callbacks are already derived.
  * AI_WARNING: Do not move restoration or save-progress effects here.
  */
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -14,8 +14,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,15 +24,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.epubreader.feature.reader.readerTapGesture
+import com.epubreader.feature.reader.ReaderChapterContent
+import com.epubreader.feature.reader.ReaderChromeCallbacks
+import com.epubreader.feature.reader.ReaderChromeState
+import com.epubreader.feature.reader.ReaderTheme
 import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,6 +48,7 @@ internal fun ReaderScreenChrome(
 ) {
     ModalNavigationDrawer(
         drawerState = state.drawerState,
+        gesturesEnabled = !state.settings.selectableText && !state.isTextSelectionSessionActive,
         drawerContent = {
             ReaderTocDrawerContent(
                 state = state,
@@ -88,27 +92,31 @@ private fun ReaderContentSurface(
                 .testTag("reader_controls_overlay")
                 .then(
                     if (!state.isTextSelectionSessionActive) {
-                        Modifier.clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                        ) {
-                            callbacks.onShowControlsChange(!state.showControls)
-                        }
+                        Modifier.readerTapGesture(
+                            onTap = { callbacks.onShowControlsChange(!state.showControls) },
+                        )
                     } else {
                         Modifier
                     },
                 ),
         ) {
-            ReaderChapterContent(
-                settings = state.settings,
-                themeColors = state.themeColors,
-                listState = state.listState,
-                chapterElements = state.chapterElements,
-                isLoadingChapter = state.isLoadingChapter,
-                currentChapterIndex = state.currentChapterIndex,
-                selectionResetToken = state.selectionResetToken,
-                onSelectionActiveChange = callbacks.onTextSelectionActiveChange,
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("reader_chapter_content"),
+            ) {
+                ReaderChapterContent(
+                    settings = state.settings,
+                    themeColors = state.themeColors,
+                    listState = state.listState,
+                    chapterElements = state.chapterElements,
+                    isLoadingChapter = state.isLoadingChapter,
+                    currentChapterIndex = state.currentChapterIndex,
+                    selectionSessionEpoch = state.selectionSessionEpoch,
+                    onSelectionActiveChange = callbacks.onTextSelectionActiveChange,
+                    onSelectionHandleDragChange = callbacks.onSelectionHandleDragChange,
+                )
+            }
         }
 
         if (state.settings.showScrubber && !state.isLoadingChapter && state.currentChapterIndex != -1) {
@@ -165,7 +173,7 @@ private fun ReaderContentSurface(
                 onNavigatePrev = callbacks.onNavigatePrev,
                 onNavigateNext = callbacks.onNavigateNext,
                 listState = state.listState,
-                itemCount = state.chapterElements.size,
+                itemCount = state.renderedItemCount,
                 currentChapterIndex = state.currentChapterIndex,
                 totalChapters = state.book.spineHrefs.size,
                 sectionLabel = state.book.navigationUnitLabel,

@@ -5,34 +5,42 @@ Use this guide before changing reader restoration, progress saving, TOC behavior
 ## Read Order
 
 1. `feature/reader/ReaderScreen.kt`
+   - Thin public reader boundary that mounts the internal shell.
+2. `feature/reader/internal/shell/ReaderFeatureShell.kt`
    - State owner and effect coordinator.
-2. `feature/reader/ReaderScreenContracts.kt`
+3. `feature/reader/ReaderScreenContracts.kt`
    - Contract map and theme helpers.
-3. One focused helper/rendering file only if needed:
-   - `ReaderScreenChrome.kt`
-   - `ReaderScreenControls.kt`
-   - `ReaderChapterContent.kt`
-   - `ReaderControlsSections.kt`
-   - `ReaderControlsWidgets.kt`
-   - `ReaderVerticalScrubber.kt`
+4. One focused helper/rendering file only if needed:
+   - `feature/reader/internal/shell/ReaderScreenEffects.kt`
+   - `feature/reader/internal/shell/ReaderScreenHelpers.kt`
+   - `feature/reader/internal/ui/ReaderScreenChrome.kt`
+   - `feature/reader/internal/ui/ReaderScreenControls.kt`
+   - `feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`
+   - `feature/reader/internal/runtime/epub/ReaderChapterSelectionHost.kt`
 
 ## File Boundaries
 
 - `ReaderScreen.kt`
-  - Owns `currentChapterIndex`, `chapterElements`, restoration flags, progress saving, and navigation actions.
+  - Public feature entry only. It should stay thin.
+- `internal/shell/ReaderFeatureShell.kt`
+  - Owns `currentChapterIndex`, `chapterElements`, restoration flags, progress saving, TOC actions, overscroll navigation, controls visibility, and back-layer order.
 - `ReaderScreenContracts.kt`
   - Owns reader contract types, theme helpers, and chrome surface contracts.
-- `ReaderScreenChrome.kt`
+- `internal/ui/ReaderScreenChrome.kt`
   - Owns drawer, top bar, overlays, and reader shell layout.
-- `ReaderScreenControls.kt` and split helpers
-  - Own controls sheet, scrubber support, chapter rendering, and selection widgets.
+- `internal/ui/ReaderScreenControls.kt` and split helpers
+  - Own the controls sheet, scrubber support, and reader-local chrome widgets.
+- `internal/runtime/epub/EpubReaderRuntime.kt`
+  - Owns the single active EPUB chapter runtime.
+- `internal/runtime/epub/ReaderChapterSelectionHost.kt`
+  - Owns the custom reader selection stack: document mapping, visible-layout registry, word snapping, handles, copy/define/translate actions, tap-to-dismiss, and the lookup sheet handoff.
 
 ## Critical State Machine
 
 ### Chapter Load Flow
 
 1. `currentChapterIndex` changes.
-2. `ReaderScreen.kt` loads chapter content through `parser.parseChapter(...)` on IO.
+2. `ReaderFeatureShell.kt` loads chapter content through `parser.parseChapter(...)` on IO.
 3. `chapterElements` updates and drives recomposition.
 4. Adjacent chapter prefetch runs as child work of the active load effect.
 
@@ -48,7 +56,7 @@ Use this guide before changing reader restoration, progress saving, TOC behavior
 ### Progress Save Flow
 
 1. Observe `firstVisibleItemIndex` and `firstVisibleItemScrollOffset`.
-2. Gate writes behind `isInitialScrollDone` and `isRestoringPosition`.
+2. Gate writes behind `isInitialScrollDone`, `isRestoringPosition`, and the custom-selection handle-drag flag.
 3. Keep the `delay(500)` debounce before saving `BookProgress`.
 
 ### Navigation Modes
@@ -84,4 +92,6 @@ Use this guide before changing reader restoration, progress saving, TOC behavior
 
 - Reader setting sliders should preview locally and persist only on settle, not on every drag sample.
 - Keep scroll-driven UI signals as narrow state reads so the state owner does not recompose more than necessary.
-- Keep selection scoped to composed text items; do not wrap the whole chapter `LazyColumn` in one broad `SelectionContainer`.
+- Keep selection chapter-local and reader-owned; selection state lives in `ReaderChapterSelectionHost`, while visible text sections only register layouts and paint highlight slices.
+- Do not reintroduce `SelectionContainer`, `LocalTextToolbar`, or clipboard-driven selection state as the source of truth.
+- The active reader runtime is now a single plugin-owned EPUB runtime; do not reintroduce hidden engine branching or a user-facing engine selector.

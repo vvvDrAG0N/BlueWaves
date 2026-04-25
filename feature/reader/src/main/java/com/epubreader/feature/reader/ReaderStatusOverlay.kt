@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.ui
 
 import android.content.Context
 import android.content.Intent
@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.epubreader.core.model.ReaderStatusUiState
+import com.epubreader.feature.reader.ReaderTheme
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

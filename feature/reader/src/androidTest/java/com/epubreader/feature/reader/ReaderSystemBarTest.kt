@@ -65,7 +65,9 @@ class ReaderSystemBarTest {
         assertSystemBarsVisibility(visible = false)
 
         // 4. Tap to show controls. 
-        composeRule.onNodeWithTag("reader_controls_overlay", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithTag("reader_controls_overlay", useUnmergedTree = true).performTouchInput {
+            click(androidx.compose.ui.geometry.Offset(x = centerX, y = height * 0.30f))
+        }
         
         // 5. Controls should be visible (Top bar is a good indicator)
         composeRule.waitUntil(30000) {
@@ -74,7 +76,9 @@ class ReaderSystemBarTest {
         assertSystemBarsVisibility(visible = true)
 
         // 6. Tap again to hide
-        composeRule.onNodeWithTag("reader_controls_overlay", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithTag("reader_controls_overlay", useUnmergedTree = true).performTouchInput {
+            click(androidx.compose.ui.geometry.Offset(x = centerX, y = height * 0.30f))
+        }
         
         // 7. System bars should be hidden again
         composeRule.waitUntil(20000) {

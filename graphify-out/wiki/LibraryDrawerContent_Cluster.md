@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **LibraryDrawerContent.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\LibraryDrawerContent.kt`
-- **LibraryDrawerContent()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\LibraryDrawerContent.kt`
+- **LibraryDrawerContent.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDrawerContent.kt`
+- **LibraryDrawerContent()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDrawerContent.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\LibraryDrawerContent.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDrawerContent.kt`
 
 ## Audit Trail
 

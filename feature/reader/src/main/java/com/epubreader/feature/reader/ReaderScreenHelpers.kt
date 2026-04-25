@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.shell
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -13,6 +13,7 @@ import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.EpubBook
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
+import com.epubreader.feature.reader.internal.runtime.epub.ReaderChapterSection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -25,6 +26,7 @@ internal suspend fun saveReaderProgressSnapshot(
     settingsManager: SettingsManager,
     currentChapterIndex: Int,
     listState: LazyListState,
+    chapterSections: List<ReaderChapterSection>,
     isInitialScrollDone: Boolean,
     isRestoringPosition: Boolean,
     isGestureNavigation: Boolean,
@@ -39,7 +41,10 @@ internal suspend fun saveReaderProgressSnapshot(
         val progress = when {
             isInitialScrollDone && !isRestoringPosition -> {
                 BookProgress(
-                    scrollIndex = listState.firstVisibleItemIndex,
+                    scrollIndex = chapterSections
+                        .getOrNull(listState.firstVisibleItemIndex)
+                        ?.startElementIndex
+                        ?: 0,
                     scrollOffset = listState.firstVisibleItemScrollOffset,
                     lastChapterHref = book.spineHrefs[currentChapterIndex],
                 )
@@ -134,6 +139,26 @@ internal suspend fun prefetchAdjacentReaderChapters(
             parser.parseChapter(book.rootPath, book.spineHrefs[chapterIndex + 1])
         }
     }
+}
+
+internal fun mapReaderProgressIndexToRenderedItem(
+    progressIndex: Int,
+    chapterSections: List<ReaderChapterSection>,
+): Int {
+    if (chapterSections.isEmpty()) {
+        return 0
+    }
+
+    return chapterSections.indexOfFirst { section ->
+        progressIndex in section.startElementIndex..section.endElementIndex
+    }.takeIf { it != -1 } ?: chapterSections.lastIndex
+}
+
+internal fun mapRenderedItemIndexToReaderProgressIndex(
+    renderedItemIndex: Int,
+    chapterSections: List<ReaderChapterSection>,
+): Int {
+    return chapterSections.getOrNull(renderedItemIndex)?.startElementIndex ?: 0
 }
 
 @Composable

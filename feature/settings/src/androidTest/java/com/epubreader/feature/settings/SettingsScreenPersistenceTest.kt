@@ -5,12 +5,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -530,12 +533,12 @@ class SettingsScreenPersistenceTest {
     }
 
     @Test
-    fun readerContentEngine_rowShowsLegacyInLibrarySection() {
+    fun librarySection_doesNotShowDeprecatedReaderContentEngineSelector() {
         launchSettingsScreen()
         waitUntilDisplayed("Settings")
         openLibrarySection()
-        composeRule.onNodeWithText("Reader Content Engine").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithTag("reader_content_engine_value").assertTextContains("Legacy")
+        composeRule.onAllNodesWithText("Reader Content Engine").assertCountEquals(0)
+        composeRule.onAllNodesWithTag("reader_content_engine_selector").assertCountEquals(0)
     }
 
     private suspend fun resetSettings(customThemes: List<CustomTheme> = emptyList()) {

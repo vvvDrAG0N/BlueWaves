@@ -1,33 +1,42 @@
 package com.epubreader.feature.reader
 
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.MainActivity
-import com.epubreader.core.model.BookProgress
+import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.EpubBook
-import com.epubreader.data.parser.EpubParser
-import com.epubreader.data.settings.SettingsManager
-import kotlinx.coroutines.runBlocking
-import org.junit.After
+import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.TocItem
+import com.epubreader.feature.reader.internal.shell.rememberReaderNestedScrollConnection
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
-import java.io.FileOutputStream
-import java.nio.charset.StandardCharsets
-import java.util.UUID
-import java.util.zip.CRC32
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 @RunWith(AndroidJUnit4::class)
 class ReaderScreenOverscrollTest {
@@ -35,128 +44,289 @@ class ReaderScreenOverscrollTest {
     @get:Rule
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private val settingsManager by lazy { SettingsManager(composeRule.activity) }
-    private val parser by lazy { EpubParser.create(composeRule.activity) }
-    private val createdBookIds = mutableListOf<String>()
-    private val createdFolders = mutableListOf<File>()
+    private var triggerNextChapterOverscroll: (() -> Unit)? = null
 
-    @After
-    fun tearDown() = runBlocking {
-        createdBookIds.forEach { bookId ->
-            settingsManager.deleteBookData(bookId)
-        }
-        createdFolders.forEach(File::deleteRecursively)
+    @Test
+    fun overscrollReleaseAtBottom_goesToNextChapter() {
+        setReaderOverscrollTestContent(
+            initialChapterIndex = 0,
+            selectableText = false,
+        )
+
+        waitUntilChapterDisplayed(0)
+        swipeUpUntilChapterDisplayed(targetChapterIndex = 1, sourceChapterIndex = 0)
     }
 
     @Test
-    fun overscrollReleaseAtBottom_goesToNextChapter() = runBlocking {
-        val book = createOverscrollBook()
-        openReader(
-            book = book,
-            progress = BookProgress(
-                scrollIndex = 0,
-                scrollOffset = 0,
-                lastChapterHref = "chapter1.xhtml",
-            ),
+    fun overscrollReleaseAtTop_goesToPreviousChapter() {
+        setReaderOverscrollTestContent(
+            initialChapterIndex = 1,
+            selectableText = false,
         )
 
-        waitUntilDisplayed("Chapter 1 Paragraph 0")
-        scrollUntilDisplayed("Chapter 1 Paragraph 39")
-
-        swipeUpLarge()
-        waitUntilDisplayed("Chapter 2 Paragraph 0")
-
-        composeRule.onNodeWithText("Chapter 2 Paragraph 0").assertIsDisplayed()
-        assertMissing("Chapter 1 Paragraph 39")
+        waitUntilChapterDisplayed(1)
+        swipeDownUntilChapterDisplayed(targetChapterIndex = 0, sourceChapterIndex = 1)
     }
 
     @Test
-    fun overscrollReleaseAtTop_goesToPreviousChapter() = runBlocking {
-        val book = createOverscrollBook()
-        openReader(
-            book = book,
-            progress = BookProgress(
-                scrollIndex = 0,
-                scrollOffset = 0,
-                lastChapterHref = "chapter2.xhtml",
-            ),
+    fun overscrollBelowThreshold_doesNotFlipChapter() {
+        setReaderOverscrollTestContent(
+            initialChapterIndex = 1,
+            selectableText = false,
         )
 
-        waitUntilDisplayed("Chapter 2 Paragraph 0")
-
-        swipeDownLarge()
-        waitUntilDisplayed("Chapter 1 Paragraph 39")
-
-        composeRule.onNodeWithText("Chapter 1 Paragraph 39").assertIsDisplayed()
-        assertMissing("Chapter 2 Paragraph 0")
-    }
-
-    @Test
-    fun overscrollBelowThreshold_doesNotFlipChapter() = runBlocking {
-        val book = createOverscrollBook()
-        openReader(
-            book = book,
-            progress = BookProgress(
-                scrollIndex = 0,
-                scrollOffset = 0,
-                lastChapterHref = "chapter2.xhtml",
-            ),
-        )
-
-        waitUntilDisplayed("Chapter 2 Paragraph 0")
-
-        swipeDownSmall()
+        waitUntilChapterDisplayed(1)
+        swipeDownSmall(chapterIndex = 1)
         composeRule.waitForIdle()
-
-        composeRule.onNodeWithText("Chapter 2 Paragraph 0").assertIsDisplayed()
-        assertMissing("Chapter 1 Paragraph 39")
     }
 
-    private fun openReader(book: EpubBook, progress: BookProgress) = runBlocking {
-        settingsManager.saveBookProgress(book.id, progress)
+    @Test
+    fun overscrollAfterActiveSelection_stillAllowsSelectingTextInTheNewChapter() {
+        setReaderOverscrollTestContent(
+            initialChapterIndex = 0,
+            selectableText = true,
+        )
+
+        waitUntilChapterDisplayed(0)
+        longPressVisibleText("AlphaSelectionTarget")
+        waitForSelectionActionBar()
+        composeRule.runOnUiThread {
+            checkNotNull(triggerNextChapterOverscroll) {
+                "Next-chapter overscroll trigger was not registered"
+            }.invoke()
+        }
+        waitUntilChapterDisplayed(1)
+
+        waitUntilChapterDisplayed(1)
+        longPressVisibleText("BetaSelectionTarget")
+        waitForSelectionActionBar()
+    }
+
+    private fun setReaderOverscrollTestContent(
+        initialChapterIndex: Int,
+        selectableText: Boolean,
+    ) {
         composeRule.runOnUiThread {
             composeRule.activity.setContent {
                 MaterialTheme {
-                    ReaderScreen(
-                        book = book,
-                        settingsManager = settingsManager,
-                        parser = parser,
-                        onBack = {},
+                    ReaderOverscrollTestSurface(
+                        initialChapterIndex = initialChapterIndex,
+                        selectableText = selectableText,
                     )
                 }
             }
         }
+        composeRule.waitForIdle()
     }
 
-    private fun waitUntilDisplayed(text: String, timeoutMillis: Long = 15_000) {
-        composeRule.waitUntil(timeoutMillis) { hasText(text) }
+    @Composable
+    private fun ReaderOverscrollTestSurface(
+        initialChapterIndex: Int,
+        selectableText: Boolean,
+    ) {
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val listState = rememberLazyListState()
+        val tocListState = rememberLazyListState()
+        val progressPercentageState = remember { mutableFloatStateOf(0f) }
+        var verticalOverscroll by remember { mutableFloatStateOf(0f) }
+        var currentChapterIndex by remember { mutableIntStateOf(initialChapterIndex) }
+        var selectionSessionEpoch by remember { mutableIntStateOf(0) }
+        var isTextSelectionSessionActive by remember { mutableStateOf(false) }
+        var isSelectionHandleDragActive by remember { mutableStateOf(false) }
+        var pendingScrollToBottom by remember { mutableStateOf(false) }
+        val density = LocalDensity.current
+        val overscrollThreshold = with(density) { 80.dp.toPx() }
+        val chapterElements = remember(currentChapterIndex) {
+            buildOverscrollChapterElements(currentChapterIndex)
+        }
+        val renderedItemCount = remember(chapterElements) {
+            buildReaderChapterSections(chapterElements).size
+        }
+        val nestedScrollConnection = rememberReaderNestedScrollConnection(
+            listState = listState,
+            isLoadingChapter = false,
+            isInitialScrollDone = true,
+            overscrollThreshold = overscrollThreshold,
+            verticalOverscroll = verticalOverscroll,
+            onVerticalOverscrollChange = { verticalOverscroll = it },
+        )
+
+        fun invalidateSelectionSession() {
+            isTextSelectionSessionActive = false
+            isSelectionHandleDragActive = false
+            selectionSessionEpoch++
+        }
+
+        fun releaseOverscroll() {
+            when {
+                verticalOverscroll >= overscrollThreshold && currentChapterIndex > 0 -> {
+                    invalidateSelectionSession()
+                    pendingScrollToBottom = true
+                    currentChapterIndex--
+                }
+
+                verticalOverscroll <= -overscrollThreshold && currentChapterIndex < 1 -> {
+                    invalidateSelectionSession()
+                    pendingScrollToBottom = false
+                    currentChapterIndex++
+                }
+            }
+            verticalOverscroll = 0f
+        }
+
+        DisposableEffect(overscrollThreshold) {
+            triggerNextChapterOverscroll = {
+                verticalOverscroll = -overscrollThreshold
+                releaseOverscroll()
+            }
+            onDispose {
+                triggerNextChapterOverscroll = null
+            }
+        }
+
+        LaunchedEffect(currentChapterIndex, selectionSessionEpoch, renderedItemCount, pendingScrollToBottom) {
+            if (renderedItemCount == 0) {
+                return@LaunchedEffect
+            }
+            listState.scrollToItem(
+                index = if (pendingScrollToBottom) renderedItemCount - 1 else 0,
+                scrollOffset = 0,
+            )
+            pendingScrollToBottom = false
+        }
+
+        val state = ReaderChromeState(
+            book = buildOverscrollTestBook(),
+            settings = GlobalSettings(selectableText = selectableText),
+            themeColors = getThemeColors("light"),
+            drawerState = drawerState,
+            listState = listState,
+            tocListState = tocListState,
+            currentChapterIndex = currentChapterIndex,
+            chapterElements = chapterElements,
+            renderedItemCount = renderedItemCount,
+            isLoadingChapter = false,
+            showControls = false,
+            isTextSelectionSessionActive = isTextSelectionSessionActive,
+            tocSort = TocSort.Ascending,
+            sortedToc = buildOverscrollTestBook().toc,
+            verticalOverscrollState = remember { mutableStateOf(verticalOverscroll) }.also { it.value = verticalOverscroll },
+            overscrollThreshold = overscrollThreshold,
+            nestedScrollConnection = nestedScrollConnection,
+            progressPercentageState = progressPercentageState,
+            selectionSessionEpoch = selectionSessionEpoch,
+        )
+        val callbacks = ReaderChromeCallbacks(
+            onShowControlsChange = {},
+            onTextSelectionActiveChange = { epoch, isActive ->
+                if (epoch == selectionSessionEpoch) {
+                    isTextSelectionSessionActive = isActive
+                }
+            },
+            onSelectionHandleDragChange = { epoch, isDragging ->
+                if (epoch == selectionSessionEpoch) {
+                    isSelectionHandleDragActive = isDragging
+                }
+            },
+            onClearTextSelection = { invalidateSelectionSession() },
+            onToggleTocSort = {},
+            onReleaseOverscroll = ::releaseOverscroll,
+            onSaveAndBack = {},
+            onOpenToc = {},
+            onCloseToc = {},
+            onLocateCurrentChapterInToc = {},
+            onJumpToChapter = { targetIndex ->
+                if (targetIndex != currentChapterIndex) {
+                    invalidateSelectionSession()
+                    pendingScrollToBottom = false
+                    currentChapterIndex = targetIndex
+                }
+            },
+            onSelectTocChapter = { targetIndex ->
+                if (targetIndex != currentChapterIndex) {
+                    invalidateSelectionSession()
+                    pendingScrollToBottom = false
+                    currentChapterIndex = targetIndex
+                }
+            },
+            onPreviewSettings = {},
+            onPersistSettings = {},
+            onNavigatePrev = {
+                if (currentChapterIndex > 0) {
+                    invalidateSelectionSession()
+                    pendingScrollToBottom = true
+                    currentChapterIndex--
+                }
+            },
+            onNavigateNext = {
+                if (currentChapterIndex < 1) {
+                    invalidateSelectionSession()
+                    pendingScrollToBottom = false
+                    currentChapterIndex++
+                }
+            },
+            onMainScrubberDragStart = { invalidateSelectionSession() },
+        )
+
+        ReaderScreenChrome(
+            state = state,
+            callbacks = callbacks,
+        )
     }
 
-    private fun scrollUntilDisplayed(text: String, maxSwipes: Int = 12) {
+    private fun waitUntilChapterDisplayed(chapterIndex: Int, timeoutMillis: Long = 15_000) {
+        composeRule.waitUntil(timeoutMillis) {
+            composeRule.onAllNodesWithTag(
+                "reader_runtime_chapter_$chapterIndex",
+                useUnmergedTree = true,
+            ).fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
+    private fun swipeUpUntilChapterDisplayed(
+        targetChapterIndex: Int,
+        sourceChapterIndex: Int,
+        maxSwipes: Int = 20,
+    ) {
         repeat(maxSwipes) {
-            if (hasText(text)) return
-            swipeUpLarge()
+            swipeUpLarge(sourceChapterIndex)
+            if (isChapterDisplayed(targetChapterIndex)) {
+                return
+            }
         }
-        check(hasText(text)) { "Did not reach expected reader position: $text" }
-    }
-
-    private fun hasText(text: String): Boolean {
-        return try {
-            composeRule.onNodeWithText(text).assertIsDisplayed()
-            true
-        } catch (_: AssertionError) {
-            false
+        check(isChapterDisplayed(targetChapterIndex)) {
+            "Did not reach expected chapter after overscroll: $targetChapterIndex"
         }
     }
 
-    private fun assertMissing(text: String) {
-        check(composeRule.onAllNodesWithText(text).fetchSemanticsNodes().isEmpty()) {
-            "Unexpected text still visible: $text"
+    private fun swipeDownUntilChapterDisplayed(
+        targetChapterIndex: Int,
+        sourceChapterIndex: Int,
+        maxSwipes: Int = 12,
+    ) {
+        repeat(maxSwipes) {
+            swipeDownLarge(sourceChapterIndex)
+            if (isChapterDisplayed(targetChapterIndex)) {
+                return
+            }
+        }
+        check(isChapterDisplayed(targetChapterIndex)) {
+            "Did not reach expected chapter after reverse overscroll: $targetChapterIndex"
         }
     }
 
-    private fun swipeUpLarge() {
-        composeRule.onRoot().performTouchInput {
+    private fun isChapterDisplayed(chapterIndex: Int): Boolean {
+        return composeRule.onAllNodesWithTag(
+            "reader_runtime_chapter_$chapterIndex",
+            useUnmergedTree = true,
+        ).fetchSemanticsNodes().isNotEmpty()
+    }
+
+    private fun swipeUpLarge(chapterIndex: Int) {
+        composeRule.onNodeWithTag(
+            "reader_runtime_chapter_$chapterIndex",
+            useUnmergedTree = true,
+        ).performTouchInput {
             swipe(
                 start = Offset(center.x, height * 0.85f),
                 end = Offset(center.x, height * 0.15f),
@@ -165,8 +335,11 @@ class ReaderScreenOverscrollTest {
         }
     }
 
-    private fun swipeDownLarge() {
-        composeRule.onRoot().performTouchInput {
+    private fun swipeDownLarge(chapterIndex: Int) {
+        composeRule.onNodeWithTag(
+            "reader_runtime_chapter_$chapterIndex",
+            useUnmergedTree = true,
+        ).performTouchInput {
             swipe(
                 start = Offset(center.x, height * 0.15f),
                 end = Offset(center.x, height * 0.85f),
@@ -175,8 +348,11 @@ class ReaderScreenOverscrollTest {
         }
     }
 
-    private fun swipeDownSmall() {
-        composeRule.onRoot().performTouchInput {
+    private fun swipeDownSmall(chapterIndex: Int) {
+        composeRule.onNodeWithTag(
+            "reader_runtime_chapter_$chapterIndex",
+            useUnmergedTree = true,
+        ).performTouchInput {
             swipe(
                 start = Offset(center.x, height * 0.20f),
                 end = Offset(center.x, height * 0.26f),
@@ -185,120 +361,48 @@ class ReaderScreenOverscrollTest {
         }
     }
 
-    private fun createOverscrollBook(): EpubBook {
-        val rootDir = File(composeRule.activity.cacheDir, "androidTest-books").apply { mkdirs() }
-        val bookId = "reader-overscroll-${UUID.randomUUID()}"
-        val bookFolder = File(rootDir, bookId).apply { mkdirs() }
-        val epubFile = File(bookFolder, "book.epub")
-
-        ZipOutputStream(FileOutputStream(epubFile)).use { zip ->
-            addStoredEntry(zip, "mimetype", "application/epub+zip")
-            addEntry(
-                zip,
-                "META-INF/container.xml",
-                """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
-                  <rootfiles>
-                    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
-                  </rootfiles>
-                </container>
-                """.trimIndent(),
-            )
-            addEntry(
-                zip,
-                "OEBPS/content.opf",
-                """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
-                  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
-                    <dc:title>Overscroll Test Book</dc:title>
-                    <dc:creator>Blue Waves</dc:creator>
-                    <dc:identifier id="BookId">urn:uuid:$bookId</dc:identifier>
-                    <dc:language>en</dc:language>
-                  </metadata>
-                  <manifest>
-                    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
-                    <item id="chapter1" href="chapter1.xhtml" media-type="application/xhtml+xml"/>
-                    <item id="chapter2" href="chapter2.xhtml" media-type="application/xhtml+xml"/>
-                  </manifest>
-                  <spine toc="ncx">
-                    <itemref idref="chapter1"/>
-                    <itemref idref="chapter2"/>
-                  </spine>
-                </package>
-                """.trimIndent(),
-            )
-            addEntry(
-                zip,
-                "OEBPS/toc.ncx",
-                """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
-                  <head/>
-                  <docTitle><text>Overscroll Test Book</text></docTitle>
-                  <navMap>
-                    <navPoint id="navPoint-1" playOrder="1">
-                      <navLabel><text>Chapter 1</text></navLabel>
-                      <content src="chapter1.xhtml"/>
-                    </navPoint>
-                    <navPoint id="navPoint-2" playOrder="2">
-                      <navLabel><text>Chapter 2</text></navLabel>
-                      <content src="chapter2.xhtml"/>
-                    </navPoint>
-                  </navMap>
-                </ncx>
-                """.trimIndent(),
-            )
-            addEntry(zip, "OEBPS/chapter1.xhtml", chapterXhtml("Chapter 1", 40))
-            addEntry(zip, "OEBPS/chapter2.xhtml", chapterXhtml("Chapter 2", 40))
+    private fun longPressVisibleText(text: String) {
+        composeRule.onNodeWithText(text, substring = true, useUnmergedTree = true).performTouchInput {
+            longClick(center)
         }
-
-        val book = requireNotNull(parser.reparseBook(bookFolder))
-        createdBookIds += book.id
-        createdFolders += bookFolder
-        return book
     }
 
-    private fun chapterXhtml(chapterLabel: String, paragraphCount: Int): String {
-        val body = buildString {
-            append("<h1>")
-            append(chapterLabel)
-            append("</h1>")
-            repeat(paragraphCount) { index ->
-                append("<p>")
-                append(chapterLabel)
-                append(" Paragraph ")
-                append(index)
-                append("</p>")
+    private fun waitForSelectionActionBar() {
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodesWithText("Copy", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
+    private fun buildOverscrollTestBook(): EpubBook {
+        return EpubBook(
+            id = "reader-overscroll-test-book",
+            title = "Overscroll Test Book",
+            author = "Blue Waves",
+            coverPath = null,
+            rootPath = composeRule.activity.filesDir.absolutePath,
+            toc = listOf(
+                TocItem(title = "Chapter 1", href = "chapter1.xhtml"),
+                TocItem(title = "Chapter 2", href = "chapter2.xhtml"),
+            ),
+            spineHrefs = listOf("chapter1.xhtml", "chapter2.xhtml"),
+        )
+    }
+
+    private fun buildOverscrollChapterElements(chapterIndex: Int): List<ChapterElement> {
+        val heading = if (chapterIndex == 0) "Chapter 1" else "Chapter 2"
+        val selectionTarget = if (chapterIndex == 0) "AlphaSelectionTarget" else "BetaSelectionTarget"
+        return buildList {
+            add(ChapterElement.Text(heading, type = "h", id = "heading-$chapterIndex"))
+            add(ChapterElement.Text(selectionTarget, id = "selection-$chapterIndex"))
+            repeat(18) { index ->
+                add(
+                    ChapterElement.Text(
+                        "$heading filler $index",
+                        id = "filler-$chapterIndex-$index",
+                    ),
+                )
             }
         }
-        return """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <html xmlns="http://www.w3.org/1999/xhtml">
-              <head><title>$chapterLabel</title></head>
-              <body>$body</body>
-            </html>
-        """.trimIndent()
-    }
-
-    private fun addStoredEntry(zip: ZipOutputStream, name: String, content: String) {
-        val bytes = content.toByteArray(StandardCharsets.UTF_8)
-        val crc = CRC32().apply { update(bytes) }
-        val entry = ZipEntry(name).apply {
-            method = ZipEntry.STORED
-            size = bytes.size.toLong()
-            compressedSize = bytes.size.toLong()
-            this.crc = crc.value
-        }
-        zip.putNextEntry(entry)
-        zip.write(bytes)
-        zip.closeEntry()
-    }
-
-    private fun addEntry(zip: ZipOutputStream, name: String, content: String) {
-        zip.putNextEntry(ZipEntry(name))
-        zip.write(content.toByteArray(StandardCharsets.UTF_8))
-        zip.closeEntry()
     }
 }

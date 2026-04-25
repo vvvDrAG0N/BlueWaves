@@ -16,8 +16,11 @@ internal data class AppStartupState(
         get() = phase != StartupPhase.Ready
 }
 
-internal fun resolveStartupPhaseAfterEvaluation(currentScreen: Screen): StartupPhase {
-    return if (currentScreen == Screen.Library) {
+internal fun resolveStartupPhaseAfterEvaluation(
+    currentScreen: Screen,
+    hasCompletedInitialLibraryRefresh: Boolean = false,
+): StartupPhase {
+    return if (currentScreen == Screen.Library && !hasCompletedInitialLibraryRefresh) {
         StartupPhase.LoadingLibrary
     } else {
         StartupPhase.Ready

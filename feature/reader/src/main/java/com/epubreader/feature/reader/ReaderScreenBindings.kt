@@ -1,4 +1,4 @@
-package com.epubreader.feature.reader
+package com.epubreader.feature.reader.internal.shell
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DrawerState
@@ -8,6 +8,11 @@ import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.TocItem
+import com.epubreader.core.ui.GlobalSettingsTransform
+import com.epubreader.feature.reader.ReaderChromeCallbacks
+import com.epubreader.feature.reader.ReaderChromeState
+import com.epubreader.feature.reader.ReaderTheme
+import com.epubreader.feature.reader.TocSort
 
 internal fun buildReaderChromeState(
     book: EpubBook,
@@ -18,6 +23,7 @@ internal fun buildReaderChromeState(
     tocListState: LazyListState,
     currentChapterIndex: Int,
     chapterElements: List<ChapterElement>,
+    renderedItemCount: Int,
     isLoadingChapter: Boolean,
     showControls: Boolean,
     isTextSelectionSessionActive: Boolean,
@@ -27,7 +33,7 @@ internal fun buildReaderChromeState(
     overscrollThreshold: Float,
     nestedScrollConnection: NestedScrollConnection,
     progressPercentageState: State<Float>,
-    selectionResetToken: Int,
+    selectionSessionEpoch: Int,
 ): ReaderChromeState {
     return ReaderChromeState(
         book = book,
@@ -38,6 +44,7 @@ internal fun buildReaderChromeState(
         tocListState = tocListState,
         currentChapterIndex = currentChapterIndex,
         chapterElements = chapterElements,
+        renderedItemCount = renderedItemCount,
         isLoadingChapter = isLoadingChapter,
         showControls = showControls,
         isTextSelectionSessionActive = isTextSelectionSessionActive,
@@ -47,13 +54,14 @@ internal fun buildReaderChromeState(
         overscrollThreshold = overscrollThreshold,
         nestedScrollConnection = nestedScrollConnection,
         progressPercentageState = progressPercentageState,
-        selectionResetToken = selectionResetToken,
+        selectionSessionEpoch = selectionSessionEpoch,
     )
 }
 
 internal fun buildReaderChromeCallbacks(
     onShowControlsChange: (Boolean) -> Unit,
-    onTextSelectionActiveChange: (Boolean) -> Unit,
+    onTextSelectionActiveChange: (Int, Boolean) -> Unit,
+    onSelectionHandleDragChange: (Int, Boolean) -> Unit,
     onClearTextSelection: () -> Unit,
     onToggleTocSort: () -> Unit,
     onReleaseOverscroll: () -> Unit,
@@ -72,6 +80,7 @@ internal fun buildReaderChromeCallbacks(
     return ReaderChromeCallbacks(
         onShowControlsChange = onShowControlsChange,
         onTextSelectionActiveChange = onTextSelectionActiveChange,
+        onSelectionHandleDragChange = onSelectionHandleDragChange,
         onClearTextSelection = onClearTextSelection,
         onToggleTocSort = onToggleTocSort,
         onReleaseOverscroll = onReleaseOverscroll,

@@ -258,6 +258,24 @@ This file is append-only.
     - `.\gradlew.bat :feature:settings:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#themeGallery_doneDismissesOverlayAndAllowsReopen'`
     - Manual adb sanity check confirmed the app process stayed alive and the crash buffer was empty after the gallery interaction.
 - Blockers: None.
+
+## 24. 2026-04-25 09:20
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the live reader selectable-text long-press regression and close the test gap that let it ship.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenChrome.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChromeTapBehaviorTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `logs/reader-selection-fix-20260425-090456/`
+- Action taken:
+  - Reproduced the broken real-user flow on `emulator-5554` and confirmed long-press selection did not start from live EPUB content even though the old tests were green.
+  - Replaced the reader's full-surface `clickable` chrome toggle with a non-consuming tap observer so long-press selection can win the gesture race instead of being starved by the shell overlay.
+  - Stopped `LocalTextToolbar.hide()` from immediately tearing down the app-owned selection session, which kept the in-app selection action bar alive after long-press startup.
+  - Added a full reader-chrome long-press regression test plus new action-bar tests for `Copy`, `Define`, and `Translate` so the selection startup and button path are both covered.
+- Result: Live emulator QA now shows long-press opening the selection action bar again, outside-tap dismissal works, and normal chapter taps reopen reader chrome afterward. The focused selection suite is green again.
+- Verification:
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+  - Live emulator evidence in `logs/reader-selection-fix-20260425-090456/`
+- Blockers: The full `:feature:reader:connectedDebugAndroidTest` suite still fails `ReaderScreenOverscrollTest` and `ReaderScreenRestorationTest`, which appear to be pre-existing reader debt outside this selection fix.
+- Suggested next step: Triage the overscroll/restoration suite failures separately, then do one more real-book confirmation pass for `Copy` / `Define` / `Translate` on a device or less brittle tap harness.
 - Suggested next step: Re-run the exact user flow once on the target device/emulator build and capture a fresh logcat only if a renderer crash still reproduces.
 
 ## 24. 2026-04-23 21:27
@@ -1119,3 +1137,360 @@ This file is append-only.
     - None.
 - Suggested next step:
     - Replace the `Compose Lazy Improved` placeholder with the first real non-legacy chapter body engine, then decide whether to expose that manual engine choice in the Library settings UI during the next phase.
+
+## 61. 2026-04-25 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Implement the phase-2 `Compose Lazy Improved` reader engine, expose it beside `Legacy` in Library settings, and keep the broader reader state machine unchanged.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSections.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentCommon.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentLegacy.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentComposeLazyImproved.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderChapterSectionsTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectableTextStructureTest.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsGeneralTabs.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+    1. Added a pure reader-local section model and builder that groups consecutive body paragraphs into large `TextSection`s, isolates headings, splits on images, and uses a rare `30_000` character soft cap with paragraph-boundary-only splitting.
+    2. Extracted the text-selection shell into a shared `ReaderChapterSelectionHost`, preserving the existing custom action bar, copy/define/translate flow, WebView lookup sheet, selection reset handling, and active-selection reporting for both reader engines.
+    3. Extracted shared chapter rendering helpers for loading, text blocks, images, and the in-app lookup WebView, then slimmed the legacy engine to use those shared pieces without changing its rendering structure.
+    4. Replaced the `Compose Lazy Improved` placeholder with a real section-based lazy renderer that wraps each `TextSection` in one `SelectionContainer` and clears active selection on blank-space taps and image taps.
+    5. Replaced the phase-1 static Library row with a real manual selector that exposes only `Legacy` and `Compose Lazy Improved`, while still treating hidden persisted values like `TEXT_VIEW` as `Legacy` for visible selection-state purposes.
+    6. Added focused coverage for the section builder, updated selectable-text structure instrumentation to cover both legacy and grouped Compose behavior, and extended settings instrumentation for selector visibility, persistence, and hidden-value fallback.
+- Result:
+    - The app now has a real user-selectable `Compose Lazy Improved` engine that keeps lazy rendering but greatly reduces paragraph-level selection boundaries by grouping long body text runs into much larger selectable sections.
+    - `Legacy` remains the default engine and the broader reader shell stays intact: chapter loading, restoration timing, progress save behavior, TOC flow, and the WebView lookup path were not changed.
+    - The selection shell is now shared between engines, which reduces the risk of the new engine drifting from the established copy/define/translate behavior.
+- Verification:
+    - `./gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderChapterSectionsTest" --tests "com.epubreader.feature.reader.ReaderChapterContentRoutingTest" --console=plain`
+    - `./gradlew.bat :data:settings:testDebugUnitTest --tests "com.epubreader.data.settings.SettingsManagerContractsTest" --console=plain`
+    - `./gradlew.bat :feature:settings:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat :feature:reader:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat assembleDebug --console=plain`
+- Blockers:
+    - No implementation blockers. A broad `:feature:reader:testDebugUnitTest` run still reports older `ReaderScreenContractsTest` theme assertions unrelated to this phase, so targeted reader verification remains the reliable signal for this change set.
+- Suggested next step:
+    - Validate the exposed `Compose Lazy Improved` engine against the real `temps/` webnovel and light-novel samples, then decide whether Phase 3 should be `TextView` fallback work, `Select All`, or a smaller Compose polish pass based on what the real-book manual matrix shows.
+
+## 62. 2026-04-25 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the legacy-reader regression where disabling selectable text could leave the reader stuck in a hidden “selection active” state and block normal tap interactions.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreen.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenContracts.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionStateTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+    1. Added a small pure helper that decides when the reader must force-clear its selection session state after selectable text is turned off.
+    2. Added a reader-state-owner effect in `ReaderScreen.kt` that clears `isTextSelectionSessionActive` and bumps `selectionResetToken` whenever selectable text becomes disabled while a selection session is still marked active.
+    3. Added a focused unit regression test so future engine work cannot silently reintroduce this “selection state stuck on while selection is disabled” problem.
+- Result:
+    - `Legacy` no longer depends on the engine-local selection host alone to recover from selectable-text shutdown; the state owner now actively protects the fallback reader path.
+    - Turning selectable text off can no longer leave the reader in the “controls blocked, only scroll/FAB still usable” state that the regression produced.
+- Verification:
+    - `./gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionStateTest" --tests "com.epubreader.feature.reader.ReaderChapterSectionsTest" --tests "com.epubreader.feature.reader.ReaderChapterContentRoutingTest" --console=plain`
+    - `./gradlew.bat assembleDebug --console=plain`
+- Blockers:
+    - None.
+- Suggested next step:
+    - Keep `Legacy` behavior-protection tests small and state-owner-focused whenever future engine work touches shared selection or reader-interaction state.
+
+## 63. 2026-04-25 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the remaining shared-reader regression where enabling selectable text caused chapter-surface taps to stop reopening reader controls even when no text selection session was active.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentLegacy.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentComposeLazyImproved.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChromeTapBehaviorTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+    1. Tightened the shared `ReaderChapterSelectionHost` contract so engine renderers receive both `selectionEnabled` and `selectionActive`.
+    2. Gated the host-level tap-clearing gesture behind an active selection session instead of installing it whenever selectable text was enabled.
+    3. Updated both the legacy and Compose-lazy engines so image taps only clear selection while a real selection session is active.
+    4. Added an Android instrumentation regression test that taps the chapter surface with selectable text enabled but no active selection and verifies that reader controls still toggle.
+- Result:
+    - `Legacy` once again behaves like the safe fallback path: enabling selectable text no longer makes ordinary chapter taps dead.
+    - The shared selection shell now only consumes taps when it truly needs to dismiss an active selection, which protects both current engines from the same regression.
+    - Future reader-engine work now has a focused UI regression test guarding the chapter-surface tap-to-toggle behavior.
+- Verification:
+    - `./gradlew.bat :feature:reader:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionStateTest" --tests "com.epubreader.feature.reader.ReaderChapterSectionsTest" --tests "com.epubreader.feature.reader.ReaderChapterContentRoutingTest" --console=plain`
+    - `./gradlew.bat assembleDebug --console=plain`
+- Blockers:
+    - No code blockers. The new regression test compiles, but I did not run instrumentation on a device from this thread.
+- Suggested next step:
+    - Include chapter-surface tap-to-toggle checks in the real-book `Legacy` vs `Compose Lazy Improved` validation pass so any future selection-shell changes are caught quickly on-device.
+
+## 64. 2026-04-25 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the follow-up legacy/shared-reader regression where an active text-selection session could no longer be dismissed by tapping the chapter area.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+    1. Moved the selection-dismiss gesture off the outer host container and onto the chapter-content layer itself so the handler can still observe taps after `SelectionContainer` content consumes pointer input.
+    2. Replaced the old `detectTapGestures` dismiss path with a final-pass tap observer that only runs while a selection session is active and resets the session on a real tap-up.
+    3. Added a focused Android instrumentation regression test that programmatically activates the host selection session through the injected text toolbar, then taps the chapter surface and verifies the active-selection callback returns to `false`.
+- Result:
+    - Active text selection can once again be exited by tapping the chapter content area, which keeps `Legacy` usable as the fallback reader path.
+    - The dismiss gesture no longer depends on unconsumed taps from the outer host, so future selection-shell changes are less likely to strand the reader in selection mode.
+    - The new regression test protects the specific “selection active -> tap chapter -> clear selection” behavior.
+- Verification:
+    - `./gradlew.bat :feature:reader:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionStateTest" --tests "com.epubreader.feature.reader.ReaderChapterSectionsTest" --tests "com.epubreader.feature.reader.ReaderChapterContentRoutingTest" --tests "com.epubreader.feature.reader.ReaderTextSelectionSessionTest" --console=plain`
+- Blockers:
+    - No code blockers. I compiled the Android test sources but did not run instrumentation on a device from this thread.
+- Suggested next step:
+    - During the real-book validation pass, explicitly check both selection-shell tap behaviors: tapping chapter content should clear an active selection, and tapping chapter content with no active selection should still reopen reader controls.
+
+## 65. 2026-04-25 06:50
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Refactor the app shell into a builder plus feature lego/plugin architecture without breaking the live EPUB-first flows.
+- Area/files: `AGENTS.md`, `docs/project_graph.md`, `docs/app_shell_navigation.md`, `docs/architecture.md`, `docs/AI_DEBUG_GUIDE.md`, `docs/test_checklist.md`, `docs/legacy/PDF_review.md`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`, `app/src/main/java/com/epubreader/app/AppRoute.kt`, `app/src/main/java/com/epubreader/app/AppFeatureRegistry.kt`, `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `app/src/main/java/com/epubreader/app/AppNavigationScreenHost.kt`, `app/src/main/java/com/epubreader/app/AppNavigationEffects.kt`, `core/ui/src/main/java/com/epubreader/core/ui/FeatureLegoPlugin.kt`, `data/books/src/main/java/com/epubreader/data/parser/EpubParser.kt`, `data/books/src/main/java/com/epubreader/data/parser/EpubParserLookup.kt`, `feature/library/src/main/java/com/epubreader/feature/library/`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsLegoPlugin.kt`, `feature/editbook/src/main/java/com/epubreader/feature/editbook/EditBookLegoPlugin.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderLegoPlugin.kt`, `feature/pdf-legacy/src/main/java/com/epubreader/feature/pdf/legacy/PdfLegacyLegoPlugin.kt`, targeted plugin/parser tests, and the removed dead app-side library wrapper files.
+- Action taken:
+    1. Added a shared root plugin contract in `:core:ui`, introduced typed builder routes in `:app`, and added a compile-time feature registry for shell chrome plus plugin ownership.
+    2. Reworked `AppNavigation` and `AppNavigationScreenHost` so the builder only assembles dependency bags, owns startup/chrome state, and reacts to feature events instead of owning feature behavior directly.
+    3. Moved the live library flow behind `feature/library`, added `bookId` lookup support in `EpubParser`, wrapped settings/edit-book/reader/PDF behind root lego plugins, and removed dead app-side library UI/import/PDF bridge files that no longer belonged on the live path.
+    4. Rewrote the canonical architecture/debug/test docs to point at the new builder/plugin seams, refreshed queued follow-up notes, and rebuilt graphify so repo memory matched the implementation.
+- Result:
+    - `:app` now behaves like the intended builder: route state, startup coordination, shell chrome, and feature event handling only.
+    - Library, settings, reader, edit-book, and parked PDF all have explicit root plugin boundaries, with route-id based loading living in the feature/data layers instead of the builder.
+    - The old app-side library ownership path was materially reduced, and the canonical docs now describe the live plugin architecture instead of the pre-refactor shell helper layout.
+- Verification:
+    - `.\gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:compileDebugAndroidTestKotlin :feature:library:testDebugUnitTest :feature:editbook:testDebugUnitTest --tests "com.epubreader.feature.editbook.EditBookLegoPluginTest" :data:books:testDebugUnitTest --tests "com.epubreader.data.parser.EpubParserLookupTest" :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderLegoPluginTest" --tests "com.epubreader.feature.reader.ReaderChapterSectionsTest" --tests "com.epubreader.feature.reader.ReaderSelectionStateTest" :feature:reader:compileDebugAndroidTestKotlin :feature:pdf-legacy:testDebugUnitTest --tests "com.epubreader.feature.pdf.legacy.PdfLegacyLegoPluginTest"`
+    - `python scripts/check_graph_staleness.py --rebuild`
+    - `python scripts/check_graph_staleness.py`
+- Blockers:
+    - None. The live builder/plugin path is in place and verified. Remaining cleanup is optional hardening around the last app-side pure helper duplicates called out in `docs/agent_memory/next_steps.md`.
+- Suggested next step:
+    - Either run the `Builder Plugin Cleanup Follow-Up` to retire the last mirrored app helpers, or return to the reader real-book validation matrix now that the builder/plugin structure is settled.
+
+## 66. 2026-04-25 06:56
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the cold-start regression where the custom warm-up screen could stay visible forever on app launch.
+- Area/files: `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `app/src/main/java/com/epubreader/app/AppNavigationStartupState.kt`, `app/src/test/java/com/epubreader/app/AppNavigationContractsTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+    1. Traced the startup path and found a race between builder startup evaluation and the library plugin's first refresh completion event.
+    2. Added a builder-owned `hasCompletedInitialLibraryRefresh` flag so the app remembers if the library already finished its cold-start refresh before startup evaluation completes.
+    3. Updated startup phase resolution so a library launch goes straight to `Ready` when that initial refresh has already finished, and extended the startup contract test to cover both the cold-launch and race-completed paths.
+- Result:
+    - The warm-up overlay no longer depends on one fragile event ordering.
+    - If the library refresh finishes before the builder leaves `EvaluatingStartup`, the later startup evaluation now resolves directly to `Ready` instead of getting stuck in `LoadingLibrary`.
+- Verification:
+    - `.\gradlew.bat :app:testDebugUnitTest :app:assembleDebug`
+- Blockers:
+    - None. I verified the fix at the JVM/build level, but I did not launch the app on a device/emulator from this thread.
+- Suggested next step:
+    - Cold-launch the app once manually to confirm the warm-up screen now hands off into the library as expected.
+
+## 67. 2026-04-25 07:45
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Implement the plugin-first single EPUB reader runtime, remove the deprecated reader-engine selector contract, and keep the app shell boundary stable.
+- Area/files: `core/model/src/main/java/com/epubreader/core/model/SettingsModels.kt`, `data/settings/src/main/java/com/epubreader/data/settings/SettingsManager.kt`, `data/settings/src/main/java/com/epubreader/data/settings/SettingsManagerContracts.kt`, `data/settings/src/test/java/com/epubreader/data/settings/SettingsManagerContractsTest.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsGeneralTabs.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreen.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderInternalFacades.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenBindings.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenEffects.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenHelpers.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderChapterContentCommon.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderChapterSections.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderTextActions.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderTextSelectionSession.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/ui/*.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderChapterSectionsTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderScreenContractsTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectableTextStructureTest.kt`, `docs/reader_screen.md`, `docs/test_checklist.md`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Removed the persisted/user-facing reader-engine selector contract by deleting `ReaderContentEngine`, removing the `GlobalSettings.readerContentEngine` field, removing active `reader_content_engine` reads/writes, and deleting the Settings UI row while keeping deprecated stored values safely ignored.
+  2. Made `ReaderScreen.kt` a thin boundary again and moved the reader state machine into `internal/shell/ReaderFeatureShell.kt`, preserving the restoration/saving invariants (`isInitialScrollDone`, `isRestoringPosition`, `delay(100)`, `delay(500)`, overscroll release order, and back-layer unwind order).
+  3. Collapsed chapter rendering onto one internal EPUB runtime in `internal/runtime/epub/EpubReaderRuntime.kt`, moved selection/lookup/session helpers into that runtime area, and deleted the old legacy/textview/engine-routing chapter renderer branches.
+  4. Moved reader-local chrome/controls pieces under `internal/ui`, added thin root facades only where tests or feature-local callers still needed stable names, and updated reader tests to reflect the single-runtime behavior.
+  5. Verified the refactor across unit/build coverage and a live emulator flow: install, cold launch to library, open a real EPUB into the reader, tap to show controls, verify one back hides controls, and verify the next back returns to the library.
+- Result:
+  - The reader now runs through one plugin-owned EPUB runtime instead of a hidden multi-engine dispatch path.
+  - `ReaderLegoPlugin` still resolves `bookId`, blocks active PDF opens, prepares EPUB books, and mounts the stable `ReaderScreen` boundary while all reader behavior stays inside `:feature:reader`.
+  - Selectable text, define/translate lookup, controls, restoration, overscroll, and back-layer behavior remain inside the feature-local shell/runtime split instead of leaking into settings or the app shell.
+  - The deprecated reader-engine setting is gone from the active app surface and old stored values no longer affect behavior.
+- Verification:
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :app:assembleDebug :app:testDebugUnitTest :feature:reader:testDebugUnitTest :data:settings:testDebugUnitTest :feature:settings:testDebugUnitTest :feature:reader:compileDebugAndroidTestKotlin :feature:settings:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :app:installDebug`
+  - Emulator manual QA on `emulator-5554`: launch app to library, open `Advent of the Three Calamities`, show reader controls with a content tap, confirm first back hides controls, confirm second back returns to the library.
+- Blockers:
+  - I did not run the release-live lag harness in this thread because the representative scripted book matrix was not the same as the emulator's current library contents.
+- Suggested next step:
+  - Run the updated real-book validation/perf pass from `docs/agent_memory/next_steps.md` only if you still feel hitching or selection friction on actual long-form books.
+
+## 68. 2026-04-25 08:30
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Verify the rebuilt reader plugin end-to-end, especially selectable text, then fix any regressions exposed by the unit and instrumentation suites.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenChrome.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenContracts.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenBindings.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenHelpers.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderControlsSections.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderControlsWidgets.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSections.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChromeTapBehaviorTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderControlsSettingsUpdateTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenOverscrollTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSystemBarTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+  1. Ran the reader module's selection-focused JVM and emulator tests, then expanded to the full `:feature:reader` unit plus instrumentation suite to audit the rebuilt plugin instead of relying on spot checks.
+  2. Fixed reader chrome/test-surface regressions by restoring stable test hooks for the controls drag handle, font slider, font/theme chips, and by separating the chapter-surface and controls-overlay semantics so selection/tap tests hit the intended node.
+  3. Fixed a real shell/runtime mismatch introduced by grouped text sections: the shell now tracks rendered section counts, maps saved `BookProgress.scrollIndex` values to rendered items, and maps rendered positions back to persisted progress so restore/save/overscroll stay aligned with the new runtime.
+  4. Reduced the text-section soft chunk limit so long chapters no longer collapse into one giant lazy item, which improves bottom-of-chapter overscroll behavior and keeps grouped selection while restoring more realistic lazy rendering.
+  5. Tightened the Android tests to interact with the live reader the way users do: scrolling the controls sheet before dragging the font slider, tapping the real overlay region instead of an obscured center point, and allowing bottom overscroll validation to swipe until the next chapter genuinely appears.
+  6. Re-launched the app on `emulator-5554`, reopened a real EPUB from the library, and attempted a manual long-press selection sanity pass; UIAutomator did not expose the selection action bar text from that adb gesture, so the selection confidence for this pass comes primarily from the green instrumentation coverage rather than a screenshot-confirmed manual selection sheet.
+- Result:
+  - The full reader plugin suite is green again, including selection-session behavior, tap-to-dismiss, tap-to-toggle with no active selection, controls/settings regressions, restoration, overscroll, theme reactivity, and system-bar behavior.
+  - The rebuilt single-runtime reader no longer mixes raw chapter-element counts with rendered grouped-section counts, which was the main hidden correctness risk after the refactor.
+  - Selectable text is now covered by both JVM state-machine tests and emulator instrumentation tests instead of only manual trust.
+- Verification:
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionStateTest" --tests "com.epubreader.feature.reader.ReaderTextSelectionSessionTest" --tests "com.epubreader.feature.reader.ReaderChapterSectionsTest"`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest"`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest :feature:reader:connectedDebugAndroidTest`
+  - Emulator manual QA on `emulator-5554`: launch app, reopen `Advent of the Three Calamities`, and confirm the rebuilt reader still opens normally after the verification fixes.
+- Blockers:
+  - I attempted one adb-driven manual long-press check for the selection action bar, but UIAutomator did not surface the selection menu labels from that gesture. Automated selection instrumentation is green; screenshot-confirmed manual define/translate remains optional if you want one more human-style pass.
+- Suggested next step:
+  - Only if you still feel reader friction on-device, run the real-book validation matrix from `docs/agent_memory/next_steps.md`; otherwise the plugin's automated verification surface is now in a solid state.
+
+## 69. 2026-04-25 10:25
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Replace the borrowed Compose text-selection path with a fully reader-owned custom selection stack inside the plugin-first EPUB runtime.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionController.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionDocument.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGeometry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGestures.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionState.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContent.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderInternalFacades.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenChrome.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenContracts.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenBindings.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChromeTapBehaviorTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectableTextStructureTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionDocumentTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionGeometryTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionStateTest.kt`, `docs/reader_screen.md`, `docs/test_checklist.md`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added a chapter-local custom selection stack made of document mapping, word snapping, visible-layout registration, highlight slicing, handle dragging, and bounded lazy-list auto-scroll instead of relying on `SelectionContainer` plus `LocalTextToolbar`.
+  2. Rebuilt `ReaderChapterSelectionHost` into the selection owner, rewired `EpubReaderRuntime` to render one selectable text lego per section, and removed the old `ReaderTextSelectionSession` bridge and its tests.
+  3. Wired the shell so back, TOC, settings/chrome opening, chapter navigation, scrubber drags, and save-progress all treat selection as reader-owned state, including a new no-save gate while a selection handle is actively dragging.
+  4. Replaced the old host instrumentation with real-path long-press/action-bar tests, added new JVM tests for selection document/geometry/state helpers, and performed a live emulator pass against `Advent of the Three Calamities` to confirm long-press opens the custom action bar and outside tap dismisses it.
+- Result:
+  - Reader selection is now owned entirely by the reader plugin/runtime instead of a borrowed Compose toolbar/session path.
+  - Selection survives lazy off-screen item death because the active range lives in chapter coordinates while visible sections only contribute layout and paint highlights.
+  - `Copy`, `Define`, and `Translate` now read directly from selected text, and the shell no longer blames the builder or app chrome for selection bugs.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderScreenRestorationTest,com.epubreader.feature.reader.ReaderScreenOverscrollTest,com.epubreader.feature.reader.ReaderControlsSettingsUpdateTest'`
+  - `.\gradlew.bat :app:installDebug`
+  - Emulator QA on `emulator-5554`: opened a real EPUB from the library, long-pressed reader text to surface the custom action bar, and confirmed outside-tap dismissal with screenshots/UI dumps under `logs/reader-custom-selection-qa-20260425-101638/`
+- Blockers:
+  - `ReaderScreenRestorationTest` and `ReaderScreenOverscrollTest` are still failing with the same timeout-style suite debt already tracked in `next_steps.md`; the focused custom-selection suites are green.
+  - I got firsthand confirmation for long-press plus tap-to-dismiss, but the adb-only manual `Define` tap was inconclusive even though the instrumentation path for `Define` and `Translate` is green.
+- Suggested next step:
+  - Keep the next reader pass focused on the already-known restoration/overscroll suite debt, then optionally do one more real-book matrix specifically for multi-section selection plus `Copy`/`Define`/`Translate` feel.
+
+## 70. 2026-04-25 11:55
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the reader's flaky surface taps and selection gestures, then verify the result firsthand in the emulator instead of trusting only focused tests.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderTapGestures.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenChrome.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionController.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGestures.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChromeTapBehaviorTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`, `logs/reader-gesture-qa-20260425-114704/`
+- Action taken:
+  1. Added a slop-tolerant `ReaderTapGestures` helper and rewired the reader chrome overlay to use it so small finger drift no longer makes content taps randomly fail or require repeated retries.
+  2. Changed the custom selection path so a long-press selects first and only real movement upgrades into handle drag, preventing the reader from entering a fake drag state on simple long presses and keeping the custom action bar stable.
+  3. Reworked section-layout publishing in `ReaderSelectableTextSection` so live geometry is refreshed on demand for gestures without feeding an infinite recomposition loop back into the selection registry.
+  4. Updated the selection layout registry/controller seams so section-local pointer positions can resolve cleanly into host coordinates during drag, and kept handle rendering tied to the live drag pointer to reduce rigid/floating handle behavior.
+  5. Added focused regression coverage for slight-drift taps while keeping the stable selection/action-bar instrumentation suite green, then ran a live emulator QA pass with screenshots/UI dumps under `logs/reader-gesture-qa-20260425-114704/`.
+- Result:
+  - Reader surface taps are now much more forgiving: in live emulator QA the same reading-area tap consistently opened chrome, hid chrome, reopened chrome, and dismissed active selection without the previous "tap 3 times" feel.
+  - Long-press selection now reliably surfaces the custom `Copy / Define / Translate` action bar again, `Define` and `Translate` open the lookup sheet, a second back returns cleanly to the active selection, and a final outside tap hands control back to normal reader chrome.
+  - The custom selection stack no longer leaves Compose stuck in pending recompositions after long-press selection tests, which had been caused by upgrading every long-press into an immediate handle drag.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+  - `.\gradlew.bat :app:installDebug`
+  - Emulator manual QA on `emulator-5554` with evidence in `logs/reader-gesture-qa-20260425-114704/`: open `Shadow Slave`, tap content to show/hide chrome repeatedly, long-press text to open the action bar, open `Define`, back out of the lookup sheet to the active selection, and tap outside to dismiss selection and return to the normal chrome toggle path.
+- Blockers:
+  - ADB gesture injection is not a perfect substitute for a human finger on selection handles, so I could not make adb conclusively prove "hold then drag to expand selection" or clipboard contents after `Copy` even though the live long-press/action-bar path and the focused instrumentation suites are green again.
+- Suggested next step:
+  - If the selection still feels off on a real phone, run one short real-device pass focused only on direct finger expansion and handle feel; otherwise keep the next engineering pass on the already-known restoration/overscroll suite debt.
+
+## 71. 2026-04-25 20:35
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the remaining custom-selection handle bugs reported from firsthand use: missing tears after long-press, accidental TOC gesture steals, floating tears when the selected word scrolls offscreen, and overly rigid handle drag behavior.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenChrome.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGestures.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionState.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGeometry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`, `logs/reader-selection-mode-qa-20260425-200026/`
+- Action taken:
+  1. Reproduced the missing-tear bug in the live emulator, confirmed that the selection highlight/action bar appeared while the tears did not, and traced the failure to the visible-layout registry being torn down when `selectionController` was recreated on selection activation.
+  2. Reworked `ReaderSelectableTextSection` so section layouts stay registered across controller swaps, publish fresh geometry immediately from `onTextLayout` and `onGloballyPositioned`, and use unclipped `positionInRoot()` bounds instead of clipped `boundsInRoot()` so off-screen text anchors can be detected correctly.
+  3. Tightened the reader chrome by making the TOC drawer gesture button-only whenever selectable text is enabled, removing the left-edge drawer from the same gesture lane as long-press selection and tear dragging.
+  4. Reworked handle dragging so the drag path tracks the selection anchor instead of the raw fingertip blob, and changed handle-pointer updates to derive a stable pointer-in-host position from the live handle box rather than accumulating deltas against a moving node.
+  5. Added focused regression coverage for immediate tear appearance and for tears disappearing once the selected word scrolls offscreen, then reran the targeted instrumentation suite and reinstalled the debug app.
+- Result:
+  - Long-press selection now shows both tears immediately instead of leaving only the highlight/action bar.
+  - When the selected word scrolls offscreen, the tears now disappear instead of floating alone on the page because the selection layout now retains the section's true off-screen position.
+  - Selection and tear dragging no longer compete with the reader's TOC drawer gesture when selectable text is turned on.
+  - Handle movement is mechanically calmer because the drag path now follows the anchored selection endpoint instead of the raw finger pickup point.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionGeometryTest"`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+  - `.\gradlew.bat :app:installDebug`
+  - Emulator QA with evidence under `logs/reader-selection-mode-qa-20260425-200026/`: reproduced the old "no tears" state, then confirmed immediate tear appearance after the fix with `04-selection-after-fix.jpg`.
+- Blockers:
+  - ADB/manual emulator gestures are still too weak a substitute for a real thumb/finger to conclusively prove fine-grained tear expansion feel, so the remaining gap is physical-device validation of small handle drags rather than basic selection lifecycle correctness.
+- Suggested next step:
+  - If selection still feels wrong on a real phone, do one short real-device pass focused only on dragging a tear by a small amount and watching whether the selected range grows smoothly word-by-word without line-jump surprises.
+
+## 72. 2026-04-25 21:05
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the edge case where dragging a tear near the top or bottom lets the tear slip partly offscreen, then keeps auto-scrolling/expanding after the user releases.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGeometry.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionGeometryTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added a pure geometry helper that clamps a dragged tear pointer fully inside the reader host using the tear's visual inset, instead of letting the pointer drift past the screen edge.
+  2. Wired handle drag start and handle drag updates through that clamp inside `ReaderChapterSelectionHost`, but only for real tear drags, not for the initial long-press selection gesture.
+  3. Added a JVM regression test proving the clamp keeps the tear fully inside the host at both the top-left and bottom-right edges, then rebuilt and re-ran the focused reader selection instrumentation suite.
+- Result:
+  - Tear drags now stay fully inside the reader surface while still sitting in the auto-scroll edge zone, which removes the half-offscreen state that was letting the drag session linger after release.
+  - The fix is narrowly scoped to tear dragging and does not change normal long-press selection startup.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionGeometryTest"`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - The remaining uncertainty is still real-finger feel near the edge; adb can validate lifecycle and visibility, but not perfectly mimic a human thumb releasing at the exact border of the screen.
+- Suggested next step:
+  - If you still catch a weird edge release on a real phone, the next pass should add a host-level drag-capture lego for the active tear so release is owned by the full reader surface instead of only by the tear node.
+
+## 73. 2026-04-25 20:44
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the remaining selection edge cases where chapter changes leave selectable text permanently broken until the toggle is flipped, and where bottom-edge tear drags can still linger after release.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGestures.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionGeometryTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+  1. Keyed `ReaderChapterSelectionHost` by `currentChapterIndex` inside the EPUB runtime so the per-chapter selection host, visible-layout registry, and gesture state are recreated cleanly when the reader moves to another chapter.
+  2. Added a chapter-boundary guard in `ReaderFeatureShell` that clears the active selection session and bumps the reset token whenever the current chapter actually changes, instead of relying only on explicit nav helper paths.
+  3. Hardened handle dragging so the tear drag loop always runs `onDragEnd()` from a `finally` block and also exits when the pointer is no longer pressed, which closes the lingering bottom-edge drag path that could keep auto-scroll/expansion alive after release.
+  4. Kept tear pointer updates clamped inside the reader host for true handle drags only, and added focused JVM plus instrumentation coverage for the clamp and for re-selecting text after a chapter change.
+- Result:
+  - Moving between chapters no longer leaves selectable text in a dead state; the selection host is reset on the new chapter and text can be selected again without toggling `Selectable Text` off and back on.
+  - Tear drags now have a stronger release path at the screen border because the drag session is both clamped and forcibly ended even if pointer delivery is interrupted during edge auto-scroll.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionGeometryTest"`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - The remaining uncertainty is now very narrow: a real thumb/finger at the bottom border may still feel different from adb-driven gestures even though the cleanup path is covered and the build is installed on the emulator.
+- Suggested next step:
+  - If a physical phone can still reproduce "bottom border release keeps scrolling/expanding," escalate from tear-node drag ownership to a host-level active-drag capture lego that owns the release from the full reader surface.
+
+## 74. 2026-04-25 22:19
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Rebuild the reader selection session core around epoch-based invalidation so overscroll chapter handoff destroys the old selection session completely and a fresh long-press can start immediately in the new chapter.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionState.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionController.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContent.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenContracts.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenBindings.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenChrome.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderInternalFacades.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenOverscrollTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChromeTapBehaviorTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionStateTest.kt`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Replaced the old “clear selection and hope it is gone” path with a shell-owned `selectionSessionEpoch` that invalidates the reader session on overscroll next/prev, TOC jumps, next/prev buttons, opening settings/controls, explicit selection clear, save-and-exit, and disabling `Selectable Text`.
+  2. Re-keyed the EPUB runtime selection host by `currentChapterIndex + selectionSessionEpoch`, moved the reader callbacks to `(epoch, value)` signatures, and made the shell ignore stale callbacks from dead epochs instead of letting an invisible old host keep `isTextSelectionSessionActive` stuck.
+  3. Added an explicit selection phase model (`Idle`, `GestureSelecting`, `ActiveSelection`, `HandleDragging`) inside `ReaderSelectionState`, then used that phase as the single source of truth for whether new long-press selection can arm and whether the host is allowed to report an active usable session.
+  4. Reworked `ReaderChapterSelectionHost` so usability is derived per epoch from non-collapsed selection plus non-blank extracted text, while the stale blank-selection guard and selection callbacks now operate on usable session state instead of raw selection presence.
+  5. Rebuilt `ReaderScreenOverscrollTest` into a deterministic synthetic harness: real nested-scroll release coverage for normal overscroll, plus a direct release-callback trigger for the active-selection regression so the test proves chapter flip + fresh reselect without depending on flaky adb “scroll while selected” gestures.
+- Result:
+  - Reader chapter handoff now uses hard session invalidation instead of mutable cleanup, which makes stale invisible selections impossible by construction in the new epoch model.
+  - New long-press selection is only blocked when the current epoch is genuinely active, not because a dead host from the previous chapter still reported selection through an old callback.
+  - The overscroll regression suite now has deterministic coverage for “select in chapter A, flip chapters, select again in chapter B” on top of the regular overscroll navigation checks.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderScreenOverscrollTest'`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest,com.epubreader.feature.reader.ReaderScreenOverscrollTest,com.epubreader.feature.reader.ReaderScreenRestorationTest'`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - The focused reader slice is green except for `ReaderScreenRestorationTest`, which still times out on reopen/restore and remains separate reader debt from the new selection-session work.
+  - The connected physical phone was not visible to `adb` during the final verification pass, so the last missing sign-off is the same real-thumb overscroll reproduction path that originally exposed the dead-selection bug.
+- Suggested next step:
+  - Run a short physical-phone check for overscroll chapter handoff + immediate reselect, then triage `ReaderScreenRestorationTest` separately so restore debt does not get conflated with the session-core rebuild.
+
+## 75. 2026-04-25 22:28
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the remaining chapter-change selection bug where overscroll into a new chapter still blocks long-press selection until the reader controls are opened and closed once.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Traced the repro to an async chapter-content swap seam: the new selection-session epoch was already in place, but `ReaderChapterSelectionHost` could keep the old document-bound `ReaderSelectionController` alive when the new chapter text arrived later in the same host lifetime.
+  2. Rebuilt the selection controller whenever `selectionDocument` or `layoutRegistry` changes, so long-press hit-testing and layout registration always bind to the current chapter document instead of an older one that only dies when another invalidation (like opening controls) happens.
+  3. Added a new instrumentation regression in `ReaderChapterSelectionHostTest` for the previously missing path: chapter content swaps while the host is idle, then a fresh long-press must still start selection on the replacement text without any extra reset token or control toggle.
+- Result:
+  - The reader no longer depends on opening and closing controls to refresh the selection controller after a chapter-content swap.
+  - Idle document replacement now keeps long-press selection functional, which matches the “overscroll changed chapter, then long-press did nothing until controls opened once” user report.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest'`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - This closes the controller-refresh seam in instrumentation, but the final confirmation for the original user repro is still a physical-phone overscroll pass because the connected phone was not available to `adb` in this thread.
+- Suggested next step:
+  - Re-run the exact physical repro: select text, overscroll to next/previous chapter, immediately long-press new text, and only reopen the wider reader suites if the phone still shows a chapter-change-specific failure.

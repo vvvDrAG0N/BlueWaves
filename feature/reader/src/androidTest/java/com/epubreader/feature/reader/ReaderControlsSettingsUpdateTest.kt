@@ -65,7 +65,7 @@ class ReaderControlsSettingsUpdateTest {
             }
         }
 
-        composeRule.onNode(hasContentDescription("Theme OLED") and hasClickAction()).performScrollTo().performClick()
+        composeRule.onNodeWithTag("reader_theme_chip_oled").performScrollTo().performClick()
         composeRule.onNodeWithTag("reader_controls_section_font_family").performScrollTo()
         composeRule.onNodeWithTag("reader_font_chip_karla").performScrollTo().performClick()
 
@@ -136,8 +136,8 @@ class ReaderControlsSettingsUpdateTest {
 
         composeRule.onNodeWithTag("reader_controls_drag_handle").performTouchInput {
             down(center)
-            repeat(6) {
-                moveBy(Offset(0f, 120f))
+            repeat(10) {
+                moveBy(Offset(0f, 160f))
                 advanceEventTime(16)
             }
             up()
@@ -198,9 +198,9 @@ class ReaderControlsSettingsUpdateTest {
             }
         }
 
-        composeRule.onNodeWithTag("reader_font_size_slider").performTouchInput {
-            down(centerLeft)
-            moveTo(centerRight)
+        composeRule.onNodeWithTag("reader_font_size_slider").performScrollTo().performTouchInput {
+            down(Offset(x = width * 0.35f, y = centerY))
+            moveTo(Offset(x = width * 0.85f, y = centerY))
             up()
         }
 

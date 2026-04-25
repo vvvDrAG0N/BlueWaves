@@ -22,7 +22,7 @@ class ReaderSelectableTextStructureTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun selectableText_usesSelectableWrapperPerTextElement() {
+    fun epubRuntimeSelectableText_splitsRunsAroundImages() {
         val imageFile = File(composeRule.activity.cacheDir, "reader-selectable-image.bin").apply {
             writeBytes(byteArrayOf(1))
         }
@@ -51,6 +51,46 @@ class ReaderSelectableTextStructureTest {
             2,
             composeRule.onAllNodesWithTag("reader_selectable_text_item")
                 .fetchSemanticsNodes().size
+        )
+    }
+
+    @Test
+    fun composeLazyImprovedSelectableText_groupsConsecutiveParagraphsIntoSections() {
+        val imageFile = File(composeRule.activity.cacheDir, "reader-compose-selectable-image.bin").apply {
+            writeBytes(byteArrayOf(2))
+        }
+        composeRule.runOnUiThread {
+            composeRule.activity.setContent {
+                MaterialTheme {
+                    ReaderChapterContent(
+                        settings = GlobalSettings(selectableText = true),
+                        themeColors = getThemeColors("light"),
+                        listState = rememberLazyListState(),
+                        chapterElements = listOf(
+                            ChapterElement.Text("Paragraph one", id = "p1"),
+                            ChapterElement.Text("Paragraph two", id = "p2"),
+                            ChapterElement.Image(imageFile.absolutePath, id = "img1"),
+                            ChapterElement.Text("Paragraph three", id = "p3"),
+                            ChapterElement.Text("Paragraph four", id = "p4"),
+                        ),
+                        isLoadingChapter = false,
+                        currentChapterIndex = 0,
+                    )
+                }
+            }
+        }
+
+        composeRule.waitForIdle()
+
+        assertEquals(
+            2,
+            composeRule.onAllNodesWithTag("reader_selectable_text_item")
+                .fetchSemanticsNodes().size,
+        )
+        assertEquals(
+            2,
+            composeRule.onAllNodesWithTag("reader_compose_text_section")
+                .fetchSemanticsNodes().size,
         )
     }
 }

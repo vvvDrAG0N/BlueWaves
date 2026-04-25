@@ -1,27 +1,28 @@
 # ReaderScreenOverscrollTest Cluster
 
-> 18 nodes · cohesion 0.11
+> 19 nodes · cohesion 0.11
 
 ## Key Concepts
 
-- **ReaderScreenOverscrollTest** (17 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **ReaderScreenOverscrollTest** (18 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
 - **ReaderScreenOverscrollTest.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.addEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.addStoredEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.assertMissing()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.chapterXhtml()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.createOverscrollBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.hasText()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.openReader()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.buildOverscrollChapterElements()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.buildOverscrollTestBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.isChapterDisplayed()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.longPressVisibleText()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.overscrollAfterActiveSelection_stillAllowsSelectingTextInTheNewChapter()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
 - **.overscrollBelowThreshold_doesNotFlipChapter()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
 - **.overscrollReleaseAtBottom_goesToNextChapter()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
 - **.overscrollReleaseAtTop_goesToPreviousChapter()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.scrollUntilDisplayed()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.ReaderOverscrollTestSurface()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.setReaderOverscrollTestContent()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
 - **.swipeDownLarge()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
 - **.swipeDownSmall()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.swipeDownUntilChapterDisplayed()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
 - **.swipeUpLarge()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.tearDown()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
-- **.waitUntilDisplayed()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.swipeUpUntilChapterDisplayed()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.waitForSelectionActionBar()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
+- **.waitUntilChapterDisplayed()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\androidTest\java\com\epubreader\feature\reader\ReaderScreenOverscrollTest.kt`
 
 ## Relationships
 
@@ -33,7 +34,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 34 (100%)
+- EXTRACTED: 36 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

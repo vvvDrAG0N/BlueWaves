@@ -4,23 +4,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.GlobalSettings
-import com.epubreader.core.model.ReaderContentEngine
-
-internal enum class ReaderChapterContentDelegate {
-    Legacy,
-    ComposeLazyImproved,
-    TextView,
-}
-
-internal fun resolveReaderChapterContentDelegate(
-    engine: ReaderContentEngine,
-): ReaderChapterContentDelegate {
-    return when (engine) {
-        ReaderContentEngine.LEGACY -> ReaderChapterContentDelegate.Legacy
-        ReaderContentEngine.COMPOSE_LAZY_IMPROVED -> ReaderChapterContentDelegate.ComposeLazyImproved
-        ReaderContentEngine.TEXT_VIEW -> ReaderChapterContentDelegate.TextView
-    }
-}
+import com.epubreader.feature.reader.internal.runtime.epub.EpubReaderRuntime
 
 @Composable
 internal fun ReaderChapterContent(
@@ -30,41 +14,19 @@ internal fun ReaderChapterContent(
     chapterElements: List<ChapterElement>,
     isLoadingChapter: Boolean,
     currentChapterIndex: Int,
-    selectionResetToken: Int = 0,
-    onSelectionActiveChange: (Boolean) -> Unit = {},
+    selectionSessionEpoch: Int = 0,
+    onSelectionActiveChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onSelectionHandleDragChange: (Int, Boolean) -> Unit = { _, _ -> },
 ) {
-    when (resolveReaderChapterContentDelegate(settings.readerContentEngine)) {
-        ReaderChapterContentDelegate.Legacy -> ReaderChapterContentLegacy(
-            settings = settings,
-            themeColors = themeColors,
-            listState = listState,
-            chapterElements = chapterElements,
-            isLoadingChapter = isLoadingChapter,
-            currentChapterIndex = currentChapterIndex,
-            selectionResetToken = selectionResetToken,
-            onSelectionActiveChange = onSelectionActiveChange,
-        )
-
-        ReaderChapterContentDelegate.ComposeLazyImproved -> ReaderChapterContentComposeLazyImproved(
-            settings = settings,
-            themeColors = themeColors,
-            listState = listState,
-            chapterElements = chapterElements,
-            isLoadingChapter = isLoadingChapter,
-            currentChapterIndex = currentChapterIndex,
-            selectionResetToken = selectionResetToken,
-            onSelectionActiveChange = onSelectionActiveChange,
-        )
-
-        ReaderChapterContentDelegate.TextView -> ReaderChapterContentTextView(
-            settings = settings,
-            themeColors = themeColors,
-            listState = listState,
-            chapterElements = chapterElements,
-            isLoadingChapter = isLoadingChapter,
-            currentChapterIndex = currentChapterIndex,
-            selectionResetToken = selectionResetToken,
-            onSelectionActiveChange = onSelectionActiveChange,
-        )
-    }
+    EpubReaderRuntime(
+        settings = settings,
+        themeColors = themeColors,
+        listState = listState,
+        chapterElements = chapterElements,
+        isLoadingChapter = isLoadingChapter,
+        currentChapterIndex = currentChapterIndex,
+        selectionSessionEpoch = selectionSessionEpoch,
+        onSelectionActiveChange = onSelectionActiveChange,
+        onSelectionHandleDragChange = onSelectionHandleDragChange,
+    )
 }
