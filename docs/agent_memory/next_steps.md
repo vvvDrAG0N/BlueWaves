@@ -1,5 +1,13 @@
 # Next Steps
 
+## Reader Content Engine Phase 2
+- Goal: Replace the `Compose Lazy Improved` placeholder with the first real non-legacy chapter body engine while keeping the new phase-1 host boundary and the broader reader state machine intact.
+- Why now: The phase-1 scaffold is now in place. The engine type is persisted, the host/dispatcher routes through the chapter body boundary, the Library settings row is reserved, and both future engines already have compile-safe placeholder files.
+- Suggested owner/model: Codex / GPT-5.
+- Starting docs/files: `AGENTS.md`, `docs/reader_screen.md`, `docs/ai_mental_model.md`, `docs/test_checklist.md`, `core/model/src/main/java/com/epubreader/core/model/ReaderContentEngine.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContent.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentLegacy.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentComposeLazyImproved.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderChapterContentRoutingTest.kt`
+- Risks: Regressing reader smoothness, changing restoration timing accidentally, reintroducing the paragraph-level selectable-text problems under a new name, or breaking theme parity and image handling while the new engine is still partial.
+- Verification target: Focused reader unit/instrumentation checks plus a small manual book matrix across both webnovel-style and light-novel-style chapters before any user-facing engine switch is exposed.
+
 ## Book Open/Close Optional Follow-Up
 - Goal: Only revisit book entry/exit performance if someone can still feel a delay on the release-like build, then trace the exact rough case instead of reopening a broad matrix.
 - Why now: The real-phone release-like open/close audit is complete. `Shadow Slave` did not improve with a 15-second wait, `ttev6` improved only modestly, and the close path was mostly stable across runs, so there is no strong startup-overlap signal left to chase broadly.

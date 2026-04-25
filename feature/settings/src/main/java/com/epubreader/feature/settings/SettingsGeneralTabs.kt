@@ -214,6 +214,13 @@ internal fun LibraryTab(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text("Library", style = MaterialTheme.typography.titleLarge, color = effectiveOnSurface)
+        SettingsValueRow(
+            title = "Reader Content Engine",
+            subtitle = "Phase 1 keeps the reader on the current legacy engine while future engines are scaffolded internally.",
+            value = "Legacy",
+            valueTestTag = "reader_content_engine_value",
+            onSurfaceColor = effectiveOnSurface,
+        )
         SettingsToggleRow(
             title = "Allow Blank Covers",
             subtitle = "Removing a cover won't fall back to the original file cover.",
@@ -256,6 +263,29 @@ internal fun SettingsToggleRow(
                 uncheckedTrackColor = effectiveOnSurface.copy(alpha = 0.12f),
                 uncheckedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
             )
+        )
+    }
+}
+
+@Composable
+internal fun SettingsValueRow(
+    title: String,
+    subtitle: String,
+    value: String,
+    valueTestTag: String? = null,
+    onSurfaceColor: androidx.compose.ui.graphics.Color? = null,
+) {
+    val effectiveOnSurface = onSurfaceColor ?: MaterialTheme.colorScheme.onSurface
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.titleMedium, color = effectiveOnSurface)
+            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = effectiveOnSurface.copy(alpha = 0.6f))
+        }
+        Text(
+            text = value,
+            modifier = valueTestTag?.let { Modifier.testTag(it) } ?: Modifier,
+            style = MaterialTheme.typography.bodyMedium,
+            color = effectiveOnSurface.copy(alpha = 0.75f),
         )
     }
 }

@@ -529,6 +529,15 @@ class SettingsScreenPersistenceTest {
         composeRule.onNodeWithTag("allow_blank_covers_switch").assertIsOn()
     }
 
+    @Test
+    fun readerContentEngine_rowShowsLegacyInLibrarySection() {
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openLibrarySection()
+        composeRule.onNodeWithText("Reader Content Engine").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithTag("reader_content_engine_value").assertTextContains("Legacy")
+    }
+
     private suspend fun resetSettings(customThemes: List<CustomTheme> = emptyList()) {
         settingsManager.updateGlobalSettings(
             GlobalSettings(

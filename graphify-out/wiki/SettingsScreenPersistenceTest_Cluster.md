@@ -1,10 +1,10 @@
 # SettingsScreenPersistenceTest Cluster
 
-> 22 nodes · cohesion 0.09
+> 23 nodes · cohesion 0.09
 
 ## Key Concepts
 
-- **SettingsScreenPersistenceTest** (21 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
+- **SettingsScreenPersistenceTest** (22 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 - **SettingsScreenPersistenceTest.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 - **.allowBlankCovers_persistsAcrossScreenReopen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 - **.appearanceSwipe_backOutOfSection_persistsPendingThemeSelection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
@@ -12,6 +12,7 @@
 - **.customTheme_creationSelectsThemeAndPersistsAcrossScreenReopen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 - **.customThemeColorPicker_updatesHexFieldAndSavedPalette()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 - **.launchSettingsScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
+- **.readerContentEngine_rowShowsLegacyInLibrarySection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 - **.resetSettings()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 - **.setUp()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
 - **.showSystemBar_persistsAcrossScreenReopenAndActivityRecreation()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\androidTest\java\com\epubreader\feature\settings\SettingsScreenPersistenceTest.kt`
@@ -37,7 +38,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 42 (100%)
+- EXTRACTED: 44 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -222,6 +222,7 @@ class SettingsManager(private val context: Context) {
             preferences[SettingsPreferenceKeys.allowBlankCovers] = updated.allowBlankCovers
             preferences[SettingsPreferenceKeys.targetTranslationLanguage] = updated.targetTranslationLanguage
             preferences[SettingsPreferenceKeys.showScrollToTop] = updated.showScrollToTop
+            preferences[SettingsPreferenceKeys.readerContentEngine] = updated.readerContentEngine.storageValue
             preferences[SettingsPreferenceKeys.readerStatusEnabled] = updated.readerStatusUi.isEnabled
             preferences[SettingsPreferenceKeys.readerStatusShowClock] = updated.readerStatusUi.showClock
             preferences[SettingsPreferenceKeys.readerStatusShowBattery] = updated.readerStatusUi.showBattery

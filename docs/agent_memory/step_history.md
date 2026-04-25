@@ -1093,3 +1093,29 @@ This file is append-only.
     - None. The full matrix completed on the phone and produced decision-useful logs and summaries.
 - Suggested next step:
     - Treat book open/close performance as acceptable on the release-like build unless a user can still feel a delay. If follow-up is needed later, do one narrow trace pass only on the specific open or close scenario that still feels rough instead of broadening the matrix further.
+
+## 60. 2026-04-25 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Implement the phase-1 reader content engine scaffold so the chapter body renderer can become replaceable without changing current reader behavior.
+- Area/files: `core/model/src/main/java/com/epubreader/core/model/ReaderContentEngine.kt`, `core/model/src/main/java/com/epubreader/core/model/SettingsModels.kt`, `data/settings/src/main/java/com/epubreader/data/settings/SettingsManager.kt`, `data/settings/src/main/java/com/epubreader/data/settings/SettingsManagerContracts.kt`, `data/settings/src/test/java/com/epubreader/data/settings/SettingsManagerContractsTest.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContent.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentLegacy.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentComposeLazyImproved.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentTextView.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderChapterContentRoutingTest.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsGeneralTabs.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+    1. Added a persisted `ReaderContentEngine` enum in `:core:model` with `LEGACY`, `COMPOSE_LAZY_IMPROVED`, and `TEXT_VIEW`, then extended `GlobalSettings` with a `readerContentEngine` field that defaults to `LEGACY`.
+    2. Wired the new setting through DataStore as the string key `reader_content_engine`, with missing or invalid stored values falling back safely to `LEGACY`.
+    3. Split the existing chapter body renderer into a small host/dispatcher in `ReaderChapterContent.kt` plus a dedicated legacy implementation file, then added internal `Compose Lazy Improved` and `TextView` placeholder engines that currently delegate back to the legacy renderer.
+    4. Added a new `Global Settings > Library` row labeled `Reader Content Engine` that shows `Legacy` in phase 1 without exposing the future engine choices yet.
+    5. Added focused coverage for settings fallback/round-trip behavior, the new Library row, and reader-engine routing, while preserving the existing reader runtime behavior and selectable-text structure.
+- Result:
+    - The reader now has a real internal engine boundary at the chapter body level while the app continues to run on the legacy renderer by default.
+    - Future phases can implement `Compose Lazy Improved` and `TextView` behind the same host without reopening the settings schema or touching the broader reader state machine first.
+    - Phase 1 is behavior-preserving: current reading, restoration, progress, and text-selection flows stay on the legacy path.
+- Verification:
+    - `./gradlew.bat :data:settings:testDebugUnitTest --tests "com.epubreader.data.settings.SettingsManagerContractsTest" --console=plain`
+    - `./gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderChapterContentRoutingTest" --console=plain`
+    - `./gradlew.bat :feature:settings:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat :feature:reader:compileDebugAndroidTestKotlin --console=plain`
+    - `./gradlew.bat assembleDebug --console=plain`
+- Blockers:
+    - None.
+- Suggested next step:
+    - Replace the `Compose Lazy Improved` placeholder with the first real non-legacy chapter body engine, then decide whether to expose that manual engine choice in the Library settings UI during the next phase.

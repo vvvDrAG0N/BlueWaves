@@ -1,11 +1,11 @@
 # Graph Report - C:\Users\Amon\Desktop\projects\bluewaves_v1  (2026-04-25)
 
 ## Corpus Check
-- 218 files · ~2,170,285 words
+- 225 files · ~3,642,947 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2860 nodes · 3726 edges · 207 communities detected
+- 2925 nodes · 3848 edges · 216 communities detected
 - Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 263 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
@@ -17,10 +17,9 @@
 - [[_COMMUNITY_well_known_types Cluster|well_known_types Cluster]]
 - [[_COMMUNITY_descriptor Cluster|descriptor Cluster]]
 - [[_COMMUNITY_descriptor_pool Cluster|descriptor_pool Cluster]]
-- [[_COMMUNITY_type_checkers Cluster|type_checkers Cluster]]
 - [[_COMMUNITY_proto Cluster|proto Cluster]]
+- [[_COMMUNITY_type_checkers Cluster|type_checkers Cluster]]
 - [[_COMMUNITY_json_format Cluster|json_format Cluster]]
-- [[_COMMUNITY_message Cluster|message Cluster]]
 - [[_COMMUNITY_encoder Cluster|encoder Cluster]]
 - [[_COMMUNITY_decoder Cluster|decoder Cluster]]
 - [[_COMMUNITY_wire_format Cluster|wire_format Cluster]]
@@ -33,16 +32,22 @@
 - [[_COMMUNITY_PdfToEpubWorkspace Cluster|PdfToEpubWorkspace Cluster]]
 - [[_COMMUNITY_duration Cluster|duration Cluster]]
 - [[_COMMUNITY_timestamp Cluster|timestamp Cluster]]
+- [[_COMMUNITY_run_theme_perf_flagged_trace Cluster|run_theme_perf_flagged_trace Cluster]]
+- [[_COMMUNITY_SettingsScreenPersistenceTest Cluster|SettingsScreenPersistenceTest Cluster]]
 - [[_COMMUNITY_EpubParser Cluster|EpubParser Cluster]]
 - [[_COMMUNITY_EpubParserFacadeTestSupport Cluster|EpubParserFacadeTestSupport Cluster]]
-- [[_COMMUNITY_SettingsScreenPersistenceTest Cluster|SettingsScreenPersistenceTest Cluster]]
 - [[_COMMUNITY_symbol_database Cluster|symbol_database Cluster]]
 - [[_COMMUNITY_AppNavigationLibraryDataTest Cluster|AppNavigationLibraryDataTest Cluster]]
 - [[_COMMUNITY_SettingsScreenPersistenceTestSupport Cluster|SettingsScreenPersistenceTestSupport Cluster]]
 - [[_COMMUNITY_SettingsThemeEditorModeInferenceTest Cluster|SettingsThemeEditorModeInferenceTest Cluster]]
+- [[_COMMUNITY_resolver Cluster|resolver Cluster]]
+- [[_COMMUNITY_run_book_open_close_release_live Cluster|run_book_open_close_release_live Cluster]]
 - [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
 - [[_COMMUNITY_EditBookModels Cluster|EditBookModels Cluster]]
 - [[_COMMUNITY_SettingsThemeEditorGuidedPickerTest Cluster|SettingsThemeEditorGuidedPickerTest Cluster]]
+- [[_COMMUNITY_descriptor_database Cluster|descriptor_database Cluster]]
+- [[_COMMUNITY_message Cluster|message Cluster]]
+- [[_COMMUNITY_enum_type_wrapper Cluster|enum_type_wrapper Cluster]]
 - [[_COMMUNITY_run_reader_lag_import_matrix Cluster|run_reader_lag_import_matrix Cluster]]
 - [[_COMMUNITY_EpubParserBooks Cluster|EpubParserBooks Cluster]]
 - [[_COMMUNITY_ReaderScreenOverscrollTest Cluster|ReaderScreenOverscrollTest Cluster]]
@@ -53,13 +58,12 @@
 - [[_COMMUNITY_run_reader_lag_trace_matrix Cluster|run_reader_lag_trace_matrix Cluster]]
 - [[_COMMUNITY_ParserIntegrationTest Cluster|ParserIntegrationTest Cluster]]
 - [[_COMMUNITY_InternalEpubParser Cluster|InternalEpubParser Cluster]]
+- [[_COMMUNITY_SettingsManagerContractsTest Cluster|SettingsManagerContractsTest Cluster]]
 - [[_COMMUNITY_ReaderTextSelectionSession Cluster|ReaderTextSelectionSession Cluster]]
-- [[_COMMUNITY_message_factory Cluster|message_factory Cluster]]
 - [[_COMMUNITY_run_reader_lag_two_book_reset Cluster|run_reader_lag_two_book_reset Cluster]]
 - [[_COMMUNITY_AppNavigationContracts Cluster|AppNavigationContracts Cluster]]
 - [[_COMMUNITY_run_reader_lag_release_live Cluster|run_reader_lag_release_live Cluster]]
 - [[_COMMUNITY_EpubParserImportSupport Cluster|EpubParserImportSupport Cluster]]
-- [[_COMMUNITY_SettingsManagerContractsTest Cluster|SettingsManagerContractsTest Cluster]]
 - [[_COMMUNITY_unknown_fields Cluster|unknown_fields Cluster]]
 - [[_COMMUNITY_util Cluster|util Cluster]]
 - [[_COMMUNITY_SettingsModelsThemeTest Cluster|SettingsModelsThemeTest Cluster]]
@@ -108,7 +112,7 @@
 - [[_COMMUNITY_PdfToEpubConverterTest Cluster|PdfToEpubConverterTest Cluster]]
 - [[_COMMUNITY_EditBookChaptersTab Cluster|EditBookChaptersTab Cluster]]
 - [[_COMMUNITY_EditBookDialogs Cluster|EditBookDialogs Cluster]]
-- [[_COMMUNITY_ReaderChapterContent Cluster|ReaderChapterContent Cluster]]
+- [[_COMMUNITY_ReaderChapterContentLegacy Cluster|ReaderChapterContentLegacy Cluster]]
 - [[_COMMUNITY_ReaderScreenHelpers Cluster|ReaderScreenHelpers Cluster]]
 - [[_COMMUNITY_SettingsThemeColorPicker Cluster|SettingsThemeColorPicker Cluster]]
 - [[_COMMUNITY_ThemeEditorChrome Cluster|ThemeEditorChrome Cluster]]
@@ -121,6 +125,7 @@
 - [[_COMMUNITY_PdfReaderSupport Cluster|PdfReaderSupport Cluster]]
 - [[_COMMUNITY_ReaderAndroidTestCompat Cluster|ReaderAndroidTestCompat Cluster]]
 - [[_COMMUNITY_ReaderScreenPrefetchTest Cluster|ReaderScreenPrefetchTest Cluster]]
+- [[_COMMUNITY_SettingsGeneralTabs Cluster|SettingsGeneralTabs Cluster]]
 - [[_COMMUNITY_ThemeEditorColorEditing Cluster|ThemeEditorColorEditing Cluster]]
 - [[_COMMUNITY_any Cluster|any Cluster]]
 - [[_COMMUNITY_check_graph_staleness Cluster|check_graph_staleness Cluster]]
@@ -130,7 +135,7 @@
 - [[_COMMUNITY_PdfImportInstrumentationTest Cluster|PdfImportInstrumentationTest Cluster]]
 - [[_COMMUNITY_EpubParserPdfSupport Cluster|EpubParserPdfSupport Cluster]]
 - [[_COMMUNITY_EditBookScreen Cluster|EditBookScreen Cluster]]
-- [[_COMMUNITY_SettingsGeneralTabs Cluster|SettingsGeneralTabs Cluster]]
+- [[_COMMUNITY_ReaderChapterContentRoutingTest Cluster|ReaderChapterContentRoutingTest Cluster]]
 - [[_COMMUNITY_SettingsScreen Cluster|SettingsScreen Cluster]]
 - [[_COMMUNITY_SettingsThemeStudioComponents Cluster|SettingsThemeStudioComponents Cluster]]
 - [[_COMMUNITY_ThemeEditorSections Cluster|ThemeEditorSections Cluster]]
@@ -138,6 +143,7 @@
 - [[_COMMUNITY_PdfAndroidTestFixtures Cluster|PdfAndroidTestFixtures Cluster]]
 - [[_COMMUNITY_EpubParserPdfBookSupport Cluster|EpubParserPdfBookSupport Cluster]]
 - [[_COMMUNITY_EditBookImports Cluster|EditBookImports Cluster]]
+- [[_COMMUNITY_ReaderChapterContent Cluster|ReaderChapterContent Cluster]]
 - [[_COMMUNITY_ReaderScreenChrome Cluster|ReaderScreenChrome Cluster]]
 - [[_COMMUNITY_ReaderStatusOverlay Cluster|ReaderStatusOverlay Cluster]]
 - [[_COMMUNITY_ReaderTextActions Cluster|ReaderTextActions Cluster]]
@@ -168,9 +174,12 @@
 - [[_COMMUNITY_LibraryBookGrid Cluster|LibraryBookGrid Cluster]]
 - [[_COMMUNITY_LibraryDrawerContent Cluster|LibraryDrawerContent Cluster]]
 - [[_COMMUNITY_LibraryTopBar Cluster|LibraryTopBar Cluster]]
+- [[_COMMUNITY_ReaderContentEngine Cluster|ReaderContentEngine Cluster]]
 - [[_COMMUNITY_LibraryCoverModels Cluster|LibraryCoverModels Cluster]]
 - [[_COMMUNITY_WindowInsetsUtils Cluster|WindowInsetsUtils Cluster]]
 - [[_COMMUNITY_EpubParserPdfConversion Cluster|EpubParserPdfConversion Cluster]]
+- [[_COMMUNITY_ReaderChapterContentComposeLazyImproved Cluster|ReaderChapterContentComposeLazyImproved Cluster]]
+- [[_COMMUNITY_ReaderChapterContentTextView Cluster|ReaderChapterContentTextView Cluster]]
 - [[_COMMUNITY_ReaderProgressState Cluster|ReaderProgressState Cluster]]
 - [[_COMMUNITY_ReaderScreen Cluster|ReaderScreen Cluster]]
 - [[_COMMUNITY_ReaderScreenControls Cluster|ReaderScreenControls Cluster]]
@@ -250,7 +259,7 @@ Nodes (93): BaseContainer, data(), field_number(), MessageMap, Simple, type-chec
 
 ### Community 1 - "text_format Cluster"
 Cohesion: 0.03
-Nodes (90): _BuildMessageFromTypeName(), _ConsumeInt32(), _ConsumeInt64(), _ConsumeInteger(), _ConsumeUint32(), _ConsumeUint64(), _IsGroupLike(), _IsMapEntry() (+82 more)
+Nodes (95): Exception, _BuildMessageFromTypeName(), _ConsumeInt32(), _ConsumeInt64(), _ConsumeInteger(), _ConsumeUint32(), _ConsumeUint64(), Error (+87 more)
 
 ### Community 2 - "api Cluster"
 Cohesion: 0.04
@@ -270,83 +279,83 @@ Nodes (71): camelcase_name(), _Deprecated(), Descriptor, DescriptorBase, EnumDes
 
 ### Community 6 - "descriptor_pool Cluster"
 Cohesion: 0.04
-Nodes (52): DescriptorPool, _IsMessageSetExtension(), __new__(), _NormalizeFullyQualifiedName(), _OptionsOrNone(), _PrefixWithDot(), Make a protobuf EnumDescriptor given an EnumDescriptorProto protobuf.      Args:, Creates a field descriptor from a FieldDescriptorProto.      For message and enu (+44 more)
+Nodes (48): DescriptorPool, _IsMessageSetExtension(), __new__(), _NormalizeFullyQualifiedName(), _OptionsOrNone(), _PrefixWithDot(), Make a protobuf EnumDescriptor given an EnumDescriptorProto protobuf.      Args:, Creates a field descriptor from a FieldDescriptorProto.      For message and enu (+40 more)
 
-### Community 7 - "type_checkers Cluster"
+### Community 7 - "proto Cluster"
 Cohesion: 0.03
-Nodes (47): EnumTypeWrapper, Returns the union type of self and other., A utility for finding the names of enum values., Inits EnumTypeWrapper with an EnumDescriptor., Returns a string containing the name of an enum value., Returns the value corresponding to the given enum name., Return a list of the string names in the enum.      Returns:       A list of str, Return a list of the integer values in the enum.      Returns:       A list of i (+39 more)
+Nodes (50): Message, Outputs a human-readable representation of the message., Checks if a certain field is set for the message.      Has presence fields retur, Merges the contents of the specified message into current message.      This met, Copies the content of the specified message into the current message.      The m, Clears all data that was set in the message., Mark this as present in the parent.      This normally happens automatically whe, Checks if the message is initialized.      Returns:       bool: The method retur (+42 more)
 
-### Community 8 - "proto Cluster"
+### Community 8 - "type_checkers Cluster"
 Cohesion: 0.03
-Nodes (46): Message, Outputs a human-readable representation of the message., Checks if a certain field is set for the message.      Has presence fields retur, Merges the contents of the specified message into current message.      This met, Copies the content of the specified message into the current message.      The m, Clears all data that was set in the message., Mark this as present in the parent.      This normally happens automatically whe, Checks if the message is initialized.      Returns:       bool: The method retur (+38 more)
+Nodes (50): GetMessageClass(), GetMessageClassesForFiles(), GetMessages(), _InternalCreateMessageClass(), MessageFactory, # TODO: Remove this check here. Duplicate extension, Builds a proto2 message class based on the passed in descriptor.    Args:     de, # TODO: Remove this check here. Duplicate extension (+42 more)
 
 ### Community 9 - "json_format Cluster"
 Cohesion: 0.05
 Nodes (53): _ConvertBool(), _ConvertFloat(), _ConvertInteger(), _ConvertScalarFieldValue(), _CreateMessageFromTypeUrl(), _DuplicateChecker(), EnumStringValueParseError, Error (+45 more)
 
-### Community 10 - "message Cluster"
-Cohesion: 0.03
-Nodes (52): DescriptorDatabase, DescriptorDatabaseConflictingDefinitionError, Error, _ExtractSymbols(), # TODO: implement this API., # TODO: implement this API., Pulls out all the symbols from a descriptor proto.    Args:     desc_proto: The, Raised when a proto is added with the same name & different descriptor. (+44 more)
-
-### Community 11 - "encoder Cluster"
+### Community 10 - "encoder Cluster"
 Cohesion: 0.05
 Nodes (54): BoolEncoder(), BytesEncoder(), BytesSizer(), _FixedSizer(), _FloatingPointEncoder(), GroupEncoder(), GroupSizer(), MapEncoder() (+46 more)
 
-### Community 12 - "decoder Cluster"
+### Community 11 - "decoder Cluster"
 Cohesion: 0.05
 Nodes (42): BytesDecoder(), _DecodeFixed32(), _DecodeFixed64(), DecodeTag(), _DecodeUnknownField(), _DecodeUnknownFieldSet(), _DoubleDecoder(), EnumDecoder() (+34 more)
 
-### Community 13 - "wire_format Cluster"
+### Community 12 - "wire_format Cluster"
 Cohesion: 0.1
 Nodes (34): BoolByteSize(), BytesByteSize(), DoubleByteSize(), EnumByteSize(), Fixed32ByteSize(), Fixed64ByteSize(), FloatByteSize(), GroupByteSize() (+26 more)
 
-### Community 14 - "service_reflection Cluster"
+### Community 13 - "service_reflection Cluster"
 Cohesion: 0.08
 Nodes (20): GeneratedServiceStubType, GeneratedServiceType, Initializes an instance of the service class builder.      Args:       service_d, Constructs the service class.      Args:       cls: The class that will be const, Calls the method described by a given method descriptor.      Args:       srvc:, Returns the class of the request protocol message.      Args:       method_descr, Returns the class of the response protocol message.      Args:       method_desc, Generates and returns a method that can be set for a service methods.      Args: (+12 more)
 
-### Community 15 - "SettingsManager Cluster"
+### Community 14 - "SettingsManager Cluster"
 Cohesion: 0.06
 Nodes (1): SettingsManager
 
-### Community 16 - "ThemePaletteGeneration Cluster"
+### Community 15 - "ThemePaletteGeneration Cluster"
 Cohesion: 0.06
 Nodes (1): GuidedThemePaletteInput
 
-### Community 17 - "SettingsThemePreviewSpecimenTest Cluster"
+### Community 16 - "SettingsThemePreviewSpecimenTest Cluster"
 Cohesion: 0.07
 Nodes (1): SettingsThemePreviewSpecimenTest
 
-### Community 18 - "run_theme_perf_release_live Cluster"
-Cohesion: 0.2
+### Community 17 - "run_theme_perf_release_live Cluster"
+Cohesion: 0.19
 Nodes (28): Assert-ReleaseLikeInstall(), Close-Gallery(), Dismiss-DialogIfPresent(), Find-NodesByExactText(), Format-Number(), Get-Average(), Get-CenterFromBounds(), Get-FirstExactNode() (+20 more)
 
-### Community 19 - "EpubParserEditing Cluster"
+### Community 18 - "EpubParserEditing Cluster"
 Cohesion: 0.07
 Nodes (8): ChapterContent, CoverAction, EditedChapterEntry, Existing, NavigationRewrite, New, Remove, Replace
 
-### Community 20 - "PdfToEpubWorkspace Cluster"
+### Community 19 - "PdfToEpubWorkspace Cluster"
 Cohesion: 0.07
 Nodes (4): PdfConversionWorkspaceState, PdfReflowSection, PdfWorkspacePage, WorkspacePageStat
 
-### Community 21 - "duration Cluster"
+### Community 20 - "duration Cluster"
 Cohesion: 0.08
 Nodes (24): from_json_string(), from_microseconds(), from_milliseconds(), from_nanoseconds(), from_seconds(), from_timedelta(), Converts a string to Duration.    Args:     value: A string to be converted. The, Converts microseconds to Duration. (+16 more)
 
-### Community 22 - "timestamp Cluster"
+### Community 21 - "timestamp Cluster"
 Cohesion: 0.08
 Nodes (24): from_current_time(), from_json_string(), from_microseconds(), from_milliseconds(), from_nanoseconds(), from_seconds(), Converts Timestamp to a datetime.    Args:     tz: A datetime.tzinfo subclass; d, Parse a RFC 3339 date string format to Timestamp.    Args:     value: A date str (+16 more)
 
-### Community 23 - "EpubParser Cluster"
+### Community 22 - "run_theme_perf_flagged_trace Cluster"
+Cohesion: 0.22
+Nodes (23): Dismiss-DialogIfPresent(), Find-NodesByExactText(), Get-CenterFromBounds(), Get-FirstExactNode(), Get-TrimmedUiDump(), Invoke-Adb(), Normalize-ToPaperWhite(), Open-AppearanceFixedFromLibrary() (+15 more)
+
+### Community 23 - "SettingsScreenPersistenceTest Cluster"
+Cohesion: 0.09
+Nodes (1): SettingsScreenPersistenceTest
+
+### Community 24 - "EpubParser Cluster"
 Cohesion: 0.09
 Nodes (1): EpubParser
 
-### Community 24 - "EpubParserFacadeTestSupport Cluster"
+### Community 25 - "EpubParserFacadeTestSupport Cluster"
 Cohesion: 0.09
 Nodes (2): EpubParserFacadeTestSupport, FakePdfLegacyBridge
-
-### Community 25 - "SettingsScreenPersistenceTest Cluster"
-Cohesion: 0.09
-Nodes (1): SettingsScreenPersistenceTest
 
 ### Community 26 - "symbol_database Cluster"
 Cohesion: 0.1
@@ -364,687 +373,687 @@ Nodes (0):
 Cohesion: 0.1
 Nodes (1): SettingsThemeEditorModeInferenceTest
 
-### Community 30 - "SettingsModels Cluster"
+### Community 30 - "resolver Cluster"
+Cohesion: 0.13
+Nodes (17): Enum, _args_dict_from_uri(), ConstraintClass, from_trace_uri(), Op, _parse_arg(), Parse operator from string.    Given string and an expected start index for oper, Parse argument string and return a tuple (key, operator, value).    Given a stri (+9 more)
+
+### Community 31 - "run_book_open_close_release_live Cluster"
+Cohesion: 0.21
+Nodes (19): Assert-ReleaseLikeInstall(), Dismiss-DialogIfPresent(), Find-NodesByExactText(), Format-Number(), Get-Average(), Get-CenterFromBounds(), Get-ComparisonRows(), Get-PreferredBookNode() (+11 more)
+
+### Community 32 - "SettingsModels Cluster"
 Cohesion: 0.1
 Nodes (6): BookProgress, CustomTheme, GlobalSettings, ReaderStatusUiState, ThemeOption, ThemePalette
 
-### Community 31 - "EditBookModels Cluster"
+### Community 33 - "EditBookModels Cluster"
 Cohesion: 0.1
 Nodes (2): EditableChapterItem, EditableChapterSource
 
-### Community 32 - "SettingsThemeEditorGuidedPickerTest Cluster"
+### Community 34 - "SettingsThemeEditorGuidedPickerTest Cluster"
 Cohesion: 0.1
 Nodes (1): SettingsThemeEditorGuidedPickerTest
 
-### Community 33 - "run_reader_lag_import_matrix Cluster"
+### Community 35 - "descriptor_database Cluster"
+Cohesion: 0.12
+Nodes (12): DescriptorDatabase, DescriptorDatabaseConflictingDefinitionError, Error, _ExtractSymbols(), # TODO: implement this API., # TODO: implement this API., Pulls out all the symbols from a descriptor proto.    Args:     desc_proto: The, Raised when a proto is added with the same name & different descriptor. (+4 more)
+
+### Community 36 - "message Cluster"
+Cohesion: 0.11
+Nodes (18): DecodeError, EncodeError, Error, _InternalConstructMessage(), # TODO: MergeFromString() should probably return None and be, Base error type for this module., # TODO: Document handling of unknown fields., # TODO: When we switch to a helper, this will return None. (+10 more)
+
+### Community 37 - "enum_type_wrapper Cluster"
+Cohesion: 0.11
+Nodes (10): EnumTypeWrapper, Returns the union type of self and other., A utility for finding the names of enum values., Inits EnumTypeWrapper with an EnumDescriptor., Returns a string containing the name of an enum value., Returns the value corresponding to the given enum name., Return a list of the string names in the enum.      Returns:       A list of str, Return a list of the integer values in the enum.      Returns:       A list of i (+2 more)
+
+### Community 38 - "run_reader_lag_import_matrix Cluster"
 Cohesion: 0.22
 Nodes (16): Dismiss-DialogIfPresent(), Find-NodesByExactText(), Get-CenterFromBounds(), Get-PreferredLowerNode(), Get-TrimmedUiDump(), Invoke-Adb(), Save-TextFile(), Tap-NodeCenter() (+8 more)
 
-### Community 34 - "EpubParserBooks Cluster"
+### Community 39 - "EpubParserBooks Cluster"
 Cohesion: 0.11
 Nodes (1): ResolvedBookCoverFiles
 
-### Community 35 - "ReaderScreenOverscrollTest Cluster"
+### Community 40 - "ReaderScreenOverscrollTest Cluster"
 Cohesion: 0.11
 Nodes (1): ReaderScreenOverscrollTest
 
-### Community 36 - "ReaderScreenThemeReactivityTest Cluster"
+### Community 41 - "ReaderScreenThemeReactivityTest Cluster"
 Cohesion: 0.11
 Nodes (2): BackgroundSample, ReaderScreenThemeReactivityTest
 
-### Community 37 - "ImportRouting Cluster"
+### Community 42 - "ImportRouting Cluster"
 Cohesion: 0.12
 Nodes (9): ArchiveImportCandidate, ArchiveInspectionResult, Candidate, DirectEpubContainer, ImportFailureReason, ImportInspectionResult, ImportRequest, Ready (+1 more)
 
-### Community 38 - "proto_builder Cluster"
+### Community 43 - "proto_builder Cluster"
 Cohesion: 0.12
 Nodes (10): Creates a new, empty TracePacket object.      This packet is not yet part of the, Serializes and writes a TracePacket to the file stream.      The packet is wrapp, An in-memory builder for creating Perfetto traces from Python.    This class con, Initializes the TraceProtoBuilder., Adds a packet to the trace and returns the packet for modification., Serializes the entire trace into a byte string., A streaming builder for creating Perfetto traces into a file.    This class is d, Initializes the StreamingTraceProtoBuilder with a file-like object.      Args: (+2 more)
 
-### Community 39 - "AppNavigationOperations Cluster"
+### Community 44 - "AppNavigationOperations Cluster"
 Cohesion: 0.12
 Nodes (6): Duplicate, EditBookResult, Failed, ImportBookResult, Imported, Updated
 
-### Community 40 - "run_reader_lag_trace_matrix Cluster"
+### Community 45 - "run_reader_lag_trace_matrix Cluster"
 Cohesion: 0.26
 Nodes (14): Dismiss-DialogIfPresent(), Find-NodesByExactText(), Get-CenterFromBounds(), Get-PreferredBookNode(), Get-TrimmedUiDump(), Invoke-Adb(), Save-TextFile(), Start-PerfettoTrace() (+6 more)
 
-### Community 41 - "ParserIntegrationTest Cluster"
+### Community 46 - "ParserIntegrationTest Cluster"
 Cohesion: 0.13
 Nodes (2): EpubExtraEntry, ParserIntegrationTest
 
-### Community 42 - "InternalEpubParser Cluster"
+### Community 47 - "InternalEpubParser Cluster"
 Cohesion: 0.13
 Nodes (4): InternalEpubParser, ManifestItem, OpfData, RawEpubMetadata
 
-### Community 43 - "ReaderTextSelectionSession Cluster"
+### Community 48 - "SettingsManagerContractsTest Cluster"
+Cohesion: 0.13
+Nodes (1): SettingsManagerContractsTest
+
+### Community 49 - "ReaderTextSelectionSession Cluster"
 Cohesion: 0.13
 Nodes (3): ReaderTextSelectionCancellable, ReaderTextSelectionScheduler, ReaderTextSelectionSession
 
-### Community 44 - "message_factory Cluster"
-Cohesion: 0.16
-Nodes (13): GetMessageClass(), GetMessageClassesForFiles(), GetMessages(), _InternalCreateMessageClass(), MessageFactory, # TODO: Remove this check here. Duplicate extension, Builds a proto2 message class based on the passed in descriptor.    Args:     de, # TODO: Remove this check here. Duplicate extension (+5 more)
-
-### Community 45 - "run_reader_lag_two_book_reset Cluster"
+### Community 50 - "run_reader_lag_two_book_reset Cluster"
 Cohesion: 0.27
 Nodes (12): Dismiss-DialogIfPresent(), Find-NodesByExactText(), Get-CenterFromBounds(), Get-PreferredBookNode(), Get-TrimmedUiDump(), Invoke-Adb(), Save-TextFile(), Tap-NodeCenter() (+4 more)
 
-### Community 46 - "AppNavigationContracts Cluster"
+### Community 51 - "AppNavigationContracts Cluster"
 Cohesion: 0.14
 Nodes (11): BookSelectionActionBarActions, BookSelectionActionBarState, BookSelectionUiState, FolderDrawerActions, FolderDrawerUiState, LibraryAsyncUiState, LibraryDialogActions, LibraryDialogState (+3 more)
 
-### Community 47 - "run_reader_lag_release_live Cluster"
+### Community 52 - "run_reader_lag_release_live Cluster"
 Cohesion: 0.3
 Nodes (12): Dismiss-DialogIfPresent(), Find-NodesByExactText(), Get-CenterFromBounds(), Get-PreferredBookNode(), Get-TrimmedUiDump(), Invoke-Adb(), Save-TextFile(), Tap-NodeCenter() (+4 more)
 
-### Community 48 - "EpubParserImportSupport Cluster"
+### Community 53 - "EpubParserImportSupport Cluster"
 Cohesion: 0.15
 Nodes (0): 
 
-### Community 49 - "SettingsManagerContractsTest Cluster"
-Cohesion: 0.15
-Nodes (1): SettingsManagerContractsTest
-
-### Community 50 - "unknown_fields Cluster"
+### Community 54 - "unknown_fields Cluster"
 Cohesion: 0.15
 Nodes (4): A parsed unknown field., UnknownField container., UnknownField, UnknownFieldSet
 
-### Community 51 - "util Cluster"
+### Community 55 - "util Cluster"
 Cohesion: 0.19
 Nodes (10): and_list(), _cs_list(), file_generator(), or_list(), Converts list of constraints into list of AND clauses.    Function `fn` is appli, Converts list of constraints into list of OR clauses.    Similar to and_list met, Converts input into list if it is not already a list.    For resolvers that can, Converts list of constraints into list of clauses.    Applies function `fn` over (+2 more)
 
-### Community 52 - "SettingsModelsThemeTest Cluster"
+### Community 56 - "SettingsModelsThemeTest Cluster"
 Cohesion: 0.17
 Nodes (1): SettingsModelsThemeTest
 
-### Community 53 - "EpubParserBooksTest Cluster"
+### Community 57 - "EpubParserBooksTest Cluster"
 Cohesion: 0.17
 Nodes (1): EpubParserBooksTest
 
-### Community 54 - "SettingsManagerContracts Cluster"
+### Community 58 - "SettingsManagerContracts Cluster"
 Cohesion: 0.17
 Nodes (3): BookProgressPreferenceKeys, GlobalSettingsSnapshot, SettingsPreferenceKeys
 
-### Community 55 - "SettingsManagerJson Cluster"
+### Community 59 - "SettingsManagerJson Cluster"
 Cohesion: 0.17
 Nodes (0): 
 
-### Community 56 - "builder Cluster"
+### Community 60 - "builder Cluster"
 Cohesion: 0.2
 Nodes (11): AddHelpersToExtensions(), _BuildMessage(), BuildMessageAndEnumDescriptors(), _BuildNestedDescriptors(), BuildServices(), BuildTopDescriptorsAndMessages(), # TODO: Remove this on-op, Builds services classes and services stub class.    Args:     file_des: FileDesc (+3 more)
 
-### Community 57 - "summarize_reader_lag_trace Cluster"
+### Community 61 - "summarize_reader_lag_trace Cluster"
 Cohesion: 0.38
 Nodes (11): add_perfetto_path(), first_int(), get_frame_tables(), main(), maybe_frame_summary(), parse_args(), render_table(), rows_to_dicts() (+3 more)
 
-### Community 58 - "BookEditingModels Cluster"
+### Community 62 - "BookEditingModels Cluster"
 Cohesion: 0.18
 Nodes (10): BookChapterEdit, BookCoverAction, BookCoverUpdate, BookEditRequest, BookNewChapterContent, HtmlDocument, Keep, PlainText (+2 more)
 
-### Community 59 - "EpubParserChapter Cluster"
+### Community 63 - "EpubParserChapter Cluster"
 Cohesion: 0.18
 Nodes (0): 
 
-### Community 60 - "SettingsManagerProgressPersistenceTest Cluster"
+### Community 64 - "SettingsManagerProgressPersistenceTest Cluster"
 Cohesion: 0.18
 Nodes (1): SettingsManagerProgressPersistenceTest
 
-### Community 61 - "AppNavigationLibraryData Cluster"
+### Community 65 - "AppNavigationLibraryData Cluster"
 Cohesion: 0.18
 Nodes (2): FolderDragPreviewUpdate, LibraryDerivedData
 
-### Community 62 - "ReaderScreenContracts Cluster"
+### Community 66 - "ReaderScreenContracts Cluster"
 Cohesion: 0.18
 Nodes (5): ReaderBackAction, ReaderChromeCallbacks, ReaderChromeState, ReaderSettingsDraft, TocSort
 
-### Community 63 - "SettingsAppearanceVisuals Cluster"
+### Community 67 - "SettingsAppearanceVisuals Cluster"
 Cohesion: 0.18
 Nodes (1): SpecimenGeometry
 
-### Community 64 - "ThemeEditorModels Cluster"
+### Community 68 - "ThemeEditorModels Cluster"
 Cohesion: 0.18
 Nodes (3): ThemeEditorDraft, ThemeEditorMode, ThemeEditorSession
 
-### Community 65 - "MainActivity Cluster"
+### Community 69 - "MainActivity Cluster"
 Cohesion: 0.2
 Nodes (2): MainActivity, Screen
 
-### Community 66 - "AppNavigationDialogs Cluster"
+### Community 70 - "AppNavigationDialogs Cluster"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 67 - "LibraryModels Cluster"
+### Community 71 - "LibraryModels Cluster"
 Cohesion: 0.2
 Nodes (8): BookFormat, BookRepresentation, ChapterElement, ConversionStatus, EpubBook, Image, Text, TocItem
 
-### Community 68 - "PdfLegacyBridge Cluster"
+### Community 72 - "PdfLegacyBridge Cluster"
 Cohesion: 0.2
 Nodes (4): PdfConversionProgress, PdfConversionProgressListener, PdfConversionResult, PdfLegacyBridge
 
-### Community 69 - "PdfGeneratedEpubWriter Cluster"
+### Community 73 - "PdfGeneratedEpubWriter Cluster"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 70 - "PdfToEpubConverter Cluster"
+### Community 74 - "PdfToEpubConverter Cluster"
 Cohesion: 0.2
 Nodes (3): MlKitPdfToEpubConverter, PdfTextExtractionMethod, PdfToEpubConverter
 
-### Community 71 - "EpubParserEditingTest Cluster"
+### Community 75 - "EpubParserEditingTest Cluster"
 Cohesion: 0.2
 Nodes (1): EpubParserEditingTest
 
-### Community 72 - "ImportRoutingTest Cluster"
+### Community 76 - "ImportRoutingTest Cluster"
 Cohesion: 0.2
 Nodes (1): ImportRoutingTest
 
-### Community 73 - "SettingsManagerThemePersistenceTest Cluster"
+### Community 77 - "SettingsManagerThemePersistenceTest Cluster"
 Cohesion: 0.2
 Nodes (1): SettingsManagerThemePersistenceTest
 
-### Community 74 - "ReaderControlsSettingsUpdateTest Cluster"
+### Community 78 - "ReaderControlsSettingsUpdateTest Cluster"
 Cohesion: 0.2
 Nodes (1): ReaderControlsSettingsUpdateTest
 
-### Community 75 - "ReaderTextSelectionSessionTest Cluster"
+### Community 79 - "ReaderTextSelectionSessionTest Cluster"
 Cohesion: 0.2
 Nodes (3): FakeScheduler, ReaderTextSelectionSessionTest, ScheduledTask
 
-### Community 76 - "EpubParserPdfFallbackTest Cluster"
+### Community 80 - "EpubParserPdfFallbackTest Cluster"
 Cohesion: 0.22
 Nodes (1): EpubParserPdfFallbackTest
 
-### Community 77 - "SettingsManagerJsonTest Cluster"
+### Community 81 - "SettingsManagerJsonTest Cluster"
 Cohesion: 0.22
 Nodes (1): SettingsManagerJsonTest
 
-### Community 78 - "EditBookModelsTest Cluster"
+### Community 82 - "EditBookModelsTest Cluster"
 Cohesion: 0.22
 Nodes (1): EditBookModelsTest
 
-### Community 79 - "ReaderScreenRestorationTest Cluster"
+### Community 83 - "ReaderScreenRestorationTest Cluster"
 Cohesion: 0.22
 Nodes (1): ReaderScreenRestorationTest
 
-### Community 80 - "ReaderSystemBarTest Cluster"
+### Community 84 - "ReaderSystemBarTest Cluster"
 Cohesion: 0.22
 Nodes (1): ReaderSystemBarTest
 
-### Community 81 - "ReaderScreenContractsTest Cluster"
+### Community 85 - "ReaderScreenContractsTest Cluster"
 Cohesion: 0.22
 Nodes (1): ReaderScreenContractsTest
 
-### Community 82 - "AppNavigationBindings Cluster"
+### Community 86 - "AppNavigationBindings Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 83 - "PdfConversionWorker Cluster"
+### Community 87 - "PdfConversionWorker Cluster"
 Cohesion: 0.25
 Nodes (1): PdfConversionWorker
 
-### Community 84 - "ReaderControlsSections Cluster"
+### Community 88 - "ReaderControlsSections Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 85 - "ReaderControlsWidgets Cluster"
+### Community 89 - "ReaderControlsWidgets Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 86 - "SettingsAppearanceTransfers Cluster"
+### Community 90 - "SettingsAppearanceTransfers Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 87 - "ThemeGalleryTestScreen Cluster"
+### Community 91 - "ThemeGalleryTestScreen Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 88 - "ThemeStudioScreen Cluster"
+### Community 92 - "ThemeStudioScreen Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 89 - "ThemeEditorGuidedColorEditTest Cluster"
+### Community 93 - "ThemeEditorGuidedColorEditTest Cluster"
 Cohesion: 0.25
 Nodes (1): ThemeEditorGuidedColorEditTest
 
-### Community 90 - "ThemeEditorModeInferenceTest Cluster"
+### Community 94 - "ThemeEditorModeInferenceTest Cluster"
 Cohesion: 0.25
 Nodes (1): ThemeEditorModeInferenceTest
 
-### Community 91 - "text_encoding Cluster"
+### Community 95 - "text_encoding Cluster"
 Cohesion: 0.32
 Nodes (7): _AsciiIsPrint(), CEscape(), CUnescape(), _DecodeUtf8EscapeErrors(), _MakeStrEscapes(), Escape a bytes string for use in an text protocol buffer.    Args:     text: A b, Unescape a text string with C-style escape sequences to UTF-8 bytes.    Args:
 
-### Community 92 - "AppLog Cluster"
+### Community 96 - "AppLog Cluster"
 Cohesion: 0.29
 Nodes (1): AppLog
 
-### Community 93 - "EpubParserChapterTest Cluster"
+### Community 97 - "EpubParserChapterTest Cluster"
 Cohesion: 0.29
 Nodes (1): EpubParserChapterTest
 
-### Community 94 - "EpubParserImportTest Cluster"
+### Community 98 - "EpubParserImportTest Cluster"
 Cohesion: 0.29
 Nodes (1): EpubParserImportTest
 
-### Community 95 - "PdfToEpubConverterTest Cluster"
+### Community 99 - "PdfToEpubConverterTest Cluster"
 Cohesion: 0.29
 Nodes (1): PdfToEpubConverterTest
 
-### Community 96 - "EditBookChaptersTab Cluster"
+### Community 100 - "EditBookChaptersTab Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 97 - "EditBookDialogs Cluster"
+### Community 101 - "EditBookDialogs Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 98 - "ReaderChapterContent Cluster"
+### Community 102 - "ReaderChapterContentLegacy Cluster"
 Cohesion: 0.29
-Nodes (1): NestedScrollWebView
+Nodes (1): ReaderLegacyNestedScrollWebView
 
-### Community 99 - "ReaderScreenHelpers Cluster"
+### Community 103 - "ReaderScreenHelpers Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 100 - "SettingsThemeColorPicker Cluster"
+### Community 104 - "SettingsThemeColorPicker Cluster"
 Cohesion: 0.29
 Nodes (2): HsvColor, ThemeColorPickerStatusState
 
-### Community 101 - "ThemeEditorChrome Cluster"
+### Community 105 - "ThemeEditorChrome Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 102 - "proto_builder Cluster"
+### Community 106 - "proto_builder Cluster"
 Cohesion: 0.38
 Nodes (6): _GetMessageFromFactory(), _MakeFileDescriptorProto(), MakeSimpleProtoClass(), Get a proto class from the MessageFactory by name.    Args:     pool: a descript, Create a Protobuf class whose fields are basic types.    Note: this doesn't vali, Populate FileDescriptorProto for MessageFactory's DescriptorPool.
 
-### Community 103 - "api_implementation Cluster"
+### Community 107 - "api_implementation Cluster"
 Cohesion: 0.29
 Nodes (2): # NOTE: Merely importing this automatically enables deterministic proto, # TODO: fail back to python
 
-### Community 104 - "AppNavigationStartup Cluster"
+### Community 108 - "AppNavigationStartup Cluster"
 Cohesion: 0.33
 Nodes (1): AppShellStartupDecision
 
-### Community 105 - "PdfLegacyRuntime Cluster"
+### Community 109 - "PdfLegacyRuntime Cluster"
 Cohesion: 0.33
 Nodes (1): PdfLegacyRuntime
 
-### Community 106 - "EpubParserScanCacheTest Cluster"
+### Community 110 - "EpubParserScanCacheTest Cluster"
 Cohesion: 0.33
 Nodes (1): EpubParserScanCacheTest
 
-### Community 107 - "EditBookDetailsTab Cluster"
+### Community 111 - "EditBookDetailsTab Cluster"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 108 - "PdfReaderSupport Cluster"
+### Community 112 - "PdfReaderSupport Cluster"
 Cohesion: 0.33
 Nodes (1): PdfDocumentHandle
 
-### Community 109 - "ReaderAndroidTestCompat Cluster"
+### Community 113 - "ReaderAndroidTestCompat Cluster"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 110 - "ReaderScreenPrefetchTest Cluster"
+### Community 114 - "ReaderScreenPrefetchTest Cluster"
 Cohesion: 0.33
 Nodes (1): ReaderScreenPrefetchTest
 
-### Community 111 - "ThemeEditorColorEditing Cluster"
+### Community 115 - "SettingsGeneralTabs Cluster"
+Cohesion: 0.33
+Nodes (0): 
+
+### Community 116 - "ThemeEditorColorEditing Cluster"
 Cohesion: 0.33
 Nodes (2): ThemeEditorColorEditResult, ThemeEditorPickerSession
 
-### Community 112 - "any Cluster"
+### Community 117 - "any Cluster"
 Cohesion: 0.47
 Nodes (3): type_name(), unpack(), unpack_as()
 
-### Community 113 - "check_graph_staleness Cluster"
+### Community 118 - "check_graph_staleness Cluster"
 Cohesion: 0.53
 Nodes (5): check_staleness(), get_last_modified(), infer_python_from_graphify_bin(), interpreter_has_graphify(), resolve_graphify_python()
 
-### Community 114 - "AppNavigationDerivedState Cluster"
+### Community 119 - "AppNavigationDerivedState Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 115 - "AppNavigationPdfLegacy Cluster"
+### Community 120 - "AppNavigationPdfLegacy Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 116 - "AppNavigationStartupState Cluster"
+### Community 121 - "AppNavigationStartupState Cluster"
 Cohesion: 0.4
 Nodes (2): AppStartupState, StartupPhase
 
-### Community 117 - "PdfImportInstrumentationTest Cluster"
+### Community 122 - "PdfImportInstrumentationTest Cluster"
 Cohesion: 0.4
 Nodes (1): PdfImportInstrumentationTest
 
-### Community 118 - "EpubParserPdfSupport Cluster"
+### Community 123 - "EpubParserPdfSupport Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 119 - "EditBookScreen Cluster"
+### Community 124 - "EditBookScreen Cluster"
 Cohesion: 0.4
 Nodes (3): ChapterDisplaySort, ChapterSelectionMode, EditBookTab
 
-### Community 120 - "SettingsGeneralTabs Cluster"
+### Community 125 - "ReaderChapterContentRoutingTest Cluster"
 Cohesion: 0.4
-Nodes (0): 
+Nodes (1): ReaderChapterContentRoutingTest
 
-### Community 121 - "SettingsScreen Cluster"
+### Community 126 - "SettingsScreen Cluster"
 Cohesion: 0.4
 Nodes (1): SettingsSection
 
-### Community 122 - "SettingsThemeStudioComponents Cluster"
+### Community 127 - "SettingsThemeStudioComponents Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 123 - "ThemeEditorSections Cluster"
+### Community 128 - "ThemeEditorSections Cluster"
 Cohesion: 0.4
 Nodes (1): ThemeEditorColorField
 
-### Community 124 - "LibraryCards Cluster"
+### Community 129 - "LibraryCards Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 125 - "PdfAndroidTestFixtures Cluster"
+### Community 130 - "PdfAndroidTestFixtures Cluster"
 Cohesion: 0.5
 Nodes (1): PdfAndroidTestFixtures
 
-### Community 126 - "EpubParserPdfBookSupport Cluster"
+### Community 131 - "EpubParserPdfBookSupport Cluster"
 Cohesion: 0.5
 Nodes (1): PdfDocumentInfo
 
-### Community 127 - "EditBookImports Cluster"
+### Community 132 - "EditBookImports Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 128 - "ReaderScreenChrome Cluster"
+### Community 133 - "ReaderChapterContent Cluster"
+Cohesion: 0.5
+Nodes (1): ReaderChapterContentDelegate
+
+### Community 134 - "ReaderScreenChrome Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 129 - "ReaderStatusOverlay Cluster"
+### Community 135 - "ReaderStatusOverlay Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 130 - "ReaderTextActions Cluster"
+### Community 136 - "ReaderTextActions Cluster"
 Cohesion: 0.5
 Nodes (3): Define, Translate, WebLookupAction
 
-### Community 131 - "SettingsThemeGallery Cluster"
+### Community 137 - "SettingsThemeGallery Cluster"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 132 - "cpp_message Cluster"
+### Community 138 - "cpp_message Cluster"
 Cohesion: 0.5
 Nodes (3): GeneratedProtocolMessageType, # TODO: Remove this import after fix api_implementation, Metaclass for protocol message classes created at runtime from Descriptors.    T
 
-### Community 133 - "repo_utils Cluster"
+### Community 139 - "repo_utils Cluster"
 Cohesion: 0.67
 Nodes (3): Finds the repo root by traversing up the hierarchy    This is for use in scripts, repo_dir(), repo_root()
 
-### Community 134 - "AppNavigationLibraryMutations Cluster"
+### Community 140 - "AppNavigationLibraryMutations Cluster"
 Cohesion: 0.67
 Nodes (1): AppNavigationLibraryMutations
 
-### Community 135 - "AppNavigationProgress Cluster"
+### Community 141 - "AppNavigationProgress Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 136 - "AppWarmUpScreen Cluster"
+### Community 142 - "AppWarmUpScreen Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 137 - "LibrarySelectionActionBar Cluster"
+### Community 143 - "LibrarySelectionActionBar Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 138 - "ReaderStatusSettingsRow Cluster"
+### Community 144 - "ReaderStatusSettingsRow Cluster"
 Cohesion: 0.67
 Nodes (1): ReaderStatusSettingsRow()
 
-### Community 139 - "ReaderUiSupport Cluster"
+### Community 145 - "ReaderUiSupport Cluster"
 Cohesion: 0.67
 Nodes (1): ReaderTheme
 
-### Community 140 - "PdfReaderScreen Cluster"
+### Community 146 - "PdfReaderScreen Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 141 - "ReaderSelectableTextStructureTest Cluster"
+### Community 147 - "ReaderSelectableTextStructureTest Cluster"
 Cohesion: 0.67
 Nodes (1): ReaderSelectableTextStructureTest
 
-### Community 142 - "ReaderScreenBindings Cluster"
+### Community 148 - "ReaderScreenBindings Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 143 - "ReaderScreenEffects Cluster"
+### Community 149 - "ReaderScreenEffects Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 144 - "ReaderTopBarAndFab Cluster"
+### Community 150 - "ReaderTopBarAndFab Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 145 - "ReaderVerticalScrubber Cluster"
+### Community 151 - "ReaderVerticalScrubber Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 146 - "SettingsThemeEditor Cluster"
+### Community 152 - "SettingsThemeEditor Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 147 - "ThemeEditorControlRow Cluster"
+### Community 153 - "ThemeEditorControlRow Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 148 - "descriptor_pb2 Cluster"
+### Community 154 - "descriptor_pb2 Cluster"
 Cohesion: 0.67
 Nodes (1): _ResolvedFeatures
 
-### Community 149 - "AppNavigation Cluster"
+### Community 155 - "AppNavigation Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 150 - "AppNavigationEffects Cluster"
+### Community 156 - "AppNavigationEffects Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 151 - "AppNavigationImport Cluster"
+### Community 157 - "AppNavigationImport Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 152 - "AppNavigationLibrary Cluster"
+### Community 158 - "AppNavigationLibrary Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 153 - "AppNavigationScreenHost Cluster"
+### Community 159 - "AppNavigationScreenHost Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 154 - "AppNavigationStartupEffect Cluster"
+### Community 160 - "AppNavigationStartupEffect Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 155 - "LibraryBookGrid Cluster"
+### Community 161 - "LibraryBookGrid Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 156 - "LibraryDrawerContent Cluster"
+### Community 162 - "LibraryDrawerContent Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 157 - "LibraryTopBar Cluster"
+### Community 163 - "LibraryTopBar Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 158 - "LibraryCoverModels Cluster"
+### Community 164 - "ReaderContentEngine Cluster"
+Cohesion: 1.0
+Nodes (1): ReaderContentEngine
+
+### Community 165 - "LibraryCoverModels Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 159 - "WindowInsetsUtils Cluster"
+### Community 166 - "WindowInsetsUtils Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 160 - "EpubParserPdfConversion Cluster"
+### Community 167 - "EpubParserPdfConversion Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 161 - "ReaderProgressState Cluster"
+### Community 168 - "ReaderChapterContentComposeLazyImproved Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 162 - "ReaderScreen Cluster"
+### Community 169 - "ReaderChapterContentTextView Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 163 - "ReaderScreenControls Cluster"
+### Community 170 - "ReaderProgressState Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 164 - "ReaderTocDrawer Cluster"
+### Community 171 - "ReaderScreen Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 165 - "SettingsAppearanceGalleryHost Cluster"
+### Community 172 - "ReaderScreenControls Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 166 - "SettingsAppearanceTab Cluster"
+### Community 173 - "ReaderTocDrawer Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 167 - "SettingsThemeEditorTags Cluster"
+### Community 174 - "SettingsAppearanceGalleryHost Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 168 - "ThemeEditorPreviewCard Cluster"
+### Community 175 - "SettingsAppearanceTab Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 169 - "python_edition_defaults Cluster"
+### Community 176 - "SettingsThemeEditorTags Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 177 - "ThemeEditorPreviewCard Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 178 - "python_edition_defaults Cluster"
 Cohesion: 1.0
 Nodes (1): This file contains the serialized FeatureSetDefaults object corresponding to the
 
-### Community 170 - "shell Cluster"
+### Community 179 - "shell Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 171 - "LibraryDataContracts Cluster"
+### Community 180 - "LibraryDataContracts Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 172 - "MainActivityCompat Cluster"
+### Community 181 - "MainActivityCompat Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 173 - "any_pb2 Cluster"
+### Community 182 - "any_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 174 - "api_pb2 Cluster"
+### Community 183 - "api_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 175 - "descriptor_rationale_484 Cluster"
+### Community 184 - "descriptor_rationale_484 Cluster"
 Cohesion: 1.0
 Nodes (1): Same FieldDescriptor objects as in :attr:`fields`, but indexed by      :attr:`Fi
 
-### Community 176 - "descriptor_rationale_796 Cluster"
+### Community 185 - "descriptor_rationale_796 Cluster"
 Cohesion: 1.0
 Nodes (1): Returns if the field is required.
 
-### Community 177 - "descriptor_rationale_804 Cluster"
+### Community 186 - "descriptor_rationale_804 Cluster"
 Cohesion: 1.0
 Nodes (1): Returns if the field is repeated.
 
-### Community 178 - "descriptor_rationale_809 Cluster"
+### Community 187 - "descriptor_rationale_809 Cluster"
 Cohesion: 1.0
 Nodes (1): Camelcase name of this field.      Returns:       str: the name in CamelCase.
 
-### Community 179 - "descriptor_rationale_820 Cluster"
+### Community 188 - "descriptor_rationale_820 Cluster"
 Cohesion: 1.0
 Nodes (1): Whether the field distinguishes between unpopulated and default values.      Rai
 
-### Community 180 - "descriptor_rationale_841 Cluster"
+### Community 189 - "descriptor_rationale_841 Cluster"
 Cohesion: 1.0
 Nodes (1): Returns if the field is packed.
 
-### Community 181 - "descriptor_rationale_860 Cluster"
+### Community 190 - "descriptor_rationale_860 Cluster"
 Cohesion: 1.0
 Nodes (1): Converts from a Python proto type to a C++ Proto Type.      The Python ProtocolB
 
-### Community 182 - "descriptor_rationale_968 Cluster"
+### Community 191 - "descriptor_rationale_968 Cluster"
 Cohesion: 1.0
 Nodes (1): Returns true whether this is a "closed" enum.      This means that it:     - Has
 
-### Community 183 - "duration_pb2 Cluster"
+### Community 192 - "duration_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 184 - "empty_pb2 Cluster"
+### Community 193 - "empty_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 185 - "field_mask_pb2 Cluster"
+### Community 194 - "field_mask_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 186 - "reflection Cluster"
+### Community 195 - "reflection Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 187 - "source_context_pb2 Cluster"
+### Community 196 - "source_context_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 188 - "struct_pb2 Cluster"
+### Community 197 - "struct_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 189 - "timestamp_pb2 Cluster"
+### Community 198 - "timestamp_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 190 - "type_pb2 Cluster"
+### Community 199 - "type_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 191 - "wrappers_pb2 Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 192 - "__init__ Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 193 - "plugin_pb2 Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 194 - "__init__ Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 195 - "__init__ Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 196 - "__init__ Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 197 - "__init__ Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 198 - "__init__ Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 199 - "trace_data_checks Cluster"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 200 - "__init__ Cluster"
+### Community 200 - "wrappers_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
@@ -1052,7 +1061,7 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 202 - "perfetto_trace_pb2 Cluster"
+### Community 202 - "plugin_pb2 Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
@@ -1060,20 +1069,56 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 204 - "resolver_rationale_120 Cluster"
+### Community 204 - "__init__ Cluster"
 Cohesion: 1.0
-Nodes (1): Creates a resolver from a URI.      URIs have the form:     android_ci:day=2021-
+Nodes (0): 
 
 ### Community 205 - "__init__ Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 206 - "update_protocol Cluster"
+### Community 206 - "__init__ Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 207 - "__init__ Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 208 - "trace_data_checks Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 209 - "__init__ Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 210 - "__init__ Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 211 - "perfetto_trace_pb2 Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 212 - "__init__ Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 213 - "resolver_rationale_120 Cluster"
+Cohesion: 1.0
+Nodes (1): Creates a resolver from a URI.      URIs have the form:     android_ci:day=2021-
+
+### Community 214 - "__init__ Cluster"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 215 - "update_protocol Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
-- **615 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+610 more)
+- **617 isolated node(s):** `Screen`, `LibraryAsyncUiState`, `LibraryScreenState`, `BookSelectionUiState`, `FolderDrawerUiState` (+612 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `AppNavigation Cluster`** (2 nodes): `AppNavigation()`, `AppNavigation.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -1093,11 +1138,17 @@ Nodes (0):
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `LibraryTopBar Cluster`** (2 nodes): `LibraryTopBar.kt`, `LibraryTopBar()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `ReaderContentEngine Cluster`** (2 nodes): `ReaderContentEngine.kt`, `ReaderContentEngine`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `LibraryCoverModels Cluster`** (2 nodes): `LibraryCoverModels.kt`, `rememberLibraryCoverModel()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `WindowInsetsUtils Cluster`** (2 nodes): `WindowInsetsUtils.kt`, `getStaticWindowInsets()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `EpubParserPdfConversion Cluster`** (2 nodes): `EpubParserPdfConversion.kt`, `convertStoredPdfForBook()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `ReaderChapterContentComposeLazyImproved Cluster`** (2 nodes): `ReaderChapterContentComposeLazyImproved.kt`, `ReaderChapterContentComposeLazyImproved()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `ReaderChapterContentTextView Cluster`** (2 nodes): `ReaderChapterContentTextView.kt`, `ReaderChapterContentTextView()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `ReaderProgressState Cluster`** (2 nodes): `ReaderProgressState.kt`, `rememberReaderProgressPercentageState()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -1196,11 +1247,11 @@ Nodes (0):
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `FieldDescriptor` connect `containers Cluster` to `descriptor Cluster`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
-- **Why does `DescriptorPool` connect `descriptor_pool Cluster` to `proto Cluster`, `api Cluster`, `type_checkers Cluster`?**
-  _High betweenness centrality (0.037) - this node is a cross-community bridge._
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
+- **Why does `DescriptorPool` connect `descriptor_pool Cluster` to `type_checkers Cluster`, `api Cluster`, `proto Cluster`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Why does `_Listener` connect `python_message Cluster` to `type_checkers Cluster`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **Are the 80 inferred relationships involving `FieldDescriptor` (e.g. with `BaseContainer` and `RepeatedScalarFieldContainer`) actually correct?**
   _`FieldDescriptor` has 80 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 5 inferred relationships involving `DescriptorPool` (e.g. with `Converts protobuf message to a dictionary.    When the dictionary is encoded to` and `Parses a JSON dictionary representation into a message.    Args:     message_cla`) actually correct?**

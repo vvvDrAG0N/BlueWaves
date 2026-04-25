@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.preferencesOf
 import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.LightThemeId
+import com.epubreader.core.model.ReaderContentEngine
 import com.epubreader.core.model.ThemePalette
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -28,6 +29,7 @@ class SettingsManagerContractsTest {
         assertEquals(false, settings.showScrubber)
         assertEquals(false, settings.showSystemBar)
         assertEquals(false, settings.allowBlankCovers)
+        assertEquals(ReaderContentEngine.LEGACY, settings.readerContentEngine)
         assertTrue(settings.customThemes.isEmpty())
         assertEquals(DefaultLibrarySort, settings.librarySort)
         assertEquals(DefaultLibraryName, settings.favoriteLibrary)
@@ -176,6 +178,24 @@ class SettingsManagerContractsTest {
 
         assertEquals(true, settings.showSystemBar)
         assertEquals(true, settings.allowBlankCovers)
+    }
+
+    @Test
+    fun toGlobalSettings_readsReaderContentEngineFromStoredValue() {
+        val settings = preferencesOf(
+            SettingsPreferenceKeys.readerContentEngine to ReaderContentEngine.TEXT_VIEW.storageValue,
+        ).toGlobalSettings()
+
+        assertEquals(ReaderContentEngine.TEXT_VIEW, settings.readerContentEngine)
+    }
+
+    @Test
+    fun toGlobalSettings_fallsBackToLegacyReaderContentEngineWhenStoredValueIsInvalid() {
+        val settings = preferencesOf(
+            SettingsPreferenceKeys.readerContentEngine to "broken",
+        ).toGlobalSettings()
+
+        assertEquals(ReaderContentEngine.LEGACY, settings.readerContentEngine)
     }
 
     @Test

@@ -13,6 +13,7 @@ import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.LightThemeId
+import com.epubreader.core.model.ReaderContentEngine
 import com.epubreader.core.model.ThemePalette
 import com.epubreader.core.model.contrastColor
 import com.epubreader.core.model.deriveAppForegroundMuted
@@ -68,6 +69,7 @@ internal object SettingsPreferenceKeys {
     val folderSorts = stringPreferencesKey("folder_sorts")
     val folderOrder = stringPreferencesKey("folder_order")
     val targetTranslationLanguage = stringPreferencesKey("target_translation_language")
+    val readerContentEngine = stringPreferencesKey("reader_content_engine")
     val readerStatusEnabled = booleanPreferencesKey("reader_status_enabled")
     val readerStatusShowClock = booleanPreferencesKey("reader_status_show_clock")
     val readerStatusShowBattery = booleanPreferencesKey("reader_status_show_battery")
@@ -103,6 +105,7 @@ internal data class GlobalSettingsSnapshot(
     val folderOrder: String,
     val targetTranslationLanguage: String,
     val showScrollToTop: Boolean,
+    val readerContentEngine: String,
     val readerStatusEnabled: Boolean,
     val readerStatusShowClock: Boolean,
     val readerStatusShowBattery: Boolean,
@@ -160,6 +163,7 @@ internal fun Preferences.toGlobalSettingsSnapshot(): GlobalSettingsSnapshot {
         folderOrder = this[SettingsPreferenceKeys.folderOrder] ?: EmptyJsonArray,
         targetTranslationLanguage = this[SettingsPreferenceKeys.targetTranslationLanguage] ?: "ar",
         showScrollToTop = this[SettingsPreferenceKeys.showScrollToTop] ?: true,
+        readerContentEngine = this[SettingsPreferenceKeys.readerContentEngine] ?: ReaderContentEngine.LEGACY.storageValue,
         readerStatusEnabled = this[SettingsPreferenceKeys.readerStatusEnabled] ?: true,
         readerStatusShowClock = this[SettingsPreferenceKeys.readerStatusShowClock] ?: true,
         readerStatusShowBattery = this[SettingsPreferenceKeys.readerStatusShowBattery] ?: true,
@@ -191,6 +195,7 @@ internal fun GlobalSettingsSnapshot.toGlobalSettings(): GlobalSettings {
         folderOrder = folderOrder,
         targetTranslationLanguage = targetTranslationLanguage,
         showScrollToTop = showScrollToTop,
+        readerContentEngine = ReaderContentEngine.fromStorageValue(readerContentEngine),
         readerStatusUi = com.epubreader.core.model.ReaderStatusUiState(
             isEnabled = readerStatusEnabled,
             showClock = readerStatusShowClock,
