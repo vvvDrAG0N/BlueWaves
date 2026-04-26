@@ -21,6 +21,9 @@ Out of scope:
 
 - `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`
   - Derives the handle stem height passed into the selection handle layer.
+  - This file is the implementation owner for the host behavior.
+- `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderInternalFacades.kt`
+  - Provides the feature-local forwarding facade into the runtime host.
 - `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`
   - Builds handle dimensions and renders the visual handle.
 - `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGeometry.kt`
@@ -49,7 +52,7 @@ This keeps the behavior aligned with the request for full handle geometry reduct
 
 Follow a red-green cycle with targeted reader tests:
 
-1. Add or extend a focused reader test that activates selection and asserts the exposed handle semantics reflect a 50% stem reduction for a known `fontSize`.
+1. Add or extend a focused reader test that activates selection and asserts a 50% stem reduction for a known `fontSize` by reading `ReaderSelectionHandleSemanticsData` and deriving the effective stem height from `stemBottomYInHandle - stemTopYInHandle`.
 2. Run the targeted test first and confirm it fails for the expected reason.
 3. Implement the source reduction in `ReaderChapterSelectionHost.kt`.
 4. Re-run the targeted reader test and confirm it passes.
