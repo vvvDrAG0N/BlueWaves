@@ -37,7 +37,9 @@ import com.epubreader.feature.reader.readerTapGesture
 import com.epubreader.feature.reader.ReaderChapterContent
 import com.epubreader.feature.reader.ReaderChromeCallbacks
 import com.epubreader.feature.reader.ReaderChromeState
+import com.epubreader.feature.reader.ReaderOverlayRenderContext
 import com.epubreader.feature.reader.ReaderTheme
+import com.epubreader.feature.reader.ReaderToolRenderContext
 import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,6 +117,7 @@ private fun ReaderContentSurface(
                     selectionSessionEpoch = state.selectionSessionEpoch,
                     onSelectionActiveChange = callbacks.onTextSelectionActiveChange,
                     onSelectionHandleDragChange = callbacks.onSelectionHandleDragChange,
+                    onLookupSheetDismissed = callbacks.onLookupSheetDismissed,
                 )
             }
         }
@@ -165,6 +168,7 @@ private fun ReaderContentSurface(
             modifier = Modifier.align(Alignment.BottomCenter),
         ) {
             ReaderControls(
+                book = state.book,
                 settings = state.settings,
                 onSettingsChange = callbacks.onPersistSettings,
                 onPreviewSettingsChange = callbacks.onPreviewSettings,
@@ -180,6 +184,7 @@ private fun ReaderContentSurface(
                 progressPercentageState = state.progressPercentageState,
                 onDismiss = { callbacks.onShowControlsChange(false) },
                 isVisible = state.showControls,
+                toolHosts = state.toolHosts,
             )
         }
 
@@ -199,6 +204,20 @@ private fun ReaderContentSurface(
             progressPercentageState = state.progressPercentageState,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
+
+        val overlayContext = ReaderOverlayRenderContext(
+            book = state.book,
+            settings = state.settings,
+            themeColors = state.themeColors,
+            showControls = state.showControls,
+            currentChapterIndex = state.currentChapterIndex,
+            progressPercentageState = state.progressPercentageState,
+        )
+        state.overlayHosts.forEach { overlayHost ->
+            with(overlayHost) {
+                Render(overlayContext)
+            }
+        }
     }
 }
 

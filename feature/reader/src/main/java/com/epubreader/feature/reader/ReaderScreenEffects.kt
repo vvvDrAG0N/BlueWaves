@@ -22,6 +22,7 @@ private const val AdjacentChapterPrefetchDelayMillis = 2500L
 internal fun ReaderSystemBarEffect(
     showControls: Boolean,
     globalSettings: GlobalSettings,
+    refreshToken: Int = 0,
 ) {
     val view = LocalView.current
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
@@ -39,7 +40,7 @@ internal fun ReaderSystemBarEffect(
         }
     }
 
-    LaunchedEffect(showControls, globalSettings.showSystemBar, resumeTrigger) {
+    LaunchedEffect(showControls, globalSettings.showSystemBar, resumeTrigger, refreshToken) {
         val window = (view.context as? Activity)?.window ?: return@LaunchedEffect
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
 

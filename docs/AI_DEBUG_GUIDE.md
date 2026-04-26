@@ -13,7 +13,7 @@ Use this file to route common bug types to the smallest useful file set.
 ### Builder Routes The Wrong Screen
 
 - Start with `docs/app_shell_navigation.md`.
-- Then inspect `app/AppRoute.kt`, `app/AppFeatureRegistry.kt`, `app/AppNavigation.kt`, and the owning `*LegoPlugin.kt`.
+- Then inspect `app/AppRoute.kt`, `app/AppSurfaceRegistry.kt`, `app/AppNavigation.kt`, and the owning `*SurfacePlugin.kt`.
 
 ### Scroll Position Not Restored
 
@@ -38,7 +38,7 @@ Use this file to route common bug types to the smallest useful file set.
 
 ### Edit Book Save Or Reopen Is Wrong
 
-- Start with `feature/editbook/EditBookLegoPlugin.kt` and `docs/epub_parsing.md`.
+- Start with `feature/editbook/EditBookSurfacePlugin.kt` and `docs/epub_parsing.md`.
 - Then inspect `data/parser/EpubParserLookup.kt`, `data/parser/EpubParserEditing.kt`, and `feature/editbook/EditBookScreen.kt`.
 
 ### Settings, Theme, Or Progress Persistence Is Wrong
@@ -49,5 +49,5 @@ Use this file to route common bug types to the smallest useful file set.
 ### Disabled PDF Behavior Reappears
 
 - Start with `docs/app_shell_navigation.md`.
-- Then inspect `app/AppNavigation.kt`, `app/AppFeatureRegistry.kt`, and `feature/pdf/legacy/PdfLegacyLegoPlugin.kt`.
+- Then inspect `app/AppNavigation.kt`, `app/AppSurfaceRegistry.kt`, and `feature/pdf-legacy/PdfLegacyLegoPlugin.kt`.
 - Treat `docs/legacy/PDF_review.md` as opt-in context only.

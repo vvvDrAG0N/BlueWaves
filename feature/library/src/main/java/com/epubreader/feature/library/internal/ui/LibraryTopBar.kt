@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.core.ui.getStaticWindowInsets
+import com.epubreader.feature.library.LibraryActionSlot
 import com.epubreader.feature.library.internal.LibraryScreenActions
 import com.epubreader.feature.library.internal.LibraryScreenState
 
@@ -28,6 +29,7 @@ import com.epubreader.feature.library.internal.LibraryScreenState
 internal fun LibraryTopBar(
     state: LibraryScreenState,
     actions: LibraryScreenActions,
+    extensionActions: List<LibraryActionSlot>,
 ) {
     val favoriteAccent = Color(
         themePaletteSeed(
@@ -83,6 +85,9 @@ internal fun LibraryTopBar(
                 }
                 IconButton(onClick = actions.onShowSortMenu) {
                     Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = "Sort")
+                }
+                extensionActions.forEach { action ->
+                    action.content()
                 }
                 IconButton(onClick = actions.onOpenSettings) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")

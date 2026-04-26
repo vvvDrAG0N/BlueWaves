@@ -139,6 +139,15 @@ internal fun buildSelectionBarActions(
     )
 }
 
+internal fun buildLibraryScreenSlots(
+    resolvedHostExtensions: LibraryResolvedHostExtensions,
+): LibraryScreenSlots {
+    return LibraryScreenSlots(
+        topBarActions = resolvedHostExtensions.actionSlots,
+        decorations = resolvedHostExtensions.decorationSlots,
+    )
+}
+
 internal fun buildDialogState(
     showSortMenu: Boolean,
     currentSort: String,

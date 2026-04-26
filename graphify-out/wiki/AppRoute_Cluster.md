@@ -1,15 +1,13 @@
 # AppRoute Cluster
 
-> 6 nodes · cohesion 0.33
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
-- **AppRoute.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
+- **AppRoute.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
 - **AppRoute** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
-- **EditBook** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
-- **Library** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
-- **Reader** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
-- **Settings** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
+- **EditBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
+- **Reader()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
 
 ## Relationships
 
@@ -21,7 +19,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,6 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from graph_corpus import staleness_watch_paths
+
 def get_last_modified(paths):
     last_mod = 0
     for path in paths:
@@ -17,27 +19,19 @@ def get_last_modified(paths):
     return last_mod
 
 def check_staleness(root: Path):
-    docs_dir = root / "docs"
     graph_file = root / "graphify-out" / "graph.json"
     
     if not graph_file.exists():
         print("STALE: Graph file missing.")
         return True
 
-    # Critical files that should trigger a rebuild
-    critical_files = [
-        docs_dir,
-        # Grep for AI_ENTRY_POINT could be expensive, so we just check core source dirs
-        root / "app/src/main/java/com/epubreader/app",
-        root / "app/src/main/java/com/epubreader/data",
-        root / "app/src/main/java/com/epubreader/feature",
-    ]
-    
-    last_source_mod = get_last_modified(critical_files)
+    watched_paths = staleness_watch_paths(root)
+
+    last_source_mod = get_last_modified(watched_paths)
     graph_mod = graph_file.stat().st_mtime
     
     if last_source_mod > graph_mod:
-        print(f"STALE: Source or docs modified since last graph build.")
+        print("STALE: Graph inputs or corpus rules modified since last graph build.")
         return True
     
     print("FRESH: Graph is up to date.")

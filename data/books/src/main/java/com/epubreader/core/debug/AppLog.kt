@@ -18,6 +18,7 @@ object AppLog {
     }
 
     const val APP_SHELL = "AppShell"
+    const val LIBRARY = "LibraryScreen"
     const val PARSER = "EpubParser"
     const val READER = "ReaderScreen"
     const val SETTINGS = "SettingsManager"

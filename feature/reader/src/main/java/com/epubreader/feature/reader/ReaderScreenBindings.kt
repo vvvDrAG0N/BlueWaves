@@ -11,7 +11,9 @@ import com.epubreader.core.model.TocItem
 import com.epubreader.core.ui.GlobalSettingsTransform
 import com.epubreader.feature.reader.ReaderChromeCallbacks
 import com.epubreader.feature.reader.ReaderChromeState
+import com.epubreader.feature.reader.ReaderOverlayHost
 import com.epubreader.feature.reader.ReaderTheme
+import com.epubreader.feature.reader.ReaderToolHost
 import com.epubreader.feature.reader.TocSort
 
 internal fun buildReaderChromeState(
@@ -34,6 +36,8 @@ internal fun buildReaderChromeState(
     nestedScrollConnection: NestedScrollConnection,
     progressPercentageState: State<Float>,
     selectionSessionEpoch: Int,
+    overlayHosts: List<ReaderOverlayHost>,
+    toolHosts: List<ReaderToolHost>,
 ): ReaderChromeState {
     return ReaderChromeState(
         book = book,
@@ -55,6 +59,8 @@ internal fun buildReaderChromeState(
         nestedScrollConnection = nestedScrollConnection,
         progressPercentageState = progressPercentageState,
         selectionSessionEpoch = selectionSessionEpoch,
+        overlayHosts = overlayHosts,
+        toolHosts = toolHosts,
     )
 }
 
@@ -76,6 +82,7 @@ internal fun buildReaderChromeCallbacks(
     onNavigatePrev: () -> Unit,
     onNavigateNext: () -> Unit,
     onMainScrubberDragStart: () -> Unit,
+    onLookupSheetDismissed: () -> Unit = {},
 ): ReaderChromeCallbacks {
     return ReaderChromeCallbacks(
         onShowControlsChange = onShowControlsChange,
@@ -95,5 +102,6 @@ internal fun buildReaderChromeCallbacks(
         onNavigatePrev = onNavigatePrev,
         onNavigateNext = onNavigateNext,
         onMainScrubberDragStart = onMainScrubberDragStart,
+        onLookupSheetDismissed = onLookupSheetDismissed,
     )
 }

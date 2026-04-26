@@ -29,6 +29,7 @@ internal fun EpubReaderRuntime(
     selectionSessionEpoch: Int = 0,
     onSelectionActiveChange: (Int, Boolean) -> Unit = { _, _ -> },
     onSelectionHandleDragChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onLookupSheetDismissed: () -> Unit = {},
 ) {
     if (currentChapterIndex == -1 || isLoadingChapter) {
         ReaderChapterLoadingContent(themeColors)
@@ -51,6 +52,7 @@ internal fun EpubReaderRuntime(
             selectionSessionEpoch = selectionSessionEpoch,
             onSelectionActiveChange = onSelectionActiveChange,
             onSelectionHandleDragChange = onSelectionHandleDragChange,
+            onLookupSheetDismissed = onLookupSheetDismissed,
         ) { selectionController ->
             LazyColumn(
                 state = listState,

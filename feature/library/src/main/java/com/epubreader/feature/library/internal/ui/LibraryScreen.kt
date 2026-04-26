@@ -29,6 +29,7 @@ import com.epubreader.feature.library.internal.LibraryDialogActions
 import com.epubreader.feature.library.internal.LibraryDialogState
 import com.epubreader.feature.library.internal.LibraryScreenActions
 import com.epubreader.feature.library.internal.LibraryScreenState
+import com.epubreader.feature.library.internal.LibraryScreenSlots
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -39,6 +40,7 @@ import com.epubreader.feature.library.internal.LibraryScreenState
 internal fun LibraryScreen(
     state: LibraryScreenState,
     actions: LibraryScreenActions,
+    slots: LibraryScreenSlots,
     selectionBarState: BookSelectionActionBarState,
     selectionBarActions: BookSelectionActionBarActions,
     dialogState: LibraryDialogState,
@@ -70,6 +72,7 @@ internal fun LibraryScreen(
                     LibraryTopBar(
                         state = state,
                         actions = actions,
+                        extensionActions = slots.topBarActions,
                     )
                 },
             ) { padding ->
@@ -106,6 +109,10 @@ internal fun LibraryScreen(
                     }
                 }
             }
+        }
+
+        slots.decorations.forEach { decoration ->
+            decoration.content(this)
         }
 
         BookSelectionActionBar(

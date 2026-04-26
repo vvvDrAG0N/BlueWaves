@@ -10,7 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import com.epubreader.Screen
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
@@ -42,6 +41,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     var detectedVersionCode by remember { mutableIntStateOf(0) }
     var pendingStartupDecision by remember { mutableStateOf<AppShellStartupDecision?>(null) }
     var hasCompletedInitialLibraryRefresh by remember { mutableStateOf(false) }
+    val activeSurface = remember(currentRoute) { AppSurfaceRegistry.resolve(currentRoute) }
 
     fun commitPendingStartupDecision() {
         val decision = pendingStartupDecision ?: return
@@ -65,17 +65,17 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
             pendingStartupDecision = decision
             startupState = AppStartupState(
                 phase = resolveStartupPhaseAfterEvaluation(
-                    currentScreen = currentRoute.screen,
+                    currentSurfaceId = activeSurface.surfaceId,
                     hasCompletedInitialLibraryRefresh = hasCompletedInitialLibraryRefresh,
                 ),
             )
-            if (currentRoute.screen != Screen.Library) {
+            if (activeSurface.surfaceId != com.epubreader.feature.library.LibrarySurfacePlugin.surfaceId) {
                 commitPendingStartupDecision()
             }
         },
     )
 
-    LaunchedEffect(startupState.phase, currentRoute.screen, pendingStartupDecision) {
+    LaunchedEffect(startupState.phase, activeSurface.surfaceId, pendingStartupDecision) {
         if (startupState.phase == StartupPhase.Ready && pendingStartupDecision != null) {
             commitPendingStartupDecision()
         }
@@ -84,85 +84,86 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
     AppNavigationSideEffects(
         view = view,
         globalSettings = globalSettings,
-        currentScreen = currentRoute.screen,
-        chromeSpec = AppFeatureRegistry.chromeSpecFor(currentRoute),
+        currentSurfaceId = activeSurface.surfaceId,
+        chromeSpec = activeSurface.chromeSpec,
     )
 
     AppNavigationScreenHost(
         currentRoute = currentRoute,
         startupState = startupState,
         globalSettings = globalSettings,
-        libraryDependencies = LibraryDependencies(
-            settingsManager = settingsManager,
-            globalSettings = globalSettings,
-            parser = parser,
-            startupPresentation = startupPresentation,
-        ),
-        settingsDependencies = SettingsDependencies(
-            settingsManager = settingsManager,
-        ),
-        readerDependencies = ReaderDependencies(
-            parser = parser,
-            settingsManager = settingsManager,
-        ),
-        editBookDependencies = EditBookDependencies(
-            parser = parser,
-            settingsManager = settingsManager,
-        ),
-        settingsRoute = SettingsRoute,
-        libraryRoute = LibraryRoute,
-        onLibraryEvent = { event ->
-            when (event) {
-                LibraryEvent.InitialLibraryRefreshCompleted -> {
-                    hasCompletedInitialLibraryRefresh = true
-                    if (startupState.phase == StartupPhase.LoadingLibrary) {
-                        startupState = AppStartupState(phase = StartupPhase.Ready)
-                        commitPendingStartupDecision()
+        surfaceHost = AppSurfaceHost(
+            libraryDependencies = LibraryDependencies(
+                settingsManager = settingsManager,
+                globalSettings = globalSettings,
+                parser = parser,
+                startupPresentation = startupPresentation,
+            ),
+            settingsDependencies = SettingsDependencies(
+                settingsManager = settingsManager,
+            ),
+            readerDependencies = ReaderDependencies(
+                parser = parser,
+                settingsManager = settingsManager,
+            ),
+            editBookDependencies = EditBookDependencies(
+                parser = parser,
+                settingsManager = settingsManager,
+            ),
+            onLibraryEvent = { event ->
+                when (event) {
+                    LibraryEvent.InitialLibraryRefreshCompleted -> {
+                        hasCompletedInitialLibraryRefresh = true
+                        if (startupState.phase == StartupPhase.LoadingLibrary) {
+                            startupState = AppStartupState(phase = StartupPhase.Ready)
+                            commitPendingStartupDecision()
+                        }
+                    }
+
+                    LibraryEvent.OpenSettings -> {
+                        currentRoute = AppRoute.Settings
+                    }
+
+                    LibraryEvent.DismissWelcome -> {
+                        scope.launch {
+                            settingsManager.setFirstTime(false)
+                            startupPresentation = startupPresentation.copy(showFirstTimeNote = false)
+                        }
+                    }
+
+                    LibraryEvent.DismissChangelog -> {
+                        scope.launch {
+                            settingsManager.setLastSeenVersionCode(detectedVersionCode)
+                            startupPresentation = startupPresentation.copy(changelogEntries = emptyList())
+                        }
+                    }
+
+                    is LibraryEvent.OpenReader -> {
+                        currentRoute = AppRoute.Reader(event.bookId)
+                    }
+
+                    is LibraryEvent.OpenEditBook -> {
+                        currentRoute = AppRoute.EditBook(event.bookId)
                     }
                 }
-
-                LibraryEvent.OpenSettings -> {
-                    currentRoute = AppRoute.Settings
+            },
+            onSettingsEvent = { event ->
+                when (event) {
+                    SettingsEvent.Back -> goToLibrary()
                 }
-
-                LibraryEvent.DismissWelcome -> {
-                    scope.launch {
-                        settingsManager.setFirstTime(false)
-                        startupPresentation = startupPresentation.copy(showFirstTimeNote = false)
-                    }
+            },
+            onReaderEvent = { event ->
+                when (event) {
+                    ReaderEvent.Back -> goToLibrary()
                 }
-
-                LibraryEvent.DismissChangelog -> {
-                    scope.launch {
-                        settingsManager.setLastSeenVersionCode(detectedVersionCode)
-                        startupPresentation = startupPresentation.copy(changelogEntries = emptyList())
-                    }
+            },
+            onEditBookEvent = { event ->
+                when (event) {
+                    EditBookEvent.Back -> goToLibrary()
+                    is EditBookEvent.Saved -> goToLibrary()
                 }
-
-                is LibraryEvent.OpenReader -> {
-                    currentRoute = AppRoute.Reader(event.bookId)
-                }
-
-                is LibraryEvent.OpenEditBook -> {
-                    currentRoute = AppRoute.EditBook(event.bookId)
-                }
-            }
-        },
-        onSettingsEvent = { event ->
-            when (event) {
-                SettingsEvent.Back -> goToLibrary()
-            }
-        },
-        onReaderEvent = { event ->
-            when (event) {
-                ReaderEvent.Back -> goToLibrary()
-            }
-        },
-        onEditBookEvent = { event ->
-            when (event) {
-                EditBookEvent.Back -> goToLibrary()
-                is EditBookEvent.Saved -> goToLibrary()
-            }
-        },
+            },
+            onBackToLibrary = ::goToLibrary,
+        ),
     )
 }

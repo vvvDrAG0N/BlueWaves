@@ -99,6 +99,11 @@ internal data class BookSelectionActionBarActions(
     val onEditSelectedBook: () -> Unit,
 )
 
+internal data class LibraryScreenSlots(
+    val topBarActions: List<com.epubreader.feature.library.LibraryActionSlot> = emptyList(),
+    val decorations: List<com.epubreader.feature.library.LibraryDecorationSlot> = emptyList(),
+)
+
 internal enum class LibraryBackAction {
     ClearFolderSelection,
     CloseDrawer,

@@ -8,13 +8,13 @@
 - Risks: Reopening the selection lane based on superseded instrumentation assumptions, or retuning stable geometry and handle behavior without a newly reproduced failure.
 - Verification target: If reopened, reproduce the failure first on the exact content path, then rerun only the narrow affected test slice plus one representative emulator reader pass.
 
-## Builder Plugin Cleanup Follow-Up
-- Goal: Finish retiring the remaining app-side pure helper duplicates now that the live builder routes exclusively through feature lego/plugins.
-- Why now: The production path now goes through `AppRoute`, `AppFeatureRegistry`, and root feature plugins, but a few older app-local helpers and tests still mirror library-era behavior and can drift if they are left around indefinitely.
+## Surface Registry Generalization Follow-Up
+- Goal: Reduce the remaining shell-specific surface wiring so a new top-level surface can be added with one registry entry instead of touching multiple app-shell seams.
+- Why now: The live path now routes through `AppRoute`, `AppSurfaceRegistry`, and root surface plugins, but `AppSurfaceHost`, startup gating, system-bar policy, and unavailable-surface behavior tests still encode built-in surface assumptions.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/app_shell_navigation.md`, `docs/project_graph.md`, `app/src/main/java/com/epubreader/app/AppNavigationDerivedState.kt`, `app/src/main/java/com/epubreader/app/AppNavigationOperations.kt`, `app/src/main/java/com/epubreader/app/AppNavigationProgress.kt`, `feature/library/src/main/java/com/epubreader/feature/library/internal/`, `app/src/test/java/com/epubreader/app/`
-- Risks: Letting dead or duplicated helper logic silently diverge from the feature-owned path, and keeping future refactors split across both the builder and library feature for no product reason.
-- Verification target: After any cleanup, rerun builder JVM tests plus `:feature:library:testDebugUnitTest`, and confirm the canonical docs still point only at the live builder/plugin path.
+- Starting docs/files: `AGENTS.md`, `docs/app_shell_navigation.md`, `docs/project_graph.md`, `app/src/main/java/com/epubreader/app/AppSurfaceRegistry.kt`, `app/src/main/java/com/epubreader/app/AppSurfaceHost.kt`, `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `app/src/main/java/com/epubreader/app/AppNavigationEffects.kt`, `app/src/main/java/com/epubreader/app/AppNavigationStartupState.kt`
+- Risks: Keeping new-surface onboarding split across registry, host, shell-policy, and fallback seams; or over-generalizing the builder before the next real surface proves the boundary.
+- Verification target: After any follow-up, rerun builder JVM tests plus the relevant surface-plugin tests, confirm unavailable-surface back behavior is covered, and confirm the canonical docs still point only at the live surface path.
 
 ## Reader Single-Runtime Real-Book Validation
 - Goal: Validate the shipped single EPUB runtime on representative long-form books and decide whether any remaining work is performance polish instead of more architecture churn.
@@ -53,7 +53,7 @@
 - Goal: Decide whether the parked PDF path should be safely revived as a separate surface or removed from the product direction entirely.
 - Why now: Parked runtime code still exists, but the active shell intentionally blocks it and the repo should not drift into accidental half-support.
 - Suggested owner/model: Gemini for scoping and design comparison, Codex for any later implementation.
-- Starting docs/files: `docs/legacy/PDF_review.md`, `docs/app_shell_navigation.md`, `docs/epub_parsing.md`, `app/AppNavigation.kt`, `app/AppFeatureRegistry.kt`, `feature/pdf-legacy/src/main/java/com/epubreader/feature/pdf/legacy/PdfLegacyLegoPlugin.kt`, `data/parser/PdfLegacyBridge.kt`
+- Starting docs/files: `docs/legacy/PDF_review.md`, `docs/app_shell_navigation.md`, `docs/epub_parsing.md`, `app/AppNavigation.kt`, `app/AppSurfaceRegistry.kt`, `feature/pdf-legacy/src/main/java/com/epubreader/feature/pdf/legacy/PdfLegacyLegoPlugin.kt`, `data/books/PdfLegacyBridge.kt`
 - Risks: Re-enabling broken shell paths, progress persistence mismatch, conversion-state staleness, memory pressure.
 - Verification target: Explicit design decision plus targeted parser/shell tests before any runtime reactivation.
 

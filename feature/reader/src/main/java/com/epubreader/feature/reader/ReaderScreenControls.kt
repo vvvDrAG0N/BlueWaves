@@ -30,14 +30,18 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.feature.reader.GlobalSettingsTransform
 import com.epubreader.feature.reader.ReaderTheme
+import com.epubreader.feature.reader.ReaderToolHost
+import com.epubreader.feature.reader.ReaderToolRenderContext
 
 private const val ReaderControlsDismissVelocityThreshold = 1_600f
 
 @Composable
 fun ReaderControls(
+    book: EpubBook,
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
     onPreviewSettingsChange: ((GlobalSettingsTransform) -> Unit)? = null,
@@ -53,6 +57,7 @@ fun ReaderControls(
     progressPercentageState: State<Float>,
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
+    toolHosts: List<ReaderToolHost> = emptyList(),
 ) {
     val previewSettingsChange = onPreviewSettingsChange ?: onSettingsChange
     val persistSettingsChange = onPersistSettingsChange ?: onSettingsChange
@@ -181,6 +186,18 @@ fun ReaderControls(
                         isVisible = isVisible,
                         themeColors = themeColors,
                     )
+                    if (toolHosts.isNotEmpty()) {
+                        HorizontalDivider(color = themeColors.foreground.copy(alpha = 0.08f))
+                        val toolContext = ReaderToolRenderContext(
+                            book = book,
+                            settings = settings,
+                            themeColors = themeColors,
+                            currentChapterIndex = currentChapterIndex,
+                        )
+                        toolHosts.forEach { toolHost ->
+                            toolHost.Render(toolContext)
+                        }
+                    }
                 }
             }
         }

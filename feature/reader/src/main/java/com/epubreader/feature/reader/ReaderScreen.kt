@@ -11,12 +11,14 @@ fun ReaderScreen(
     book: EpubBook,
     settingsManager: SettingsManager,
     parser: EpubParser,
+    hostExtensions: ReaderResolvedHostExtensions = ReaderResolvedHostExtensions(),
     onBack: () -> Unit,
 ) {
     ReaderFeatureShell(
         book = book,
         settingsManager = settingsManager,
         parser = parser,
+        hostExtensions = hostExtensions,
         onBack = onBack,
     )
 }

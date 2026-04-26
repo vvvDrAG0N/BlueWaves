@@ -36,6 +36,8 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.MainActivity
+import com.epubreader.core.model.EpubBook
+import com.epubreader.core.model.BookFormat
 import com.epubreader.core.model.GlobalSettings
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -115,6 +117,7 @@ class ReaderControlsSettingsUpdateTest {
                         if (showControls) {
                             val progressState = remember { mutableFloatStateOf(0f) }
                             ReaderControls(
+                                book = sampleBook(),
                                 settings = GlobalSettings(),
                                 onSettingsChange = {},
                                 themeColors = getThemeColors("light"),
@@ -167,6 +170,7 @@ class ReaderControlsSettingsUpdateTest {
                     ) {
                         val progressState = remember { mutableFloatStateOf(0f) }
                         ReaderControls(
+                            book = sampleBook(),
                             settings = displayedSettings,
                             onSettingsChange = {},
                             onPreviewSettingsChange = { transform ->
@@ -298,6 +302,7 @@ class ReaderControlsSettingsUpdateTest {
                 contentAlignment = Alignment.BottomCenter,
             ) {
                 ReaderControls(
+                    book = sampleBook(),
                     settings = settings,
                     onSettingsChange = onSettingsChange,
                     themeColors = getThemeColors(settings.theme),
@@ -342,5 +347,18 @@ class ReaderControlsSettingsUpdateTest {
                     .width(20.dp),
             )
         }
+    }
+
+    private fun sampleBook(): EpubBook {
+        return EpubBook(
+            id = "reader-controls-test",
+            title = "Reader Controls Test",
+            author = "Test",
+            coverPath = null,
+            rootPath = "/tests/reader-controls",
+            format = BookFormat.EPUB,
+            sourceFormat = BookFormat.EPUB,
+            spineHrefs = listOf("chapter-1.xhtml"),
+        )
     }
 }

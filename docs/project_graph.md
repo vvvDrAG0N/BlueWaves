@@ -16,7 +16,7 @@ Use it before loading large groups of source files.
 - `:app` is the builder/bootstrap module.
 - `:core:model` and `:core:ui` hold shared contracts and presentation helpers.
 - `:data:settings` and `:data:books` hold persistence and parser/runtime code.
-- `:feature:library`, `:feature:reader`, `:feature:settings`, `:feature:editbook`, and `:feature:pdf-legacy` each expose one root feature lego/plugin plus internal helper legos.
+- `:feature:library`, `:feature:reader`, `:feature:settings`, `:feature:editbook`, and `:feature:pdf-legacy` each expose one root surface or feature plugin plus internal helper legos.
 - `checkKotlinFileLineLimit` enforces the repo-wide 500-line Kotlin cap.
 
 ## Default Graph-First Flow
@@ -33,7 +33,7 @@ Use it before loading large groups of source files.
 graphify query "What owns folder ordering and drag preview?" --budget 900
 graphify query "Which files control reader restoration and progress saving?" --budget 900
 graphify query "Where is metadata.json read and written?" --budget 900
-graphify query "What should I open first for builder or library plugin folder bugs?" --budget 900
+graphify query "What should I open first for builder or library surface bugs?" --budget 900
 graphify query "Which files own Edit Book save validation and chapter mutation?" --budget 900
 ```
 
@@ -44,20 +44,19 @@ flowchart TD
     MainActivity[MainActivity]
 
     MainActivity --> AppShell[app/AppNavigation]
-    MainActivity --> ScreenEnum[MainActivity Screen enum]
 
     AppShell --> AppRoute[app/AppRoute]
-    AppShell --> Registry[app/AppFeatureRegistry]
+    AppShell --> Registry[app/AppSurfaceRegistry]
     AppShell --> AppStartup[app/AppNavigationStartupEffect]
     AppShell --> AppHost[app/AppNavigationScreenHost]
     AppShell --> AppEffects[app/AppNavigationEffects]
     AppShell --> SettingsManager[data/settings/SettingsManager]
     AppShell --> EpubParser[data/parser/EpubParser]
 
-    AppHost --> LibraryPlugin[feature/library/LibraryLegoPlugin]
-    AppHost --> SettingsPlugin[feature/settings/SettingsLegoPlugin]
-    AppHost --> ReaderPlugin[feature/reader/ReaderLegoPlugin]
-    AppHost --> EditBookPlugin[feature/editbook/EditBookLegoPlugin]
+    Registry --> LibraryPlugin[feature/library/LibrarySurfacePlugin]
+    Registry --> SettingsPlugin[feature/settings/SettingsSurfacePlugin]
+    Registry --> ReaderPlugin[feature/reader/ReaderSurfacePlugin]
+    Registry --> EditBookPlugin[feature/editbook/EditBookSurfacePlugin]
 
     LibraryPlugin --> LibraryContent[feature/library/internal/LibraryFeatureContent]
     LibraryContent --> LibraryData[feature/library/internal/LibraryFeatureData]
@@ -88,7 +87,7 @@ flowchart TD
     CoreModels --> SettingsManager
     CoreModels --> EpubParser
 
-    CoreUi[core/ui/FeatureLegoPlugin + shared UI] --> LibraryPlugin
+    CoreUi[core/ui/SurfacePlugin + shared UI] --> LibraryPlugin
     CoreUi --> SettingsPlugin
     CoreUi --> ReaderPlugin
     CoreUi --> EditBookPlugin
@@ -100,19 +99,19 @@ flowchart TD
 
 - Read `docs/app_shell_navigation.md`.
 - Start with `app/AppRoute.kt` for the builder route map.
-- Then read `app/AppFeatureRegistry.kt` and `app/AppNavigation.kt`.
-- Open `app/AppNavigationScreenHost.kt` only when the issue is about plugin mounting or screen transitions.
+- Then read `app/AppSurfaceRegistry.kt` and `app/AppNavigation.kt`.
+- Open `app/AppNavigationScreenHost.kt` only when the issue is about surface mounting or screen transitions.
 
 ### Library
 
 - Read `docs/app_shell_navigation.md`.
-- Start with `feature/library/LibraryLegoPlugin.kt`.
+- Start with `feature/library/LibrarySurfacePlugin.kt`.
 - Then open `feature/library/internal/LibraryFeatureContent.kt` and one focused helper file only.
 
 ### Settings / Persistence
 
 - Read `docs/settings_persistence.md`.
-- Start with `feature/settings/SettingsLegoPlugin.kt` if the issue begins at the builder boundary.
+- Start with `feature/settings/SettingsSurfacePlugin.kt` if the issue begins at the builder boundary.
 - Start with `data/settings/SettingsManagerContracts.kt` for keys/defaults.
 - Then read `data/settings/SettingsManager.kt` for behavior.
 
@@ -126,13 +125,13 @@ flowchart TD
 ### Reader
 
 - Read `docs/reader_screen.md`.
-- Start with `feature/reader/ReaderLegoPlugin.kt`.
+- Start with `feature/reader/ReaderSurfacePlugin.kt`.
 - Then read `feature/reader/ReaderScreen.kt`.
 - Open `ReaderScreenChrome.kt` or `ReaderScreenControls.kt` only for that specific surface.
 
 ### Edit Book UI
 
-- Start with `feature/editbook/EditBookLegoPlugin.kt`.
+- Start with `feature/editbook/EditBookSurfacePlugin.kt`.
 - Then read `feature/editbook/EditBookScreen.kt`.
 - Then read `docs/epub_parsing.md` if the task touches EPUB mutation behavior.
 
@@ -144,3 +143,5 @@ flowchart TD
 ## Rebuild
 
 Run `python scripts/check_graph_staleness.py --rebuild` after meaningful documentation or structural changes.
+
+The canonical graph corpus is production and navigation focused. It follows `src/main` ownership plus the repo-owned Graphify workflow scripts, and it excludes tests, logs, generated output, and continuity docs such as `docs/agent_memory/`.

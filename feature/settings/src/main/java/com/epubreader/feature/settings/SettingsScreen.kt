@@ -223,6 +223,12 @@ fun SettingsScreen(
     BackHandler(enabled = activeSection != null) {
         activeSection = null
     }
+
+    BackHandler(
+        enabled = activeSection == null && editorSession == null && themeToDelete == null,
+    ) {
+        onBack()
+    }
 }
 
 @Composable

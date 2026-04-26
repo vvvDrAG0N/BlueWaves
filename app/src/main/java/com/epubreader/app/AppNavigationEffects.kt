@@ -13,15 +13,16 @@ import androidx.compose.ui.graphics.luminance
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.epubreader.Screen
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.ui.ShellChromeSpec
+import com.epubreader.core.ui.SurfaceId
+import com.epubreader.feature.library.LibrarySurfacePlugin
 
 @Composable
 internal fun AppNavigationSideEffects(
     view: View,
     globalSettings: GlobalSettings,
-    currentScreen: Screen,
+    currentSurfaceId: SurfaceId,
     chromeSpec: ShellChromeSpec,
 ) {
     LaunchedEffect(globalSettings.hapticFeedback) {
@@ -43,7 +44,7 @@ internal fun AppNavigationSideEffects(
         }
     }
 
-    LaunchedEffect(currentScreen, globalSettings.showSystemBar, resumeTrigger, isLightAppTheme, chromeSpec) {
+    LaunchedEffect(currentSurfaceId, globalSettings.showSystemBar, resumeTrigger, isLightAppTheme, chromeSpec) {
         val window = (view.context as? Activity)?.window ?: return@LaunchedEffect
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
 
@@ -53,7 +54,7 @@ internal fun AppNavigationSideEffects(
 
             if (globalSettings.showSystemBar) {
                 windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
-            } else if (currentScreen == Screen.Library) {
+            } else if (currentSurfaceId == LibrarySurfacePlugin.surfaceId) {
                 windowInsetsController.systemBarsBehavior =
                     WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())

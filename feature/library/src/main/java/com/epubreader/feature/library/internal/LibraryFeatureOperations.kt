@@ -179,7 +179,7 @@ private fun findExistingBook(
     return books.find { it.id == bookId }
 }
 
-private fun repairProgressAfterBookEdit(
+internal fun repairProgressAfterBookEdit(
     previousProgress: BookProgress,
     originalSpineHrefs: List<String>,
     updatedSpineHrefs: List<String>,

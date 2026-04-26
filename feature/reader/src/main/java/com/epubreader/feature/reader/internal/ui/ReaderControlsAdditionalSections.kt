@@ -60,6 +60,8 @@ internal fun ReaderReadingControlsSection(
                 isReaderUI = true,
                 isSystemBarVisible = settings.showSystemBar,
                 showHeader = false,
+                primaryColor = themeColors.primary,
+                onSurfaceColor = themeColors.foreground,
             )
         }
     }

@@ -1,6 +1,28 @@
-# Keep the architecture graph focused on production code and real entry points.
-build.gradle.kts
-settings.gradle.kts
-app/src/test/**
-app/src/androidTest/**
-scripts/rebuild_graphify.py
+# Mirror the allowlist-first graph corpus used by scripts/graph_corpus.py.
+.agents/**
+.codex/**
+.gemini/**
+.gradle/**
+.idea/**
+.kotlin/**
+.obsidian/**
+build/**
+docs/agent_memory/**
+docs/legacy/**
+graphify-out/**
+logs/**
+scripts/__pycache__/**
+scripts/reader_lag_trace_config.pbtxt
+scripts/run_book_open_close_release_live.ps1
+scripts/run_reader_lag_import_matrix.ps1
+scripts/run_reader_lag_release_live.ps1
+scripts/run_reader_lag_trace_matrix.ps1
+scripts/run_reader_lag_two_book_reset.ps1
+scripts/run_theme_perf_flagged_trace.ps1
+scripts/run_theme_perf_release_live.ps1
+scripts/summarize_reader_lag_trace.py
+scripts/update_protocol.py
+temps/**
+**/build/**
+**/src/test/**
+**/src/androidTest/**

@@ -15,39 +15,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DataUsage
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FileDownload
-import androidx.compose.material.icons.filled.FileUpload
-import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
@@ -57,12 +36,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.epubreader.core.model.CustomTheme
-import com.epubreader.core.model.CustomThemeIdPrefix
-import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.ThemePalette
-import com.epubreader.data.settings.SettingsManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 internal data class SpecimenGeometry(
     val lineHeight: Dp,
@@ -89,110 +63,6 @@ internal fun buildSpecimenGeometry(
         fontSize = fontSize.sp,
         scale = scale,
     )
-}
-
-@Composable
-internal fun ThemeControlHub(
-    currentTheme: CustomTheme?,
-    getSysFg: () -> Color,
-    getPrimary: () -> Color,
-    onCreate: () -> Unit,
-    onData: () -> Unit,
-    onModify: () -> Unit,
-    onDelete: () -> Unit,
-    onExport: () -> Unit,
-    onGallery: () -> Unit,
-) {
-    val isCustom = currentTheme?.id?.startsWith(CustomThemeIdPrefix) == true
-    var showDataMenu = remember { androidx.compose.runtime.mutableStateOf(false) }
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        HubButton(
-            icon = Icons.Default.Add,
-            label = "Create",
-            getSysFg = getSysFg,
-            getPrimary = getPrimary,
-            testTag = "create_custom_theme_button",
-        ) {
-            onCreate()
-        }
-
-        Box {
-            HubButton(Icons.Default.DataUsage, "Data", getSysFg, getPrimary) {
-                showDataMenu.value = true
-            }
-            DropdownMenu(expanded = showDataMenu.value, onDismissRequest = { showDataMenu.value = false }) {
-                DropdownMenuItem(
-                    text = { Text("Import Themes") },
-                    onClick = { showDataMenu.value = false; onData() },
-                    leadingIcon = { Icon(Icons.Default.FileDownload, null) },
-                )
-                if (isCustom) {
-                    DropdownMenuItem(
-                        text = { Text("Export This Theme") },
-                        onClick = { showDataMenu.value = false; onExport() },
-                        leadingIcon = { Icon(Icons.Default.FileUpload, null) },
-                    )
-                }
-            }
-        }
-
-        HubButton(
-            icon = Icons.Default.Edit,
-            label = "Modify",
-            getSysFg = getSysFg,
-            getPrimary = getPrimary,
-            enabled = isCustom,
-        ) {
-            onModify()
-        }
-
-        HubButton(Icons.Default.GridView, "Gallery", getSysFg, getPrimary) { onGallery() }
-    }
-}
-
-@Composable
-private fun HubButton(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    getSysFg: () -> Color,
-    getPrimary: () -> Color,
-    enabled: Boolean = true,
-    testTag: String? = null,
-    onClick: () -> Unit,
-) {
-    val alpha = if (enabled) 0.8f else 0.2f
-    val labelAlpha = if (enabled) 0.4f else 0.15f
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        IconButton(
-            onClick = onClick,
-            enabled = enabled,
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .then(testTag?.let { Modifier.testTag(it) } ?: Modifier)
-                .drawBehind {
-                    drawCircle(color = getSysFg().copy(alpha = 0.05f))
-                },
-        ) {
-            Icon(
-                icon,
-                contentDescription = label,
-                tint = getSysFg().copy(alpha = alpha),
-            )
-        }
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            color = getSysFg().copy(alpha = labelAlpha),
-            fontSize = 10.sp,
-        )
-    }
 }
 
 @Composable
@@ -396,128 +266,5 @@ private fun SurfaceMock(p: ThemePalette, isMini: Boolean = false) {
                     .background(Color(p.primary)),
             )
         }
-    }
-}
-
-@Composable
-internal fun TypographySettingsPanel(
-    settings: GlobalSettings,
-    currentFontSize: Int,
-    currentLineHeight: Float,
-    currentPadding: Int,
-    onFontSizeChange: (Float) -> Unit,
-    onLineHeightChange: (Float) -> Unit,
-    onPaddingChange: (Float) -> Unit,
-    onCommitFontSize: () -> Unit,
-    onCommitLineHeight: () -> Unit,
-    onCommitPadding: () -> Unit,
-    settingsManager: SettingsManager,
-    scope: CoroutineScope,
-    getSysFg: () -> Color,
-    getPrimary: () -> Color,
-) {
-    Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text("Typography & Rhythm", style = MaterialTheme.typography.titleMedium, color = getSysFg())
-
-        Column {
-            val fonts = listOf("default", "serif", "sans-serif", "monospace", "karla")
-            val listState = rememberLazyListState(
-                initialFirstVisibleItemIndex = fonts.indexOf(settings.fontType).coerceAtLeast(0),
-            )
-
-            LazyRow(
-                state = listState,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(fonts) { font ->
-                    val isSelected = settings.fontType == font
-                    FilterChip(
-                        selected = isSelected,
-                        onClick = { scope.launch { settingsManager.updateGlobalSettings { it.copy(fontType = font) } } },
-                        label = { Text(font.replaceFirstChar { it.uppercase() }) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = Color.Transparent,
-                            labelColor = getSysFg().copy(alpha = 0.5f),
-                            selectedContainerColor = Color.Transparent,
-                            selectedLabelColor = getPrimary(),
-                        ),
-                        border = FilterChipDefaults.filterChipBorder(
-                            enabled = true,
-                            selected = isSelected,
-                            borderColor = getSysFg().copy(alpha = 0.1f),
-                            selectedBorderColor = getPrimary(),
-                            borderWidth = 1.dp,
-                            selectedBorderWidth = 2.dp,
-                        ),
-                    )
-                }
-            }
-        }
-
-        ControlSlider(
-            label = "Font Size",
-            value = currentFontSize.toFloat(),
-            range = 12f..32f,
-            getSysFg = getSysFg,
-            getPrimary = getPrimary,
-            onValueChange = onFontSizeChange,
-            onValueChangeFinished = onCommitFontSize,
-        )
-
-        ControlSlider(
-            label = "Line Height",
-            value = currentLineHeight,
-            range = 1.0f..2.0f,
-            getSysFg = getSysFg,
-            getPrimary = getPrimary,
-            onValueChange = onLineHeightChange,
-            onValueChangeFinished = onCommitLineHeight,
-        )
-
-        ControlSlider(
-            label = "Padding",
-            value = currentPadding.toFloat(),
-            range = 0f..48f,
-            getSysFg = getSysFg,
-            getPrimary = getPrimary,
-            onValueChange = onPaddingChange,
-            onValueChangeFinished = onCommitPadding,
-        )
-    }
-}
-
-@Composable
-private fun ControlSlider(
-    label: String,
-    value: Float,
-    range: ClosedFloatingPointRange<Float>,
-    getSysFg: () -> Color,
-    getPrimary: () -> Color,
-    onValueChange: (Float) -> Unit,
-    onValueChangeFinished: () -> Unit,
-) {
-    Column {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(label, style = MaterialTheme.typography.labelLarge, color = getSysFg().copy(alpha = 0.7f))
-            Text(
-                if (range.endInclusive > 5f) "${value.toInt()}" else String.format("%.2f", value),
-                style = MaterialTheme.typography.labelMedium,
-                color = getSysFg().copy(alpha = 0.5f),
-            )
-        }
-        Slider(
-            value = value,
-            onValueChange = onValueChange,
-            onValueChangeFinished = onValueChangeFinished,
-            valueRange = range,
-            modifier = Modifier.semantics {
-                contentDescription = "$label Slider"
-            },
-            colors = SliderDefaults.colors(
-                thumbColor = getPrimary(),
-                activeTrackColor = getPrimary(),
-                inactiveTrackColor = getSysFg().copy(alpha = 0.2f),
-            ),
-        )
     }
 }

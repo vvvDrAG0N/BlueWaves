@@ -2001,3 +2001,92 @@ This file is append-only.
   - No blockers. The focused Android slice stayed green after the anchor change, including the nearby paragraph-boundary and paragraph-gap regressions.
 - Suggested next step:
   - Leave `next_steps.md` unchanged and only reopen this lane if the user reports another whitespace-specific selection mismatch on different content.
+
+## 96. 2026-04-26 16:03
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Finish the surface-plugin shell migration hardening pass by closing fallback ownership gaps, containing extension failures, cleaning dead shell leftovers, aligning docs, and re-verifying the registry-driven app path.
+- Area/files: `app/src/main/java/com/epubreader/app/AppRoute.kt`, `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `app/src/main/java/com/epubreader/app/AppNavigationEffects.kt`, `app/src/main/java/com/epubreader/app/AppNavigationScreenHost.kt`, `app/src/main/java/com/epubreader/app/AppNavigationStartupState.kt`, `app/src/main/java/com/epubreader/app/AppSurfaceHost.kt`, `app/src/main/java/com/epubreader/app/AppSurfaceRegistry.kt`, `app/src/test/java/com/epubreader/app/AppSurfaceRegistryTest.kt`, `core/ui/src/main/java/com/epubreader/core/ui/SurfaceExtensions.kt`, `core/ui/src/main/java/com/epubreader/core/ui/SurfaceExtensionRender.kt`, `core/ui/src/test/java/com/epubreader/core/ui/SurfaceExtensionRenderTest.kt`, `data/books/src/main/java/com/epubreader/core/debug/AppLog.kt`, `feature/library/src/main/java/com/epubreader/feature/library/LibrarySurfacePlugin.kt`, `feature/library/src/main/java/com/epubreader/feature/library/LibraryExtensions.kt`, `feature/library/src/main/java/com/epubreader/feature/library/internal/LibraryFeatureContent.kt`, `feature/library/src/main/java/com/epubreader/feature/library/internal/LibraryFeatureExtensions.kt`, `feature/library/src/main/java/com/epubreader/feature/library/internal/LibraryFeatureOperations.kt`, `feature/library/src/test/java/com/epubreader/feature/library/internal/LibraryFeatureExtensionsTest.kt`, `feature/library/src/test/java/com/epubreader/feature/library/internal/LibraryFeatureOperationsTest.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderSurfacePlugin.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderExtensions.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderExtensionHostTest.kt`, renamed built-in `*SurfacePlugin.kt` files, deleted dead app-shell helper/tests, `docs/app_shell_navigation.md`, `docs/project_graph.md`, `docs/architecture.md`, `docs/AI_DEBUG_GUIDE.md`, `docs/test_checklist.md`, `docs/legacy/PDF_review.md`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`, and `graphify-out/`.
+- Action taken:
+  1. Added shell-level resolved-surface fallback handling so unknown surface IDs and invalid route args now resolve to a shell-owned unavailable surface before chrome, startup gating, or host rendering are derived.
+  2. Added shared extension render-containment helpers in `:core:ui` and wired Library/Reader extension rendering through them so extension UI failures are logged and contained locally instead of crashing the shell or surface host.
+  3. Removed dead app-shell migration leftovers (`AppFeatureRegistry`, old app-side navigation helper files/tests, and duplicate wrapper logic) once the new registry-driven path was confirmed to own those responsibilities.
+  4. Renamed the built-in root plugin files/tests from `*LegoPlugin*` to `*SurfacePlugin*` so the code matches the new vocabulary and shell boundary.
+  5. Fixed the remaining test ownership mismatch by moving `repairProgressAfterBookEdit(...)` coverage from the deleted app wrapper layer into `feature/library` beside the live helper that now owns that behavior.
+  6. Refreshed the canonical shell/PDF docs, corrected parked PDF module paths, updated `next_steps.md` with the remaining surface-generalization seams, and rebuilt the graph artifacts after the structural/doc updates.
+- Result:
+  - Invalid routes now fall back at the shell identity/chrome level instead of only rendering a visual fallback after the shell has already committed to the wrong surface metadata.
+  - Library and Reader extension hosts now contain render-time extension failures and keep the rest of the active surface alive.
+  - Dead app-shell wrappers are gone, built-in surface files now reflect the surface-plugin vocabulary, and the remaining edit-progress test coverage lives with the library feature that owns the logic.
+  - Canonical docs now point to the live surface registry path and the parked `feature/pdf-legacy` module, while `next_steps.md` records the still-hard-coded new-surface seams as explicit follow-up instead of hidden drift.
+- Verification:
+  - `.\gradlew.bat :core:ui:testDebugUnitTest --tests "com.epubreader.core.ui.SurfaceExtensionRenderTest" --tests "com.epubreader.core.ui.SurfaceExtensionResolutionTest"`
+  - `.\gradlew.bat :app:testDebugUnitTest --tests "com.epubreader.app.AppSurfaceRegistryTest" --tests "com.epubreader.app.SurfaceRegistryTest" --tests "com.epubreader.app.AppRouteTest"`
+  - `.\gradlew.bat :feature:library:testDebugUnitTest --tests "com.epubreader.feature.library.internal.LibraryFeatureExtensionsTest"`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderExtensionHostTest"`
+  - `.\gradlew.bat :feature:library:testDebugUnitTest --tests "com.epubreader.feature.library.internal.LibraryFeatureOperationsTest"`
+  - `.\gradlew.bat :core:ui:testDebugUnitTest :app:testDebugUnitTest :feature:library:testDebugUnitTest :feature:reader:testDebugUnitTest :feature:editbook:testDebugUnitTest :feature:settings:testDebugUnitTest`
+  - `.\gradlew.bat :app:assembleDebug`
+  - `python scripts/check_graph_staleness.py --rebuild`
+- Blockers:
+  - No product blockers remained after the final broad suite passed. The only outstanding follow-up is architectural: adding a brand-new top-level surface still needs extra app-shell policy wiring beyond a single registry entry.
+- Suggested next step:
+  - Use the `Surface Registry Generalization Follow-Up` in `docs/agent_memory/next_steps.md` if the next phase is to reduce those remaining shell-specific seams.
+
+## 97. 2026-04-26 17:35
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Execute the repo quality uplift program by hardening the graph workflow, refreshing the verification map, standardizing surface-plugin boundary tests, and adding rendered unavailable-state coverage without reopening app architecture work.
+- Area/files: `scripts/graph_corpus.py`, `scripts/check_graph_staleness.py`, `scripts/rebuild_graphify.py`, `.graphifyignore`, `build.gradle.kts`, `docs/project_graph.md`, `docs/test_checklist.md`, `feature/library/src/test/java/com/epubreader/feature/library/LibrarySurfacePluginTest.kt`, `feature/settings/src/test/java/com/epubreader/feature/settings/SettingsSurfacePluginTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSurfacePluginTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSurfacePluginUnavailableTest.kt`, `feature/editbook/src/test/java/com/epubreader/feature/editbook/EditBookSurfacePluginTest.kt`, `feature/editbook/src/test/java/com/epubreader/feature/editbook/EditBookProgressRepairTest.kt`, `feature/editbook/src/androidTest/java/com/epubreader/feature/editbook/EditBookSurfacePluginUnavailableTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderControlsSettingsUpdateTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`, and refreshed `graphify-out/`.
+- Action taken:
+  1. Added a shared `scripts/graph_corpus.py` contract so graph rebuilds and freshness checks now agree on the same `src/main` production corpus, the same repo-owned workflow files, and the same exclusions for tests, logs, generated output, and continuity docs.
+  2. Reworked `.graphifyignore`, `scripts/check_graph_staleness.py`, and `scripts/rebuild_graphify.py` to use that shared contract, then rebuilt the graph so the canonical report and targeted queries route back to repo-owned code instead of `logs/pydeps` noise.
+  3. Added `verifyTestChecklistReferences` at the root Gradle layer, wired it into subproject `check`, and refreshed `docs/test_checklist.md` so the official verification map points at the live surface-plugin and edit-progress seams instead of deleted tests.
+  4. Standardized JVM boundary tests for the top-level surfaces that now own public routing contracts: Reader, Library, Settings, and Edit Book each assert stable `surfaceId` behavior and valid/invalid route decoding, while the old edit-book progress helper coverage moved into its own focused test file.
+  5. Added feature-local Compose instrumentation for Reader and Edit Book unavailable states so missing books, parked PDF-origin flows, and EPUB-only edit gating are now verified at the rendered surface boundary with a back path present.
+  6. Fixed a pre-existing `ReaderControlsSettingsUpdateTest` compile mismatch so the reader Android-test source set compiles against the current `ReaderControls(...)` contract during the new verification sweep.
+- Result:
+  - Graph tooling is now driven by one explicit corpus definition, freshness checks watch the live modular inputs, and the rebuilt report/query flow is repo-navigation focused again.
+  - `docs/test_checklist.md` is current and self-policing through Gradle, which lowers the chance of review drift back to deleted tests.
+  - Every active top-level surface now has a direct JVM contract test, and the highest-risk unavailable-state surfaces also have rendered Android coverage.
+  - The uplift landed without changing `AppNavigation`, `SettingsManager`, `EpubParser`, or the EPUB/PDF product boundary.
+- Verification:
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest --tests com.epubreader.feature.reader.ReaderSurfacePluginTest`
+  - `.\gradlew.bat :feature:library:testDebugUnitTest --tests com.epubreader.feature.library.LibrarySurfacePluginTest`
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest --tests com.epubreader.feature.settings.SettingsSurfacePluginTest`
+  - `.\gradlew.bat :feature:editbook:testDebugUnitTest --tests com.epubreader.feature.editbook.EditBookSurfacePluginTest --tests com.epubreader.feature.editbook.EditBookProgressRepairTest`
+  - `.\gradlew.bat --% :feature:reader:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSurfacePluginUnavailableTest`
+  - `.\gradlew.bat --% :feature:editbook:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.editbook.EditBookSurfacePluginUnavailableTest`
+  - `.\gradlew.bat verifyTestChecklistReferences :app:testDebugUnitTest :feature:library:testDebugUnitTest :feature:settings:testDebugUnitTest :feature:reader:testDebugUnitTest :feature:editbook:testDebugUnitTest assembleDebug`
+  - `python -m py_compile scripts/graph_corpus.py scripts/check_graph_staleness.py scripts/rebuild_graphify.py`
+  - `python scripts/check_graph_staleness.py --rebuild`
+  - `python scripts/check_graph_staleness.py`
+- Blockers:
+  - `.\gradlew.bat checkKotlinFileLineLimit` still fails in the current workspace because four pre-existing oversized files remain above the 500-line repo limit: `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, and `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceVisuals.kt`.
+- Suggested next step:
+  - Pay down the explicit file-size debt in `next_steps.md` so the repo-wide `checkKotlinFileLineLimit` guard can become green again on broad verification runs.
+
+## 98. 2026-04-26 18:28
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Eliminate the remaining 500-line guard failures by splitting the oversized Reader and Settings production/test files into smaller focused units while preserving behavior.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, new `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShellCallbacks.kt`, deleted `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, new `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTestSupport.kt`, `ReaderChapterSelectionHostActionsTest.kt`, `ReaderChapterSelectionHandleLayoutTest.kt`, `ReaderChapterSelectionContentReplacementTest.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceVisuals.kt`, new `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceControlHub.kt`, `SettingsTypographySettingsPanel.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, new `SettingsScreenPersistenceTestBase.kt`, `SettingsScreenThemeEditorPersistenceTest.kt`, `SettingsScreenThemeGalleryPersistenceTest.kt`, `SettingsScreenSectionPersistenceTest.kt`, and updated `SettingsScreenPersistenceTestSupport.kt`.
+- Action taken:
+  1. Re-baselined `.\gradlew.bat checkKotlinFileLineLimit` against the live dirty worktree and confirmed the four remaining offenders were the Reader shell, the large Reader selection-host instrumentation file, the Settings appearance visuals file, and the large Settings persistence instrumentation file.
+  2. Split `ReaderFeatureShell.kt` by extracting chrome-callback assembly into `ReaderFeatureShellCallbacks.kt`, keeping state/effects ownership in the shell while trimming the file below the hard limit.
+  3. Replaced the monolithic `ReaderChapterSelectionHostTest.kt` with three smaller thematic instrumentation classes plus a shared support file so selection action-bar behavior, handle layout behavior, and replacement-content regressions each live in focused files.
+  4. Split `SettingsAppearanceVisuals.kt` into specimen rendering, the appearance control hub, and the typography panel so each visual concern now has its own file instead of one large settings-visuals surface.
+  5. Reworked the large Settings persistence instrumentation class into an appearance-focused core file, a shared base/support layer, and separate theme-editor, theme-gallery, and section-persistence test files.
+  6. Re-ran the line-limit guard and the broad repo verification sweep after integration, then attempted a targeted Reader connected-test rerun for the newly split classes. The emulator was no longer connected, so that optional runtime rerun stopped at a truthful `No connected devices!` failure after androidTest compilation had already passed.
+- Result:
+  - `checkKotlinFileLineLimit` is green again in the main workspace.
+  - The oversized Reader and Settings files were split by responsibility rather than padded or cosmetically edited.
+  - The broad repo verification command is green again after the refactor, so the earlier quality-uplift work no longer has a lingering repo-wide blocker.
+- Verification:
+  - `.\gradlew.bat checkKotlinFileLineLimit :feature:reader:testDebugUnitTest :feature:settings:testDebugUnitTest :feature:reader:compileDebugAndroidTestKotlin :feature:settings:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat checkKotlinFileLineLimit verifyTestChecklistReferences :app:testDebugUnitTest :feature:library:testDebugUnitTest :feature:settings:testDebugUnitTest :feature:reader:testDebugUnitTest :feature:editbook:testDebugUnitTest assembleDebug`
+  - Attempted: `.\gradlew.bat --% :feature:reader:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostActionsTest,com.epubreader.feature.reader.ReaderChapterSelectionHandleLayoutTest,com.epubreader.feature.reader.ReaderChapterSelectionContentReplacementTest`
+- Blockers:
+  - No code blocker remains. The only incomplete verification was the optional Reader connected-test rerun because `adb devices` showed no connected emulator/device at that point.
+- Suggested next step:
+  - If UI confidence is needed for the newly split Reader/Settings instrumentation classes, reconnect an emulator/device and rerun the targeted connected-test slices; otherwise the repo can move on from the file-size debt lane.

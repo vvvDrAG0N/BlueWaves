@@ -26,10 +26,10 @@ import com.epubreader.core.model.BookRepresentation
 import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
-import com.epubreader.core.ui.GlobalSettingsTransform
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import com.epubreader.feature.reader.ReaderBackAction
+import com.epubreader.feature.reader.ReaderResolvedHostExtensions
 import com.epubreader.feature.reader.ReaderSettingsDraft
 import com.epubreader.feature.reader.TocSort
 import com.epubreader.feature.reader.getThemeColors
@@ -54,6 +54,7 @@ internal fun ReaderFeatureShell(
     book: EpubBook,
     settingsManager: SettingsManager,
     parser: EpubParser,
+    hostExtensions: ReaderResolvedHostExtensions,
     onBack: () -> Unit,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -75,6 +76,7 @@ internal fun ReaderFeatureShell(
     var shouldScrollToBottom by remember { mutableStateOf(false) }
     var showControls by remember { mutableStateOf(false) }
     var selectionSessionEpoch by remember(book.id) { mutableIntStateOf(0) }
+    var systemBarRefreshToken by remember(book.id) { mutableIntStateOf(0) }
     var isTextSelectionSessionActive by remember(book.id) { mutableStateOf(false) }
     var isSelectionHandleDragActive by remember(book.id) { mutableStateOf(false) }
     val listState = rememberLazyListState()
@@ -405,6 +407,7 @@ internal fun ReaderFeatureShell(
     ReaderSystemBarEffect(
         showControls = showControls,
         globalSettings = globalSettings,
+        refreshToken = systemBarRefreshToken,
     )
     val chromeState = buildReaderChromeState(
         book = book,
@@ -426,60 +429,29 @@ internal fun ReaderFeatureShell(
         nestedScrollConnection = nestedScrollConnection,
         progressPercentageState = progressPercentageState,
         selectionSessionEpoch = selectionSessionEpoch,
+        overlayHosts = hostExtensions.overlayHosts,
+        toolHosts = hostExtensions.toolHosts,
     )
-    val chromeCallbacks = buildReaderChromeCallbacks(
-        onShowControlsChange = { shouldShow ->
-            if (shouldShow) {
-                invalidateSelectionSession(reason = "showControls")
-            }
-            showControls = shouldShow
-        },
-        onTextSelectionActiveChange = { epoch, isActive ->
-            if (epoch == selectionSessionEpoch) {
-                isTextSelectionSessionActive = isActive
-            } else {
-                logReaderSelectionTransition {
-                    "selection.shell.ignoreActiveCallback staleEpoch=$epoch currentEpoch=$selectionSessionEpoch active=$isActive"
-                }
-            }
-        },
-        onSelectionHandleDragChange = { epoch, isDragging ->
-            if (epoch == selectionSessionEpoch) {
-                isSelectionHandleDragActive = isDragging
-            } else {
-                logReaderSelectionTransition {
-                    "selection.shell.ignoreHandleCallback staleEpoch=$epoch currentEpoch=$selectionSessionEpoch dragging=$isDragging"
-                }
-            }
-        },
-        onClearTextSelection = { invalidateSelectionSession(reason = "chromeClearSelection") },
-        onToggleTocSort = {
-            tocSort = if (tocSort == TocSort.Ascending) TocSort.Descending else TocSort.Ascending
-        },
+    val chromeCallbacks = buildReaderFeatureShellChromeCallbacks(
+        selectionSessionEpoch = selectionSessionEpoch,
+        invalidateSelectionSession = ::invalidateSelectionSession,
+        onShowControlsChange = { showControls = it },
+        onTextSelectionSessionActiveChange = { isTextSelectionSessionActive = it },
+        onSelectionHandleDragActiveChange = { isSelectionHandleDragActive = it },
+        tocSort = tocSort,
+        onTocSortChange = { tocSort = it },
         onReleaseOverscroll = ::releaseOverscroll,
         onSaveAndBack = { scope.launch { saveAndBack() } },
-        onOpenToc = {
-            invalidateSelectionSession(reason = "openToc")
-            scope.launch { drawerState.open() }
-        },
+        onOpenToc = { scope.launch { drawerState.open() } },
         onCloseToc = { scope.launch { drawerState.close() } },
         onLocateCurrentChapterInToc = ::locateCurrentChapterInToc,
         onJumpToChapter = ::jumpToChapter,
         onSelectTocChapter = ::selectTocChapter,
-        onPreviewSettings = { transform ->
-            val previewedSettings = transform(effectiveSettings)
-            settingsDraft = ReaderSettingsDraft.from(previewedSettings)
-        },
-        onPersistSettings = { transform: GlobalSettingsTransform ->
-            val updatedSettings = transform(effectiveSettings)
-            if (
-                settingsDraft != null ||
-                updatedSettings.fontSize != globalSettings.fontSize ||
-                updatedSettings.lineHeight != globalSettings.lineHeight ||
-                updatedSettings.horizontalPadding != globalSettings.horizontalPadding
-            ) {
-                settingsDraft = ReaderSettingsDraft.from(updatedSettings)
-            }
+        effectiveSettings = effectiveSettings,
+        globalSettings = globalSettings,
+        settingsDraft = settingsDraft,
+        onSettingsDraftChange = { settingsDraft = it },
+        onPersistGlobalSettings = { updatedSettings ->
             scope.launch {
                 settingsManager.updateGlobalSettings(updatedSettings)
             }
@@ -487,6 +459,7 @@ internal fun ReaderFeatureShell(
         onNavigatePrev = { navigatePrev(toBottom = false) },
         onNavigateNext = ::navigateNext,
         onMainScrubberDragStart = ::handleMainScrubberDragStart,
+        onLookupSheetDismissed = { systemBarRefreshToken++ },
     )
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         ReaderScreenChrome(

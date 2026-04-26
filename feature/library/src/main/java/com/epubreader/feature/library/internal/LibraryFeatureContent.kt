@@ -18,12 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.epubreader.core.debug.AppLog
 import com.epubreader.core.model.EpubBook
 import com.epubreader.data.parser.EPUB_MIME_TYPE
 import com.epubreader.data.parser.ZIP_COMPRESSED_MIME_TYPE
 import com.epubreader.data.parser.ZIP_MIME_TYPE
+import com.epubreader.feature.library.LibraryExtensionContext
 import com.epubreader.feature.library.LibraryDependencies
 import com.epubreader.feature.library.LibraryEvent
+import com.epubreader.feature.library.LibraryImportHook
 import com.epubreader.feature.library.LibraryRoute
 import com.epubreader.feature.library.internal.ui.LibraryScreen
 import kotlinx.coroutines.Dispatchers
@@ -208,6 +211,28 @@ internal fun LibraryFeatureContent(
         },
         onBookImported = ::applyUpdatedBook,
     )
+    val resolvedHostExtensions = resolveLibraryHostExtensions(
+        importExtensions = dependencies.importExtensions,
+        actionExtensions = dependencies.actionExtensions,
+        decorationExtensions = dependencies.decorationExtensions,
+        context = LibraryExtensionContext(
+            selectedFolderName = selectedFolderName,
+            isBookSelectionMode = isBookSelectionMode,
+            isImportInFlight = asyncState.importInFlight,
+        ),
+        fallbackImportHook = LibraryImportHook(id = "host-default-import") {
+            launchBookImport(arrayOf(EPUB_MIME_TYPE, ZIP_MIME_TYPE, ZIP_COMPRESSED_MIME_TYPE))
+            true
+        },
+    )
+    val libraryScreenSlots = buildLibraryScreenSlots(resolvedHostExtensions)
+    LaunchedEffect(resolvedHostExtensions.failures) {
+        resolvedHostExtensions.failures.forEach { failure ->
+            AppLog.w(AppLog.LIBRARY, failure.cause) {
+                "Library extension failed at ${failure.pointId}: ${failure.extensionId}"
+            }
+        }
+    }
     val libraryMutations = buildLibraryFeatureMutations(
         globalSettings = dependencies.globalSettings,
         haptics = haptics,
@@ -283,7 +308,7 @@ internal fun LibraryFeatureContent(
         selectedBookIds = selectedBookIds,
         globalSettings = dependencies.globalSettings,
         onAddBookClick = {
-            launchBookImport(arrayOf(EPUB_MIME_TYPE, ZIP_MIME_TYPE, ZIP_COMPRESSED_MIME_TYPE))
+            dispatchLibraryImportRequest(resolvedHostExtensions.importHooks)
         },
         onRefreshLibrary = ::refreshLibrary,
         onOpenDrawer = openDrawer,
@@ -359,6 +384,7 @@ internal fun LibraryFeatureContent(
         modifier = modifier,
         state = libraryScreenState,
         actions = libraryScreenActions,
+        slots = libraryScreenSlots,
         selectionBarState = selectionBarState,
         selectionBarActions = selectionBarActions,
         dialogState = dialogState,

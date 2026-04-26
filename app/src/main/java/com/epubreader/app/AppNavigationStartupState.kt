@@ -1,6 +1,7 @@
 package com.epubreader.app
 
-import com.epubreader.Screen
+import com.epubreader.core.ui.SurfaceId
+import com.epubreader.feature.library.LibrarySurfacePlugin
 
 internal enum class StartupPhase {
     WaitingForSettings,
@@ -17,10 +18,10 @@ internal data class AppStartupState(
 }
 
 internal fun resolveStartupPhaseAfterEvaluation(
-    currentScreen: Screen,
+    currentSurfaceId: SurfaceId,
     hasCompletedInitialLibraryRefresh: Boolean = false,
 ): StartupPhase {
-    return if (currentScreen == Screen.Library && !hasCompletedInitialLibraryRefresh) {
+    return if (currentSurfaceId == LibrarySurfacePlugin.surfaceId && !hasCompletedInitialLibraryRefresh) {
         StartupPhase.LoadingLibrary
     } else {
         StartupPhase.Ready
@@ -28,8 +29,8 @@ internal fun resolveStartupPhaseAfterEvaluation(
 }
 
 internal fun shouldRunInitialLibraryRefresh(
-    currentScreen: Screen,
+    currentSurfaceId: SurfaceId,
     startupState: AppStartupState,
 ): Boolean {
-    return currentScreen == Screen.Library && startupState.phase == StartupPhase.LoadingLibrary
+    return currentSurfaceId == LibrarySurfacePlugin.surfaceId && startupState.phase == StartupPhase.LoadingLibrary
 }

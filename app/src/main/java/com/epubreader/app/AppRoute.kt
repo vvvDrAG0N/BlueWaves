@@ -1,27 +1,33 @@
 package com.epubreader.app
 
-import com.epubreader.Screen
+import com.epubreader.core.ui.SurfaceId
+import com.epubreader.feature.editbook.EditBookRouteArgs
+import com.epubreader.feature.editbook.EditBookSurfacePlugin
+import com.epubreader.feature.library.LibrarySurfacePlugin
+import com.epubreader.feature.reader.ReaderRouteArgs
+import com.epubreader.feature.reader.ReaderSurfacePlugin
+import com.epubreader.feature.settings.SettingsSurfacePlugin
 
-internal sealed interface AppRoute {
-    val screen: Screen
+internal data class AppRoute(
+    val surfaceId: SurfaceId,
+    val routeArgs: Any? = null,
+) {
+    companion object {
+        val Library: AppRoute = AppRoute(surfaceId = LibrarySurfacePlugin.surfaceId)
+        val Settings: AppRoute = AppRoute(surfaceId = SettingsSurfacePlugin.surfaceId)
 
-    data object Library : AppRoute {
-        override val screen: Screen = Screen.Library
-    }
+        fun Reader(bookId: String): AppRoute {
+            return AppRoute(
+                surfaceId = ReaderSurfacePlugin.surfaceId,
+                routeArgs = ReaderRouteArgs(bookId = bookId),
+            )
+        }
 
-    data object Settings : AppRoute {
-        override val screen: Screen = Screen.Settings
-    }
-
-    data class Reader(
-        val bookId: String,
-    ) : AppRoute {
-        override val screen: Screen = Screen.Reader
-    }
-
-    data class EditBook(
-        val bookId: String,
-    ) : AppRoute {
-        override val screen: Screen = Screen.EditBook
+        fun EditBook(bookId: String): AppRoute {
+            return AppRoute(
+                surfaceId = EditBookSurfacePlugin.surfaceId,
+                routeArgs = EditBookRouteArgs(bookId = bookId),
+            )
+        }
     }
 }

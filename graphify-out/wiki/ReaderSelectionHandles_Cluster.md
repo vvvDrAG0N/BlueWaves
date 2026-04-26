@@ -1,12 +1,13 @@
 # ReaderSelectionHandles Cluster
 
-> 3 nodes · cohesion 0.67
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
-- **ReaderSelectionHandles.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
+- **ReaderSelectionHandles.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
 - **ReaderSelectionHandle()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
 - **ReaderSelectionHandleLayer()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
+- **ReaderSelectionHandleSemanticsData** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
 
 ## Relationships
 
@@ -18,7 +19,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

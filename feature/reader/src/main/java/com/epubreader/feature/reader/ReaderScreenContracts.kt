@@ -107,6 +107,8 @@ internal data class ReaderChromeState(
     val nestedScrollConnection: NestedScrollConnection,
     val progressPercentageState: State<Float>,
     val selectionSessionEpoch: Int,
+    val overlayHosts: List<ReaderOverlayHost> = emptyList(),
+    val toolHosts: List<ReaderToolHost> = emptyList(),
 )
 
 @Stable
@@ -127,5 +129,6 @@ internal data class ReaderChromeCallbacks(
     val onPersistSettings: (GlobalSettingsTransform) -> Unit,
     val onNavigatePrev: () -> Unit,
     val onNavigateNext: () -> Unit,
-    val onMainScrubberDragStart: () -> Unit
+    val onMainScrubberDragStart: () -> Unit,
+    val onLookupSheetDismissed: () -> Unit = {},
 )

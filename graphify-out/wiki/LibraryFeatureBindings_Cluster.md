@@ -1,14 +1,15 @@
 # LibraryFeatureBindings Cluster
 
-> 8 nodes · cohesion 0.25
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
-- **LibraryFeatureBindings.kt** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
+- **LibraryFeatureBindings.kt** (8 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
 - **buildDialogActions()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
 - **buildDialogState()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
 - **buildFolderDrawerActions()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
 - **buildLibraryScreenActions()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
+- **buildLibraryScreenSlots()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
 - **buildLibraryScreenState()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
 - **buildSelectionBarActions()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
 - **buildSelectionBarState()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureBindings.kt`
@@ -23,7 +24,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
+- EXTRACTED: 16 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

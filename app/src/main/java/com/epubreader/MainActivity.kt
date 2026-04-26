@@ -96,13 +96,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-enum class Screen {
-    Library,
-    Reader,
-    Settings,
-    EditBook,
-}
-
 internal fun appColorScheme(
     theme: String,
     customThemes: List<CustomTheme> = emptyList(),

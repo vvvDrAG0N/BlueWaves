@@ -1,10 +1,10 @@
 # MainActivity Cluster
 
-> 10 nodes · cohesion 0.20
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
-- **MainActivity.kt** (8 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
+- **MainActivity.kt** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
 - **MainActivity** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
 - **appColorScheme()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
 - **averageLuminance()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
@@ -12,7 +12,6 @@
 - **contentColorFor()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
 - **customAppColorScheme()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
 - **.onCreate()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
-- **Screen** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
 - **themedContainer()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\MainActivity.kt`
 
 ## Relationships
@@ -25,7 +24,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 18 (100%)
+- EXTRACTED: 16 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

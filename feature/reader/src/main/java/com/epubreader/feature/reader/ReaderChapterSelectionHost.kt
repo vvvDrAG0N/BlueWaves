@@ -49,6 +49,7 @@ internal fun ReaderChapterSelectionHost(
     selectionSessionEpoch: Int,
     onSelectionActiveChange: (Int, Boolean) -> Unit,
     onSelectionHandleDragChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onLookupSheetDismissed: () -> Unit = {},
     content: @Composable (ReaderSelectionController) -> Unit,
 ) {
     val overlayScrim = remember(settings.theme, settings.customThemes) {
@@ -427,7 +428,6 @@ internal fun ReaderChapterSelectionHost(
         Box(modifier = contentTapDismissModifier) {
             content(selectionController)
         }
-
         if (shouldShowSelectionHandles) {
             ReaderSelectionHandleLayer(
                 startHandle = startHandle,
@@ -441,7 +441,6 @@ internal fun ReaderChapterSelectionHost(
                 onHandleDragEnd = selectionController::finishHandleDrag,
             )
         }
-
         AnimatedVisibility(
             visible = hasUsableSelectionSession,
             enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
@@ -467,11 +466,13 @@ internal fun ReaderChapterSelectionHost(
                 themeColors = themeColors,
                 onCopy = {
                     clipboardManager.setText(AnnotatedString(selectedText))
+                    clearSelection()
                 },
                 onDefine = {
                     if (selectedText.isNotBlank()) {
                         pendingWebLookup = WebLookupAction.Define(selectedText)
                     }
+                    clearSelection()
                 },
                 onTranslate = {
                     if (selectedText.isNotBlank()) {
@@ -480,18 +481,17 @@ internal fun ReaderChapterSelectionHost(
                             targetLanguage = settings.targetTranslationLanguage,
                         )
                     }
+                    clearSelection()
                 },
             )
         }
     }
-
     pendingWebLookup?.let { action ->
         ReaderLookupWebViewBottomSheet(
             url = action.url,
             scrimColor = overlayScrim,
-            onDismiss = { pendingWebLookup = null },
+            onDismiss = { pendingWebLookup = null; onLookupSheetDismissed() },
         )
     }
 }
-
 internal fun shouldClampReaderSelectionDragPointer(dragSource: ReaderSelectionDragSource?): Boolean = dragSource != null

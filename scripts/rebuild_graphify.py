@@ -3,10 +3,10 @@ import re
 import shutil
 import sys
 
+from graph_corpus import count_words, graph_code_files, graph_document_files
 from graphify.analyze import god_nodes, suggest_questions, surprising_connections
 from graphify.build import build_from_json
 from graphify.cluster import cluster, score_all
-from graphify.detect import detect
 from graphify.export import to_json
 from graphify.extract import extract
 from graphify.report import generate
@@ -37,11 +37,13 @@ def build_labels(graph, communities, file_labels):
 
 
 def rebuild(root: Path) -> int:
-    detected = detect(root)
-    code_files = [Path(path) for path in detected["files"]["code"]]
+    code_files = graph_code_files(root)
+    document_files = graph_document_files(root)
     if not code_files:
         print("[graphify] No code files found.")
         return 1
+
+    total_words = sum(count_words(path) for path in code_files + document_files)
 
     extracted = extract(code_files)
     graph = build_from_json(extracted)
@@ -69,12 +71,12 @@ def rebuild(root: Path) -> int:
         {
             "files": {
                 "code": [str(path) for path in code_files],
-                "document": [],
+                "document": [str(path) for path in document_files],
                 "paper": [],
                 "image": [],
             },
-            "total_files": len(code_files),
-            "total_words": detected.get("total_words", 0),
+            "total_files": len(code_files) + len(document_files),
+            "total_words": total_words,
         },
         {"input": 0, "output": 0},
         str(root),

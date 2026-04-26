@@ -8,9 +8,11 @@ Use this guide before changing reader restoration, progress saving, TOC behavior
    - Thin public reader boundary that mounts the internal shell.
 2. `feature/reader/internal/shell/ReaderFeatureShell.kt`
    - State owner and effect coordinator.
-3. `feature/reader/ReaderScreenContracts.kt`
+3. `feature/reader/internal/shell/ReaderFeatureShellCallbacks.kt`
+   - Callback wiring between shell-owned state and `ReaderScreenChrome`.
+4. `feature/reader/ReaderScreenContracts.kt`
    - Contract map and theme helpers.
-4. One focused helper/rendering file only if needed:
+5. One focused helper/rendering file only if needed:
    - `feature/reader/internal/shell/ReaderScreenEffects.kt`
    - `feature/reader/internal/shell/ReaderScreenHelpers.kt`
    - `feature/reader/internal/ui/ReaderScreenChrome.kt`
@@ -24,6 +26,8 @@ Use this guide before changing reader restoration, progress saving, TOC behavior
   - Public feature entry only. It should stay thin.
 - `internal/shell/ReaderFeatureShell.kt`
   - Owns `currentChapterIndex`, `chapterElements`, restoration flags, progress saving, TOC actions, overscroll navigation, controls visibility, and back-layer order.
+- `internal/shell/ReaderFeatureShellCallbacks.kt`
+  - Owns the translation from shell state into `ReaderChromeCallbacks`, including selection-session invalidation rules and settings-preview/persist wiring.
 - `ReaderScreenContracts.kt`
   - Owns reader contract types, theme helpers, and chrome surface contracts.
 - `internal/ui/ReaderScreenChrome.kt`

@@ -2,18 +2,20 @@ package com.epubreader.feature.reader
 
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.click
+import androidx.compose.ui.test.longClick
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.MainActivity
 import com.epubreader.core.model.EpubBook
@@ -87,6 +89,38 @@ class ReaderSystemBarTest {
         assertSystemBarsVisibility(visible = false)
     }
 
+    @Test
+    fun reader_DismissingDefineLookup_RehidesSystemBars() = runBlocking {
+        val book = createTestBook()
+        settingsManager.updateGlobalSettings(
+            GlobalSettings(
+                firstTime = false,
+                showSystemBar = false,
+                selectableText = true,
+            ),
+        )
+
+        openReader(book)
+        waitForReaderContent()
+        assertLookupDismissRehidesSystemBars("Define")
+    }
+
+    @Test
+    fun reader_DismissingTranslateLookup_RehidesSystemBars() = runBlocking {
+        val book = createTestBook()
+        settingsManager.updateGlobalSettings(
+            GlobalSettings(
+                firstTime = false,
+                showSystemBar = false,
+                selectableText = true,
+            ),
+        )
+
+        openReader(book)
+        waitForReaderContent()
+        assertLookupDismissRehidesSystemBars("Translate")
+    }
+
     private fun openReader(book: EpubBook) = runBlocking {
         composeRule.runOnUiThread {
             val settingsManager = SettingsManager(composeRule.activity)
@@ -111,31 +145,90 @@ class ReaderSystemBarTest {
         composeRule.waitForIdle()
     }
 
+    private fun waitForReaderContent() {
+        composeRule.waitUntil(30_000) {
+            composeRule.onAllNodesWithText("Chapter 1", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
+    private fun assertLookupDismissRehidesSystemBars(actionLabel: String) {
+        assertSystemBarsVisibility(visible = false)
+        activateReaderSelection()
+
+        composeRule.onNodeWithText(actionLabel, useUnmergedTree = true).performClick()
+        composeRule.onNodeWithTag("web_lookup_webview", useUnmergedTree = true).assertExists()
+
+        forceSystemBarsVisible()
+        assertSystemBarsVisibility(visible = true)
+
+        dismissLookupSheet()
+        composeRule.waitUntil(10_000) {
+            composeRule.onAllNodesWithTag("web_lookup_webview", useUnmergedTree = true)
+                .fetchSemanticsNodes().isEmpty()
+        }
+
+        assertSystemBarsVisibility(visible = false)
+    }
+
+    private fun activateReaderSelection() {
+        composeRule.waitForIdle()
+        val textNodes = composeRule.onAllNodesWithTag("reader_compose_text_section", useUnmergedTree = true)
+        textNodes[1].performTouchInput {
+                longClick(Offset(x = 60f, y = 32f))
+        }
+
+        composeRule.waitUntil(10_000) {
+            composeRule.onAllNodesWithText("Define", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
+    private fun forceSystemBarsVisible() {
+        composeRule.runOnUiThread {
+            val controller = WindowCompat.getInsetsController(
+                composeRule.activity.window,
+                composeRule.activity.window.decorView,
+            )
+            controller.show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
+    private fun dismissLookupSheet() {
+        pressBack()
+    }
+
     private fun assertSystemBarsVisibility(visible: Boolean) {
         val timeout = 5000L
-        composeRule.waitUntil(timeout) {
-            var success = false
-            composeRule.runOnUiThread {
-                val activity = composeRule.activity
-                val decorView = activity.window.decorView
-                if (!decorView.hasFocus()) {
-                    decorView.requestFocus()
+        var lastSnapshot = "unavailable"
+        try {
+            composeRule.waitUntil(timeout) {
+                var success = false
+                composeRule.runOnUiThread {
+                    val activity = composeRule.activity
+                    val decorView = activity.window.decorView
+                    if (!decorView.hasFocus()) {
+                        decorView.requestFocus()
+                    }
+                    val insets = ViewCompat.getRootWindowInsets(decorView)
+                    lastSnapshot =
+                        if (insets == null) {
+                            "insets=null hasFocus=${decorView.hasFocus()} systemUi=${decorView.systemUiVisibility}"
+                        } else {
+                            val statusVisible = insets.isVisible(WindowInsetsCompat.Type.statusBars())
+                            val navigationVisible = insets.isVisible(WindowInsetsCompat.Type.navigationBars())
+                            val systemVisible = insets.isVisible(WindowInsetsCompat.Type.systemBars())
+                            success = if (visible) statusVisible else !statusVisible
+                            "status=$statusVisible nav=$navigationVisible system=$systemVisible hasFocus=${decorView.hasFocus()} systemUi=${decorView.systemUiVisibility}"
+                        }
                 }
-                val insets = ViewCompat.getRootWindowInsets(decorView)
-                val systemUiVisibility = decorView.systemUiVisibility
-                
-                if (insets != null) {
-                    val statusVisible = insets.isVisible(WindowInsetsCompat.Type.statusBars())
-                    val isImmersive = (systemUiVisibility and android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) != 0 ||
-                                     (systemUiVisibility and android.view.View.SYSTEM_UI_FLAG_FULLSCREEN) != 0
-                    
-                    val reportedMatches = if (visible) statusVisible else !statusVisible
-                    val hiddenByFlags = !visible && isImmersive
-                    
-                    success = reportedMatches || hiddenByFlags
-                }
+                success
             }
-            success
+        } catch (error: Throwable) {
+            throw AssertionError(
+                "Expected system bars visible=$visible within ${timeout}ms; lastSnapshot=$lastSnapshot",
+                error,
+            )
         }
     }
 
@@ -182,7 +275,12 @@ class ReaderSystemBarTest {
                 </ncx>
             """.trimIndent())
             addEntry(zip, "OEBPS/chapter1.xhtml", """
-                <html xmlns="http://www.w3.org/1999/xhtml"><body><h1>Chapter 1</h1><p>Content</p></body></html>
+                <html xmlns="http://www.w3.org/1999/xhtml">
+                  <body>
+                    <h1>Chapter 1</h1>
+                    <p>Scholarship keeps the lookup sheet path realistic for selection testing.</p>
+                  </body>
+                </html>
             """.trimIndent())
         }
 

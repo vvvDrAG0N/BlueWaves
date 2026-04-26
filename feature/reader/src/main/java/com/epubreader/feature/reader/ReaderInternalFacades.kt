@@ -6,6 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.epubreader.core.model.ChapterElement
+import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.ReaderStatusUiState
 import com.epubreader.feature.reader.internal.runtime.epub.ReaderChapterSection as InternalReaderChapterSection
@@ -55,6 +56,7 @@ internal fun ReaderChapterSelectionHost(
     selectionSessionEpoch: Int,
     onSelectionActiveChange: (Int, Boolean) -> Unit,
     onSelectionHandleDragChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onLookupSheetDismissed: () -> Unit = {},
     content: @Composable (
         com.epubreader.feature.reader.internal.runtime.epub.ReaderSelectionController,
     ) -> Unit,
@@ -67,6 +69,7 @@ internal fun ReaderChapterSelectionHost(
         selectionSessionEpoch = selectionSessionEpoch,
         onSelectionActiveChange = onSelectionActiveChange,
         onSelectionHandleDragChange = onSelectionHandleDragChange,
+        onLookupSheetDismissed = onLookupSheetDismissed,
         content = content,
     )
 }
@@ -84,6 +87,7 @@ internal fun ReaderScreenChrome(
 
 @Composable
 internal fun ReaderControls(
+    book: EpubBook,
     settings: GlobalSettings,
     onSettingsChange: (GlobalSettingsTransform) -> Unit,
     onPreviewSettingsChange: ((GlobalSettingsTransform) -> Unit)? = null,
@@ -99,8 +103,10 @@ internal fun ReaderControls(
     progressPercentageState: State<Float>,
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
+    toolHosts: List<ReaderToolHost> = emptyList(),
 ) {
     InternalReaderControls(
+        book = book,
         settings = settings,
         onSettingsChange = onSettingsChange,
         onPreviewSettingsChange = onPreviewSettingsChange,
@@ -116,6 +122,7 @@ internal fun ReaderControls(
         progressPercentageState = progressPercentageState,
         onDismiss = onDismiss,
         isVisible = isVisible,
+        toolHosts = toolHosts,
     )
 }
 
