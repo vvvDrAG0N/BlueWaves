@@ -77,6 +77,7 @@ internal fun ReaderFeatureShell(
     var showControls by remember { mutableStateOf(false) }
     var selectionSessionEpoch by remember(book.id) { mutableIntStateOf(0) }
     var systemBarRefreshToken by remember(book.id) { mutableIntStateOf(0) }
+    var isLookupSheetVisible by remember(book.id) { mutableStateOf(false) }
     var isTextSelectionSessionActive by remember(book.id) { mutableStateOf(false) }
     var isSelectionHandleDragActive by remember(book.id) { mutableStateOf(false) }
     val listState = rememberLazyListState()
@@ -406,7 +407,9 @@ internal fun ReaderFeatureShell(
     }
     ReaderSystemBarEffect(
         showControls = showControls,
+        isLookupSheetVisible = isLookupSheetVisible,
         globalSettings = globalSettings,
+        themeColors = themeColors,
         refreshToken = systemBarRefreshToken,
     )
     val chromeState = buildReaderChromeState(
@@ -459,7 +462,8 @@ internal fun ReaderFeatureShell(
         onNavigatePrev = { navigatePrev(toBottom = false) },
         onNavigateNext = ::navigateNext,
         onMainScrubberDragStart = ::handleMainScrubberDragStart,
-        onLookupSheetDismissed = { systemBarRefreshToken++ },
+        onLookupSheetVisibilityChange = { isLookupSheetVisible = it },
+        onLookupSheetDismissed = { isLookupSheetVisible = false; systemBarRefreshToken++ },
     )
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         ReaderScreenChrome(

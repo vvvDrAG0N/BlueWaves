@@ -136,5 +136,6 @@ internal data class ReaderChromeCallbacks(
     val onNavigatePrev: () -> Unit,
     val onNavigateNext: () -> Unit,
     val onMainScrubberDragStart: () -> Unit,
+    val onLookupSheetVisibilityChange: (Boolean) -> Unit = {},
     val onLookupSheetDismissed: () -> Unit = {},
 )

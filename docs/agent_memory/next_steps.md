@@ -1,5 +1,21 @@
 # Next Steps
 
+## Reader Real-Phone Perf Refresh
+- Goal: Refresh the outdated book-opening and chapter-scrolling performance reports on an actual phone after the later refactors, using fresh release-like measurements before trusting any April conclusions.
+- Why now: The existing reports were useful at the time, but they predate two major refactor rounds. Even if the core reader logic mostly survived, the phone baselines should be revalidated before we keep quoting those numbers.
+- Suggested owner/model: Codex / GPT-5.
+- Starting docs/files: `AGENTS.md`, `docs/project_graph.md`, `graphify-out/GRAPH_REPORT.md`, `docs/test_checklist.md`, `docs/superpowers/plans/2026-04-27-reader-real-phone-perf-refresh.md`, `scripts/run_book_open_close_release_live.ps1`, `scripts/run_reader_lag_release_live.ps1`, `scripts/run_reader_lag_trace_matrix.ps1`, `logs/book-open-close-release-live-20260425-023012/summary.md`, `logs/reader-lag-release-live-20260424-090627/summary.md`, `logs/reader-lag-two-book-reset-20260424-0830-ch11/summary.md`
+- Risks: Reusing stale prepared-state markers, trusting release-live scripts without a selector smoke pass, mixing Theme / Appearance back into the scope, or overreacting to debug-trace artifacts instead of the new release-like phone numbers.
+- Verification target: One fresh release-like phone pass for book opening, one fresh release-like phone pass for chapter scrolling, targeted traces only for flagged cases, and one new portable report that compares the new results against the April baselines.
+
+## Theme Spectrum Picker Spec Review And Plan
+- Goal: Convert the approved Appearance theme-picker redesign into an implementation plan after the user reviews the written spec.
+- Why now: The design choices are now locked in chat and captured in `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, but implementation should stay paused until the user signs off on the written artifact.
+- Suggested owner/model: Codex / GPT-5.
+- Starting docs/files: `AGENTS.md`, `docs/settings_persistence.md`, `docs/test_checklist.md`, `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeStudioComponents.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorSections.kt`
+- Risks: Losing the agreed guided `Picked` versus `Applied` transparency, accidentally expanding scope into theme persistence/model changes, or overcrowding the two-column editor cells with overly verbose color tokens.
+- Verification target: User approval of the spec text first, then a plan file in `docs/superpowers/plans/` that maps each approved requirement to concrete tasks and tests.
+
 ## Reader Selection Reopen Only On Fresh Repro
 - Goal: Keep the reader selectable-text stabilization lane closed unless a fresh content-specific repro appears or the user explicitly asks for a separate physical-device confirmation pass.
 - Why now: The baseline restoration/session gate is green again, the focused 30-test reader selection slice is green, and the real-book emulator walkthrough on `Shadow Slave` confirmed live selection, mirrored handle readability, stable bottom-edge release, and clean deselection without any production reader changes.

@@ -118,6 +118,7 @@ private fun ReaderContentSurface(
                     selectionSessionEpoch = state.selectionSessionEpoch,
                     onSelectionActiveChange = callbacks.onTextSelectionActiveChange,
                     onSelectionHandleDragChange = callbacks.onSelectionHandleDragChange,
+                    onLookupSheetVisibilityChange = callbacks.onLookupSheetVisibilityChange,
                     onLookupSheetDismissed = callbacks.onLookupSheetDismissed,
                 )
             }

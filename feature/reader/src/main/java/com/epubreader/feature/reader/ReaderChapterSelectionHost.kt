@@ -1,15 +1,7 @@
 package com.epubreader.feature.reader.internal.runtime.epub
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -19,7 +11,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -36,7 +27,6 @@ import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.feature.reader.ReaderTheme
 import com.epubreader.feature.reader.readerTapGesture
 import com.epubreader.feature.reader.internal.logReaderSelectionTransition
-import com.epubreader.feature.reader.internal.ui.TextSelectionActionBar
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 
@@ -49,6 +39,7 @@ internal fun ReaderChapterSelectionHost(
     selectionSessionEpoch: Int,
     onSelectionActiveChange: (Int, Boolean) -> Unit,
     onSelectionHandleDragChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onLookupSheetVisibilityChange: (Boolean) -> Unit = {},
     onLookupSheetDismissed: () -> Unit = {},
     content: @Composable (ReaderSelectionController) -> Unit,
 ) {
@@ -70,12 +61,18 @@ internal fun ReaderChapterSelectionHost(
     val selectionState = remember(selectionDocument) { ReaderSelectionState() }
     val layoutRegistry = remember(selectionDocument) { ReaderSelectionLayoutRegistry() }
 
+    fun clearDragTransientState() {
+        rawDragPointerInHost = null
+        resolvedHandleTarget = null
+        isSelectionAutoScrollActive = false
+    }
+
     fun clearSelection() {
         logReaderSelectionTransition {
             "selection.clear active=${selectionState.isActive} usable=${selectionState.hasUsableSelection(selectedTextLength = selectionDocument.extractSelectedText(selectionState.normalizedSelection).length)} epoch=$selectionSessionEpoch docLen=${selectionDocument.totalTextLength}"
         }
         selectionState.clear()
-        rawDragPointerInHost = null; resolvedHandleTarget = null; isSelectionAutoScrollActive = false
+        clearDragTransientState()
     }
 
     fun buildDisabledController(): ReaderSelectionController {
@@ -203,7 +200,7 @@ internal fun ReaderChapterSelectionHost(
 
     fun finishSelectionGesture() {
         selectionState.finishSelectionGesture()
-        rawDragPointerInHost = null; resolvedHandleTarget = null; isSelectionAutoScrollActive = false
+        clearDragTransientState()
     }
 
     fun startHandleDrag(
@@ -228,7 +225,13 @@ internal fun ReaderChapterSelectionHost(
             "selection.drag.end epoch=$selectionSessionEpoch raw=$rawDragPointerInHost pinned=${selectionState.dragPointerInHost} resolved=${resolvedHandleTarget?.documentOffset}"
         }
         selectionState.finishHandleDrag()
-        rawDragPointerInHost = null; resolvedHandleTarget = null; isSelectionAutoScrollActive = false
+        clearDragTransientState()
+    }
+
+    fun selectAll() {
+        val fullChapterRange = resolveReaderSelectAllRange(selectionDocument.totalTextLength) ?: return
+        selectionState.activate(fullChapterRange)
+        clearDragTransientState()
     }
 
     val highlightedRangesBySection = remember(selectionDocument, selectionState.normalizedSelection) {
@@ -247,6 +250,11 @@ internal fun ReaderChapterSelectionHost(
     val selectedText = remember(selectionDocument, normalizedSelection) {
         selectionDocument.extractSelectedText(normalizedSelection)
     }
+    val isFullChapterSelection = normalizedSelection?.let { selection ->
+        selectionDocument.totalTextLength > 0 &&
+            selection.start == 0 &&
+            selection.end == selectionDocument.totalTextLength
+    } == true
     val selectionSessionPhase = selectionState.resolveSessionPhase(selectedTextLength = selectedText.length)
     val hasUsableSelectionSession = selectionSessionPhase != ReaderSelectionSessionPhase.Idle
 
@@ -441,50 +449,39 @@ internal fun ReaderChapterSelectionHost(
                 onHandleDragEnd = selectionController::finishHandleDrag,
             )
         }
-        AnimatedVisibility(
+        ReaderSelectionActionBarOverlay(
             visible = hasUsableSelectionSession,
-            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
-            exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
-            modifier = Modifier
-                .align(if (moveSelectionActionBarToTop) Alignment.TopCenter else Alignment.BottomCenter)
-                .then(
-                    if (moveSelectionActionBarToTop) {
-                        Modifier
-                            .padding(top = 24.dp)
-                            .statusBarsPadding()
-                    } else {
-                        Modifier
-                            .padding(bottom = selectionActionBarBottomPadding)
-                            .navigationBarsPadding()
-                    },
-                )
-                .onGloballyPositioned { coordinates ->
-                    actionBarHeightPx = coordinates.size.height
-                },
-        ) {
-            TextSelectionActionBar(
-                themeColors = themeColors,
-                onCopy = {
-                    clipboardManager.setText(AnnotatedString(selectedText))
-                    clearSelection()
-                },
-                onDefine = {
-                    if (selectedText.isNotBlank()) {
-                        pendingWebLookup = WebLookupAction.Define(selectedText)
-                    }
-                    clearSelection()
-                },
-                onTranslate = {
-                    if (selectedText.isNotBlank()) {
-                        pendingWebLookup = WebLookupAction.Translate(
-                            text = selectedText,
-                            targetLanguage = settings.targetTranslationLanguage,
-                        )
-                    }
-                    clearSelection()
-                },
-            )
-        }
+            moveToTop = moveSelectionActionBarToTop,
+            bottomPadding = selectionActionBarBottomPadding,
+            themeColors = themeColors,
+            copyEnabled = true,
+            selectAllEnabled = true,
+            translateEnabled = !isFullChapterSelection,
+            defineEnabled = !isFullChapterSelection,
+            onHeightChanged = { actionBarHeightPx = it },
+            onCopy = {
+                clipboardManager.setText(AnnotatedString(selectedText))
+                clearSelection()
+            },
+            onSelectAll = ::selectAll,
+            onTranslate = {
+                if (selectedText.isNotBlank()) {
+                    onLookupSheetVisibilityChange(true)
+                    pendingWebLookup = WebLookupAction.Translate(
+                        text = selectedText,
+                        targetLanguage = settings.targetTranslationLanguage,
+                    )
+                }
+                clearSelection()
+            },
+            onDefine = {
+                if (selectedText.isNotBlank()) {
+                    onLookupSheetVisibilityChange(true)
+                    pendingWebLookup = WebLookupAction.Define(selectedText)
+                }
+                clearSelection()
+            },
+        )
     }
     pendingWebLookup?.let { action ->
         ReaderLookupWebViewBottomSheet(

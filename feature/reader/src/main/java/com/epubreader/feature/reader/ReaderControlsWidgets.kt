@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.GTranslate
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -240,9 +241,14 @@ fun KeypadButton(
 @Composable
 internal fun TextSelectionActionBar(
     themeColors: ReaderTheme,
+    copyEnabled: Boolean = true,
+    selectAllEnabled: Boolean = true,
+    translateEnabled: Boolean = true,
+    defineEnabled: Boolean = true,
     onCopy: () -> Unit,
-    onDefine: () -> Unit,
+    onSelectAll: () -> Unit,
     onTranslate: () -> Unit,
+    onDefine: () -> Unit,
 ) {
     Surface(
         modifier = Modifier
@@ -257,9 +263,10 @@ internal fun TextSelectionActionBar(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            TextSelectionActionButton(Icons.Default.ContentCopy, "Copy", themeColors, onCopy)
-            TextSelectionActionButton(Icons.AutoMirrored.Filled.MenuBook, "Define", themeColors, onDefine)
-            TextSelectionActionButton(Icons.Default.GTranslate, "Translate", themeColors, onTranslate)
+            TextSelectionActionButton(Icons.Default.ContentCopy, "Copy", "text_selection_action_copy", themeColors, copyEnabled, onCopy)
+            TextSelectionActionButton(Icons.Default.SelectAll, "Select All", "text_selection_action_select_all", themeColors, selectAllEnabled, onSelectAll)
+            TextSelectionActionButton(Icons.Default.GTranslate, "Translate", "text_selection_action_translate", themeColors, translateEnabled, onTranslate)
+            TextSelectionActionButton(Icons.AutoMirrored.Filled.MenuBook, "Define", "text_selection_action_define", themeColors, defineEnabled, onDefine)
         }
     }
 }
@@ -268,27 +275,32 @@ internal fun TextSelectionActionBar(
 private fun TextSelectionActionButton(
     icon: ImageVector,
     label: String,
+    tag: String,
     themeColors: ReaderTheme,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
+    val contentAlpha = if (enabled) 1f else 0.4f
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .testTag(tag)
+            .graphicsLayer { alpha = contentAlpha }
             .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 8.dp),
     ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = themeColors.foreground,
+            tint = themeColors.foreground.copy(alpha = contentAlpha),
             modifier = Modifier.size(22.dp),
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = themeColors.variantForeground,
+            color = themeColors.variantForeground.copy(alpha = contentAlpha),
             maxLines = 1,
         )
     }

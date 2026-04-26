@@ -17,6 +17,7 @@ internal fun ReaderChapterContent(
     selectionSessionEpoch: Int = 0,
     onSelectionActiveChange: (Int, Boolean) -> Unit = { _, _ -> },
     onSelectionHandleDragChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onLookupSheetVisibilityChange: (Boolean) -> Unit = {},
     onLookupSheetDismissed: () -> Unit = {},
 ) {
     EpubReaderRuntime(
@@ -29,6 +30,7 @@ internal fun ReaderChapterContent(
         selectionSessionEpoch = selectionSessionEpoch,
         onSelectionActiveChange = onSelectionActiveChange,
         onSelectionHandleDragChange = onSelectionHandleDragChange,
+        onLookupSheetVisibilityChange = onLookupSheetVisibilityChange,
         onLookupSheetDismissed = onLookupSheetDismissed,
     )
 }

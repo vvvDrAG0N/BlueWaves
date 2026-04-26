@@ -56,6 +56,7 @@ internal fun ReaderChapterSelectionHost(
     selectionSessionEpoch: Int,
     onSelectionActiveChange: (Int, Boolean) -> Unit,
     onSelectionHandleDragChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onLookupSheetVisibilityChange: (Boolean) -> Unit = {},
     onLookupSheetDismissed: () -> Unit = {},
     content: @Composable (
         com.epubreader.feature.reader.internal.runtime.epub.ReaderSelectionController,
@@ -69,6 +70,7 @@ internal fun ReaderChapterSelectionHost(
         selectionSessionEpoch = selectionSessionEpoch,
         onSelectionActiveChange = onSelectionActiveChange,
         onSelectionHandleDragChange = onSelectionHandleDragChange,
+        onLookupSheetVisibilityChange = onLookupSheetVisibilityChange,
         onLookupSheetDismissed = onLookupSheetDismissed,
         content = content,
     )

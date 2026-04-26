@@ -4,6 +4,7 @@ import android.content.ClipboardManager
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -26,6 +27,9 @@ internal typealias ReaderComposeRule =
 internal fun ReaderComposeRule.setReaderSelectionContent(
     settings: GlobalSettings = GlobalSettings(selectableText = true),
     onSelectionActiveChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onLookupSheetVisibilityChange: (Boolean) -> Unit = {},
+    onLookupSheetDismissed: () -> Unit = {},
+    listState: LazyListState? = null,
     chapterElements: List<ChapterElement> = defaultReaderSelectionChapterElements(),
 ) {
     runOnUiThread {
@@ -34,6 +38,9 @@ internal fun ReaderComposeRule.setReaderSelectionContent(
                 ReaderSelectionTestSurface(
                     settings = settings,
                     onSelectionActiveChange = onSelectionActiveChange,
+                    onLookupSheetVisibilityChange = onLookupSheetVisibilityChange,
+                    onLookupSheetDismissed = onLookupSheetDismissed,
+                    listState = listState,
                     chapterElements = chapterElements,
                 )
             }
@@ -61,6 +68,9 @@ internal fun ReaderComposeRule.requireClipboardManager(): ClipboardManager {
 internal fun ReaderSelectionTestSurface(
     settings: GlobalSettings,
     onSelectionActiveChange: (Int, Boolean) -> Unit = { _, _ -> },
+    onLookupSheetVisibilityChange: (Boolean) -> Unit = {},
+    onLookupSheetDismissed: () -> Unit = {},
+    listState: LazyListState? = null,
     chapterElements: List<ChapterElement> = defaultReaderSelectionChapterElements(),
 ) {
     Box(
@@ -68,14 +78,17 @@ internal fun ReaderSelectionTestSurface(
             .fillMaxSize()
             .testTag("selection_surface"),
     ) {
+        val chapterListState = listState ?: rememberLazyListState()
         ReaderChapterContent(
             settings = settings,
             themeColors = getThemeColors("light"),
-            listState = rememberLazyListState(),
+            listState = chapterListState,
             chapterElements = chapterElements,
             isLoadingChapter = false,
             currentChapterIndex = 0,
             onSelectionActiveChange = onSelectionActiveChange,
+            onLookupSheetVisibilityChange = onLookupSheetVisibilityChange,
+            onLookupSheetDismissed = onLookupSheetDismissed,
         )
     }
 }
@@ -85,4 +98,20 @@ private fun defaultReaderSelectionChapterElements(): List<ChapterElement> {
         ChapterElement.Text("Scholarship", id = "p1"),
         ChapterElement.Text("Reading keeps the selection lego steady.", id = "p2"),
     )
+}
+
+internal fun longReaderSelectionChapterElements(): List<ChapterElement> {
+    return List(18) { index ->
+        ChapterElement.Text(
+            "Paragraph ${index + 1}: " +
+                "Reading keeps the selection lego steady across the full chapter fixture. ".repeat(10).trim(),
+            id = "p${index + 1}",
+        )
+    }
+}
+
+internal fun selectionExpectedTextFor(chapterElements: List<ChapterElement>): String {
+    return chapterElements
+        .filterIsInstance<ChapterElement.Text>()
+        .joinToString(separator = "\n\n") { it.content }
 }

@@ -82,6 +82,7 @@ internal fun buildReaderChromeCallbacks(
     onNavigatePrev: () -> Unit,
     onNavigateNext: () -> Unit,
     onMainScrubberDragStart: () -> Unit,
+    onLookupSheetVisibilityChange: (Boolean) -> Unit = {},
     onLookupSheetDismissed: () -> Unit = {},
 ): ReaderChromeCallbacks {
     return ReaderChromeCallbacks(
@@ -102,6 +103,7 @@ internal fun buildReaderChromeCallbacks(
         onNavigatePrev = onNavigatePrev,
         onNavigateNext = onNavigateNext,
         onMainScrubberDragStart = onMainScrubberDragStart,
+        onLookupSheetVisibilityChange = onLookupSheetVisibilityChange,
         onLookupSheetDismissed = onLookupSheetDismissed,
     )
 }
