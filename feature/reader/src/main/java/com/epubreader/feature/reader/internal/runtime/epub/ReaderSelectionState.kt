@@ -37,11 +37,9 @@ internal class ReaderSelectionState {
         get() = phase == ReaderSelectionSessionPhase.Idle
 
     fun resolveSessionPhase(selectedTextLength: Int): ReaderSelectionSessionPhase {
-        if (!isActive || selectedTextLength <= 0) {
-            return ReaderSelectionSessionPhase.Idle
-        }
         return when {
             draggedHandle != null -> ReaderSelectionSessionPhase.HandleDragging
+            !isActive -> ReaderSelectionSessionPhase.Idle
             phase == ReaderSelectionSessionPhase.GestureSelecting -> ReaderSelectionSessionPhase.GestureSelecting
             else -> ReaderSelectionSessionPhase.ActiveSelection
         }
@@ -124,7 +122,13 @@ internal class ReaderSelectionState {
     }
 
     fun finishHandleDrag() {
+        val shouldClearCollapsedSelection = normalizedSelection?.collapsed == true
         clearDragState()
+        if (shouldClearCollapsedSelection) {
+            selection = null
+            phase = ReaderSelectionSessionPhase.Idle
+            return
+        }
         phase = if (isActive) ReaderSelectionSessionPhase.ActiveSelection else ReaderSelectionSessionPhase.Idle
     }
 

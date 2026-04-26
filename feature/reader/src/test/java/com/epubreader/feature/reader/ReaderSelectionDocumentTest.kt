@@ -2,6 +2,8 @@ package com.epubreader.feature.reader
 
 import androidx.compose.ui.text.TextRange
 import com.epubreader.core.model.ChapterElement
+import com.epubreader.feature.reader.internal.runtime.epub.ReaderSelectionDocument
+import com.epubreader.feature.reader.internal.runtime.epub.ReaderSelectionDocumentSection
 import com.epubreader.feature.reader.internal.runtime.epub.ReaderSelectionParagraphSeparator
 import com.epubreader.feature.reader.internal.runtime.epub.buildReaderChapterSections
 import com.epubreader.feature.reader.internal.runtime.epub.buildReaderSelectionDocument
@@ -72,6 +74,35 @@ class ReaderSelectionDocumentTest {
         assertEquals(
             "Alpha${ReaderSelectionParagraphSeparator}Beta",
             document.extractSelectedText(selection),
+        )
+    }
+
+    @Test
+    fun extractSelectedText_preservesTrailingWhitespaceInsideTheSelectedRange() {
+        val sectionText = "Alpha  "
+        val document = ReaderSelectionDocument(
+            sections = listOf(
+                ReaderSelectionDocumentSection(
+                    sectionId = "text:p1",
+                    sectionIndex = 0,
+                    text = sectionText,
+                    paragraphStartOffsets = listOf(0),
+                    isHeading = false,
+                    documentStart = 0,
+                    documentEnd = sectionText.length,
+                ),
+            ),
+            totalTextLength = sectionText.length,
+        )
+
+        assertEquals(
+            sectionText,
+            document.extractSelectedText(
+                TextRange(
+                    start = 0,
+                    end = sectionText.length,
+                ),
+            ),
         )
     }
 }

@@ -1,20 +1,12 @@
 # Next Steps
 
-## Reader Restoration Suite Follow-Up
-- Goal: Triage and stabilize the remaining reader restoration instrumentation failure that is still red after the selection-session epoch rebuild.
-- Why now: The rebuilt `ReaderScreenOverscrollTest` harness is green again, including the new chapter-flip selection re-arm regression. The broader `:feature:reader:connectedDebugAndroidTest` slice is now blocked only by `ReaderScreenRestorationTest`, so restoration is the last known automated reader debt in this area.
+## Reader Selection Reopen Only On Fresh Repro
+- Goal: Keep the reader selectable-text stabilization lane closed unless a fresh content-specific repro appears or the user explicitly asks for a separate physical-device confirmation pass.
+- Why now: The baseline restoration/session gate is green again, the focused 30-test reader selection slice is green, and the real-book emulator walkthrough on `Shadow Slave` confirmed live selection, mirrored handle readability, stable bottom-edge release, and clean deselection without any production reader changes.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/reader_screen.md`, `docs/ai_mental_model.md`, `docs/test_checklist.md`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenRestorationTest.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenHelpers.kt`
-- Risks: Shipping around broken reopen/restore expectations, blaming the new selection-session work for older restore debt, or "fixing" timing blindly and destabilizing progress persistence.
-- Verification target: Make the focused reader instrumentation slice fully green again, then rerun a real-book reopen/restore matrix.
-
-## Reader Session Core Phone Sign-Off
-- Goal: Confirm on a physical phone that chapter-to-chapter overscroll no longer leaves the reader stuck in a dead invisible selection state.
-- Why now: The epoch-based session rebuild is green in JVM tests, focused instrumentation, and the rebuilt overscroll regression harness. A follow-up patch also fixed the last discovered async content-swap seam where opening and closing controls could “unstick” chapter-change selection. The connected phone was still not visible to `adb` during the final verification pass.
-- Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/reader_screen.md`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenOverscrollTest.kt`
-- Risks: Declaring the session-core rebuild done without the same real-thumb overscroll path that originally reproduced the bug, or missing a physical-device-only gesture quirk.
-- Verification target: On the phone, long-press in chapter A, overscroll to chapter B, immediately long-press fresh text there, then repeat in reverse and after reopening the book without toggling `Selectable Text`.
+- Starting docs/files: `AGENTS.md`, `docs/reader_screen.md`, `docs/test_checklist.md`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenRestorationTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenOverscrollTest.kt`, `logs/reader_qa_select1.png`, `logs/reader_qa_bottom_release_c.png`, `logs/reader_qa_bottom_release_d.png`, `logs/reader_qa_deselect.png`
+- Risks: Reopening the selection lane based on superseded instrumentation assumptions, or retuning stable geometry and handle behavior without a newly reproduced failure.
+- Verification target: If reopened, reproduce the failure first on the exact content path, then rerun only the narrow affected test slice plus one representative emulator reader pass.
 
 ## Builder Plugin Cleanup Follow-Up
 - Goal: Finish retiring the remaining app-side pure helper duplicates now that the live builder routes exclusively through feature lego/plugins.

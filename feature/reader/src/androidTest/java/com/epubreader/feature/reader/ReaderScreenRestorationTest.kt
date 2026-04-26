@@ -72,9 +72,17 @@ class ReaderScreenRestorationTest {
 
         waitUntilDisplayed("Chapter 2 Paragraph 18")
 
-        composeRule.onNodeWithText("Chapter 2 Paragraph 18").assertIsDisplayed()
+        composeRule.onNodeWithText(
+            "Chapter 2 Paragraph 18",
+            substring = true,
+            useUnmergedTree = true,
+        ).assertIsDisplayed()
         check(
-            composeRule.onAllNodesWithText("Chapter 1 Paragraph 0")
+            composeRule.onAllNodesWithText(
+                "Chapter 1 Paragraph 0",
+                substring = true,
+                useUnmergedTree = true,
+            )
                 .fetchSemanticsNodes().isEmpty(),
         ) { "Reader loaded the wrong chapter content." }
     }
@@ -82,7 +90,11 @@ class ReaderScreenRestorationTest {
     private fun waitUntilDisplayed(text: String, timeoutMillis: Long = 15_000) {
         composeRule.waitUntil(timeoutMillis) {
             try {
-                composeRule.onNodeWithText(text).assertIsDisplayed()
+                composeRule.onNodeWithText(
+                    text,
+                    substring = true,
+                    useUnmergedTree = true,
+                ).assertIsDisplayed()
                 true
             } catch (_: AssertionError) {
                 false

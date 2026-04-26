@@ -1,6 +1,6 @@
 # text_format Cluster
 
-> 157 nodes · cohesion 0.03
+> 149 nodes · cohesion 0.03
 
 ## Key Concepts
 
@@ -24,12 +24,12 @@
 - **._SkipField()** (8 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\text_format.py`
 - **._SkipFieldMessage()** (8 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\text_format.py`
 - **._SkipRepeatedFieldValue()** (8 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\text_format.py`
-- **Exception** (7 connections)
 - **._ConsumeAnyTypeUrl()** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\text_format.py`
 - **._ParseOrMerge()** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\text_format.py`
 - **.PrintField()** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\text_format.py`
 - **.PrintFieldValue()** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\text_format.py`
-- *... and 132 more nodes in this community*
+- **TextWriter** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\logs\_perfetto_py\google\protobuf\text_format.py`
+- *... and 124 more nodes in this community*
 
 ## Relationships
 
@@ -41,7 +41,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 640 (100%)
+- EXTRACTED: 617 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,12 +1,11 @@
 {
   "hooks": {
-    "PreToolUse": [
+    "SessionStart": [
       {
-        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "[ -f graphify-out/graph.json ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"},\"systemMessage\":\"graphify: Knowledge graph exists. Read graphify-out/GRAPH_REPORT.md for god nodes and community structure before searching raw files.\"}' || true"
+            "command": "if (Test-Path 'graphify-out/graph.json') { Write-Output '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\"},\"systemMessage\":\"graphify: Knowledge graph exists. Before broad repo exploration, read graphify-out/GRAPH_REPORT.md and prefer graphify query for architecture/file relationship questions.\"}' }; exit 0"
           }
         ]
       }

@@ -38,6 +38,7 @@ internal fun ReaderSelectableTextSection(
 ) {
     var textLayoutResult by remember(section.sectionId) { mutableStateOf<TextLayoutResult?>(null) }
     var boundsInRoot by remember(section.sectionId) { mutableStateOf<Rect?>(null) }
+    var isSelectionGestureArmed by remember(section.sectionId) { mutableStateOf(false) }
     val currentSelectionController by rememberUpdatedState(selectionController)
 
     fun publishLayoutSnapshot(
@@ -56,9 +57,13 @@ internal fun ReaderSelectableTextSection(
                         y = -controller.hostOriginInRoot.y,
                     ),
                 ),
+                text = section.text,
+                paragraphStartOffsets = section.paragraphStartOffsets,
                 textLayoutResult = layoutResult,
                 textLength = section.text.length,
                 documentStart = section.documentStart,
+                renderedTextTopInSection = layoutResult.renderedTextTopInSection(),
+                renderedTextBottomInSection = layoutResult.renderedTextBottomInSection(),
             ),
         )
     }
@@ -129,12 +134,17 @@ internal fun ReaderSelectableTextSection(
                     publishLayoutSnapshot(latestBoundsInRoot = latestBoundsInRoot)
                 }
                 .then(
-                    if (
-                        selectionController.selectionEnabled &&
-                        selectionController.selectionSessionPhase == ReaderSelectionSessionPhase.Idle
-                    ) {
+                    if (selectionController.selectionEnabled) {
                         Modifier.readerSelectionLongPressGesture(
                             onLongPressStart = { localPosition ->
+                                isSelectionGestureArmed = canStartReaderSelectionAt(
+                                    text = section.text,
+                                    layoutResult = textLayoutResult,
+                                    localPosition = localPosition,
+                                )
+                                if (!isSelectionGestureArmed) {
+                                    return@readerSelectionLongPressGesture
+                                }
                                 publishLayoutSnapshot()
                                 selectionController.startSelectionAt(
                                     sectionId = section.sectionId,
@@ -142,13 +152,21 @@ internal fun ReaderSelectableTextSection(
                                 )
                             },
                             onLongPressDrag = { localPosition ->
+                                if (!isSelectionGestureArmed) {
+                                    return@readerSelectionLongPressGesture
+                                }
                                 publishLayoutSnapshot()
                                 selectionController.updateSelectionGesture(
                                     sectionId = section.sectionId,
                                     localPositionInSection = localPosition,
                                 )
                             },
-                            onLongPressEnd = selectionController::finishSelectionGesture,
+                            onLongPressEnd = {
+                                if (isSelectionGestureArmed) {
+                                    selectionController.finishSelectionGesture()
+                                }
+                                isSelectionGestureArmed = false
+                            },
                         )
                     } else {
                         Modifier
@@ -160,6 +178,31 @@ internal fun ReaderSelectableTextSection(
             },
         )
     }
+}
+
+private fun canStartReaderSelectionAt(
+    text: String,
+    layoutResult: TextLayoutResult?,
+    localPosition: Offset,
+): Boolean {
+    if (text.isEmpty() || layoutResult == null || layoutResult.lineCount == 0) {
+        return false
+    }
+    val lineIndex = layoutResult.getLineForVerticalPosition(localPosition.y)
+    val lineLeft = layoutResult.getLineLeft(lineIndex)
+    val lineRight = layoutResult.getLineRight(lineIndex)
+    val lineTop = layoutResult.getLineTop(lineIndex)
+    val lineBottom = layoutResult.getLineBottom(lineIndex)
+    return localPosition.x in lineLeft..lineRight &&
+        localPosition.y in lineTop..lineBottom
+}
+
+private fun TextLayoutResult.renderedTextTopInSection(): Float {
+    return if (lineCount == 0) 0f else getLineTop(0)
+}
+
+private fun TextLayoutResult.renderedTextBottomInSection(): Float {
+    return if (lineCount == 0) 0f else getLineBottom(lineCount - 1)
 }
 
 private fun Rect.translateBy(offset: Offset): Rect {

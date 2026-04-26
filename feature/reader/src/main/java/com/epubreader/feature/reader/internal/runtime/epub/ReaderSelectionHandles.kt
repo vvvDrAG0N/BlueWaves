@@ -18,9 +18,25 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsPropertyKey
+import androidx.compose.ui.semantics.SemanticsPropertyReceiver
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
+
+internal data class ReaderSelectionHandleSemanticsData(
+    val touchTargetHeightPx: Float,
+    val stemTopYInHandle: Float,
+    val stemBottomYInHandle: Float,
+    val knobCenterYInHandle: Float,
+    val isHidden: Boolean,
+)
+
+internal val ReaderSelectionHandleSemanticsKey =
+    SemanticsPropertyKey<ReaderSelectionHandleSemanticsData>("ReaderSelectionHandleSemantics")
+
+internal var SemanticsPropertyReceiver.readerSelectionHandleSemantics by ReaderSelectionHandleSemanticsKey
 
 @Composable
 internal fun ReaderSelectionHandleLayer(
@@ -28,6 +44,7 @@ internal fun ReaderSelectionHandleLayer(
     endHandle: ReaderSelectionHandleUiState?,
     draggedHandle: ReaderSelectionHandle?,
     dragPointerInHost: Offset?,
+    stemHeightPx: Float,
     color: Color,
     onHandleDragStart: (ReaderSelectionHandle, Offset) -> Unit,
     onHandleDrag: (Offset) -> Unit,
@@ -35,14 +52,17 @@ internal fun ReaderSelectionHandleLayer(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         startHandle?.let { handleState ->
+            val isHidden = draggedHandle == ReaderSelectionHandle.Start
             ReaderSelectionHandle(
                 handleState = handleState.copy(
-                    anchorInHost = if (draggedHandle == ReaderSelectionHandle.Start && dragPointerInHost != null) {
+                    anchorInHost = if (isHidden && dragPointerInHost != null) {
                         dragPointerInHost
                     } else {
                         handleState.anchorInHost
                     },
                 ),
+                hidden = isHidden,
+                stemHeightPx = stemHeightPx,
                 color = color,
                 onHandleDragStart = onHandleDragStart,
                 onHandleDrag = onHandleDrag,
@@ -50,14 +70,17 @@ internal fun ReaderSelectionHandleLayer(
             )
         }
         endHandle?.let { handleState ->
+            val isHidden = draggedHandle == ReaderSelectionHandle.End
             ReaderSelectionHandle(
                 handleState = handleState.copy(
-                    anchorInHost = if (draggedHandle == ReaderSelectionHandle.End && dragPointerInHost != null) {
+                    anchorInHost = if (isHidden && dragPointerInHost != null) {
                         dragPointerInHost
                     } else {
                         handleState.anchorInHost
                     },
                 ),
+                hidden = isHidden,
+                stemHeightPx = stemHeightPx,
                 color = color,
                 onHandleDragStart = onHandleDragStart,
                 onHandleDrag = onHandleDrag,
@@ -70,20 +93,42 @@ internal fun ReaderSelectionHandleLayer(
 @Composable
 private fun ReaderSelectionHandle(
     handleState: ReaderSelectionHandleUiState,
+    hidden: Boolean,
+    stemHeightPx: Float,
     color: Color,
     onHandleDragStart: (ReaderSelectionHandle, Offset) -> Unit,
     onHandleDrag: (Offset) -> Unit,
     onHandleDragEnd: () -> Unit,
 ) {
-    val touchTargetSize = 32.dp
+    val touchTargetWidth = 16.dp
     val density = LocalDensity.current
-    val touchTargetSizePx = with(density) { touchTargetSize.toPx() }
-    val handleTopLeft = Offset(
-        x = handleState.anchorInHost.x - (touchTargetSizePx / 2f),
-        y = handleState.anchorInHost.y - (touchTargetSizePx / 2f),
+    val dimensions = ReaderSelectionHandleDimensions(
+        knobRadiusPx = with(density) { 7.dp.toPx() },
+        stemWidthPx = with(density) { 4.dp.toPx() },
+        stemHeightPx = stemHeightPx,
+        textClearancePx = with(density) { 4.dp.toPx() },
+        minimumTouchTargetWidthPx = with(density) { touchTargetWidth.toPx() },
+        minimumTouchTargetHeightPx = with(density) { 16.dp.toPx() },
     )
-    val latestHandleTopLeft by rememberUpdatedState(handleTopLeft)
-    val latestAnchorInHost by rememberUpdatedState(handleState.anchorInHost)
+    val layout = resolveReaderSelectionHandleLayout(
+        handle = handleState.handle,
+        textAnchorInHost = handleState.anchorInHost,
+        dimensions = dimensions,
+    )
+    val touchTargetWidthPx = layout.touchTargetWidthPx
+    val touchTargetHeightPx = layout.touchTargetHeightPx
+    val touchTargetWidthDp = with(density) { touchTargetWidthPx.toDp() }
+    val touchTargetHeightDp = with(density) { touchTargetHeightPx.toDp() }
+    val dragGeometry = resolveReaderSelectionHandleDragGeometry(
+        textAnchorInHost = handleState.anchorInHost,
+        handleTopLeft = layout.handleTopLeft,
+        visualPickupPointInHandle = Offset(
+            x = layout.handleCenterXInHandle,
+            y = layout.knobCenterYInHandle,
+        ),
+    )
+    val latestDragGeometry by rememberUpdatedState(dragGeometry)
+    val latestHandleTopLeft by rememberUpdatedState(layout.handleTopLeft)
     var pointerInHost by remember(handleState.handle) {
         mutableStateOf(
             Offset(
@@ -92,7 +137,7 @@ private fun ReaderSelectionHandle(
             ),
         )
     }
-    var fingerOffsetFromAnchor by remember(handleState.handle) {
+    var fingerOffsetFromVisualPickup by remember(handleState.handle) {
         mutableStateOf(Offset.Zero)
     }
 
@@ -104,11 +149,20 @@ private fun ReaderSelectionHandle(
                     ReaderSelectionHandle.End -> "reader_selection_handle_end"
                 },
             )
-            .size(touchTargetSize)
+            .semantics {
+                readerSelectionHandleSemantics = ReaderSelectionHandleSemanticsData(
+                    touchTargetHeightPx = layout.touchTargetHeightPx,
+                    stemTopYInHandle = layout.stemTopYInHandle,
+                    stemBottomYInHandle = layout.stemBottomYInHandle,
+                    knobCenterYInHandle = layout.knobCenterYInHandle,
+                    isHidden = hidden,
+                )
+            }
+            .size(width = touchTargetWidthDp, height = touchTargetHeightDp)
             .offset {
                 IntOffset(
-                    x = handleTopLeft.x.roundToInt(),
-                    y = handleTopLeft.y.roundToInt(),
+                    x = layout.handleTopLeft.x.roundToInt(),
+                    y = layout.handleTopLeft.y.roundToInt(),
                 )
             }
             .pointerInput(handleState.handle) {
@@ -118,8 +172,12 @@ private fun ReaderSelectionHandle(
                             x = latestHandleTopLeft.x + localPosition.x,
                             y = latestHandleTopLeft.y + localPosition.y,
                         )
-                        fingerOffsetFromAnchor = fingerPointerInHost - latestAnchorInHost
-                        pointerInHost = latestAnchorInHost
+                        fingerOffsetFromVisualPickup =
+                            fingerPointerInHost - latestDragGeometry.visualPickupPointInHost
+                        pointerInHost = latestDragGeometry.resolveLogicalTextAnchorPointer(
+                            fingerPointerInHost = fingerPointerInHost,
+                            fingerOffsetFromVisualPickup = fingerOffsetFromVisualPickup,
+                        )
                         onHandleDragStart(
                             handleState.handle,
                             pointerInHost,
@@ -130,7 +188,10 @@ private fun ReaderSelectionHandle(
                             x = latestHandleTopLeft.x + localPosition.x,
                             y = latestHandleTopLeft.y + localPosition.y,
                         )
-                        pointerInHost = fingerPointerInHost - fingerOffsetFromAnchor
+                        pointerInHost = latestDragGeometry.resolveLogicalTextAnchorPointer(
+                            fingerPointerInHost = fingerPointerInHost,
+                            fingerOffsetFromVisualPickup = fingerOffsetFromVisualPickup,
+                        )
                         onHandleDrag(pointerInHost)
                     },
                     onDragEnd = onHandleDragEnd,
@@ -138,18 +199,19 @@ private fun ReaderSelectionHandle(
             },
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeColor = color.copy(alpha = 0.45f)
+            val strokeColor = if (hidden) Color.Transparent else color.copy(alpha = 0.45f)
+            val knobColor = if (hidden) Color.Transparent else color
             drawLine(
                 color = strokeColor,
-                start = Offset(x = size.width / 2f, y = size.height * 0.15f),
-                end = Offset(x = size.width / 2f, y = size.height * 0.5f),
-                strokeWidth = 4.dp.toPx(),
+                start = Offset(x = layout.handleCenterXInHandle, y = layout.stemTopYInHandle),
+                end = Offset(x = layout.handleCenterXInHandle, y = layout.stemBottomYInHandle),
+                strokeWidth = dimensions.stemWidthPx,
                 cap = StrokeCap.Round,
             )
             drawCircle(
-                color = color,
-                radius = size.minDimension * 0.22f,
-                center = Offset(size.width / 2f, size.height * 0.72f),
+                color = knobColor,
+                radius = dimensions.knobRadiusPx,
+                center = Offset(layout.handleCenterXInHandle, layout.knobCenterYInHandle),
             )
         }
     }

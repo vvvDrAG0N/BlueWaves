@@ -1494,3 +1494,510 @@ This file is append-only.
   - This closes the controller-refresh seam in instrumentation, but the final confirmation for the original user repro is still a physical-phone overscroll pass because the connected phone was not available to `adb` in this thread.
 - Suggested next step:
   - Re-run the exact physical repro: select text, overscroll to next/previous chapter, immediately long-press new text, and only reopen the wider reader suites if the phone still shows a chapter-change-specific failure.
+
+## 76. 2026-04-25 23:32
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Implement the bottom-tear root fix so downward selection-handle drag no longer depends on a stale off-screen pointer and can be reasoned about separately from the visible tear anchor and the resolved text target.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGeometry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionGeometryTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHandleBehaviorTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+  1. Separated the bottom-drag positions inside `ReaderChapterSelectionHost`: the host now tracks the raw drag pointer, the pinned visible tear anchor, and the resolved visible-text target independently instead of letting one value drive all three responsibilities.
+  2. Moved the bottom-edge math into `ReaderSelectionGeometry.kt` with new helpers for projected visible-text targets and auto-scroll gating. Bottom-edge auto-scroll now only runs when the current frame still resolves to a valid visible text target, and target projection clamps into the visible text bounds rather than blindly falling through to a stale last-visible section.
+  3. Added visible-text-bound resolution in `ReaderSelectionLayoutRegistry` so handle-target projection can use the actual current text field instead of host bounds alone.
+  4. Hardened the host drag lifecycle so clearing or finishing selection also clears the raw pointer, resolved target, and auto-scroll-active state, and added debug-gated transition logging around drag start, drag end, and auto-scroll state flips for future diagnosis without noisy release logging.
+  5. Added pure coverage in `ReaderSelectionGeometryTest` for the new bottom-edge contract, then split the new lower-edge handle behavior regression into `ReaderSelectionHandleBehaviorTest` so the existing host test file stays under the repo's 500-line guard.
+- Result:
+  - The runtime no longer bases downward auto-scroll on a stale pointer alone; a bottom drag frame must still map into valid visible text before the host will keep extending selection.
+  - The visible tear is now treated as a pinned on-screen anchor, while text-target resolution is separately projected into the visible text field, which is the actual root separation the bug needed.
+  - The reader android-test slice now includes stable lower-edge handle coverage without re-growing `ReaderChapterSelectionHostTest.kt` into another monolith.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - The exact “release while bottom auto-scroll is already live” path is still not proven by a robust automated gesture harness. The stable automation now covers the root math and lower-edge drag expansion, but true live-thumb confirmation is still needed for the final feel/sign-off.
+- Suggested next step:
+  - Run a short physical-device pass focused only on end-handle drag near the bottom edge: hold until auto-scroll is visibly active, release, and confirm scrolling stops immediately and the tear never slips under the screen.
+
+## 77. 2026-04-25 23:58
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Replace the regressed bottom-tear attempt with the user-requested safe-band drag model so the visible tear stops before the top and bottom edges and auto-scroll starts from that pinned band instead of from an edge-following tear.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGeometry.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionGeometryTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHostTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHandleBehaviorTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+  1. Switched the host drag model from “visible tear can ride all the way to the host edge” to a true safe-band clamp. `ReaderChapterSelectionHost` now pins the visible tear inside an inner vertical band while keeping the raw finger pointer separately for auto-scroll intent.
+  2. Replaced handle-target resolution in the host so selection now resolves from the pinned tear anchor with the usual hit bias instead of the previous visible-text-bound projection path that regressed top-edge behavior.
+  3. Kept auto-scroll speed on the raw finger pointer, not the pinned tear, so the user can keep pushing upward or downward while the visible tear stays parked safely inside the screen.
+  4. Added pure test coverage for the new safe-band contract in `ReaderSelectionGeometryTest`: the visible tear now clamps early at both the top and bottom instead of reaching the screen edge.
+  5. Re-ran the split Android reader selection slice and kept the new lower-edge handle regression in `ReaderSelectionHandleBehaviorTest` green so the safe-band change does not break selection expansion or chrome behavior again.
+- Result:
+  - The runtime now matches the intended interaction model much more closely: the tear is a pinned on-screen handle, while the finger outside that band only drives scrolling.
+  - The previous regression path that broke top-edge handle scrolling is removed from the live host logic.
+  - The reader host remains under the 500-line guard and the selection behavior test remains split into its own file.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionGeometryTest"`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - The same honest last mile remains: the exact human-finger feel for “hold the tear at the band, keep scrolling, then release” still needs direct device confirmation because emulator-safe regressions do not fully stand in for a real thumb.
+- Suggested next step:
+  - On the phone, drag a handle into the top band and the bottom band, keep pushing with the finger, and confirm the tear stays pinned before the edge while scrolling follows the finger and stops cleanly on release.
+
+## 78. 2026-04-26 01:19
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the raised start-handle sensitivity without changing the lifted visual design, so the left handle no longer jumps selection early while preserving the current custom selection visuals.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandleDragGeometry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGeometry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionGeometryTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHandleBehaviorTest.kt`
+- Action taken:
+  1. Added a pure `ReaderSelectionHandleDragGeometry` helper so the runtime explicitly models the true text anchor, the raised handle's visual pickup point, and the stable offset between them.
+  2. Rewired `ReaderSelectionHandles` to use the visual pickup point as the drag reference instead of the text anchor itself, which keeps the start handle's pickup math aligned with the raised visual handle.
+  3. Removed the old shared handle-drag hit bias from `ReaderSelectionGeometry` and `ReaderChapterSelectionHost`, so handle drags now resolve directly from the already-mapped logical pointer instead of getting an extra upward projection.
+  4. Added pure geometry coverage for the new helper and a focused regression in `ReaderSelectionHandleBehaviorTest` that proves a small real start-handle drag leaves the current selection unchanged while the selection path can still continue changing afterward.
+- Result:
+  - The start handle keeps the same lifted visual placement, but its drag math now keys off the handle the user is actually touching instead of off the underlying text boundary plus a shared bias.
+  - The focused reader geometry and instrumentation slice is green again with explicit start-handle coverage, not just end-handle drag coverage.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionGeometryTest"`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest,com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest'`
+- Blockers:
+  - The remaining honest gap is feel sign-off: the user originally reported sensitivity by thumb feel, so a short manual pass is still the best final confirmation even though the focused automation is green.
+- Suggested next step:
+  - Do one quick emulator or phone pass with the raised left handle and confirm it now feels less eager when nudged toward the text line.
+
+## 79. 2026-04-26 07:40
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Implement the visibility-first reader selection handle redesign so the start handle sits above the selected text, the end handle sits below it, and both handles keep the selected word visually open.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGeometry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionGeometryTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `docs/agent_memory/next_steps.md`
+- Action taken:
+  1. Added shared internal handle-layout primitives so both selection handles now use one knob radius, one stem height, one clearance gap, and mirrored vertical placement around the selected text.
+  2. Removed the old start-only half-stem and oversized lift behavior, then rewired the handle composable to render from the new mirrored layout metrics while preserving the existing drag lifecycle and pickup-point math.
+  3. Normalized handle anchoring in the layout registry so vertical placement now comes from stable cursor/line edges: start handle from the line top and end handle from the line bottom, instead of mixed glyph-box Y values.
+  4. Added red-first geometry tests for stable anchor Y and mirrored handle layout, then updated the Android reader selection test to verify the on-screen start/end knob orientation through handle semantics rather than brittle canvas bounds.
+  5. Updated `docs/agent_memory/next_steps.md` so the remaining follow-up reflects the new visibility-first handle design instead of the superseded raised-start-only tuning task.
+- Result:
+  - Reader selection handles now follow the requested visibility-first shape more closely: start handle above the text, end handle below it, with balanced handle heights and a consistent gap that keeps the selected glyphs readable.
+  - The end-handle floating issue is addressed by anchoring to line-bottom cursor geometry instead of the previous glyph-bottom mix.
+  - The reader test suite now covers both the pure mirrored layout math and the rendered handle orientation on the Android surface.
+- Verification:
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest`
+  - `.\gradlew.bat --% -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - None in automation. The remaining gap is visual/feel sign-off on a real user pass.
+- Suggested next step:
+  - Run one short manual reader pass with single-word and wrapped multi-line selections to confirm the new mirrored handles feel as readable in practice as they do in the focused test slice.
+
+## 80. 2026-04-26 08:25
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Reduce both Reader selectable-text handle stems by 50% in full geometry, including the smaller-font clamp window.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `docs/superpowers/specs/2026-04-26-reader-selection-handle-stem-length-design.md`, `docs/superpowers/plans/2026-04-26-reader-selection-handle-stem-length.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+  1. Wrote and committed a narrow design spec plus implementation plan for the Reader handle stem reduction, then executed the plan with graphify-first context and staged subagent review gates.
+  2. Added a focused Android regression test for `activeSelection_usesHalfHeightStemsForBothSelectionHandles()` and refined it twice so it seeds selection through `ReaderSelectionController`, derives offsets from the rendered section size, and computes expected px through Compose `Density`.
+  3. Halved the host-derived `handleStemHeightPx` in `ReaderChapterSelectionHost.kt` without growing the file past the repo's 500-line cap.
+  4. Followed the final review finding into the small-font path, tightened the regression window to `12sp`, and removed the effective `8.dp` stem-height clamp in `ReaderSelectionHandles.kt` while keeping the separate touch-target minimum intact.
+  5. Re-ran focused JVM and Android verification after the follow-up fix and kept commits limited to docs only because the touched production/test files already had unrelated in-flight workspace edits.
+- Result:
+  - Reader selection handles now use true half-height stems in the active full-geometry path, including the previously masked lower-font-size window.
+  - The host remains the source of the stem-height policy, while the handle renderer no longer overrides that policy with an internal minimum stem clamp.
+  - The Android regression now covers the small-font case that previously escaped the initial implementation.
+- Verification:
+  - `.\gradlew :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionGeometryTest.resolveReaderSelectionHandleLayout_mirrorsTheHandlesAroundTheSelectedText"`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest#activeSelection_usesHalfHeightStemsForBothSelectionHandles"`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostTest"`
+- Blockers:
+  - No automated blockers remain. The only remaining gap is manual feel sign-off because the original request was about handle feel and thumb interaction.
+- Suggested next step:
+  - Do one quick reader drag pass on emulator or device at a smaller font size and confirm the handles feel consistently shorter in practice, not just in semantics/test geometry.
+
+## 81. 2026-04-26 08:31
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Make Reader handle dragging character-granular while preserving the current whole-word initial long-press and whole-word selection-gesture expansion behavior.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHandleBehaviorTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+  1. Added a red-first Android regression in `ReaderSelectionHandleBehaviorTest` that seeds a whole-word selection, then drives the end handle inward through exact host coordinates and expects the range to shrink inside the same word.
+  2. Updated `ReaderChapterSelectionHost.selectionOffsetForResolvedPosition(...)` so `ReaderSelectionDragSource.Handle` now uses `ReaderResolvedSelectionPosition.documentOffset` directly, while `ReaderSelectionDragSource.SelectionGesture` still snaps through `snapReaderSelectionOffsetToWordBoundary(...)`.
+  3. Kept the existing initial word selection path untouched in `startSelectionGesture(...)`, so the initial long-press still selects the entire containing word and the long-press-then-drag gesture remains word-snapped during that gesture phase.
+  4. Re-ran focused Reader JVM and Android verification, including the nearby host/chrome/structure suites, to confirm the drag-granularity split did not regress the existing custom selection stack.
+- Result:
+  - Reader selection now matches the requested split more closely: the first selection still begins as a full word, but once a real handle is being dragged the selection can expand or contract at character granularity inside that same word.
+  - The word-snapped behavior is intentionally preserved for `SelectionGesture`, so the initial gesture path still behaves like the old whole-word expansion flow.
+  - The regression is now covered by an explicit runtime test instead of relying on manual feel alone.
+- Verification:
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest#endHandleDrag_canShrinkSelectionInsideTheOriginalWord'`
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin :feature:reader:testDebugUnitTest --tests 'com.epubreader.feature.reader.ReaderSelectionGeometryTest' :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat :feature:reader:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest,com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderChromeTapBehaviorTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest'`
+- Blockers:
+  - Automation is green, but the remaining honest gap is still live thumb feel: both handles should get a short manual pass to confirm the within-word character drag feels natural in practice.
+- Suggested next step:
+  - Do one quick emulator or phone pass where you long-press a word, drag each handle inside that same word, and confirm handle drags now move by characters while the initial long-press gesture still begins at whole-word granularity.
+
+## 82. 2026-04-26 09:02
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the Reader selection bug where dragging one handle onto the opposite boundary collapsed the range and exited selection mode before the drag could continue across.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionState.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionStateTest.kt`
+- Action taken:
+  1. Added red-first JVM regressions for both exact-overlap directions so a dragged start or end handle can reach the opposite boundary without the session immediately becoming unusable.
+  2. Updated `ReaderSelectionState.resolveSessionPhase(...)` to keep `HandleDragging` active whenever a handle is still being dragged, even if the temporary range is collapsed and currently extracts zero text.
+  3. Updated `ReaderSelectionState.finishHandleDrag()` so releasing on an exact overlap clears the collapsed selection and returns the reader to `Idle`, matching the planned release behavior.
+  4. Tried a new connected overlap regression, found that the public controller path was not deterministic enough for exact-overlap targeting, and removed that noisy test instead of leaving a misleading red runtime case behind.
+  5. Re-ran the focused stable Android selection suite so the runtime reader selection path still has connected-device coverage after the state-machine change.
+- Result:
+  - Reader selection no longer drops out mid-drag when a handle lands exactly on the opposite boundary; the transient zero-width overlap now stays alive long enough for the next drag sample to cross through normally.
+  - Releasing exactly at overlap now exits selection cleanly instead of leaving a collapsed internal selection object behind.
+  - The exact-overlap behavior is covered deterministically at the JVM state-machine level, while existing stable Android handle tests remain green for runtime safety.
+- Verification:
+  - `.\gradlew :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionStateTest"`
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest"`
+- Blockers:
+  - No automated blockers remain. The only honest gap is a manual reader pass if the user wants thumb-feel confirmation for this exact crossover case.
+- Suggested next step:
+  - In emulator or on device, drag the right handle onto and past the left boundary once to confirm the session now stays open during the crossover and only exits if you release exactly on the overlap.
+
+## 83. 2026-04-26 10:03
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Keep Reader selection alive when a dragged handle crosses past exact overlap into a temporary whitespace-only range, instead of clearing the session before the user reaches the word on the other side.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionSessionRules.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHostLayoutRules.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionSessionRulesTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added a red-first JVM rule test for the new failure path so an active handle drag can keep a non-collapsed but blank selection alive while it is crossing a separator, while still clearing that same blank selection after release.
+  2. Extracted `shouldClearReaderStaleSelection(...)` into a small runtime helper and changed `ReaderChapterSelectionHost` to skip the stale-selection clear path whenever `selectionState.isHandleDragActive` is true.
+  3. Kept `ReaderSelectionDocument.extractSelectedText(...)` unchanged, so copy/output behavior still uses trimmed extracted text and only the drag-time invalidation rule changed.
+  4. Extracted small pure host layout helpers into `ReaderSelectionHostLayoutRules.kt` so `ReaderChapterSelectionHost.kt` stayed within the repo's hard 500-line limit after the fix.
+  5. Re-ran focused JVM, Android compile, and connected Reader handle verification after the change.
+- Result:
+  - Reader selection now survives the second crossover phase where the dragged handle has moved past exact overlap but is temporarily selecting only whitespace or a separator before reaching the next word.
+  - Blank transient selections are still treated as invalid after release; the special-case protection only applies during an active handle drag.
+  - The host remains within the file-size contract, and the new stale-clear rule has deterministic JVM coverage.
+- Verification:
+  - `.\gradlew :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionSessionRulesTest"`
+  - `.\gradlew :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionStateTest"`
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest"`
+  - `.\gradlew checkKotlinFileLineLimit` (still fails because of pre-existing oversized files outside this change: `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, and `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsAppearanceVisuals.kt`)
+- Blockers:
+  - No blockers in the touched reader files. The only remaining red check is the repo-wide line-limit task caused by unrelated existing oversized files.
+- Suggested next step:
+  - Do one short manual pass dragging a handle across a space or wrapped line break so the user can confirm the session now stays alive through both the exact-overlap point and the separator-crossing phase.
+
+## 84. 2026-04-26 10:17
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Hide the actively dragged Reader selection handle during drag while keeping the opposite handle visible, then let the dragged handle reappear on release at its normal resolved position.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHandleVisibilityTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added a focused Android regression that drives `ReaderSelectionHandleLayer` directly with stable `ReaderSelectionHandleUiState` anchors and toggles `draggedHandle` between `Start`, `End`, and `null`.
+  2. Verified the new regression fails red against the old behavior because the dragged handle still rendered while `draggedHandle` was active.
+  3. Updated `ReaderSelectionHandleLayer(...)` to skip rendering the handle whose identity matches `draggedHandle`, leaving the opposite handle unchanged and avoiding any host, gesture, or geometry changes.
+  4. Re-ran the focused Android test and the existing `ReaderSelectionHandleBehaviorTest` suite to confirm the new render-only visibility rule did not disturb handle drag behavior.
+- Result:
+  - During an active handle drag, only the non-dragged selection handle is rendered.
+  - When the drag ends and `draggedHandle` returns to `null`, the hidden handle reappears through the existing resolved-selection path with no new state machine logic.
+  - The change stays isolated to the selection handle layer and is covered by a deterministic Android regression.
+- Verification:
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleVisibilityTest"`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest"`
+- Blockers:
+  - None in automation.
+- Suggested next step:
+  - Do one quick manual reader drag on emulator or phone to confirm the hidden-active-handle presentation feels cleaner in practice and that the remaining visible handle is enough orientation during drag.
+
+## 85. 2026-04-26 10:32
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Repair the dragged-handle-hide regression where removing the active handle from composition broke handle pickup and caused the drag to fall through into text selection changes underneath.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionHandles.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHandleVisibilityTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Re-investigated the regression before changing code and traced the failure to `ReaderSelectionHandleLayer(...)` removing the active handle node entirely as soon as `draggedHandle` became non-null.
+  2. Confirmed the root-cause seam against `detectReaderHandleDragGestures(...)`: deleting the composable also deletes its live `pointerInput` target, which explains the broken hold and the drag falling through into underlying text behavior.
+  3. Reworked the visibility regression so it now asserts a mounted handle can mark its visuals hidden through semantics while remaining present as a node.
+  4. Updated `ReaderSelectionHandleLayer(...)` to keep both handle nodes mounted, restore the original drag-pointer anchor override for the active handle, and hide only the active handle's drawing by switching its stroke and knob colors to `Color.Transparent`.
+  5. Re-ran the focused visibility regression and the existing `ReaderSelectionHandleBehaviorTest` suite to confirm the repair fixes pickup without reopening drag behavior regressions.
+- Result:
+  - The actively dragged handle is now visually hidden during drag without being removed from composition.
+  - Handle pickup and drag continuity remain intact because the live gesture node and pointer-input path stay mounted.
+  - The repair is covered by a deterministic Android regression that checks hidden-visual state without requiring a mid-drag host integration assertion.
+- Verification:
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleVisibilityTest"`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest"`
+- Blockers:
+  - None in automation.
+- Suggested next step:
+  - Do one quick manual drag of both start and end handles on emulator or phone to confirm the hidden-during-drag presentation now feels correct and no longer causes accidental line expansion or selection drift.
+
+## 86. 2026-04-26 10:46
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Prevent Reader text selection from starting when the user long-presses blank space inside the full-width text section instead of actual laid-out text.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChromeTapBehaviorTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added a focused Android regression in `ReaderChromeTapBehaviorTest` that long-presses the far-right trailing blank area of a short line and asserts selection does not activate.
+  2. Verified the regression fails red against the previous behavior, confirming blank trailing space still resolved to a nearest text offset and started selection.
+  3. Updated `ReaderSelectableTextSection` to arm long-press selection only when the press lands inside a real laid-out text line box, and gated the matching drag/end callbacks behind that same armed state so rejected long-presses do not leak into the gesture-selection path.
+  4. Tightened the first attempt after it proved too strict for normal inline spacing between words; the final hit-test uses `TextLayoutResult` line bounds instead of requiring a direct non-whitespace glyph hit.
+  5. Re-ran the focused reader chrome activation suite plus the handle behavior suite to confirm the new guard blocks blank-margin presses without regressing normal text long-press or handle flows.
+- Result:
+  - Long-pressing empty trailing space no longer starts selection.
+  - Long-pressing real text still starts selection normally, including the existing handle-related flows that begin from long-press on text.
+  - The fix stays local to the initial selectable-text gesture seam and does not change the later selection state machine.
+- Verification:
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChromeTapBehaviorTest"`
+  - `.\gradlew :feature:reader:connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest"`
+- Blockers:
+  - None in automation.
+- Suggested next step:
+  - If you want stricter semantics later, we can decide separately whether inter-word spaces should still count as valid long-press targets or whether activation should be limited all the way down to visible glyph hits only.
+
+## 87. 2026-04-26 11:07
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Harden the Reader long-press selection lifecycle so slight finger drift and recomposition cannot leave the end handle in a stale hidden-drag state.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionGestures.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionGestureLifecycleTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added a focused Android regression file with three guards: plain long-click handle visibility by semantics, slight post-long-press drift visibility for the end handle, and a direct long-press-gesture cancellation scenario that removes the gesture modifier mid-drag.
+  2. Confirmed those new scenarios were already green on the current dirty worktree, so they were kept as stability guards rather than a clean red reproducer for the user-reported intermittency.
+  3. Reworked `readerSelectionLongPressGesture(...)` to use a stable `pointerInput(Unit)` lifetime, read the latest callbacks through `rememberUpdatedState`, and always invoke `onLongPressEnd()` from `finally` so gesture cleanup survives recomposition or modifier removal.
+  4. Updated `ReaderSelectableTextSection` so the long-press gesture modifier stays mounted whenever selectable text is enabled, and moved the `Idle` gate into `onLongPressStart` so an already-started gesture can finish cleanly through recomposition.
+  5. Re-ran the focused reader compile chain, the new gesture lifecycle suite, and the existing handle-visibility suite to confirm the lifecycle hardening did not disturb the intentional hidden-while-dragged presentation.
+- Result:
+  - Reader long-press selection no longer depends on a recomposition-fragile pointer-input lifetime.
+  - Selection-start gating still blocks new sessions outside `Idle`, but active long-press gestures are now allowed to finish their cleanup path cleanly.
+  - The new focused Android regressions now guard both semantics-level handle visibility and gesture-cancellation cleanup.
+- Verification:
+  - `.\gradlew :feature:reader:compileDebugKotlin`
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionGestureLifecycleTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleVisibilityTest" :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - No automation blockers. The original intermittent user repro did not present as a deterministic red test on this worktree, so the fix is justified as lifecycle hardening plus focused regression coverage rather than as a single reproduced failing case.
+- Suggested next step:
+  - Do one short manual selection pass on emulator or phone with a slight post-long-press finger drift to confirm the end handle now feels consistently visible in the exact interaction the user reported.
+
+## 88. 2026-04-26 11:23
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Allow Reader long-press selection to start a new word selection even when another selection is already active, without forcing a manual tap-to-clear first.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionReselectBehaviorTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added a focused Android regression that long-presses one text section to create an active selection, then long-presses a different text section and asserts the old highlight is cleared while the new section becomes selected immediately.
+  2. Verified that regression fails red against the previous behavior, confirming the existing `Idle` gate in `ReaderSelectableTextSection` blocked re-selection while a selection was already active.
+  3. Removed the `selectionSessionPhase == Idle` guard from the long-press start path so the gesture remains attached whenever selectable text is enabled and a fresh long-press can always route into `startSelectionAt(...)`.
+  4. Confirmed no additional production change was needed in `ReaderSelectionState.startSelectionGesture(...)` because it already replaces the active range and clears prior drag state when a new gesture starts.
+  5. Re-ran the new reselect regression plus focused lifecycle and handle-behavior suites to make sure the behavioral change does not reopen the recent long-press cleanup or handle-drag regressions.
+- Result:
+  - Long-pressing different text while a selection is active now starts a new word selection immediately and clears the previous range, matching the expected Chrome/system-style behavior.
+  - The change stays local to the selectable-text gesture gate and does not alter scroll restoration, reader progress, or handle crossover behavior.
+  - The new regression gives us durable coverage for this reselect path so the old tap-to-clear requirement does not slip back in.
+- Verification:
+  - `.\gradlew :feature:reader:compileDebugKotlin`
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionReselectBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionGestureLifecycleTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - None in automation.
+- Suggested next step:
+  - Do one quick manual pass on emulator or phone by long-pressing a second word while selection handles are visible, just to confirm the interaction feels natural around densely packed text and nearby handles.
+
+## 89. 2026-04-26 11:58
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Stop Reader end-handle paragraph-gap drags from jumping into the next paragraph instead of holding selection at the end of the paragraph above.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionParagraphGapResolutionTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added a focused Android regression that captures a real `TextLayoutResult` for a two-paragraph reader section, samples multiple x/y points across the visual paragraph gap, and asserts every sample resolves to the paragraph boundary rather than into the next paragraph body.
+  2. Used that red test to narrow the actual seam on this worktree: the raw separator-line midpoint was already near-correct, but lower points in the same visual gap still let `TextLayoutResult.getOffsetForPosition(...)` drift into later offsets of the next paragraph based on x-position.
+  3. Extended `ReaderVisibleSectionLayout` to carry the section text, then taught `ReaderSelectionLayoutRegistry.resolvePositionInSection(...)` to detect blank paragraph-separator lines and treat the full vertical gap band from that blank line through the next line top as a protected paragraph boundary zone.
+  4. Kept the fix local to the layout resolver and snapshot publisher. No handle rendering, scroll restoration, reader progress, or selection state-machine behavior changed.
+  5. Re-ran the new paragraph-gap regression plus the nearby handle-behavior, gesture-lifecycle, and reselect suites to confirm the resolver change did not regress the recent selection-stack hardening work.
+- Result:
+  - Pointer resolution inside a paragraph gap now stays pinned to the paragraph boundary instead of jumping into the next paragraph body.
+  - The fix stays inside the selection host/layout seam and does not alter rendering or reader-shell behavior.
+  - The new regression now guards the exact paragraph-gap band that previously depended on x-position.
+- Verification:
+  - `.\gradlew :feature:reader:compileDebugKotlin`
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionParagraphGapResolutionTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionGestureLifecycleTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionReselectBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - No automation blockers. One parallel verification attempt hit a Gradle Android-test output lock, so the affected reselect suite was re-run serially and passed.
+- Suggested next step:
+  - Do one quick manual reader pass on emulator or phone with a real paragraph-end drag so the user can confirm the end handle now feels pinned to the last paragraph line instead of wandering toward the next paragraph when held in the gap.
+
+## 90. 2026-04-26 12:28
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Replace the earlier paragraph-gap-only Reader end-handle fix with a seam-aware resolver that keeps paragraph-end selections stable across both in-layout paragraph separators and visible-section gaps.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionParagraphGapResolutionTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Reworked the paragraph-gap regression into a three-part seam suite covering the clarified end-handle case, full same-section seam-band sampling across multiple x/y points, and a new inter-section visible-gap seam case.
+  2. Confirmed the current resolver still failed red at the inter-section seam: a pointer in the gap between two visible text layouts fell back to wrapped offsets inside the previous section instead of resolving to the shared document boundary.
+  3. Replaced the old gap-only resolver in `ReaderSelectionLayoutRegistry` with a broader paragraph-seam detector that treats the full band from the previous content line bottom to the next content line top as a protected boundary zone.
+  4. Added an explicit inter-section seam path in `resolvePositionInVisibleSections(...)` so y-positions between adjacent visible text layouts resolve directly to the next section's document start instead of delegating to nearest-section `getOffsetForPosition(...)`.
+  5. Kept the fix local to the selection layout resolver. No handle rendering, handle geometry, scroll restoration, or reader progress behavior changed.
+- Result:
+  - End-handle dragging now resolves paragraph seams by document boundary instead of by nearest wrapped glyph line.
+  - The clarified regression case is covered both within a merged paragraph layout and across a real gap between separate visible sections.
+  - The earlier paragraph-gap-only fix is effectively superseded by a unified seam-aware resolver.
+- Verification:
+  - `.\gradlew :feature:reader:compileDebugKotlin`
+  - `.\gradlew :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionParagraphGapResolutionTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionGestureLifecycleTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionReselectBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - No automation blockers.
+- Suggested next step:
+  - Do one manual end-handle drag pass on emulator or phone at a real paragraph seam to confirm the visual handle placement still feels correct while the logical selection end stays pinned to the paragraph boundary.
+
+## 91. 2026-04-26 13:10
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Stabilize Reader end-handle drags at merged-paragraph boundaries by replacing whitespace-inferred seam resolution with explicit paragraph metadata and rendered-text bounds.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionDocument.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionParagraphBoundaryBehaviorTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionParagraphGapResolutionTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionReselectBehaviorTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Added explicit `paragraphStartOffsets` to `ReaderSelectionDocumentSection` so merged text sections carry durable paragraph-boundary metadata instead of forcing the layout resolver to infer seams from rendered whitespace.
+  2. Extended `ReaderVisibleSectionLayout` snapshots to publish paragraph starts plus rendered-text top/bottom bounds, allowing the layout registry to distinguish actual glyph content from the padded `Text` composable box.
+  3. Reworked `ReaderSelectionLayoutRegistry` so same-section paragraph seams resolve from explicit paragraph starts and neighboring rendered lines, inter-section seams resolve from rendered content bounds, and out-of-content y positions clamp to section start/end before `getOffsetForPosition(...)` can drift backward.
+  4. Added a host-level Android regression for the real drag path, using a real long-press to start selection and then driving the host handle-drag API through the same live offset-resolution path after direct handle-node touch input proved flaky in instrumentation.
+  5. Updated the isolated seam regression to validate the new metadata-driven resolver and adjusted the reselect test to satisfy the expanded `ReaderSelectionDocumentSection` constructor.
+- Result:
+  - Dragging the end handle into the paragraph boundary band now keeps the previous paragraph fully selected instead of shrinking back to an earlier wrapped line.
+  - Same-section merged paragraphs and inter-section gaps now share one explicit boundary-resolution model based on document seams and rendered content bounds.
+  - The fix stays inside reader selection document/layout runtime code and leaves handle visuals, handle geometry, scroll restoration, and reader progress unchanged.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionParagraphBoundaryBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionParagraphGapResolutionTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionGestureLifecycleTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionReselectBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - No automation blockers after switching the host-level acceptance test away from flaky direct handle-node gestures.
+- Suggested next step:
+  - Do one quick manual pass on emulator or phone against the original book paragraph to confirm the in-app feel now matches the recorded repro and the end handle still looks intentionally placed while the logical end stays pinned at the paragraph boundary.
+
+## 92. 2026-04-26 13:36
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the visual bug where the Reader end handle renders down on the next paragraph even when the selection end is correctly pinned to the paragraph boundary above it.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHandleAnchorBoundaryTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Re-started from the screenshot symptom and treated it as a fresh visual-anchor bug instead of another range-resolution bug.
+  2. Added a focused Android regression that composes a real two-paragraph `TextLayoutResult`, resolves an end-handle anchor at the paragraph boundary, and asserts the anchor stays on the previous paragraph’s last visible line instead of jumping to the next paragraph start.
+  3. Verified that regression failed red with the actual bad geometry: the computed anchor x snapped to the next paragraph start rather than the end of `moving much faster.`.
+  4. Updated `ReaderSelectionLayoutRegistry.resolveHandleAnchor(...)` so upstream anchors backtrack over paragraph-separator newline characters before choosing the visual anchor box and y-line, keeping the end handle tied to the last visible upstream character.
+  5. Re-ran the new anchor regression plus the nearby paragraph-boundary, seam-resolution, handle-behavior, gesture-lifecycle, and reselect suites to make sure the fix stayed surgical.
+- Result:
+  - The end handle’s visual anchor now stays aligned with the previous paragraph’s last visible line when the selection end is the seam before the next paragraph.
+  - The fix is isolated to end-handle anchor placement and does not change selection range snapping, handle rendering style, scroll restoration, or reader progress behavior.
+  - The new regression protects the exact screenshot failure mode so this specific detached-handle bug is covered going forward.
+- Verification:
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleAnchorBoundaryTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionParagraphBoundaryBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionParagraphGapResolutionTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionGestureLifecycleTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionReselectBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - No automation blockers.
+- Suggested next step:
+  - Do one quick manual pass on the original reader paragraph to confirm the visual handle now stays up on the last selected line instead of dropping onto the next paragraph.
+
+## 93. 2026-04-26 13:56
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Keep the Reader selection session alive when the user drags the end handle across the start handle into a whitespace-only range instead of dropping out of selection mode while the highlight still remains.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionState.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionSessionRules.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionStateTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionSessionRulesTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Reproduced the new handle-crossover bug at the logic layer and traced the session drop to `ReaderChapterSelectionHost` deriving visibility from `extractSelectedText(...)`, which trims whitespace selections down to an empty string.
+  2. Wrote the regression first in JVM tests by changing `ReaderSelectionStateTest` to require `ActiveSelection` for a non-collapsed blank extraction and `ReaderSelectionSessionRulesTest` to keep whitespace-only selections after release.
+  3. Verified those tests failed red against the old logic, proving the session state and stale-clear rules were treating a real whitespace range as invalid.
+  4. Updated `ReaderSelectionState.resolveSessionPhase(...)` so session validity follows the actual non-collapsed selection state instead of the extracted text length.
+  5. Updated `ReaderSelectionSessionRules.shouldClearReaderStaleSelection(...)` so released whitespace-only selections are no longer cleared as stale; only truly collapsed released selections qualify.
+  6. Tried a host-level Android regression for the exact one-space drag path, but the instrumentation harness could not reliably land on that microscopic whitespace slice through the live drag geometry, so I removed that flaky experiment rather than leave a knowingly failing test in the tree.
+- Result:
+  - Dragging the end handle past the start into a whitespace-only selection no longer forces the session phase to `Idle` just because the extracted string trims to blank.
+  - The handles and action bar now stay governed by the real selection range instead of clipboard-style trimmed text.
+  - The fix stays surgical in selection session/state logic and does not change handle rendering, drag geometry, scroll restoration, or reader progress.
+- Verification:
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest --tests com.epubreader.feature.reader.ReaderSelectionStateTest --tests com.epubreader.feature.reader.ReaderSelectionSessionRulesTest`
+  - `.\gradlew.bat :feature:reader:compileDebugKotlin`
+  - `.\gradlew.bat :feature:reader:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionGestureLifecycleTest" :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - No code blockers. The only abandoned path was a flaky instrumentation repro that could not reliably hit the exact one-space range.
+- Suggested next step:
+  - Do one manual reader pass on the exact end-handle crossover gesture to confirm the session now stays active all the way through the whitespace step that used to dismiss the handles and action bar.
+
+## 94. 2026-04-26 14:35
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Execute the selectable-text stabilization roadmap by restoring confidence in the Reader restoration/session baseline first, then re-verifying the selection stack on the emulator.
+- Area/files: `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenRestorationTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenOverscrollTest.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`
+- Action taken:
+  1. Reproduced the roadmap's exact baseline failures with focused instrumentation: `ReaderScreenRestorationTest` timed out waiting for an exact paragraph text node, and `ReaderScreenOverscrollTest#overscrollAfterActiveSelection_stillAllowsSelectingTextInTheNewChapter` timed out before the first selection action bar ever appeared.
+  2. Traced both failures back to the same post-selection-refactor seam: the Reader now groups consecutive body paragraphs into larger selectable text sections, but those two older tests still assumed one exact text node per paragraph and a safe long-press at the matched node center.
+  3. Updated the restoration test to assert substring visibility inside grouped section content, and updated the overscroll helper to long-press near the top of the matched grouped section instead of the center so the gesture lands on the requested text.
+  4. Re-ran the two red targets immediately after the test-only fix, confirming both passed and that no reader production code needed to change for this stabilization pass.
+  5. Ran the planned confidence slice on `emulator-5554`: `:feature:reader:testDebugUnitTest` plus a 30-test connected Android slice covering restoration, overscroll/session continuity, selection structure, host behavior, gesture lifecycle, handle anchoring, handle behavior, handle visibility, paragraph-boundary/gap behavior, and reselect behavior.
+  6. Finished with a real-book emulator walkthrough on `Shadow Slave` from the app library. That pass confirmed live long-press selection on actual prose, mirrored visibility-first handles, multi-line selection that kept text visually open, bottom-edge expansion/release that stayed stable across back-to-back screenshots, and tap-to-dismiss clearing the action bar and handles cleanly.
+- Result:
+  - The roadmap's baseline gate is green in this workspace without any reader-shell or selection-runtime production edits.
+  - The only fixes needed were stale instrumentation assumptions after grouped selectable text sections landed.
+  - The broader selection/restoration emulator slice is green again, and the real-book emulator pass confirmed the visible selection behavior on actual content.
+- Verification:
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderScreenRestorationTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderScreenOverscrollTest#overscrollAfterActiveSelection_stillAllowsSelectingTextInTheNewChapter" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderScreenRestorationTest,com.epubreader.feature.reader.ReaderScreenOverscrollTest,com.epubreader.feature.reader.ReaderSelectableTextStructureTest,com.epubreader.feature.reader.ReaderChapterSelectionHostTest,com.epubreader.feature.reader.ReaderSelectionGestureLifecycleTest,com.epubreader.feature.reader.ReaderSelectionHandleAnchorBoundaryTest,com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest,com.epubreader.feature.reader.ReaderSelectionHandleVisibilityTest,com.epubreader.feature.reader.ReaderSelectionParagraphBoundaryBehaviorTest,com.epubreader.feature.reader.ReaderSelectionParagraphGapResolutionTest,com.epubreader.feature.reader.ReaderSelectionReselectBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+  - `.\gradlew.bat :app:installDebug`
+  - Emulator real-book QA artifacts captured under `logs/reader_qa_*.{png,xml,txt}`
+- Blockers:
+  - No product blockers. One parallel rerun attempt hit Gradle connected-test output locking on `utp.0.log.lck`, so the second targeted instrumentation command was rerun serially and passed.
+- Suggested next step:
+  - Only reopen the selection stabilization lane if the user reports a fresh repro on different content or wants a separate physical-device confirmation pass beyond the emulator-accepted contract used here.
+
+## 95. 2026-04-26 14:52
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the mismatch where the Reader end handle visually snaps back to the last visible character after selecting trailing whitespace or a paragraph gap even though the underlying selection range still includes that whitespace.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionLayoutRegistry.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectionDocument.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectionHandleAnchorBoundaryTest.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderSelectionDocumentTest.kt`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Investigated the three requested owner seams and confirmed the handle-drag offset path was already preserving raw whitespace for `ReaderSelectionDragSource.Handle`; `selectionOffsetForResolvedPosition(...)` was not trimming the drag result.
+  2. Traced the visual mismatch to `ReaderSelectionLayoutRegistry.resolveHandleAnchor(...)`, where the upstream end-handle anchor deliberately backtracked over paragraph separators to the previous visible glyph instead of using the true cursor position when the selection actually ended in whitespace.
+  3. Traced the copy mismatch to `ReaderSelectionDocument.extractSelectedText(...)`, which was still trimming each selected substring before joining it, so copied text could not preserve trailing spaces or gap whitespace even when the selected range did.
+  4. Wrote the regressions first: a focused Android anchor test that requires the paragraph-gap end handle to use the whitespace cursor position, and a pure JVM document test that requires selected trailing spaces to survive extraction unchanged.
+  5. Updated the layout registry so the upstream end handle falls back to the true cursor anchor when the selection end is at the end of a section or immediately after whitespace, while keeping the existing previous-glyph anchor behavior for normal visible-character endings.
+  6. Removed the old substring trimming in `extractSelectedText(...)` so the copied selection now preserves the whitespace the user actually selected.
+- Result:
+  - End-handle release now stays aligned with the actual selected whitespace boundary instead of flicking back to the last visible character.
+  - Copy now preserves selected trailing whitespace instead of silently trimming it away before it reaches the clipboard.
+  - The drag-offset seam stayed untouched because it was already correct for per-character handle drags; the fix remained local to anchor resolution and selected-text extraction.
+- Verification:
+  - `.\gradlew.bat :feature:reader:testDebugUnitTest --tests "com.epubreader.feature.reader.ReaderSelectionDocumentTest"`
+  - `.\gradlew.bat "-Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectionHandleAnchorBoundaryTest,com.epubreader.feature.reader.ReaderSelectionParagraphBoundaryBehaviorTest,com.epubreader.feature.reader.ReaderSelectionParagraphGapResolutionTest,com.epubreader.feature.reader.ReaderSelectionHandleBehaviorTest" :feature:reader:connectedDebugAndroidTest`
+- Blockers:
+  - No blockers. The focused Android slice stayed green after the anchor change, including the nearby paragraph-boundary and paragraph-gap regressions.
+- Suggested next step:
+  - Leave `next_steps.md` unchanged and only reopen this lane if the user reports another whitespace-specific selection mismatch on different content.

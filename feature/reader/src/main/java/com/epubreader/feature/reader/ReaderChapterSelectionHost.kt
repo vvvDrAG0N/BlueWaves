@@ -30,6 +30,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.themePaletteSeed
 import com.epubreader.feature.reader.ReaderTheme
@@ -61,6 +62,9 @@ internal fun ReaderChapterSelectionHost(
     var hostSize by remember { mutableStateOf(IntSize.Zero) }
     var actionBarHeightPx by remember { mutableIntStateOf(0) }
     var pendingWebLookup by remember { mutableStateOf<WebLookupAction?>(null) }
+    var rawDragPointerInHost by remember(selectionDocument) { mutableStateOf<Offset?>(null) }
+    var resolvedHandleTarget by remember(selectionDocument) { mutableStateOf<ReaderResolvedSelectionPosition?>(null) }
+    var isSelectionAutoScrollActive by remember(selectionDocument) { mutableStateOf(false) }
 
     val selectionState = remember(selectionDocument) { ReaderSelectionState() }
     val layoutRegistry = remember(selectionDocument) { ReaderSelectionLayoutRegistry() }
@@ -70,6 +74,7 @@ internal fun ReaderChapterSelectionHost(
             "selection.clear active=${selectionState.isActive} usable=${selectionState.hasUsableSelection(selectedTextLength = selectionDocument.extractSelectedText(selectionState.normalizedSelection).length)} epoch=$selectionSessionEpoch docLen=${selectionDocument.totalTextLength}"
         }
         selectionState.clear()
+        rawDragPointerInHost = null; resolvedHandleTarget = null; isSelectionAutoScrollActive = false
     }
 
     fun buildDisabledController(): ReaderSelectionController {
@@ -97,46 +102,44 @@ internal fun ReaderChapterSelectionHost(
         handle: ReaderSelectionHandle,
     ): Int? {
         val section = selectionDocument.sectionById(position.sectionId) ?: return null
-        val snappedLocalOffset = snapReaderSelectionOffsetToWordBoundary(
-            text = section.text,
-            rawOffset = position.localOffset,
-            handle = handle,
-        ).coerceIn(0, section.text.length)
-        return section.documentStart + snappedLocalOffset
-    }
-
-    fun resolveVisibleHandleAnchor(anchorInHost: Offset?): Offset? {
-        val resolvedAnchor = anchorInHost ?: return null
-        if (hostSize.width <= 0 || hostSize.height <= 0) {
-            return resolvedAnchor
-        }
-        val hostWidth = hostSize.width.toFloat()
-        val hostHeight = hostSize.height.toFloat()
-        return resolvedAnchor.takeIf { anchor ->
-            anchor.x in 0f..hostWidth && anchor.y in 0f..hostHeight
+        return when (selectionState.dragSource) {
+            ReaderSelectionDragSource.Handle -> position.documentOffset
+            ReaderSelectionDragSource.SelectionGesture,
+            null,
+            -> {
+                val snappedLocalOffset = snapReaderSelectionOffsetToWordBoundary(
+                    text = section.text,
+                    rawOffset = position.localOffset,
+                    handle = handle,
+                ).coerceIn(0, section.text.length)
+                section.documentStart + snappedLocalOffset
+            }
         }
     }
 
-    fun resolveSelectionTargetPointer(pointerInHost: Offset): Offset {
-        val handleTextHitBiasPx = with(density) { 10.dp.toPx() }
-        return resolveReaderSelectionTargetPointer(
-            pointerInHost = pointerInHost,
-            dragSource = selectionState.dragSource,
-            handleTextHitBiasPx = handleTextHitBiasPx,
-        )
-    }
-
-    fun constrainHandleDragPointer(pointerInHost: Offset): Offset {
-        if (selectionState.dragSource != ReaderSelectionDragSource.Handle) {
-            return pointerInHost
-        }
-        val handleInsetPx = with(density) { 16.dp.toPx() }
-        return clampReaderSelectionHandlePointer(
+    fun constrainHandleDragPointer(pointerInHost: Offset, handle: ReaderSelectionHandle? = selectionState.draggedHandle): Offset {
+        if (!shouldClampReaderSelectionDragPointer(selectionState.dragSource)) return pointerInHost
+        val draggedHandle = handle ?: return pointerInHost
+        val handleInsetPx = with(density) { 16.dp.toPx() }; val edgeZonePx = with(density) { 72.dp.toPx() }; val textClearancePx = with(density) { 4.dp.toPx() }
+        val visualHeightPx = with(density) { 14.dp.toPx() } + with(density) { settings.fontSize.sp.toPx() * 0.5f }
+        return clampReaderSelectionHandlePointerToVisibleSafeArea(
             pointerInHost = pointerInHost,
             hostWidth = hostSize.width.toFloat(),
             hostHeight = hostSize.height.toFloat(),
+            handle = draggedHandle,
             handleInsetPx = handleInsetPx,
+            safeVerticalInsetPx = edgeZonePx,
+            visualHeightPx = visualHeightPx,
+            textClearancePx = textClearancePx,
         )
+    }
+
+    fun resolveDraggedHandleTarget(pointerInHost: Offset): ReaderResolvedSelectionPosition? {
+        val projectedPointer = resolveReaderSelectionTargetPointer(
+            pointerInHost = pointerInHost,
+            dragSource = selectionState.dragSource,
+        )
+        return layoutRegistry.resolvePositionInVisibleSections(projectedPointer)
     }
 
     fun startSelectionGesture(
@@ -162,9 +165,9 @@ internal fun ReaderChapterSelectionHost(
 
     fun updateDraggedHandle(pointerInHost: Offset) {
         val draggedHandle = selectionState.draggedHandle ?: return
-        val resolvedPosition = layoutRegistry.resolvePositionInVisibleSections(
-            resolveSelectionTargetPointer(pointerInHost),
-        ) ?: return
+        val resolvedPosition = resolveDraggedHandleTarget(pointerInHost)
+        resolvedHandleTarget = resolvedPosition
+        if (resolvedPosition == null) return
         val snappedOffset = selectionOffsetForResolvedPosition(
             position = resolvedPosition,
             handle = draggedHandle,
@@ -173,6 +176,7 @@ internal fun ReaderChapterSelectionHost(
     }
 
     fun continueHandleDrag(pointerInHost: Offset) {
+        rawDragPointerInHost = pointerInHost
         val constrainedPointer = constrainHandleDragPointer(pointerInHost)
         selectionState.updateDragPointer(constrainedPointer)
         updateDraggedHandle(constrainedPointer)
@@ -198,19 +202,32 @@ internal fun ReaderChapterSelectionHost(
 
     fun finishSelectionGesture() {
         selectionState.finishSelectionGesture()
+        rawDragPointerInHost = null; resolvedHandleTarget = null; isSelectionAutoScrollActive = false
     }
 
     fun startHandleDrag(
         handle: ReaderSelectionHandle,
         pointerInHost: Offset,
     ) {
-        val constrainedPointer = constrainHandleDragPointer(pointerInHost)
+        rawDragPointerInHost = pointerInHost
+        val constrainedPointer = constrainHandleDragPointer(pointerInHost, handle)
         selectionState.startDraggingHandle(
             handle = handle,
             pointerInHost = constrainedPointer,
             source = ReaderSelectionDragSource.Handle,
         )
         updateDraggedHandle(constrainedPointer)
+        logReaderSelectionTransition {
+            "selection.drag.start epoch=$selectionSessionEpoch raw=$rawDragPointerInHost pinned=${selectionState.dragPointerInHost} resolved=${resolvedHandleTarget?.documentOffset}"
+        }
+    }
+
+    fun finishHandleDrag() {
+        logReaderSelectionTransition {
+            "selection.drag.end epoch=$selectionSessionEpoch raw=$rawDragPointerInHost pinned=${selectionState.dragPointerInHost} resolved=${resolvedHandleTarget?.documentOffset}"
+        }
+        selectionState.finishHandleDrag()
+        rawDragPointerInHost = null; resolvedHandleTarget = null; isSelectionAutoScrollActive = false
     }
 
     val highlightedRangesBySection = remember(selectionDocument, selectionState.normalizedSelection) {
@@ -260,7 +277,7 @@ internal fun ReaderChapterSelectionHost(
                 clearSelection = ::clearSelection,
                 startHandleDrag = ::startHandleDrag,
                 updateHandleDrag = ::continueHandleDrag,
-                finishHandleDrag = selectionState::finishHandleDrag,
+                finishHandleDrag = ::finishHandleDrag,
             )
         }
     }
@@ -277,7 +294,12 @@ internal fun ReaderChapterSelectionHost(
     }
 
     LaunchedEffect(selectionDocument, normalizedSelection, selectedText) {
-        if (normalizedSelection != null && normalizedSelection.collapsed.not() && selectedText.isBlank()) {
+        if (shouldClearReaderStaleSelection(
+                normalizedSelection = normalizedSelection,
+                selectedText = selectedText,
+                isHandleDragActive = selectionState.isHandleDragActive,
+            )
+        ) {
             logReaderSelectionTransition {
                 "selection.host.clearStaleSelection epoch=$selectionSessionEpoch active=${selectionState.isActive} docLen=${selectionDocument.totalTextLength}"
             }
@@ -306,17 +328,25 @@ internal fun ReaderChapterSelectionHost(
 
         val edgeZonePx = with(density) { 72.dp.toPx() }
         while (currentCoroutineContext().isActive && selectionState.isHandleDragActive) {
-            val pointerInHost = selectionState.dragPointerInHost
-            val scrollDelta = pointerInHost?.let {
-                resolveSelectionAutoScrollDelta(
-                    pointerY = it.y,
-                    hostHeight = hostSize.height.toFloat(),
-                    edgeZonePx = edgeZonePx,
-                )
-            } ?: 0f
+            val scrollDelta = resolveReaderSelectionAutoScrollDelta(
+                pointerY = rawDragPointerInHost?.y,
+                hostHeight = hostSize.height.toFloat(),
+                edgeZonePx = edgeZonePx,
+                hasValidResolvedTarget = resolvedHandleTarget != null,
+            )
+            val shouldAutoScroll = scrollDelta != 0f
+            if (shouldAutoScroll != isSelectionAutoScrollActive) {
+                isSelectionAutoScrollActive = shouldAutoScroll
+                logReaderSelectionTransition {
+                    "selection.drag.autoScroll epoch=$selectionSessionEpoch active=$isSelectionAutoScrollActive raw=$rawDragPointerInHost pinned=${selectionState.dragPointerInHost} resolved=${resolvedHandleTarget?.documentOffset}"
+                }
+            }
 
             if (scrollDelta != 0f) {
-                listState.scrollBy(scrollDelta)
+                val consumed = listState.scrollBy(scrollDelta)
+                if (consumed == 0f) {
+                    isSelectionAutoScrollActive = false
+                }
                 selectionState.dragPointerInHost?.let(::updateDraggedHandle)
             }
 
@@ -325,12 +355,13 @@ internal fun ReaderChapterSelectionHost(
     }
 
     val startHandle = normalizedSelection?.let { selection ->
-        resolveVisibleHandleAnchor(
+        resolveVisibleReaderSelectionHandleAnchor(
             layoutRegistry.resolveHandleAnchor(
                 offset = selection.start,
                 affinity = ReaderSelectionOffsetAffinity.Downstream,
                 document = selectionDocument,
             ),
+            hostSize = hostSize,
         )?.let { anchor ->
             ReaderSelectionHandleUiState(
                 handle = ReaderSelectionHandle.Start,
@@ -339,12 +370,13 @@ internal fun ReaderChapterSelectionHost(
         }
     }
     val endHandle = normalizedSelection?.let { selection ->
-        resolveVisibleHandleAnchor(
+        resolveVisibleReaderSelectionHandleAnchor(
             layoutRegistry.resolveHandleAnchor(
                 offset = selection.end,
                 affinity = ReaderSelectionOffsetAffinity.Upstream,
                 document = selectionDocument,
             ),
+            hostSize = hostSize,
         )?.let { anchor ->
             ReaderSelectionHandleUiState(
                 handle = ReaderSelectionHandle.End,
@@ -372,11 +404,12 @@ internal fun ReaderChapterSelectionHost(
         endHandle?.anchorInHost?.y,
         selectionState.dragPointerInHost?.y,
     ).maxOrNull()
-    val moveSelectionActionBarToTop =
-        actionBarReferenceY?.let { anchorY ->
-            hostSize.height > 0 && anchorY >= (hostSize.height - actionBarCollisionZonePx)
-        } == true
-
+    val handleStemHeightPx = with(density) { settings.fontSize.sp.toPx() * 0.5f }
+    val moveSelectionActionBarToTop = shouldMoveReaderSelectionActionBarToTop(
+        actionBarReferenceY = actionBarReferenceY,
+        hostHeight = hostSize.height,
+        actionBarCollisionZonePx = actionBarCollisionZonePx,
+    )
     Box(
         modifier = Modifier
             .onGloballyPositioned { coordinates ->
@@ -401,6 +434,7 @@ internal fun ReaderChapterSelectionHost(
                 endHandle = endHandle,
                 draggedHandle = selectionState.draggedHandle,
                 dragPointerInHost = selectionState.dragPointerInHost,
+                stemHeightPx = handleStemHeightPx,
                 color = themeColors.primary,
                 onHandleDragStart = selectionController::startHandleDrag,
                 onHandleDrag = selectionController::updateHandleDrag,
@@ -460,27 +494,4 @@ internal fun ReaderChapterSelectionHost(
     }
 }
 
-private fun resolveSelectionAutoScrollDelta(
-    pointerY: Float,
-    hostHeight: Float,
-    edgeZonePx: Float,
-): Float {
-    if (hostHeight <= 0f || edgeZonePx <= 0f) {
-        return 0f
-    }
-
-    return when {
-        pointerY < edgeZonePx -> {
-            val strength = (1f - (pointerY / edgeZonePx)).coerceIn(0f, 1f)
-            -36f * strength
-        }
-
-        pointerY > hostHeight - edgeZonePx -> {
-            val distanceIntoEdge = pointerY - (hostHeight - edgeZonePx)
-            val strength = (distanceIntoEdge / edgeZonePx).coerceIn(0f, 1f)
-            36f * strength
-        }
-
-        else -> 0f
-    }
-}
+internal fun shouldClampReaderSelectionDragPointer(dragSource: ReaderSelectionDragSource?): Boolean = dragSource != null

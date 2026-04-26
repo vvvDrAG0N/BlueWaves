@@ -363,7 +363,14 @@ class ReaderScreenOverscrollTest {
 
     private fun longPressVisibleText(text: String) {
         composeRule.onNodeWithText(text, substring = true, useUnmergedTree = true).performTouchInput {
-            longClick(center)
+            // The runtime now groups consecutive body paragraphs into one text section, so
+            // pressing the section center can miss the requested text near the top of the node.
+            longClick(
+                Offset(
+                    x = width * 0.25f,
+                    y = minOf(height * 0.15f, 48f),
+                ),
+            )
         }
     }
 

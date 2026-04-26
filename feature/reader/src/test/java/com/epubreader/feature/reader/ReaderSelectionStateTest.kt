@@ -7,6 +7,7 @@ import com.epubreader.feature.reader.internal.runtime.epub.ReaderSelectionSessio
 import com.epubreader.feature.reader.internal.runtime.epub.ReaderSelectionState
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -67,6 +68,55 @@ class ReaderSelectionStateTest {
     }
 
     @Test
+    fun resolveSessionPhase_keepsHandleDraggingActiveWhenTheDraggedHandleReachesExactOverlap() {
+        val state = ReaderSelectionState()
+        state.activate(TextRange(2, 8))
+        state.startDraggingHandle(
+            handle = ReaderSelectionHandle.End,
+            pointerInHost = Offset.Zero,
+        )
+
+        state.updateDraggedHandle(2)
+
+        assertEquals(TextRange(2, 2), state.normalizedSelection)
+        assertEquals(ReaderSelectionSessionPhase.HandleDragging, state.resolveSessionPhase(selectedTextLength = 0))
+        assertTrue(state.hasUsableSelection(selectedTextLength = 0))
+    }
+
+    @Test
+    fun resolveSessionPhase_keepsHandleDraggingActiveWhenTheStartHandleReachesExactOverlap() {
+        val state = ReaderSelectionState()
+        state.activate(TextRange(2, 8))
+        state.startDraggingHandle(
+            handle = ReaderSelectionHandle.Start,
+            pointerInHost = Offset.Zero,
+        )
+
+        state.updateDraggedHandle(8)
+
+        assertEquals(TextRange(8, 8), state.normalizedSelection)
+        assertEquals(ReaderSelectionSessionPhase.HandleDragging, state.resolveSessionPhase(selectedTextLength = 0))
+        assertTrue(state.hasUsableSelection(selectedTextLength = 0))
+    }
+
+    @Test
+    fun finishHandleDrag_clearsCollapsedSelectionWhenReleasedAtExactOverlap() {
+        val state = ReaderSelectionState()
+        state.activate(TextRange(2, 8))
+        state.startDraggingHandle(
+            handle = ReaderSelectionHandle.End,
+            pointerInHost = Offset.Zero,
+        )
+        state.updateDraggedHandle(2)
+
+        state.finishHandleDrag()
+
+        assertNull(state.normalizedSelection)
+        assertEquals(ReaderSelectionSessionPhase.Idle, state.phase)
+        assertTrue(state.isIdle)
+    }
+
+    @Test
     fun clear_resetsTheSessionPhaseToIdle() {
         val state = ReaderSelectionState()
 
@@ -79,13 +129,13 @@ class ReaderSelectionStateTest {
     }
 
     @Test
-    fun resolveSessionPhase_returnsIdleWhenTheSelectionCanNoLongerExtractText() {
+    fun resolveSessionPhase_keepsSelectionActiveEvenWhenTheExtractedTextIsBlank() {
         val state = ReaderSelectionState()
 
         state.activate(TextRange(1, 4))
 
-        assertEquals(ReaderSelectionSessionPhase.Idle, state.resolveSessionPhase(selectedTextLength = 0))
-        assertFalse(state.hasUsableSelection(selectedTextLength = 0))
+        assertEquals(ReaderSelectionSessionPhase.ActiveSelection, state.resolveSessionPhase(selectedTextLength = 0))
+        assertTrue(state.hasUsableSelection(selectedTextLength = 0))
     }
 
     @Test

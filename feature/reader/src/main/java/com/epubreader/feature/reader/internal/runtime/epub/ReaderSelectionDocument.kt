@@ -10,6 +10,7 @@ internal data class ReaderSelectionDocumentSection(
     val sectionId: String,
     val sectionIndex: Int,
     val text: String,
+    val paragraphStartOffsets: List<Int>,
     val isHeading: Boolean,
     val documentStart: Int,
     val documentEnd: Int,
@@ -78,8 +79,6 @@ internal data class ReaderSelectionDocument(
             .mapNotNull { section ->
                 val localRange = rangeInSection(section.sectionId, normalizedSelection) ?: return@mapNotNull null
                 section.text.substring(localRange.start, localRange.end)
-                    .trim()
-                    .takeIf { it.isNotEmpty() }
             }
             .joinToString(separator = ReaderSelectionParagraphSeparator)
     }
@@ -95,6 +94,16 @@ internal fun buildReaderSelectionDocument(
                 is ReaderChapterSection.ImageSection -> Unit
 
                 is ReaderChapterSection.TextSection -> {
+                    var sectionCursor = 0
+                    val paragraphStartOffsets = buildList {
+                        section.blocks.forEachIndexed { blockIndex, block ->
+                            add(sectionCursor)
+                            sectionCursor += block.content.length
+                            if (blockIndex < section.blocks.lastIndex) {
+                                sectionCursor += ReaderSelectionParagraphSeparator.length
+                            }
+                        }
+                    }
                     val sectionText = section.blocks.joinToString(separator = ReaderSelectionParagraphSeparator) {
                         it.content
                     }
@@ -104,6 +113,7 @@ internal fun buildReaderSelectionDocument(
                             sectionId = section.id,
                             sectionIndex = index,
                             text = sectionText,
+                            paragraphStartOffsets = paragraphStartOffsets,
                             isHeading = section.blocks.firstOrNull()?.type == "h",
                             documentStart = documentCursor,
                             documentEnd = documentCursor + sectionLength,
@@ -120,4 +130,3 @@ internal fun buildReaderSelectionDocument(
         totalTextLength = documentSections.lastOrNull()?.documentEnd ?: 0,
     )
 }
-
