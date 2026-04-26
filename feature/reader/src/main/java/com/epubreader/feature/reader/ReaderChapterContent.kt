@@ -12,6 +12,7 @@ internal fun ReaderChapterContent(
     themeColors: ReaderTheme,
     listState: LazyListState,
     chapterElements: List<ChapterElement>,
+    chapterSections: List<ReaderChapterSection> = buildReaderChapterSections(chapterElements),
     isLoadingChapter: Boolean,
     currentChapterIndex: Int,
     selectionSessionEpoch: Int = 0,

@@ -9,6 +9,7 @@ import com.epubreader.core.model.EpubBook
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.TocItem
 import com.epubreader.core.ui.GlobalSettingsTransform
+import com.epubreader.feature.reader.ReaderChapterSection
 import com.epubreader.feature.reader.ReaderChromeCallbacks
 import com.epubreader.feature.reader.ReaderChromeState
 import com.epubreader.feature.reader.ReaderOverlayHost
@@ -25,6 +26,7 @@ internal fun buildReaderChromeState(
     tocListState: LazyListState,
     currentChapterIndex: Int,
     chapterElements: List<ChapterElement>,
+    chapterSections: List<ReaderChapterSection>,
     renderedItemCount: Int,
     isLoadingChapter: Boolean,
     showControls: Boolean,
@@ -48,6 +50,7 @@ internal fun buildReaderChromeState(
         tocListState = tocListState,
         currentChapterIndex = currentChapterIndex,
         chapterElements = chapterElements,
+        chapterSections = chapterSections,
         renderedItemCount = renderedItemCount,
         isLoadingChapter = isLoadingChapter,
         showControls = showControls,

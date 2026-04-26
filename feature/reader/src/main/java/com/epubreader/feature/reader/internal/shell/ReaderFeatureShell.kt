@@ -29,13 +29,13 @@ import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import com.epubreader.feature.reader.ReaderBackAction
+import com.epubreader.feature.reader.ReaderChapterSection
 import com.epubreader.feature.reader.ReaderResolvedHostExtensions
 import com.epubreader.feature.reader.ReaderSettingsDraft
 import com.epubreader.feature.reader.TocSort
+import com.epubreader.feature.reader.buildReaderChapterSections
 import com.epubreader.feature.reader.getThemeColors
 import com.epubreader.feature.reader.internal.logReaderSelectionTransition
-import com.epubreader.feature.reader.internal.runtime.epub.ReaderChapterSection
-import com.epubreader.feature.reader.internal.runtime.epub.buildReaderChapterSections
 import com.epubreader.feature.reader.internal.ui.ReaderScreenChrome
 import com.epubreader.feature.reader.rememberReaderProgressPercentageState
 import com.epubreader.feature.reader.resolveReaderBackAction
@@ -421,6 +421,7 @@ internal fun ReaderFeatureShell(
         tocListState = tocListState,
         currentChapterIndex = currentChapterIndex,
         chapterElements = chapterElements,
+        chapterSections = chapterSections,
         renderedItemCount = renderedItemCount,
         isLoadingChapter = isLoadingChapter,
         showControls = showControls,
