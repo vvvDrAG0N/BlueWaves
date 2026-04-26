@@ -74,6 +74,35 @@ class ReaderChapterSelectionHandleLayoutTest {
     }
 
     @Test
+    fun activeSelection_keepsHandleTouchTargetsAtLeastThirtyTwoDpWide() {
+        composeRule.setReaderSelectionContent(
+            chapterElements = listOf(
+                ChapterElement.Text("Scholarship", id = "p1"),
+            ),
+        )
+
+        composeRule.activateSelection()
+        composeRule.waitForIdle()
+
+        val expectedMinWidthPx = 32f * composeRule.activity.resources.displayMetrics.density
+        val startBounds = composeRule
+            .onNodeWithTag("reader_selection_handle_start", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val endBounds = composeRule
+            .onNodeWithTag("reader_selection_handle_end", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+
+        assertTrue(
+            "Expected the start handle touch target to stay at least 32dp wide, but width was ${startBounds.width}px",
+            startBounds.width >= expectedMinWidthPx - 1f,
+        )
+        assertTrue(
+            "Expected the end handle touch target to stay at least 32dp wide, but width was ${endBounds.width}px",
+            endBounds.width >= expectedMinWidthPx - 1f,
+        )
+    }
+
+    @Test
     fun activeSelection_usesHalfHeightStemsForBothSelectionHandles() {
         val fontSizeSp = 12
         lateinit var selectionController: ReaderSelectionController

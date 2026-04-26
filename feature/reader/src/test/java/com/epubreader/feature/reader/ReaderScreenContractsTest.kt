@@ -9,6 +9,24 @@ import org.junit.Test
 class ReaderScreenContractsTest {
 
     @Test
+    fun shouldEnableReaderTocDrawerGestures_returnsTrueWhenSelectionSessionIsInactive() {
+        val shouldEnable = shouldEnableReaderTocDrawerGestures(
+            isTextSelectionSessionActive = false,
+        )
+
+        assertEquals(true, shouldEnable)
+    }
+
+    @Test
+    fun shouldEnableReaderTocDrawerGestures_returnsFalseWhenSelectionSessionIsActive() {
+        val shouldEnable = shouldEnableReaderTocDrawerGestures(
+            isTextSelectionSessionActive = true,
+        )
+
+        assertEquals(false, shouldEnable)
+    }
+
+    @Test
     fun getThemeColors_returnsLightThemeForUnknownTheme() {
         val theme = getThemeColors("custom")
 

@@ -111,6 +111,7 @@ class SettingsThemeEditorModeInferenceTest {
         setSliderProgress("custom_theme_reader_background_picker_hue", 120f)
         setSliderProgress("custom_theme_reader_background_picker_saturation", 1f)
         setSliderProgress("custom_theme_reader_background_picker_value", 1f)
+        closeColorPicker()
         waitUntilTextContains("custom_theme_reader_background", "#00FF00")
         saveThemeEditor()
 
@@ -153,6 +154,7 @@ class SettingsThemeEditorModeInferenceTest {
         setSliderProgress("custom_theme_favorite_accent_picker_hue", 0f)
         setSliderProgress("custom_theme_favorite_accent_picker_saturation", 1f)
         setSliderProgress("custom_theme_favorite_accent_picker_value", 1f)
+        closeColorPicker()
         waitUntilTextContains("custom_theme_favorite_accent", "#FF0000")
         saveThemeEditor()
 
@@ -194,9 +196,8 @@ class SettingsThemeEditorModeInferenceTest {
         setSliderProgress("custom_theme_favorite_accent_picker_hue", 0f)
         setSliderProgress("custom_theme_favorite_accent_picker_saturation", 1f)
         setSliderProgress("custom_theme_favorite_accent_picker_value", 1f)
+        closeColorPicker()
         waitUntilTextContains("custom_theme_favorite_accent", "#FF0000")
-        composeRule.onNodeWithText("Done").performClick()
-        composeRule.waitForIdle()
 
         scrollThemeEditorToTop()
         composeRule.onNodeWithTag("theme_editor_rebalance_button").performClick()
@@ -298,6 +299,7 @@ class SettingsThemeEditorModeInferenceTest {
     }
 
     private fun saveThemeEditor() {
+        closeColorPickerIfOpen()
         composeRule.onNodeWithContentDescription("Save").performClick()
         composeRule.waitForIdle()
     }
@@ -316,5 +318,20 @@ class SettingsThemeEditorModeInferenceTest {
             .performSemanticsAction(SemanticsActions.SetProgress) { setProgress ->
                 setProgress(value)
             }
+    }
+
+    private fun closeColorPicker() {
+        composeRule.onNodeWithText("Done").performClick()
+        composeRule.waitForIdle()
+    }
+
+    private fun closeColorPickerIfOpen() {
+        val doneExists = runCatching {
+            composeRule.onNodeWithText("Done").fetchSemanticsNode()
+            true
+        }.getOrDefault(false)
+        if (doneExists) {
+            closeColorPicker()
+        }
     }
 }

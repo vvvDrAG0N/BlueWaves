@@ -100,15 +100,15 @@ private fun ReaderSelectionHandle(
     onHandleDrag: (Offset) -> Unit,
     onHandleDragEnd: () -> Unit,
 ) {
-    val touchTargetWidth = 16.dp
+    val touchTargetSize = 32.dp
     val density = LocalDensity.current
     val dimensions = ReaderSelectionHandleDimensions(
         knobRadiusPx = with(density) { 7.dp.toPx() },
         stemWidthPx = with(density) { 4.dp.toPx() },
         stemHeightPx = stemHeightPx,
         textClearancePx = with(density) { 4.dp.toPx() },
-        minimumTouchTargetWidthPx = with(density) { touchTargetWidth.toPx() },
-        minimumTouchTargetHeightPx = with(density) { 16.dp.toPx() },
+        minimumTouchTargetWidthPx = with(density) { touchTargetSize.toPx() },
+        minimumTouchTargetHeightPx = with(density) { touchTargetSize.toPx() },
     )
     val layout = resolveReaderSelectionHandleLayout(
         handle = handleState.handle,

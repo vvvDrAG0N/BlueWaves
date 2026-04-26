@@ -40,6 +40,7 @@ import com.epubreader.feature.reader.ReaderChromeState
 import com.epubreader.feature.reader.ReaderOverlayRenderContext
 import com.epubreader.feature.reader.ReaderTheme
 import com.epubreader.feature.reader.ReaderToolRenderContext
+import com.epubreader.feature.reader.shouldEnableReaderTocDrawerGestures
 import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +51,7 @@ internal fun ReaderScreenChrome(
 ) {
     ModalNavigationDrawer(
         drawerState = state.drawerState,
-        gesturesEnabled = !state.settings.selectableText && !state.isTextSelectionSessionActive,
+        gesturesEnabled = shouldEnableReaderTocDrawerGestures(state.isTextSelectionSessionActive),
         drawerContent = {
             ReaderTocDrawerContent(
                 state = state,

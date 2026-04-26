@@ -132,8 +132,10 @@ class SettingsScreenPersistenceTest : SettingsScreenPersistenceTestBase() {
         setSliderProgress("custom_theme_primary_picker_saturation", 1f)
         setSliderProgress("custom_theme_primary_picker_value", 1f)
 
+        closeColorPicker()
+        waitUntilTagGone("custom_theme_primary_picker_hue")
         waitUntilTextContains("custom_theme_primary", "#FF0000")
-        composeRule.onNodeWithContentDescription("Save").performClick()
+        saveThemeEditor()
 
         composeRule.waitUntil(10_000) {
             val settings = runBlocking { settingsManager.globalSettings.first() }

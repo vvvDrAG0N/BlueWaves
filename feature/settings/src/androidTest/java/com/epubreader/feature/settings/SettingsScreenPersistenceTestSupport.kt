@@ -71,6 +71,7 @@ internal fun SettingsScreenPersistenceTestBase.openCurrentThemeEditor() {
 }
 
 internal fun SettingsScreenPersistenceTestBase.saveThemeEditor() {
+    closeColorPickerIfOpen()
     composeRule.onNodeWithContentDescription("Save").performClick()
     composeRule.waitForIdle()
 }
@@ -82,6 +83,11 @@ internal fun SettingsScreenPersistenceTestBase.selectThemeEditorMode(mode: Strin
 
 internal fun SettingsScreenPersistenceTestBase.closeThemeGallery() {
     composeRule.onNodeWithContentDescription("Done").performClick()
+    composeRule.waitForIdle()
+}
+
+internal fun SettingsScreenPersistenceTestBase.closeColorPicker() {
+    composeRule.onNodeWithText("Done").performClick()
     composeRule.waitForIdle()
 }
 
@@ -113,6 +119,10 @@ internal fun SettingsScreenPersistenceTestBase.waitUntilTagExists(tag: String, t
     composeRule.waitUntil(timeoutMillis) { tagExists(tag) }
 }
 
+internal fun SettingsScreenPersistenceTestBase.waitUntilTagGone(tag: String, timeoutMillis: Long = 10_000) {
+    composeRule.waitUntil(timeoutMillis) { !tagExists(tag) }
+}
+
 internal fun SettingsScreenPersistenceTestBase.waitUntilTagDisplayed(tag: String, timeoutMillis: Long = 10_000) {
     composeRule.waitUntil(timeoutMillis) {
         try {
@@ -129,6 +139,19 @@ internal fun SettingsScreenPersistenceTestBase.tagExists(tag: String): Boolean {
         composeRule.onNodeWithTag(tag).fetchSemanticsNode()
         true
     }.getOrDefault(false)
+}
+
+internal fun SettingsScreenPersistenceTestBase.textExists(text: String): Boolean {
+    return runCatching {
+        composeRule.onNodeWithText(text).fetchSemanticsNode()
+        true
+    }.getOrDefault(false)
+}
+
+private fun SettingsScreenPersistenceTestBase.closeColorPickerIfOpen() {
+    if (textExists("Done")) {
+        closeColorPicker()
+    }
 }
 
 internal fun SettingsScreenPersistenceTestBase.tagIsDisplayed(tag: String): Boolean {

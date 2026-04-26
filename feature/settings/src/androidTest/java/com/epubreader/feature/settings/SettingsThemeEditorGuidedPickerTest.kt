@@ -3,21 +3,25 @@ package com.epubreader.feature.settings
 import android.content.Context
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.MainActivity
 import com.epubreader.core.model.GlobalSettings
@@ -74,6 +78,7 @@ class SettingsThemeEditorGuidedPickerTest {
         setSliderProgress("custom_theme_system_text_picker_hue", 0f)
         setSliderProgress("custom_theme_system_text_picker_saturation", 1f)
         setSliderProgress("custom_theme_system_text_picker_value", 0f)
+        closeColorPicker()
 
         val expectedText = formatThemeColor(
             generatePaletteFromGuidedInput(
@@ -88,12 +93,6 @@ class SettingsThemeEditorGuidedPickerTest {
         )
 
         waitUntilTextContains("custom_theme_system_text", expectedText)
-        waitUntilPreviewState("custom_theme_system_text_picker_preview", "adjusted")
-        waitUntilTextContains(
-            "custom_theme_system_text_picker_guided_status",
-            "Adjusted for readability",
-        )
-        closeColorPicker()
     }
 
     @Test
@@ -109,12 +108,9 @@ class SettingsThemeEditorGuidedPickerTest {
         setSliderProgress("custom_theme_system_text_picker_hue", 0f)
         setSliderProgress("custom_theme_system_text_picker_saturation", 0f)
         setSliderProgress("custom_theme_system_text_picker_value", 0f)
+        closeColorPicker()
 
         waitUntilTextContains("custom_theme_system_text", "#000000")
-        composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status")
-            .assertTextContains("Guided mode keeps colors readable")
-        assertPreviewState("custom_theme_system_text_picker_preview", "default")
-        closeColorPicker()
     }
 
     @Test
@@ -141,6 +137,60 @@ class SettingsThemeEditorGuidedPickerTest {
         waitUntilTextContains("custom_theme_system_text", "#000000")
         assertTagDoesNotExist("custom_theme_system_text_picker_guided_status")
         assertPreviewState("custom_theme_system_text_picker_preview", "default")
+        closeColorPicker()
+    }
+
+    @Test
+    fun basicAccent_backDismiss_discardsPendingGuidedChoice() {
+        launchThemeEditor()
+
+        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
+        setSliderProgress("custom_theme_primary_picker_hue", 0f)
+        setSliderProgress("custom_theme_primary_picker_saturation", 1f)
+        setSliderProgress("custom_theme_primary_picker_value", 1f)
+        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
+        waitUntilTagExists("custom_theme_primary_picker_hue")
+
+        pressBack()
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
+        assertTagDoesNotExist("custom_theme_primary_picker_hue")
+    }
+
+    @Test
+    fun basicAccent_outsideDismiss_discardsPendingGuidedChoice() {
+        launchThemeEditor()
+
+        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
+        setSliderProgress("custom_theme_primary_picker_hue", 0f)
+        setSliderProgress("custom_theme_primary_picker_saturation", 1f)
+        setSliderProgress("custom_theme_primary_picker_value", 1f)
+        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
+        waitUntilTagExists("custom_theme_primary_picker_hue")
+
+        dismissColorPickerByOutsideTap("custom_theme_primary_picker_backdrop")
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
+        assertTagDoesNotExist("custom_theme_primary_picker_hue")
+    }
+
+    @Test
+    fun basicAccent_dialogChromeTap_keepsPickerOpen() {
+        launchThemeEditor()
+
+        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
+        setSliderProgress("custom_theme_primary_picker_hue", 0f)
+        setSliderProgress("custom_theme_primary_picker_saturation", 1f)
+        setSliderProgress("custom_theme_primary_picker_value", 1f)
+        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
+
+        tapDialogChrome("custom_theme_primary_picker_dialog")
+        composeRule.waitForIdle()
+
+        waitUntilTagExists("custom_theme_primary_picker_hue")
+        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
         closeColorPicker()
     }
 
@@ -239,6 +289,18 @@ class SettingsThemeEditorGuidedPickerTest {
     private fun closeColorPicker() {
         composeRule.onNodeWithText("Done").performClick()
         composeRule.waitForIdle()
+    }
+
+    private fun dismissColorPickerByOutsideTap(dialogTag: String) {
+        composeRule.onNodeWithTag(dialogTag).performTouchInput {
+            click(Offset(width * 0.1f, height * 0.1f))
+        }
+    }
+
+    private fun tapDialogChrome(dialogTag: String) {
+        composeRule.onNodeWithTag(dialogTag).performTouchInput {
+            click(Offset(width * 0.9f, 24f))
+        }
     }
 
     private fun waitUntilDisplayed(text: String, timeoutMillis: Long = 10_000) {

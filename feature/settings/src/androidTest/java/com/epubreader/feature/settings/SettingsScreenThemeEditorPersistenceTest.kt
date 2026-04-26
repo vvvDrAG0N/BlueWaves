@@ -41,6 +41,7 @@ class SettingsScreenThemeEditorPersistenceTest : SettingsScreenPersistenceTestBa
         setSliderProgress("custom_theme_reader_accent_picker_hue", 0f)
         setSliderProgress("custom_theme_reader_accent_picker_saturation", 1f)
         setSliderProgress("custom_theme_reader_accent_picker_value", 1f)
+        closeColorPicker()
         waitUntilTextContains("custom_theme_reader_accent", "#FF0000")
         saveThemeEditor()
 
@@ -102,6 +103,7 @@ class SettingsScreenThemeEditorPersistenceTest : SettingsScreenPersistenceTestBa
         setSliderProgress("custom_theme_reader_background_picker_hue", 120f)
         setSliderProgress("custom_theme_reader_background_picker_saturation", 1f)
         setSliderProgress("custom_theme_reader_background_picker_value", 1f)
+        closeColorPicker()
         waitUntilTextContains("custom_theme_reader_background", "#00FF00")
         saveThemeEditor()
 
@@ -140,6 +142,7 @@ class SettingsScreenThemeEditorPersistenceTest : SettingsScreenPersistenceTestBa
         setSliderProgress("custom_theme_favorite_accent_picker_hue", 0f)
         setSliderProgress("custom_theme_favorite_accent_picker_saturation", 1f)
         setSliderProgress("custom_theme_favorite_accent_picker_value", 1f)
+        closeColorPicker()
         waitUntilTextContains("custom_theme_favorite_accent", "#FF0000")
         saveThemeEditor()
 

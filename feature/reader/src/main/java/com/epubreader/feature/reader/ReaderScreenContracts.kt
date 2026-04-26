@@ -78,6 +78,12 @@ internal fun shouldForceClearReaderSelectionSession(
     return !selectableTextEnabled && isTextSelectionSessionActive
 }
 
+internal fun shouldEnableReaderTocDrawerGestures(
+    isTextSelectionSessionActive: Boolean,
+): Boolean {
+    return !isTextSelectionSessionActive
+}
+
 val KarlaFont
     get() = com.epubreader.core.ui.KarlaFont
 

@@ -2090,3 +2090,49 @@ This file is append-only.
   - No code blocker remains. The only incomplete verification was the optional Reader connected-test rerun because `adb devices` showed no connected emulator/device at that point.
 - Suggested next step:
   - If UI confidence is needed for the newly split Reader/Settings instrumentation classes, reconnect an emulator/device and rerun the targeted connected-test slices; otherwise the repo can move on from the file-size debt lane.
+
+## 99. 2026-04-26 20:08
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Create a planning-only follow-up for the theme color picker review after the user accepted Findings 1 and 3, but explicitly rejected Finding 2 because Appearance auto-apply is intentional.
+- Area/files: `docs/agent_memory/2026-04-26-guided-picker-dismiss-and-test-hardening-plan.md`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`, plus source references reviewed in `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, and `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTestSupport.kt`.
+- Action taken:
+  1. Re-read the guided picker production path and the current instrumentation helpers to isolate the accepted scope to guided dismiss/cancel semantics and persistence-test hardening only.
+  2. Wrote a durable implementation plan in `docs/agent_memory/2026-04-26-guided-picker-dismiss-and-test-hardening-plan.md` with exact file targets, focused TDD steps, concrete code snippets, and targeted Gradle verification commands.
+  3. Recorded the follow-up in `next_steps.md` so a later execution pass can resume from one clear artifact without reopening the already-rejected Appearance auto-apply discussion.
+- Result:
+  - The accepted review follow-up is now captured in one repo-local plan file instead of living only in chat.
+  - The plan keeps the scope tight: production change only in `ThemeColorPickerOverlay`, test hardening only in the existing Settings instrumentation seam, and no churn to `SettingsManager` or Appearance auto-apply behavior.
+- Verification:
+  - Planning-only pass. No production code changed and no tests were run in this step.
+- Blockers:
+  - None for planning. Execution will require a connected emulator/device for the targeted `connectedDebugAndroidTest` slices.
+- Suggested next step:
+  - Execute `docs/agent_memory/2026-04-26-guided-picker-dismiss-and-test-hardening-plan.md` with either a task-by-task subagent flow or an inline execution pass.
+
+## 100. 2026-04-26 22:44
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Execute the approved guided-picker dismiss and persistence-test hardening plan for the Settings Appearance theme system while preserving the user-confirmed Appearance auto-apply behavior.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTestSupport.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenThemeEditorPersistenceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorModeInferenceTest.kt`, `docs/agent_memory/step_history.md`, and `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Split the guided picker into explicit commit and dismiss paths so guided slider edits stay dialog-local until `Done`, while BACK and outside dismiss close without committing.
+  2. Replaced the platform-only outside-dismiss dependency with an in-dialog backdrop plus protected dialog chrome so the picker has a stable outside-tap cancel path and interior non-interactive taps no longer fall through and discard changes.
+  3. Expanded `SettingsThemeEditorGuidedPickerTest` to cover the three key runtime boundaries: BACK dismiss cancels, outside dismiss cancels, and taps inside empty dialog chrome keep the picker open while the draft color stays local.
+  4. Hardened the persistence helpers/tests so theme-editor save paths now explicitly close the picker through `Done` before asserting committed hex fields or pressing `Save`, and updated the nearby persistence/mode-inference instrumentation classes that shared the same stale immediate-commit assumption.
+  5. Ran subagent spec/quality reviews around Task 1 and Task 2 while iterating, then finished with a combined emulator verification sweep over the guided picker and settings persistence classes.
+- Result:
+  - Guided picker cancel semantics now match the approved behavior: BACK and outside tap discard pending guided edits, while `Done` is the explicit commit boundary.
+  - The runtime test suite now guards both the cancel paths and the new dialog-chrome safety edge case that appeared during the outside-tap testability work.
+  - Settings persistence/theme-editor instrumentation no longer assumes slider movement immediately mutates the underlying field; it now exercises the real picker-close flow before asserting saved or reopened values.
+- Verification:
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest#basicAccent_outsideDismiss_discardsPendingGuidedChoice`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest#customThemeColorPicker_updatesHexFieldAndSavedPalette`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest,com.epubreader.feature.settings.SettingsScreenThemeEditorPersistenceTest,com.epubreader.feature.settings.SettingsThemeEditorModeInferenceTest`
+  - `.\gradlew.bat :feature:settings:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest,com.epubreader.feature.settings.SettingsScreenPersistenceTest,com.epubreader.feature.settings.SettingsScreenThemeEditorPersistenceTest,com.epubreader.feature.settings.SettingsThemeEditorModeInferenceTest`
+- Blockers:
+  - No blockers remained in the settings lane after the final 18-test emulator slice passed.
+- Suggested next step:
+  - Leave this lane closed unless another theme-picker interaction path regresses; if it does, start by rerunning the final 18-test settings slice before widening the investigation.
