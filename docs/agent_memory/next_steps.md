@@ -1,20 +1,20 @@
 # Next Steps
 
-## Reader Real-Phone Perf Refresh
-- Goal: Refresh the outdated book-opening and chapter-scrolling performance reports on an actual phone after the later refactors, using fresh release-like measurements before trusting any April conclusions.
-- Why now: The existing reports were useful at the time, but they predate two major refactor rounds. Even if the core reader logic mostly survived, the phone baselines should be revalidated before we keep quoting those numbers.
+## Reader Perf Follow-Up Only If Fresh Phone Feel Still Seems Bad
+- Goal: Only reopen reader performance work if the refreshed 2026-04-27 phone report still matches a user-visible hitch on the physical device.
+- Why now: The real-phone refresh is complete and the new baseline is captured in `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md`. Book open/close did not show a broad regression, `TTEV6 CH11` scrolling improved clearly, and the one noisy `Shadow Slave` delayed release-like spike did not reproduce as a delayed-only issue in the controlled trace lane.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/project_graph.md`, `graphify-out/GRAPH_REPORT.md`, `docs/test_checklist.md`, `docs/superpowers/plans/2026-04-27-reader-real-phone-perf-refresh.md`, `scripts/run_book_open_close_release_live.ps1`, `scripts/run_reader_lag_release_live.ps1`, `scripts/run_reader_lag_trace_matrix.ps1`, `logs/book-open-close-release-live-20260425-023012/summary.md`, `logs/reader-lag-release-live-20260424-090627/summary.md`, `logs/reader-lag-two-book-reset-20260424-0830-ch11/summary.md`
-- Risks: Reusing stale prepared-state markers, trusting release-live scripts without a selector smoke pass, mixing Theme / Appearance back into the scope, or overreacting to debug-trace artifacts instead of the new release-like phone numbers.
-- Verification target: One fresh release-like phone pass for book opening, one fresh release-like phone pass for chapter scrolling, targeted traces only for flagged cases, and one new portable report that compares the new results against the April baselines.
+- Starting docs/files: `AGENTS.md`, `docs/test_checklist.md`, `docs/superpowers/plans/2026-04-27-reader-real-phone-perf-refresh.md`, `scripts/run_book_open_close_release_live.ps1`, `scripts/run_reader_lag_release_live.ps1`, `scripts/run_reader_lag_trace_matrix.ps1`, `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md`, `logs/book-open-close-release-live-20260427-013237/summary.md`, `logs/reader-lag-release-live-20260427-013816/summary.md`, `logs/reader-lag-trace-matrix-20260427-014033/summary.md`
+- Risks: Overreacting to one noisy release-like sample, forgetting that the trace lane needs a debuggable install, or drifting the benchmark books away from `Shadow Slave 1435 / 2927 ch` and `TTEV6 11 / 45 ch`.
+- Verification target: Reproduce the felt hitch first on the phone, then rerun only the exact offending release-like lane and compare it against the refreshed 2026-04-27 report before opening a broader perf investigation.
 
-## Theme Spectrum Picker Spec Review And Plan
-- Goal: Convert the approved Appearance theme-picker redesign into an implementation plan after the user reviews the written spec.
-- Why now: The design choices are now locked in chat and captured in `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, but implementation should stay paused until the user signs off on the written artifact.
+## Theme Spectrum Picker Plan Execution
+- Goal: Execute the approved Appearance theme-picker redesign with the newer exact-zone overlay direction, keeping HEX persistence intact while moving the UI to a spectrum-first picker and RGB display tokens.
+- Why now: The design is now captured in `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, the newer picker-only mockup clarified that the exact-zone circle and outer veil should be the main teaching tool, and the implementation plan is ready at `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/settings_persistence.md`, `docs/test_checklist.md`, `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeStudioComponents.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorSections.kt`
-- Risks: Losing the agreed guided `Picked` versus `Applied` transparency, accidentally expanding scope into theme persistence/model changes, or overcrowding the two-column editor cells with overly verbose color tokens.
-- Verification target: User approval of the spec text first, then a plan file in `docs/superpowers/plans/` that maps each approved requirement to concrete tasks and tests.
+- Starting docs/files: `AGENTS.md`, `docs/settings_persistence.md`, `docs/test_checklist.md`, `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorColorEditing.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeStudioComponents.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorSections.kt`
+- Risks: Letting the visual exact-zone circle drift away from the real guided resolver, reintroducing save-on-dismiss behavior, or letting RGB display work accidentally leak into persistence/model contracts.
+- Verification target: Execute the scoped JVM and instrumentation slices from the plan, confirm `checkKotlinFileLineLimit` still passes, and do one manual emulator smoke on Basic versus Advanced picker behavior.
 
 ## Reader Selection Reopen Only On Fresh Repro
 - Goal: Keep the reader selectable-text stabilization lane closed unless a fresh content-specific repro appears or the user explicitly asks for a separate physical-device confirmation pass.
@@ -43,19 +43,19 @@
 
 ## Book Open/Close Optional Follow-Up
 - Goal: Only revisit book entry/exit performance if someone can still feel a delay on the release-like build, then trace the exact rough case instead of reopening a broad matrix.
-- Why now: The real-phone release-like open/close audit is complete. `Shadow Slave` did not improve with a 15-second wait, `ttev6` improved only modestly, and the close path was mostly stable across runs, so there is no strong startup-overlap signal left to chase broadly.
+- Why now: The refreshed 2026-04-27 release-like open/close audit is complete. `Shadow Slave` improved on open and stayed flat-to-better on close, while `TTEV6` delayed open and delayed close were the only clearly worse lanes, so there is still no strong broad signal that justifies reopening the full matrix.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/test_checklist.md`, `scripts/run_book_open_close_release_live.ps1`, `logs/book-open-close-release-live-20260425-023012/summary.md`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreen.kt`
+- Starting docs/files: `AGENTS.md`, `docs/test_checklist.md`, `scripts/run_book_open_close_release_live.ps1`, `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md`, `logs/book-open-close-release-live-20260427-013237/summary.md`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreen.kt`
 - Risks: Over-tuning an already acceptable release-like flow, spending time on low-visibility transition polish, and misreading small `gfxinfo` deltas as product-significant when the user may not feel them.
 - Verification target: Only if a delay is still noticeable, rerun the exact offending case on the phone and capture one targeted trace for that open or close transition.
 
 ## Reader Cold-Open Scroll Lag Optional Polish
 - Goal: Decide whether the new reader-prefetch gating polish is enough, or whether one more release-live verification pass is worth doing after parallel theme work settles.
-- Why now: A narrow reader-only polish is now in place: adjacent chapter prefetch waits until the reader session has actually been touched, which should reduce cold-open overlap without changing the broader investigation result that release-like builds already felt smooth.
+- Why now: The refreshed 2026-04-27 phone run improved `Shadow Slave` immediate scroll and improved `TTEV6 CH11` strongly, but one `Shadow Slave` delayed release-like sample spiked. The controlled trace lane did not confirm that spike as a delayed-only regression, so this area should stay optional unless the phone still feels hitchy.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/reader_screen.md`, `docs/ai_mental_model.md`, `docs/epub_parsing.md`, `docs/test_checklist.md`, `scripts/run_reader_lag_release_live.ps1`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenEffects.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenHelpers.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderScreenPrefetchTest.kt`, `logs/reader-lag-release-live-20260424-090627/summary.md`
+- Starting docs/files: `AGENTS.md`, `docs/reader_screen.md`, `docs/ai_mental_model.md`, `docs/epub_parsing.md`, `docs/test_checklist.md`, `scripts/run_reader_lag_release_live.ps1`, `scripts/run_reader_lag_trace_matrix.ps1`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenEffects.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenHelpers.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderScreenPrefetchTest.kt`, `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md`, `logs/reader-lag-release-live-20260427-013816/summary.md`, `logs/reader-lag-trace-matrix-20260427-014033/summary.md`
 - Risks: Over-tuning an already acceptable release-like experience, slightly delaying adjacent-cache warmup for the first untouched chapter in a session, and conflating this small reader polish with unrelated theme-cleanup changes if verification is not sequenced carefully.
-- Verification target: After theme cleanup settles, optionally rerun the small release-live matrix to see whether the immediate-vs-delayed gap narrows further. If the user still feels no lag, stop here and close the topic.
+- Verification target: After theme cleanup settles, optionally rerun only the `Shadow Slave` delayed release-like lane and the matching trace lane to see whether the spike repeats under the exact same book/progress state. If the user still feels no lag, stop here and close the topic.
 
 ## Appearance Performance Optional Polish
 - Goal: Decide whether the Appearance tab's first-use jank is worth a proactive polish pass after the new device audit, or whether the current release-like behavior is acceptable as-is.

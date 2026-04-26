@@ -2271,6 +2271,44 @@ This file is append-only.
 - Suggested next step:
   - Let the user react to the visual direction, then either revise the mockup or fold the confirmed layout choices into the implementation plan.
 
+## 107. 2026-04-27 02:29
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Revise the temporary picker mockup so it shows only the color picker and teaches guided adjustment through a visible exact-zone circle plus low-alpha outer veil.
+- Area/files: `logs/theme-spectrum-picker-mockup-20260427/index.html`, `logs/theme-spectrum-picker-mockup-20260427/preview.png`, and `docs/agent_memory/step_history.md`.
+- Action taken:
+  1. Replaced the earlier broader mockup page with a picker-only HTML so the browser artifact focuses only on the modal itself.
+  2. Removed the heavier `Picked / Applied` presentation and rebuilt the explanation around a visible guided safe zone in the spectrum: exact inside the dashed circle, softly veiled outside it.
+  3. Re-rendered the page to `preview.png` with local Edge headless and corrected the first overlay implementation after it produced a white blob instead of a transparent exact-zone window.
+- Result:
+  - The temporary mockup now centers the user's preferred teaching model: the spectrum itself explains where guidance starts, without extra surrounding UI noise.
+  - The current browser-target file remains the same path, so refreshing the existing local page should show the simplified picker immediately.
+- Verification:
+  - Rendered the updated HTML to `logs/theme-spectrum-picker-mockup-20260427/preview.png` and visually checked that the exact-zone circle and outer veil both appear on the spectrum.
+- Blockers:
+  - None for the artifact. This is still a temp HTML mockup, not app implementation.
+- Suggested next step:
+  - Let the user react to the safe-zone presentation and decide whether to keep the circle as-is, soften it further, or switch to a different exact-zone shape before planning Kotlin implementation.
+
+## 108. 2026-04-27 02:44
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Update the theme spectrum picker plan so it reflects the newer picker-only mockup direction, where guided behavior is taught primarily through an exact-zone circle and low-alpha outer veil instead of heavy `Picked / Applied` labeling.
+- Area/files: `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `docs/agent_memory/step_history.md`, and `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Updated the written spec so Basic and Extended now center the exact-zone overlay, outer veil, and single-result readout, while demoting dual-value comparison to a secondary explanation path.
+  2. Wrote a new implementation plan at `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md` that maps the redesign into helper extraction, preview-only guidance plumbing, RGB editor display, instrumentation coverage, and full scoped verification.
+  3. Ran a self-review pass on both artifacts and fixed concrete issues in the draft plan, including stale spec numbering and under-specified code snippets around the spectrum canvas and picker-session wiring.
+- Result:
+  - The durable planning artifacts now match the latest visual direction from the temporary HTML picker mockup.
+  - The plan is ready for execution and explicitly preserves the earlier cancel-vs-commit fix, HEX persistence contract, and guided-versus-advanced mode split.
+- Verification:
+  - Read-back review of `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md` and `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, plus a placeholder/consistency scan on the plan content.
+- Blockers:
+  - No planning blocker remains. The next step is choosing whether to execute via subagent-driven development or inline execution.
+- Suggested next step:
+  - Execute `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md` with either `superpowers:subagent-driven-development` or `superpowers:executing-plans`.
+
 ## 106. 2026-04-27 01:11
 - Agent model: Codex GPT-5
 - Agent name: Codex
@@ -2315,3 +2353,33 @@ This file is append-only.
     - None at the planning stage. The remaining work is execution on the actual phone.
 - Suggested next step:
     - If the user approves the plan, execute `docs/superpowers/plans/2026-04-27-reader-real-phone-perf-refresh.md` in a fresh implementation pass and keep the final scope limited to book opening plus chapter scrolling.
+
+## 109. 2026-04-27 01:44
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Execute the real-phone performance refresh plan for book opening and chapter scrolling, then replace the stale April narrative with a new portable report based on fresh phone evidence.
+- Area/files: `docs/superpowers/plans/2026-04-27-reader-real-phone-perf-refresh.md`, `logs/book-open-close-release-live-20260427-013237/summary.md`, `logs/reader-lag-release-live-20260427-013816/summary.md`, `logs/reader-lag-trace-matrix-20260427-014033/summary.md`, `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md`, `docs/agent_memory/step_history.md`, and `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Built and installed the release-like APK on the physical phone, then verified the live package before running the refresh harnesses.
+  2. Ran a library preflight, found that the prepared benchmark state had drifted, paused for the user to restore it, and then revalidated `Shadow Slave 1435 / 2927 ch` plus `TTEV6 11 / 45 ch` before measuring.
+  3. Executed the book open/close release-like harness, then executed the chapter-scroll release-like harness and compared both fresh outputs against the April baselines instead of trusting the old report text.
+  4. Followed up the one flagged `Shadow Slave` delayed scroll result with the trace matrix, hit the expected `run-as` boundary on the release build, switched temporarily to a debuggable build for the diagnostic lane, captured the fresh traces, and restored the release-like APK afterward.
+  5. Wrote a new portable markdown report with charts at `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md` and updated continuity so future agents start from the refreshed phone data.
+- Result:
+  - The repo now has a post-refactor real-phone performance report for the requested reader scope, with Theme / Appearance left out.
+  - Book open/close did not show a broad regression, and chapter scrolling improved in two of the three release-like cases.
+  - The one contradictory release-like scroll spike (`Shadow Slave` delayed) did not reproduce as a delayed-only regression in the controlled trace lane, so the new report recommends treating it as suspicious but not yet escalation-worthy unless the phone still feels bad in hand.
+- Verification:
+  - `adb devices`
+  - `./gradlew.bat :app:assembleRelease --console=plain`
+  - `adb -s "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" install -r -d "app/build/outputs/apk/release/app-release-debugsigned.apk"`
+  - `powershell -ExecutionPolicy Bypass -File scripts/run_book_open_close_release_live.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp"`
+  - `powershell -ExecutionPolicy Bypass -File scripts/run_reader_lag_release_live.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp"`
+  - `./gradlew.bat :app:assembleDebug --console=plain`
+  - `adb -s "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" install -r -d "app/build/outputs/apk/debug/app-debug.apk"`
+  - `powershell -ExecutionPolicy Bypass -File scripts/run_reader_lag_trace_matrix.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" -PythonExe python`
+  - `adb -s "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" install -r -d "app/build/outputs/apk/release/app-release-debugsigned.apk"`
+- Blockers:
+  - No remaining execution blocker. The only tooling caveat is that the trace harness cannot run against a non-debuggable release install because it restores benchmark snapshots with `run-as`.
+- Suggested next step:
+  - Reopen reader perf only if the user can still feel a real hitch on the phone, and if that happens rerun just the exact offending release-like lane plus the matching trace lane against the refreshed 2026-04-27 report.
