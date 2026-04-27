@@ -1,6 +1,5 @@
 package com.epubreader.feature.reader.internal.runtime.epub
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,14 +7,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.feature.reader.ReaderTheme
+import com.epubreader.feature.reader.internal.ui.readerFontFamily
 
 @Composable
 internal fun EpubReaderRuntime(
@@ -143,17 +147,31 @@ private fun ReaderPlainTextSection(
     settings: GlobalSettings,
     themeColors: ReaderTheme,
 ) {
-    Column(
+    val isHeading = section.blocks.firstOrNull()?.type == "h"
+    val sectionText = remember(section.blocks) {
+        section.blocks.joinToString(separator = ReaderSelectionParagraphSeparator) { block ->
+            block.content
+        }
+    }
+    val sectionStyle = if (isHeading) {
+        MaterialTheme.typography.headlineSmall.copy(
+            fontSize = (settings.fontSize + 4).sp,
+        )
+    } else {
+        MaterialTheme.typography.bodyLarge.copy(
+            fontSize = settings.fontSize.sp,
+            lineHeight = (settings.fontSize * settings.lineHeight).sp,
+        )
+    }
+
+    Text(
+        text = sectionText,
+        style = sectionStyle,
+        fontFamily = readerFontFamily(settings.fontType),
+        color = themeColors.foreground,
+        textAlign = if (isHeading) TextAlign.Center else TextAlign.Start,
         modifier = Modifier
             .fillMaxWidth()
             .testTag("reader_compose_text_section"),
-    ) {
-        section.blocks.forEach { block ->
-            ReaderChapterTextBlock(
-                element = block,
-                settings = settings,
-                themeColors = themeColors,
-            )
-        }
-    }
+    )
 }
