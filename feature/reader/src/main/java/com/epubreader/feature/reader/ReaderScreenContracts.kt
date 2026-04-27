@@ -102,7 +102,7 @@ internal data class ReaderChromeState(
     val tocListState: LazyListState,
     val currentChapterIndex: Int,
     val chapterElements: List<ChapterElement>,
-    val chapterSections: List<ReaderChapterSection> = buildReaderChapterSections(chapterElements),
+    val chapterSections: List<ReaderChapterSection>,
     val renderedItemCount: Int,
     val isLoadingChapter: Boolean,
     val showControls: Boolean,

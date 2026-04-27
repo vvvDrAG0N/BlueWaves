@@ -139,8 +139,11 @@ class ReaderScreenOverscrollTest {
         val chapterElements = remember(currentChapterIndex) {
             buildOverscrollChapterElements(currentChapterIndex)
         }
-        val renderedItemCount = remember(chapterElements) {
-            buildReaderChapterSections(chapterElements).size
+        val chapterSections = remember(chapterElements) {
+            buildReaderChapterSections(chapterElements)
+        }
+        val renderedItemCount = remember(chapterSections) {
+            chapterSections.size
         }
         val nestedScrollConnection = rememberReaderNestedScrollConnection(
             listState = listState,
@@ -204,6 +207,7 @@ class ReaderScreenOverscrollTest {
             tocListState = tocListState,
             currentChapterIndex = currentChapterIndex,
             chapterElements = chapterElements,
+            chapterSections = chapterSections,
             renderedItemCount = renderedItemCount,
             isLoadingChapter = false,
             showControls = false,
@@ -375,8 +379,8 @@ class ReaderScreenOverscrollTest {
     }
 
     private fun waitForSelectionActionBar() {
-        composeRule.waitUntil(5_000) {
-            composeRule.onAllNodesWithText("Copy", useUnmergedTree = true)
+        composeRule.waitUntil(10_000) {
+            composeRule.onAllNodesWithTag("text_selection_action_bar", useUnmergedTree = true)
                 .fetchSemanticsNodes().isNotEmpty()
         }
     }

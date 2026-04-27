@@ -47,6 +47,7 @@ class ReaderChromeTapBehaviorTest {
                 val progressState = remember { mutableFloatStateOf(0f) }
                 val overscrollState = remember { mutableFloatStateOf(0f) }
                 var showControls by remember { mutableStateOf(false) }
+                val chapterElements = listOf(ChapterElement.Text("Paragraph one", id = "p1"))
 
                 val state = ReaderChromeState(
                     book = EpubBook(
@@ -63,7 +64,8 @@ class ReaderChromeTapBehaviorTest {
                     listState = listState,
                     tocListState = tocListState,
                     currentChapterIndex = 0,
-                    chapterElements = listOf(ChapterElement.Text("Paragraph one", id = "p1")),
+                    chapterElements = chapterElements,
+                    chapterSections = buildReaderChapterSections(chapterElements),
                     renderedItemCount = 1,
                     isLoadingChapter = false,
                     showControls = showControls,
@@ -135,6 +137,12 @@ class ReaderChromeTapBehaviorTest {
                 var showControls by remember { mutableStateOf(false) }
                 var selectionSessionEpoch by remember { mutableIntStateOf(0) }
                 var isTextSelectionSessionActive by remember { mutableStateOf(false) }
+                val chapterElements = listOf(
+                    ChapterElement.Text(
+                        "Paragraph one ".repeat(40).trim(),
+                        id = "p1",
+                    ),
+                )
 
                 val state = ReaderChromeState(
                     book = EpubBook(
@@ -151,12 +159,8 @@ class ReaderChromeTapBehaviorTest {
                     listState = listState,
                     tocListState = tocListState,
                     currentChapterIndex = 0,
-                    chapterElements = listOf(
-                        ChapterElement.Text(
-                            "Paragraph one ".repeat(40).trim(),
-                            id = "p1",
-                        ),
-                    ),
+                    chapterElements = chapterElements,
+                    chapterSections = buildReaderChapterSections(chapterElements),
                     renderedItemCount = 1,
                     isLoadingChapter = false,
                     showControls = showControls,
@@ -237,6 +241,7 @@ class ReaderChromeTapBehaviorTest {
                 var showControls by remember { mutableStateOf(false) }
                 var selectionSessionEpoch by remember { mutableIntStateOf(0) }
                 var isTextSelectionSessionActive by remember { mutableStateOf(false) }
+                val chapterElements = listOf(ChapterElement.Text("Word", id = "p1"))
 
                 val state = ReaderChromeState(
                     book = EpubBook(
@@ -253,7 +258,8 @@ class ReaderChromeTapBehaviorTest {
                     listState = listState,
                     tocListState = tocListState,
                     currentChapterIndex = 0,
-                    chapterElements = listOf(ChapterElement.Text("Word", id = "p1")),
+                    chapterElements = chapterElements,
+                    chapterSections = buildReaderChapterSections(chapterElements),
                     renderedItemCount = 1,
                     isLoadingChapter = false,
                     showControls = showControls,

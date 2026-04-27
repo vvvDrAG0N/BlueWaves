@@ -72,6 +72,7 @@ class ReaderChromeDrawerSwipeTest {
                 val overscrollState = remember { mutableFloatStateOf(0f) }
                 var showControls by remember { mutableStateOf(false) }
                 val drawerOffset = drawerState.currentOffset
+                val chapterElements = listOf(ChapterElement.Text("Paragraph one", id = "p1"))
 
                 drawerObservation.currentValue = drawerState.currentValue
                 drawerObservation.currentOffset = drawerOffset
@@ -96,7 +97,8 @@ class ReaderChromeDrawerSwipeTest {
                     listState = listState,
                     tocListState = tocListState,
                     currentChapterIndex = 0,
-                    chapterElements = listOf(ChapterElement.Text("Paragraph one", id = "p1")),
+                    chapterElements = chapterElements,
+                    chapterSections = buildReaderChapterSections(chapterElements),
                     renderedItemCount = 1,
                     isLoadingChapter = false,
                     showControls = showControls,
@@ -158,6 +160,7 @@ class ReaderChromeDrawerSwipeTest {
                 val overscrollState = remember { mutableFloatStateOf(0f) }
                 var showControls by remember { mutableStateOf(false) }
                 val drawerOffset = drawerState.currentOffset
+                val chapterElements = listOf(ChapterElement.Text("Paragraph one", id = "p1"))
 
                 drawerObservation.currentValue = drawerState.currentValue
                 drawerObservation.currentOffset = drawerOffset
@@ -182,7 +185,8 @@ class ReaderChromeDrawerSwipeTest {
                     listState = listState,
                     tocListState = tocListState,
                     currentChapterIndex = 0,
-                    chapterElements = listOf(ChapterElement.Text("Paragraph one", id = "p1")),
+                    chapterElements = chapterElements,
+                    chapterSections = buildReaderChapterSections(chapterElements),
                     renderedItemCount = 1,
                     isLoadingChapter = false,
                     showControls = showControls,
