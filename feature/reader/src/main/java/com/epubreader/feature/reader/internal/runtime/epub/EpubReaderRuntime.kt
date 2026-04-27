@@ -172,6 +172,7 @@ private fun ReaderPlainTextSection(
         textAlign = if (isHeading) TextAlign.Center else TextAlign.Start,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 8.dp)
             .testTag("reader_compose_text_section"),
     )
 }
