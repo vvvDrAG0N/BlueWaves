@@ -2504,3 +2504,25 @@ This file is append-only.
   - No execution blocker remains. The target lane is green enough to park, and the phone remains on the release-like APK.
 - Suggested next step:
   - Treat the `Shadow Slave 1435 / 2927 ch` startup-entry lane as acceptable to park unless the user still feels hitching in-hand. If reopened later, use the same exact-state snapshot and judge success first on the exact-state release-like lane.
+
+## 114. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Turn the approved theme picker brainstorming outcome into a durable spec without starting implementation, while keeping the scope aligned to the user's newer picker-only direction.
+- Area/files: `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Re-read the existing theme spectrum picker spec and the queued next-step note before writing anything new, to avoid creating a competing artifact for the same feature lane.
+  2. Compared the older broader design against the newly approved direction from brainstorming and found two major scope drifts: the older spec included post-commit RGB field-token changes, and it taught guided behavior with a softer overlay instead of true in-square boundaries.
+  3. Rewrote the existing spec in place so it now captures the agreed picker-only redesign: a 2D saturation/value square plus a separate hue control, no broader editor-surface token changes, and guided mode constrained to a real safe zone inside the square while Advanced remains fully unrestricted.
+  4. Updated `docs/agent_memory/next_steps.md` so future agents do not execute the stale older implementation plan without first refreshing it against the narrowed spec.
+- Result:
+  - The repo now has one authoritative spectrum-picker design artifact instead of two conflicting ones.
+  - The durable spec matches the current user-approved direction: direct 2D picker upgrade, guided boundaries inside the square, no persistence changes, no token-format side quest, and no implementation yet.
+  - The follow-up lane now clearly requires a plan refresh before any build work starts.
+- Verification:
+  - Read-back review of `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`
+  - Read-back review of the updated theme spectrum picker entry in `docs/agent_memory/next_steps.md`
+- Blockers:
+  - No technical blocker at the design stage. The only open gate is user review of the updated spec before a fresh implementation plan is written.
+- Suggested next step:
+  - Have the user review `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, then refresh the implementation plan from that spec instead of using the older broader plan unchanged.

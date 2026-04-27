@@ -2,107 +2,118 @@
 
 ## Goal
 
-Upgrade the Appearance theme editor color picker from a slider-only HSV editor to a more direct spectrum-based picker that is easier to understand at a glance, while keeping the existing theme model, guided balancing rules, and HEX persistence contract intact.
+Upgrade the Appearance theme editor color picker from a slider-only HSV editor to a more direct spectrum-based picker that is easier to use, while keeping the existing theme model, guided balancing rules, and HEX persistence contract intact.
 
 ## Scope
 
 - Theme editor color picking in the Appearance flow
 - Basic, Extended, and Advanced theme editor modes
-- Picker modal layout, live preview, readouts, exact-zone overlay, and guided-mode cues
-- Theme editor field-cell display after a color is committed
-- Automated coverage for the new picker interaction and readout behavior
+- Picker modal layout and interaction only
+- Guided-mode safe-zone behavior inside the 2D spectrum
+- Automated coverage for the new picker interaction
 
 Out of scope:
 
-- Reworking the broader Appearance auto-apply decision
+- Reworking the broader Appearance apply flow
 - Changing DataStore keys, stored schema, or canonical theme color format
 - Replacing guided balancing logic with a new color algorithm
+- Changing the theme editor grid token format or post-commit field-cell display
 - Adding manual text entry for HEX or RGB in this pass
 
 ## Current Ownership
 
 - `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`
-  - Owns the picker modal, current HSV state, guided commit behavior, and live status text.
+  - Owns the picker modal, current HSV state, guided commit behavior, and dismiss semantics.
 - `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`
   - Owns picker launch wiring, per-mode color fields, and draft update behavior.
 - `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorColorEditing.kt`
-  - Owns guided resolution, color edit results, and the picker session contract that bridges preview behavior back into the editor draft.
-- `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorSections.kt`
-  - Owns the two-column color field grid used by the editor body.
-- `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeStudioComponents.kt`
-  - Owns `StudioColorCell`, including the visible color token shown inside each editor cell.
+  - Owns guided resolution, color edit results, and the picker session contract that bridges the picker back into the editor draft.
+- `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorModels.kt`
+  - Owns guided draft rebalancing through `rebalanceGuidedFields()`.
+- `core/model/src/main/java/com/epubreader/core/model/ThemePaletteGeneration.kt`
+  - Owns the real guided palette generation and contrast enforcement rules.
 
 ## Approved Approach
 
-Keep one shared picker surface across Basic, Extended, and Advanced, but replace the current slider-first interaction with a direct visual picker:
+Keep one shared picker surface across Basic, Extended, and Advanced, but replace the current slider trio with:
 
 - a 2D saturation/value spectrum as the primary selection surface
 - a separate hue control
-- a large live preview swatch
-- one readable live color token rendered as `RGB(r, g, b)`
-- in guided modes, a visible exact-zone circle inside the spectrum plus a low-alpha outer veil that shows where balancing may step in
+- the existing large live preview swatch
+- the existing commit and dismiss flow
 
-The picker will stay visually consistent across all modes. What changes by mode is the behavior messaging:
+The picker stays visually familiar. The redesign is about direct manipulation, not a broader theme-editor rewrite.
 
-- Guided modes may rebalance the picked color for readability
-- Advanced mode applies the exact picked color without guidance
+Mode behavior changes only in how the spectrum is constrained:
 
-HEX remains the canonical stored and internal draft format. RGB is a presentation-only readout for easier human scanning.
+- `Advanced` keeps full freedom across the full 2D square.
+- `Basic` and `Extended` show a guided safe zone inside the square.
+- In guided modes, the user cannot drag the handle outside that safe zone.
+
+This means guided mode stops teaching its rule after the fact and instead teaches it directly in the interaction surface.
 
 ## Picker Experience
 
-The new picker should feel more like a modern creative app than a settings form:
+The new picker should feel like a direct visual control rather than a stack of form sliders:
 
 1. The user taps a theme color cell.
-2. A modal opens with the current color already positioned on the spectrum and hue control.
-3. The user drags directly on the spectrum to choose the base color and uses the hue control to move around the wheel.
-4. A large preview swatch updates live.
-5. In guided modes, the spectrum itself explains the rule: inside the exact zone the color stays literal, outside it the low-alpha veil indicates that balancing may affect the final result.
-6. The picker shows readable text values instead of exposing raw HEX as the main visible token.
-7. `Done` commits the change. BACK or tapping outside dismisses without saving.
+2. A modal opens with the current color already positioned on the 2D spectrum and hue control.
+3. The user drags on the square to adjust saturation and brightness.
+4. The user uses the hue control to move across color families.
+5. The preview swatch updates live.
+6. `Done` commits the change. BACK or tapping outside dismisses without saving.
 
-The current three stacked HSV sliders are removed from the primary picker surface in this redesign. This keeps the dialog from feeling cramped and makes the visual picker the main interaction model.
+The rest of the dialog should stay stable:
 
-## Mode Behavior
+- keep the same modal ownership
+- keep the same preview area
+- keep the same `Done` affordance
+- keep the same cancel-on-dismiss behavior
 
-### Basic And Extended
+## Guided Safe Zone
 
-Basic and Extended keep the current guided balancing philosophy. The user is still free to pick any point on the spectrum, but guided logic may resolve that pick into a nearby readable color before the draft is committed.
+Guided mode should use real boundaries inside the 2D square, not just a decorative overlay.
 
 Behavior rules:
 
-- The spectrum always reflects the current live pick.
-- The spectrum shows a visible exact-zone circle.
-- The area outside that circle carries a soft low-alpha veil.
-- The large preview swatch shows the applied color that the theme will actually use.
-- When the current pick is inside the exact zone, the picker shows one main result readout and explains that the chosen color will stay exact.
-- When the current pick is outside the exact zone, the picker still keeps one main result readout, but adds a short guidance cue and a secondary chosen-color reference near the field so the user can understand why the result changed.
+- The visible safe zone represents the area where the guided resolver would keep the selected color literal for the active field and current context.
+- Areas outside that safe zone are visibly dimmed or veiled.
+- The drag handle cannot move into the dimmed region.
+- If the user drags toward an invalid point, the chosen position projects to the nearest allowed point on the guided boundary.
+- The live preview swatch in guided mode should therefore reflect the actual allowed result, not a knowingly invalid color that will later be changed.
 
-The guided picker should be able to derive that applied preview without mutating the saved draft yet. In other words, guided modes may compute a preview-only resolved color while the dialog is open, but the actual draft write still happens only on `Done`.
+This keeps guided mode honest. The square itself becomes the contract.
 
-This keeps guided modes honest and legible without making them feel locked or broken. The visual rule now teaches guidance before the user hits an adjusted color, instead of asking dual-value labels to do all the teaching afterward.
+## How The Safe Zone Must Be Computed
 
-### Advanced
+The safe zone cannot be a fake fixed circle or a hard-coded box.
 
-Advanced mode stays literal and creator-owned:
+The current guided system resolves color through:
 
-- no exact-zone overlay
-- no outer veil
-- no guided adjustment cue
-- one live `RGB(...)` readout
-- the preview swatch always matches the exact picked color
+- `ThemeEditorDraft.rebalanceGuidedFields()`
+- `generatePaletteFromGuidedInput(...)`
+- contrast enforcement in `ThemePaletteGeneration.kt`
 
-## Display Rules Outside The Picker
+That means the allowed region depends on:
 
-After the user commits a color and returns to the theme editor grid, each color cell should show:
+- which field is being edited
+- the current hue
+- the surrounding theme state
+- whether reader colors are linked
+- the current mode
 
-- the existing color swatch
-- the label
-- one compact human-readable token as `RGB(r, g, b)`
+So the implementation should derive the guided safe zone from the real guided resolver. If the boundary ends up irregular, that is acceptable. Accuracy matters more than geometric simplicity.
 
-The editor grid should not show combined `HEX + RGB` strings. The user explicitly chose the single-token approach to keep the cells easier to scan and to avoid overflow pressure inside the two-column layout.
+## Advanced Mode
 
-HEX should remain available internally for draft updates, balancing logic, persistence, and tests, but it is no longer the main visible token on the editor surface.
+Advanced mode stays literal and unrestricted:
+
+- no guided safe-zone boundary
+- no constrained drag projection
+- no dimmed invalid region
+- the preview always matches the exact chosen HSV point
+
+This preserves the existing "full freedom" contract of Advanced mode.
 
 ## Data And State Contract
 
@@ -110,43 +121,61 @@ This is a picker-surface redesign, not a theme-model redesign.
 
 - Persisted theme colors remain HEX strings.
 - Existing `ThemeEditorDraft` color fields remain HEX-backed.
-- Guided color edit paths continue to operate through the existing `ThemeEditorColorEditResult` contract.
-- RGB strings are derived in the UI layer from the resolved color value.
+- Existing `ThemeEditorColorEditResult` remains the commit path.
+- Guided balancing remains owned by the current guided pipeline.
 - No DataStore key, settings contract, or schema change is required.
 
-If a small helper is introduced, it should be UI-facing and limited to:
+If a helper is introduced, it should stay feature-local and limited to:
 
-- formatting `Long` or parsed colors as `RGB(r, g, b)`
-- mapping spectrum interactions back into the existing HSV/HEX pipeline
+- spectrum hit-testing and coordinate mapping
+- guided safe-zone evaluation and nearest-valid projection
+- drawing helpers for the 2D square and hue control
 
 ## Layout And Sizing Expectations
 
 The picker should remain comfortable on phone-sized layouts:
 
-- spectrum gets the visual priority
-- hue control sits close to the spectrum, not below a long stack of form controls
-- preview swatch and live readout stay immediately visible
-- guided status text should be short and never dominate the modal
-- the exact-zone circle must read clearly without turning into a heavy painted blob
-- the outer veil should stay subtle enough that the actual colors remain inspectable
+- the 2D spectrum gets visual priority
+- the hue control sits near the square, not below a long stack of controls
+- the preview swatch stays immediately visible
+- the square uses a stable fixed height so drag interaction cannot shift layout
+- the guided boundary remains legible without turning the square into a noisy diagram
 
-The editor grid keeps its current two-column structure. The redesign should preserve that layout rather than widening cells or introducing wrapped multiline color tokens as a requirement.
+The theme editor outside the picker should remain visually unchanged in this pass.
+
+## File Shape Expectations
+
+The picker file is already near the repo's split threshold, so the redesign should stay surgical:
+
+- keep `SettingsThemeColorPicker.kt` as the dialog owner
+- extract the 2D spectrum and hue control into a focused feature-local helper file if needed
+- avoid pushing `SettingsThemeColorPicker.kt` or `SettingsThemeEditor.kt` deeper toward the 450-500 line danger zone
+
+`SettingsThemeEditor.kt` should stay responsible only for launching the picker and receiving the chosen value, not for owning spectrum math.
 
 ## Testing Expectations
 
-The implementation plan should cover both behavior and presentation seams:
+The implementation plan should cover:
 
-- JVM or local Android-aware coverage for any extracted color-formatting helper
-- instrumentation coverage for picker dismiss vs commit behavior
-- instrumentation coverage for guided exact-zone and outer-veil visibility in Basic/Extended and their absence in Advanced
-- instrumentation coverage for inside-zone exact behavior versus outside-zone guided behavior
-- instrumentation coverage that committed editor cells render `RGB(...)` after closing the picker
-- focused manual verification across Basic, Extended, and Advanced on a phone-sized surface so the picker does not feel cramped
+- guided mode constrained drag behavior
+- advanced mode unrestricted drag behavior
+- `Done` still being the only commit path
+- BACK and outside-dismiss still discarding changes
+- guided safe-zone visibility for guided fields and absence for advanced fields
+- live preview staying consistent with the real applied picker state
+
+Manual verification should include:
+
+1. Basic mode guided field
+2. Extended mode guided field
+3. Advanced mode unrestricted field
+4. One dismiss-without-save pass
+5. One commit pass
 
 ## Risks And Guards
 
-- Guided transparency can become noisy if the picker shows too many simultaneous labels. Keep the spectrum overlay as the primary explanation and keep text cues secondary.
-- The two-column editor grid is tight. The redesign must keep the post-commit token concise and single-line.
-- The picker already has important dismiss semantics. The redesign must preserve the fixed cancel-vs-commit behavior instead of reintroducing accidental save-on-dismiss behavior.
-- Because the current picker state is HSV-backed, spectrum interaction should reuse that pipeline instead of introducing a second competing color-state model.
-- The exact-zone circle cannot become a lie. Its placement and effect must stay consistent with the real guided resolver; if a perfectly hard circle feels inaccurate, the implementation should keep the circle as the main cue but soften its boundary rather than silently drifting from the actual balancing behavior.
+- The biggest risk is lying about guided behavior. A pretty overlay that does not match the real resolver would make the picker less trustworthy.
+- The second risk is accidental scope creep into theme-editor labels, persistence, or broader Appearance UX.
+- The picker already has important dismiss semantics. The redesign must preserve cancel-vs-commit behavior.
+- Because the current picker state is HSV-backed, the new square should reuse that pipeline instead of introducing a second competing color-state model.
+- If nearest-valid projection feels jumpy, the implementation should smooth the projection path, but it still must remain inside the true guided-safe region.
