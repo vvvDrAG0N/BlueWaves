@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.MainActivity
 import com.epubreader.core.model.BookProgress
 import com.epubreader.core.model.EpubBook
+import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.runBlocking
@@ -62,6 +63,7 @@ class ReaderScreenRestorationTest {
                 MaterialTheme {
                     ReaderScreen(
                         book = book,
+                        globalSettings = GlobalSettings(),
                         settingsManager = settingsManager,
                         parser = parser,
                         onBack = {},

@@ -40,17 +40,6 @@ internal suspend fun scanLibrary(parser: EpubParser): List<EpubBook> {
     }
 }
 
-internal suspend fun touchBookLastRead(
-    parser: EpubParser,
-    book: EpubBook,
-): EpubBook {
-    val updated = book.copy(lastRead = System.currentTimeMillis())
-    withContext(Dispatchers.IO) {
-        parser.updateLastRead(updated)
-    }
-    return updated
-}
-
 internal suspend fun importBookIntoLibrary(
     books: List<EpubBook>,
     context: Context,

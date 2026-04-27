@@ -121,21 +121,7 @@ internal fun LibraryFeatureContent(
             }
             return@openBook
         }
-        if (asyncState.bookOpenInFlight != book.id) {
-            scope.launch {
-                asyncState = asyncState.copy(bookOpenInFlight = book.id)
-                try {
-                    val preparedBook = withContext(Dispatchers.IO) {
-                        dependencies.parser.prepareBookForReading(book)
-                    }
-                    val updated = touchBookLastRead(dependencies.parser, preparedBook)
-                    applyUpdatedBook(updated)
-                    onEvent(LibraryEvent.OpenReader(updated.id))
-                } finally {
-                    asyncState = asyncState.copy(bookOpenInFlight = null)
-                }
-            }
-        }
+        onEvent(LibraryEvent.OpenReader(book.id))
     }
 
     LaunchedEffect(route) {

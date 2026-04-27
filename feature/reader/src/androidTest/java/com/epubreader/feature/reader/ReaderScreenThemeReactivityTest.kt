@@ -81,6 +81,7 @@ class ReaderScreenThemeReactivityTest {
                 MaterialTheme {
                     ReaderScreen(
                         book = book,
+                        globalSettings = GlobalSettings(theme = "light"),
                         settingsManager = settingsManager,
                         parser = parser,
                         onBack = {},
@@ -132,6 +133,7 @@ class ReaderScreenThemeReactivityTest {
                 MaterialTheme {
                     ReaderScreen(
                         book = book,
+                        globalSettings = GlobalSettings(theme = "light"),
                         settingsManager = settingsManager,
                         parser = parser,
                         onBack = {},

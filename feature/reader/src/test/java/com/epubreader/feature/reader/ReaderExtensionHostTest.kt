@@ -3,6 +3,7 @@ package com.epubreader.feature.reader
 import androidx.compose.runtime.Composable
 import com.epubreader.core.model.BookFormat
 import com.epubreader.core.model.EpubBook
+import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.runBlocking
@@ -138,6 +139,7 @@ class ReaderExtensionHostTest {
             get() = error("unused in resolver tests")
         override val settingsManager: SettingsManager
             get() = error("unused in resolver tests")
+        override val globalSettings: GlobalSettings = GlobalSettings()
         override val engineExtensions: List<ReaderEngineExtension> = emptyList()
         override val overlayExtensions: List<ReaderOverlayExtension> = emptyList()
         override val toolExtensions: List<ReaderToolExtension> = emptyList()

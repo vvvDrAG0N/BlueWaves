@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.epubreader.core.debug.AppLog
+import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.ui.ShellChromeSpec
 import com.epubreader.core.ui.SurfaceId
 import com.epubreader.core.ui.SurfacePlugin
@@ -47,6 +48,7 @@ data class ReaderRouteArgs(
 data class ReaderDependencies(
     override val parser: EpubParser,
     override val settingsManager: SettingsManager,
+    override val globalSettings: GlobalSettings = GlobalSettings(),
     override val engineExtensions: List<ReaderEngineExtension> = builtInReaderEngineExtensions,
     override val overlayExtensions: List<ReaderOverlayExtension> = emptyList(),
     override val toolExtensions: List<ReaderToolExtension> = emptyList(),
@@ -55,6 +57,7 @@ data class ReaderDependencies(
 interface ReaderDependencyBag {
     val parser: EpubParser
     val settingsManager: SettingsManager
+    val globalSettings: GlobalSettings
     val engineExtensions: List<ReaderEngineExtension>
     val overlayExtensions: List<ReaderOverlayExtension>
     val toolExtensions: List<ReaderToolExtension>
@@ -121,6 +124,7 @@ object ReaderSurfacePlugin : SurfacePlugin<ReaderRoute, ReaderDependencies, Read
 
             is ReaderEngineState.Ready -> ReaderScreen(
                 book = state.book,
+                globalSettings = dependencies.globalSettings,
                 settingsManager = dependencies.settingsManager,
                 parser = dependencies.parser,
                 hostExtensions = resolvedHostExtensions,

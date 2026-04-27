@@ -7,7 +7,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -52,6 +51,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 internal fun ReaderFeatureShell(
     book: EpubBook,
+    globalSettings: GlobalSettings,
     settingsManager: SettingsManager,
     parser: EpubParser,
     hostExtensions: ReaderResolvedHostExtensions,
@@ -59,7 +59,6 @@ internal fun ReaderFeatureShell(
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val globalSettings by settingsManager.globalSettings.collectAsState(initial = GlobalSettings())
     var settingsDraft by remember(book.id) { mutableStateOf<ReaderSettingsDraft?>(null) }
     val effectiveSettings = remember(globalSettings, settingsDraft) {
         settingsDraft?.applyTo(globalSettings) ?: globalSettings

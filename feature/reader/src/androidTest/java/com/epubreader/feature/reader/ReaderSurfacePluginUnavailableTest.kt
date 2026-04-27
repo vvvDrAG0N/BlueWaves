@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.epubreader.core.model.BookFormat
+import com.epubreader.core.model.GlobalSettings
 import com.epubreader.data.parser.EpubParser
 import com.epubreader.data.settings.SettingsManager
 import org.json.JSONArray
@@ -70,6 +71,7 @@ class ReaderSurfacePluginUnavailableTest {
                         dependencies = ReaderDependencies(
                             parser = parser,
                             settingsManager = settingsManager,
+                            globalSettings = GlobalSettings(),
                         ),
                         onEvent = {},
                     )

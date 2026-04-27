@@ -2383,3 +2383,124 @@ This file is append-only.
   - No remaining execution blocker. The only tooling caveat is that the trace harness cannot run against a non-debuggable release install because it restores benchmark snapshots with `run-as`.
 - Suggested next step:
   - Reopen reader perf only if the user can still feel a real hitch on the phone, and if that happens rerun just the exact offending release-like lane plus the matching trace lane against the refreshed 2026-04-27 report.
+
+## 110. 2026-04-27 02:14
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Retest only the suspicious `Shadow Slave delayed` chapter-scrolling case on the actual phone, then collect richer evidence from truly matching traces instead of relying on the older chapter-1 Shadow snapshot.
+- Area/files: `scripts/run_reader_lag_shadow_delayed_probe.ps1`, `logs/reader-lag-shadow-midbook-snapshot-20260427-0206/shadow-1435-2927-cmd.tar`, `logs/reader-lag-shadow-delayed-release-20260427-020811/summary.md`, `logs/reader-lag-shadow-delayed-release-rerun-02-20260427/summary.md`, `logs/reader-lag-shadow-delayed-release-rerun-03-20260427/summary.md`, `logs/reader-lag-shadow-delayed-trace-1435-2927-20260427/summary.md`, `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md`, `docs/agent_memory/step_history.md`, and `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Read the existing release-like and trace harnesses closely, then isolated a key mismatch: the release-like scary run used `Shadow Slave 1435 / 2927 ch`, but the older trace harness was restoring `logs/reader-lag-two-book-reset-20260424-0802/pristine-state-cmd.tar`, which actually brings `Shadow Slave` back at `1 / 2923 ch`.
+  2. Added a focused helper script, `scripts/run_reader_lag_shadow_delayed_probe.ps1`, to retest only the delayed Shadow scenario with exact title/progress validation, richer per-run artifacts, and optional trace capture.
+  3. Waited for the user to re-place the phone at `Shadow Slave 1435 / 2927 ch`, temporarily switched to the debug build, and streamed that exact state into a new local snapshot tar at `logs/reader-lag-shadow-midbook-snapshot-20260427-0206/shadow-1435-2927-cmd.tar`.
+  4. Restored the release-like APK and reran the exact delayed case three times from that exact state by alternating debug restore and release measurement. The three release-like reruns came back `135`, `145`, and `61` high-input-latency.
+  5. Switched back to the debug build and reran the delayed trace lane three times from the new exact-state snapshot. The three matching delayed traces came back `242`, `298`, and `271` high-input-latency, with the dominant work consistently in `bindApplication`, dex open/extract, and large main-thread `traversal` / Compose render slices.
+  6. Restored the release-like APK afterward and updated the portable perf report with an exact-state addendum so the scary-case interpretation is no longer based on mismatched Shadow snapshots.
+- Result:
+  - The scary `Shadow Slave delayed` result is now partly confirmed rather than dismissed as mere noise.
+  - It reproduced twice in the release-like lane very close to the original scary run, but not perfectly; one rerun dropped substantially, so the `gfxinfo` counter still has real spread.
+  - The exact-state trace reruns stayed consistently high and shifted the interpretation: the problem looks like cold-start / dex / first-render overlap on that heavy mid-book Shadow state, not simply selector drift or a fake delayed-only anomaly.
+- Verification:
+  - Live library verification on the phone showing `Shadow Slave 1435 / 2927 ch`
+  - `adb -s "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" install -r -d "app/build/outputs/apk/debug/app-debug.apk"`
+  - Snapshot capture of the exact mid-book state to `logs/reader-lag-shadow-midbook-snapshot-20260427-0206/shadow-1435-2927-cmd.tar`
+  - Three exact-state release-like delayed reruns using `scripts/run_reader_lag_shadow_delayed_probe.ps1`
+  - Three exact-state delayed trace reruns using `scripts/run_reader_lag_shadow_delayed_probe.ps1 -Mode trace`
+  - Final reinstall of `app/build/outputs/apk/release/app-release-debugsigned.apk`
+- Blockers:
+  - No execution blocker remains. The key caveat is methodological: future Shadow delayed traces should use the new `shadow-1435-2927-cmd.tar` snapshot, not the older chapter-1 `pristine-state-cmd.tar`.
+- Suggested next step:
+  - If the user wants actual performance work next, target the cold-start / first-render overlap on `Shadow Slave 1435 / 2927 ch` specifically and use the new exact-state snapshot for any further trace or verification pass.
+
+## 111. 2026-04-27 02:36
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Create a durable implementation plan for investigating and fixing the real-phone `Shadow Slave 1435 / 2927 ch` delayed first-scroll lag without widening scope beyond the verified hot path.
+- Area/files: `docs/superpowers/plans/2026-04-27-reader-shadow-delayed-first-scroll-lag.md`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderChapterSelectionHost.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderSelectableTextSection.kt`, and `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenHelpers.kt`.
+- Action taken:
+  1. Re-read the repo routing and reader guardrail docs plus the graph report so the plan stayed anchored to the current module boundaries and reader-risk rules.
+  2. Turned the investigation findings into a narrow implementation target: reuse shell-built `chapterSections`, skip unconditional `selectionDocument` work when `selectableText` is off, and verify the result with a focused phone rerun of only the scary Shadow lane.
+  3. Wrote a new durable plan at `docs/superpowers/plans/2026-04-27-reader-shadow-delayed-first-scroll-lag.md` with task sequencing, intended file ownership, guardrails, test-first steps, regression slices, and exact release-like plus trace verification commands for the phone.
+  4. Updated `docs/agent_memory/next_steps.md` so the next implementation pass starts from this new plan rather than the older generic perf follow-up note.
+- Result:
+  - The repo now has an execution-ready plan for the newly confirmed `Shadow Slave delayed` lag path.
+  - The plan keeps scope narrow and evidence-driven: it targets the default non-selectable-text runtime path first, not parser or theme work.
+  - The phone verification lane is also now explicit: rerun only the exact `Shadow Slave 1435 / 2927 ch` delayed case and use the new exact-state snapshot if traces are still needed.
+- Verification:
+  - Read-back review of `docs/superpowers/plans/2026-04-27-reader-shadow-delayed-first-scroll-lag.md`
+  - Confirmed the continuity updates landed in `docs/agent_memory/step_history.md` and `docs/agent_memory/next_steps.md`
+- Blockers:
+  - None at the planning stage. Remaining work is implementation plus the focused device retest.
+- Suggested next step:
+  - Execute `docs/superpowers/plans/2026-04-27-reader-shadow-delayed-first-scroll-lag.md`, starting with the rendering-plan helper and the selection-off structure test before touching the phone harness again.
+
+## 112. 2026-04-27 04:01
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Execute the approved `Shadow Slave 1435 / 2927 ch` delayed first-scroll fix plan end to end, verify the reader regressions stay green, and rerun the exact scary phone lane to see whether the cleanup actually improved the real release-like result.
+- Area/files: `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/ReaderRuntimeRenderingPlan.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderRuntimeRenderingPlanTest.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenContracts.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenBindings.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContent.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenChrome.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSelectableTextStructureTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenRestorationTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenOverscrollTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChromeTapBehaviorTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderChapterSelectionHostActionsTest.kt`, `logs/reader-lag-shadow-delayed-release-postfix-run1-20260427-035549/summary.md`, `logs/reader-lag-shadow-delayed-release-postfix-run2-20260427-035654/summary.md`, `logs/reader-lag-shadow-delayed-release-postfix-run3-20260427-035739/summary.md`, `logs/reader-lag-shadow-delayed-trace-postfix-20260427-035846/summary.md`, `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md`, `docs/agent_memory/step_history.md`, and `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Executed the implementation plan with subagent-driven delivery and review loops: added a rendering-plan helper, threaded explicit prebuilt `chapterSections`, removed selection scaffolding from the default `selectableText = false` runtime path, and tightened the contracts so hidden fallback section rebuilding no longer survives at the runtime or chrome-state seam.
+  2. Caught and fixed one real regression from the broader slice: the first selection-off renderer changed restoration-visible layout granularity, so the plain path was moved back to section-level text semantics and then had its old vertical `8.dp` padding restored to keep restore/layout behavior aligned.
+  3. Re-ran the focused reader regression slice to green: file-size/test-checklist checks, selected JVM reader tests, and the instrumentation classes for selectable structure, restoration, overscroll, chrome tap behavior, and selection-host actions.
+  4. Rebuilt debug and release APKs, debug-signed the release artifact, restored the exact `Shadow Slave 1435 / 2927 ch` snapshot under the debug build, swapped back to the release-like APK, and reran the delayed scary lane three exact-state times on the physical phone.
+  5. Because the release-like reruns were still rough and mixed, ran the optional exact-state trace follow-up on the physical phone, then restored the release-like APK afterward.
+  6. Updated the portable perf report with a post-fix addendum that separates the code-quality/trace improvement story from the still-mixed release-like product result.
+- Result:
+  - The implementation landed successfully and the code path is cleaner: the default non-selectable-text reader path no longer mounts the old selection scaffolding, and the focused regression slice is green.
+  - The exact-state post-fix trace lane improved materially versus the pre-fix trace reruns, which suggests the cleanup removed real reader-side startup work.
+  - The exact-state post-fix release-like scary lane did **not** improve cleanly enough to call the issue solved. The fresh release-like reruns came back `167`, `137`, and `70`, versus the pre-fix exact-state `135`, `145`, and `61`.
+  - Updated read: the removed selection scaffolding was a contributor, but the stronger remaining bottleneck still looks like cold process / dex / first-render overlap during the first reading interaction window on the heavy Shadow mid-book state.
+- Verification:
+  - `.\gradlew.bat checkKotlinFileLineLimit verifyTestChecklistReferences`
+  - `.\gradlew.bat --% :feature:reader:testDebugUnitTest --tests com.epubreader.feature.reader.ReaderRuntimeRenderingPlanTest --tests com.epubreader.feature.reader.ReaderChapterSectionsTest --tests com.epubreader.feature.reader.ReaderSelectionDocumentTest --tests com.epubreader.feature.reader.ReaderScreenPrefetchTest --tests com.epubreader.feature.reader.ReaderScreenContractsTest`
+  - `.\gradlew.bat --% :feature:reader:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderSelectableTextStructureTest`
+  - `.\gradlew.bat --% :feature:reader:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderScreenRestorationTest`
+  - `.\gradlew.bat --% :feature:reader:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderScreenOverscrollTest`
+  - `.\gradlew.bat --% :feature:reader:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChromeTapBehaviorTest`
+  - `.\gradlew.bat --% :feature:reader:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderChapterSelectionHostActionsTest`
+  - `.\gradlew.bat --console=plain :app:assembleDebug :app:assembleRelease`
+  - `adb -s "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" install -r -d "app/build/outputs/apk/debug/app-debug.apk"`
+  - `adb -s "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" shell run-as com.epubreader tar -xf /data/local/tmp/pristine-state-cmd.tar -C /data/user/0/com.epubreader`
+  - `adb -s "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" install -r -d "app/build/outputs/apk/release/app-release-debugsigned.apk"`
+  - `powershell -ExecutionPolicy Bypass -File scripts/run_reader_lag_shadow_delayed_probe.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" -Mode release -RepeatCount 1`
+  - `powershell -ExecutionPolicy Bypass -File scripts/run_reader_lag_shadow_delayed_probe.ps1 -DeviceSerial "adb-FY2434410A95-pebaQK._adb-tls-connect._tcp" -Mode trace -RepeatCount 3 -SnapshotTarPath "logs/reader-lag-shadow-midbook-snapshot-20260427-0206/shadow-1435-2927-cmd.tar" -PythonExe python`
+- Blockers:
+  - No immediate execution blocker remains. The phone rerun is complete and the phone is back on the release-like APK.
+- Suggested next step:
+  - If reader perf work continues, stop focusing on selection scaffolding and investigate cold-start / dex / first-render overlap on the exact `Shadow Slave 1435 / 2927 ch` delayed state, using the exact-state release-like lane as the primary success metric.
+
+## 113. 2026-04-27 04:39
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Push the confirmed `Shadow Slave 1435 / 2927 ch` startup-entry lag down to the user's target of roughly `50` average across both the immediate and `15s later` exact-state release-like phone lanes, without breaking reader behavior or UI/UX.
+- Area/files: `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `app/src/main/java/com/epubreader/app/AppNavigationScreenHost.kt`, `app/src/main/AndroidManifest.xml`, `app/src/test/java/com/epubreader/app/AppNavigationScreenHostTest.kt`, `feature/library/src/main/java/com/epubreader/feature/library/internal/LibraryFeatureContent.kt`, `feature/library/src/main/java/com/epubreader/feature/library/internal/LibraryFeatureContracts.kt`, `feature/library/src/main/java/com/epubreader/feature/library/internal/LibraryFeatureOperations.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderSurfacePlugin.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreen.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/test/java/com/epubreader/feature/reader/ReaderExtensionHostTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenRestorationTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenThemeReactivityTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSystemBarTest.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderSurfacePluginUnavailableTest.kt`, `logs/reader-lag-shadow-immediate-release-pass2-20260427-042759-run*/summary.md`, `logs/reader-lag-shadow-delayed-release-pass2-20260427-042759-run*/summary.md`, `logs/reader-lag-shadow-immediate-release-pass3-20260427-043525-run*/summary.md`, `logs/reader-lag-shadow-delayed-release-pass3-20260427-043525-run*/summary.md`, `logs/perf_report_book_open_and_chapter_scroll_2026-04-27_refresh.md`, and `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Re-read the app-shell startup path, delayed probe script, exact-state traces, and merged manifest to isolate safe startup-entry targets instead of reopening the already-clean reader selection path.
+  2. Implemented the first startup-entry pass:
+     - removed duplicate library-side `prepareBookForReading(...)` and `lastRead` writes before opening the reader
+     - removed the `Library <-> Reader` route fade transition
+     - removed the automatic `EmojiCompat` startup initializer from the app manifest
+     - added a small JVM test for the new app-route transition rule
+  3. Verified that first pass locally, rebuilt debug and release APKs, debug-signed the release artifact, then reran six exact-state release-like phone measurements by restoring the same mid-book Shadow snapshot before every run: immediate `70 / 76 / 61` and delayed `54 / 71 / 48`.
+  4. Because the immediate average still missed the target, implemented the second startup-entry pass by threading already-loaded app-shell `GlobalSettings` into the reader so the reader no longer starts with a second fresh DataStore settings collection on first entry.
+  5. Fixed a small compile regression from that refactor, reran the focused JVM and reader instrumentation slice to green, rebuilt/signatured APKs again, and reran the same six exact-state release-like phone measurements from the same snapshot.
+  6. Recorded the final pass-3 results in the portable perf report with charts and interpretation instead of leaving them only in chat.
+- Result:
+  - The exact-state release-like goal was met on the physical phone.
+  - Startup pass 2 results:
+    - immediate `37`, `42`, `63` -> average `47.33`
+    - `15s later` `29`, `63`, `35` -> average `42.33`
+    - combined six-run average `44.83`
+  - Practical read: the decisive fixes were on the startup-entry path, not on selection scaffolding. The remaining variance still exists, but the center of the measured lane moved under the requested threshold while the focused regression slice stayed green.
+- Verification:
+  - `.\gradlew.bat --console=plain checkKotlinFileLineLimit :app:testDebugUnitTest --tests com.epubreader.app.AppNavigationScreenHostTest :feature:library:testDebugUnitTest --tests com.epubreader.feature.library.internal.LibraryFeatureOperationsTest :feature:reader:testDebugUnitTest --tests com.epubreader.feature.reader.ReaderExtensionHostTest`
+  - `.\gradlew.bat --% :feature:reader:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.reader.ReaderScreenRestorationTest,com.epubreader.feature.reader.ReaderSurfacePluginUnavailableTest,com.epubreader.feature.reader.ReaderSystemBarTest`
+  - `.\gradlew.bat --console=plain :app:assembleDebug :app:assembleRelease`
+  - debug-sign release artifact to `app/build/outputs/apk/release/app-release-debugsigned.apk`
+  - six exact-state release-like phone reruns using `scripts/run_reader_lag_shadow_delayed_probe.ps1` with `DelaySeconds=0` and `DelaySeconds=15`, restoring `logs/reader-lag-shadow-midbook-snapshot-20260427-0206/shadow-1435-2927-cmd.tar` before every single run
+  - `.\gradlew.bat --console=plain verifyTestChecklistReferences`
+- Blockers:
+  - No execution blocker remains. The target lane is green enough to park, and the phone remains on the release-like APK.
+- Suggested next step:
+  - Treat the `Shadow Slave 1435 / 2927 ch` startup-entry lane as acceptable to park unless the user still feels hitching in-hand. If reopened later, use the same exact-state snapshot and judge success first on the exact-state release-like lane.

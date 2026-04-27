@@ -105,6 +105,7 @@ fun AppNavigation(settingsManager: SettingsManager, globalSettings: GlobalSettin
             readerDependencies = ReaderDependencies(
                 parser = parser,
                 settingsManager = settingsManager,
+                globalSettings = globalSettings,
             ),
             editBookDependencies = EditBookDependencies(
                 parser = parser,

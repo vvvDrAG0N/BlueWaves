@@ -136,6 +136,7 @@ class ReaderSystemBarTest {
                 ) {
                     ReaderScreen(
                         book = book,
+                        globalSettings = globalSettings,
                         settingsManager = settingsManager,
                         parser = parser,
                         onBack = {},

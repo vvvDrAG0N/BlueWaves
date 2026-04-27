@@ -18,7 +18,6 @@ internal val LibrarySortOptions = listOf(
 internal data class LibraryAsyncUiState(
     val libraryRefresh: Boolean = false,
     val importInFlight: Boolean = false,
-    val bookOpenInFlight: String? = null,
 )
 
 internal data class LibraryScreenState(
