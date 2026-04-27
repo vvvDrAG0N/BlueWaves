@@ -83,7 +83,7 @@ internal fun ReaderSelectionTestSurface(
             settings = settings,
             themeColors = getThemeColors("light"),
             listState = chapterListState,
-            chapterElements = chapterElements,
+            chapterSections = buildReaderChapterSections(chapterElements),
             isLoadingChapter = false,
             currentChapterIndex = 0,
             onSelectionActiveChange = onSelectionActiveChange,

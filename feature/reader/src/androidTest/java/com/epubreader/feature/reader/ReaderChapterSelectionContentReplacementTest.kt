@@ -111,11 +111,12 @@ class ReaderChapterSelectionContentReplacementTest {
                             .fillMaxSize()
                             .testTag("selection_surface"),
                     ) {
+                        val currentChapterElements = chapterElements.value
                         ReaderChapterContent(
                             settings = GlobalSettings(selectableText = true),
                             themeColors = getThemeColors("light"),
                             listState = rememberLazyListState(),
-                            chapterElements = chapterElements.value,
+                            chapterSections = buildReaderChapterSections(currentChapterElements),
                             isLoadingChapter = false,
                             currentChapterIndex = 0,
                         )

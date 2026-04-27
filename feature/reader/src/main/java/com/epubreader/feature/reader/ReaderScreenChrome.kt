@@ -112,7 +112,6 @@ private fun ReaderContentSurface(
                     settings = state.settings,
                     themeColors = state.themeColors,
                     listState = state.listState,
-                    chapterElements = state.chapterElements,
                     chapterSections = state.chapterSections,
                     isLoadingChapter = state.isLoadingChapter,
                     currentChapterIndex = state.currentChapterIndex,

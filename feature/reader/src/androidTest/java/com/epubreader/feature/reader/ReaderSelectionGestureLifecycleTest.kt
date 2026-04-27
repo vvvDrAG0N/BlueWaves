@@ -139,6 +139,12 @@ class ReaderSelectionGestureLifecycleTest {
     }
 
     private fun setReaderContent() {
+        val chapterElements = listOf(
+            ChapterElement.Text(
+                "Scholarship keeps the selection lifecycle steady while the handle survives tiny finger drift. ".repeat(24).trim(),
+                id = "p1",
+            ),
+        )
         composeRule.runOnUiThread {
             composeRule.activity.setContent {
                 MaterialTheme {
@@ -151,12 +157,7 @@ class ReaderSelectionGestureLifecycleTest {
                             settings = GlobalSettings(selectableText = true),
                             themeColors = getThemeColors("light"),
                             listState = rememberLazyListState(),
-                            chapterElements = listOf(
-                                ChapterElement.Text(
-                                    "Scholarship keeps the selection lifecycle steady while the handle survives tiny finger drift. ".repeat(24).trim(),
-                                    id = "p1",
-                                ),
-                            ),
+                            chapterSections = buildReaderChapterSections(chapterElements),
                             isLoadingChapter = false,
                             currentChapterIndex = 0,
                         )

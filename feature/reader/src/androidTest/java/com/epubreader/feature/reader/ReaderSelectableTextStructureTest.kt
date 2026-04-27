@@ -26,6 +26,11 @@ class ReaderSelectableTextStructureTest {
         val imageFile = File(composeRule.activity.cacheDir, "reader-selectable-image.bin").apply {
             writeBytes(byteArrayOf(1))
         }
+        val chapterElements = listOf(
+            ChapterElement.Text("Paragraph one", id = "p1"),
+            ChapterElement.Image(imageFile.absolutePath, id = "img1"),
+            ChapterElement.Text("Paragraph two", id = "p2"),
+        )
         composeRule.runOnUiThread {
             composeRule.activity.setContent {
                 MaterialTheme {
@@ -33,11 +38,7 @@ class ReaderSelectableTextStructureTest {
                         settings = GlobalSettings(selectableText = true),
                         themeColors = getThemeColors("light"),
                         listState = rememberLazyListState(),
-                        chapterElements = listOf(
-                            ChapterElement.Text("Paragraph one", id = "p1"),
-                            ChapterElement.Image(imageFile.absolutePath, id = "img1"),
-                            ChapterElement.Text("Paragraph two", id = "p2"),
-                        ),
+                        chapterSections = buildReaderChapterSections(chapterElements),
                         isLoadingChapter = false,
                         currentChapterIndex = 0,
                     )
@@ -59,6 +60,13 @@ class ReaderSelectableTextStructureTest {
         val imageFile = File(composeRule.activity.cacheDir, "reader-compose-selectable-image.bin").apply {
             writeBytes(byteArrayOf(2))
         }
+        val chapterElements = listOf(
+            ChapterElement.Text("Paragraph one", id = "p1"),
+            ChapterElement.Text("Paragraph two", id = "p2"),
+            ChapterElement.Image(imageFile.absolutePath, id = "img1"),
+            ChapterElement.Text("Paragraph three", id = "p3"),
+            ChapterElement.Text("Paragraph four", id = "p4"),
+        )
         composeRule.runOnUiThread {
             composeRule.activity.setContent {
                 MaterialTheme {
@@ -66,13 +74,7 @@ class ReaderSelectableTextStructureTest {
                         settings = GlobalSettings(selectableText = true),
                         themeColors = getThemeColors("light"),
                         listState = rememberLazyListState(),
-                        chapterElements = listOf(
-                            ChapterElement.Text("Paragraph one", id = "p1"),
-                            ChapterElement.Text("Paragraph two", id = "p2"),
-                            ChapterElement.Image(imageFile.absolutePath, id = "img1"),
-                            ChapterElement.Text("Paragraph three", id = "p3"),
-                            ChapterElement.Text("Paragraph four", id = "p4"),
-                        ),
+                        chapterSections = buildReaderChapterSections(chapterElements),
                         isLoadingChapter = false,
                         currentChapterIndex = 0,
                     )
@@ -99,6 +101,13 @@ class ReaderSelectableTextStructureTest {
         val imageFile = File(composeRule.activity.cacheDir, "reader-plain-text-image.bin").apply {
             writeBytes(byteArrayOf(3))
         }
+        val chapterElements = listOf(
+            ChapterElement.Text("Paragraph one", id = "p1"),
+            ChapterElement.Text("Paragraph two", id = "p2"),
+            ChapterElement.Image(imageFile.absolutePath, id = "img1"),
+            ChapterElement.Text("Paragraph three", id = "p3"),
+            ChapterElement.Text("Paragraph four", id = "p4"),
+        )
         composeRule.runOnUiThread {
             composeRule.activity.setContent {
                 MaterialTheme {
@@ -106,13 +115,7 @@ class ReaderSelectableTextStructureTest {
                         settings = GlobalSettings(selectableText = false),
                         themeColors = getThemeColors("light"),
                         listState = rememberLazyListState(),
-                        chapterElements = listOf(
-                            ChapterElement.Text("Paragraph one", id = "p1"),
-                            ChapterElement.Text("Paragraph two", id = "p2"),
-                            ChapterElement.Image(imageFile.absolutePath, id = "img1"),
-                            ChapterElement.Text("Paragraph three", id = "p3"),
-                            ChapterElement.Text("Paragraph four", id = "p4"),
-                        ),
+                        chapterSections = buildReaderChapterSections(chapterElements),
                         isLoadingChapter = false,
                         currentChapterIndex = 0,
                     )

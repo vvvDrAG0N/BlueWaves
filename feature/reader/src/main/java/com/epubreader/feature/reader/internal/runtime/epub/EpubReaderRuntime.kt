@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.epubreader.core.model.ChapterElement
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.feature.reader.ReaderTheme
 
@@ -23,8 +22,7 @@ internal fun EpubReaderRuntime(
     settings: GlobalSettings,
     themeColors: ReaderTheme,
     listState: LazyListState,
-    chapterElements: List<ChapterElement>,
-    chapterSections: List<ReaderChapterSection> = buildReaderChapterSections(chapterElements),
+    chapterSections: List<ReaderChapterSection>,
     isLoadingChapter: Boolean,
     currentChapterIndex: Int,
     selectionSessionEpoch: Int = 0,
