@@ -24,6 +24,7 @@ internal fun EpubReaderRuntime(
     themeColors: ReaderTheme,
     listState: LazyListState,
     chapterElements: List<ChapterElement>,
+    chapterSections: List<ReaderChapterSection> = buildReaderChapterSections(chapterElements),
     isLoadingChapter: Boolean,
     currentChapterIndex: Int,
     selectionSessionEpoch: Int = 0,
@@ -37,75 +38,124 @@ internal fun EpubReaderRuntime(
         return
     }
 
-    val sections = remember(chapterElements) {
-        buildReaderChapterSections(chapterElements)
-    }
-    val selectionDocument = remember(sections) {
-        buildReaderSelectionDocument(sections)
+    val renderingPlan = remember(chapterSections, settings.selectableText) {
+        buildReaderRuntimeRenderingPlan(
+            chapterSections = chapterSections,
+            selectableTextEnabled = settings.selectableText,
+        )
     }
 
     key(currentChapterIndex, selectionSessionEpoch) {
-        ReaderChapterSelectionHost(
-            settings = settings,
-            themeColors = themeColors,
-            listState = listState,
-            selectionDocument = selectionDocument,
-            selectionSessionEpoch = selectionSessionEpoch,
-            onSelectionActiveChange = onSelectionActiveChange,
-            onSelectionHandleDragChange = onSelectionHandleDragChange,
-            onLookupSheetVisibilityChange = onLookupSheetVisibilityChange,
-            onLookupSheetDismissed = onLookupSheetDismissed,
-        ) { selectionController ->
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("reader_runtime_chapter_$currentChapterIndex"),
-                contentPadding = PaddingValues(
-                    horizontal = settings.horizontalPadding.dp,
-                    vertical = 80.dp,
-                ),
-            ) {
-                items(sections, key = { it.id }) { section ->
-                    when (section) {
-                        is ReaderChapterSection.ImageSection -> {
-                            ReaderChapterImage(
-                                filePath = section.image.filePath,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 16.dp),
-                                onTap = if (selectionController.selectionActive) selectionController::clearSelection else null,
-                            )
-                        }
+        val selectionDocument = renderingPlan.selectionDocument
+        if (selectionDocument != null) {
+            ReaderChapterSelectionHost(
+                settings = settings,
+                themeColors = themeColors,
+                listState = listState,
+                selectionDocument = selectionDocument,
+                selectionSessionEpoch = selectionSessionEpoch,
+                onSelectionActiveChange = onSelectionActiveChange,
+                onSelectionHandleDragChange = onSelectionHandleDragChange,
+                onLookupSheetVisibilityChange = onLookupSheetVisibilityChange,
+                onLookupSheetDismissed = onLookupSheetDismissed,
+            ) { selectionController ->
+                ReaderRuntimeSectionList(
+                    settings = settings,
+                    themeColors = themeColors,
+                    listState = listState,
+                    currentChapterIndex = currentChapterIndex,
+                    chapterSections = renderingPlan.chapterSections,
+                    selectionDocument = selectionDocument,
+                    selectionController = selectionController,
+                )
+            }
+        } else {
+            ReaderRuntimeSectionList(
+                settings = settings,
+                themeColors = themeColors,
+                listState = listState,
+                currentChapterIndex = currentChapterIndex,
+                chapterSections = renderingPlan.chapterSections,
+            )
+        }
+    }
+}
 
-                        is ReaderChapterSection.TextSection -> {
-                            val documentSection = selectionDocument.sectionById(section.id)
-                            if (documentSection != null) {
-                                ReaderSelectableTextSection(
-                                    section = documentSection,
-                                    settings = settings,
-                                    themeColors = themeColors,
-                                    selectionController = selectionController,
-                                )
-                            } else {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .testTag("reader_compose_text_section"),
-                                ) {
-                                    section.blocks.forEach { block ->
-                                        ReaderChapterTextBlock(
-                                            element = block,
-                                            settings = settings,
-                                            themeColors = themeColors,
-                                        )
-                                    }
-                                }
-                            }
-                        }
+@Composable
+private fun ReaderRuntimeSectionList(
+    settings: GlobalSettings,
+    themeColors: ReaderTheme,
+    listState: LazyListState,
+    currentChapterIndex: Int,
+    chapterSections: List<ReaderChapterSection>,
+    selectionDocument: ReaderSelectionDocument? = null,
+    selectionController: ReaderSelectionController? = null,
+) {
+    LazyColumn(
+        state = listState,
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("reader_runtime_chapter_$currentChapterIndex"),
+        contentPadding = PaddingValues(
+            horizontal = settings.horizontalPadding.dp,
+            vertical = 80.dp,
+        ),
+    ) {
+        items(chapterSections, key = { it.id }) { section ->
+            when (section) {
+                is ReaderChapterSection.ImageSection -> {
+                    ReaderChapterImage(
+                        filePath = section.image.filePath,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        onTap = if (selectionController?.selectionActive == true) {
+                            selectionController::clearSelection
+                        } else {
+                            null
+                        },
+                    )
+                }
+
+                is ReaderChapterSection.TextSection -> {
+                    val documentSection = selectionDocument?.sectionById(section.id)
+                    if (documentSection != null && selectionController != null) {
+                        ReaderSelectableTextSection(
+                            section = documentSection,
+                            settings = settings,
+                            themeColors = themeColors,
+                            selectionController = selectionController,
+                        )
+                    } else {
+                        ReaderPlainTextSection(
+                            section = section,
+                            settings = settings,
+                            themeColors = themeColors,
+                        )
                     }
                 }
             }
-        }        
+        }
+    }
+}
+
+@Composable
+private fun ReaderPlainTextSection(
+    section: ReaderChapterSection.TextSection,
+    settings: GlobalSettings,
+    themeColors: ReaderTheme,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("reader_compose_text_section"),
+    ) {
+        section.blocks.forEach { block ->
+            ReaderChapterTextBlock(
+                element = block,
+                settings = settings,
+                themeColors = themeColors,
+            )
+        }
     }
 }

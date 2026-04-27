@@ -26,6 +26,7 @@ internal fun ReaderChapterContent(
         themeColors = themeColors,
         listState = listState,
         chapterElements = chapterElements,
+        chapterSections = chapterSections,
         isLoadingChapter = isLoadingChapter,
         currentChapterIndex = currentChapterIndex,
         selectionSessionEpoch = selectionSessionEpoch,

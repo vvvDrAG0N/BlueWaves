@@ -93,4 +93,44 @@ class ReaderSelectableTextStructureTest {
                 .fetchSemanticsNodes().size,
         )
     }
+
+    @Test
+    fun selectableTextDisabled_rendersPlainTextSectionsWithoutSelectionScaffolding() {
+        val imageFile = File(composeRule.activity.cacheDir, "reader-plain-text-image.bin").apply {
+            writeBytes(byteArrayOf(3))
+        }
+        composeRule.runOnUiThread {
+            composeRule.activity.setContent {
+                MaterialTheme {
+                    ReaderChapterContent(
+                        settings = GlobalSettings(selectableText = false),
+                        themeColors = getThemeColors("light"),
+                        listState = rememberLazyListState(),
+                        chapterElements = listOf(
+                            ChapterElement.Text("Paragraph one", id = "p1"),
+                            ChapterElement.Text("Paragraph two", id = "p2"),
+                            ChapterElement.Image(imageFile.absolutePath, id = "img1"),
+                            ChapterElement.Text("Paragraph three", id = "p3"),
+                            ChapterElement.Text("Paragraph four", id = "p4"),
+                        ),
+                        isLoadingChapter = false,
+                        currentChapterIndex = 0,
+                    )
+                }
+            }
+        }
+
+        composeRule.waitForIdle()
+
+        assertEquals(
+            0,
+            composeRule.onAllNodesWithTag("reader_selectable_text_item")
+                .fetchSemanticsNodes().size,
+        )
+        assertEquals(
+            2,
+            composeRule.onAllNodesWithTag("reader_compose_text_section")
+                .fetchSemanticsNodes().size,
+        )
+    }
 }
