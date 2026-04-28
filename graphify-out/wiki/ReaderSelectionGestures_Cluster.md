@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **ReaderSelectionGestures.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionGestures.kt`
-- **detectReaderHandleDragGestures()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionGestures.kt`
-- **readerSelectionLongPressGesture()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionGestures.kt`
+- **ReaderSelectionGestures.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionGestures.kt`
+- **detectReaderHandleDragGestures()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionGestures.kt`
+- **readerSelectionLongPressGesture()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionGestures.kt`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionGestures.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionGestures.kt`
 
 ## Audit Trail
 

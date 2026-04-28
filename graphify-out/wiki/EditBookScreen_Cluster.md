@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **EditBookScreen.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
-- **ChapterDisplaySort** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
-- **ChapterSelectionMode** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
-- **EditBookScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
-- **EditBookTab** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
+- **EditBookScreen.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
+- **ChapterDisplaySort** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
+- **ChapterSelectionMode** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
+- **EditBookScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
+- **EditBookTab** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookScreen.kt`
 
 ## Audit Trail
 

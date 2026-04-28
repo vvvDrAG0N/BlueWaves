@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LibraryDataContracts.kt** (0 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\app\LibraryDataContracts.kt`
+- **LibraryDataContracts.kt** (0 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\app\LibraryDataContracts.kt`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\app\LibraryDataContracts.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\app\LibraryDataContracts.kt`
 
 ## Audit Trail
 

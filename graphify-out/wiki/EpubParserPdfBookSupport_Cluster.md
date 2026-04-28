@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **EpubParserPdfBookSupport.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
-- **PdfDocumentInfo** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
-- **readPdfDocumentInfo()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
-- **renderPdfCoverThumbnail()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
+- **EpubParserPdfBookSupport.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
+- **PdfDocumentInfo** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
+- **readPdfDocumentInfo()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
+- **renderPdfCoverThumbnail()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfBookSupport.kt`
 
 ## Audit Trail
 

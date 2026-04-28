@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ReaderSelectionHandles.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
-- **ReaderSelectionHandle()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
-- **ReaderSelectionHandleLayer()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
-- **ReaderSelectionHandleSemanticsData** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
+- **ReaderSelectionHandles.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
+- **ReaderSelectionHandle()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
+- **ReaderSelectionHandleLayer()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
+- **ReaderSelectionHandleSemanticsData** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandles.kt`
 
 ## Audit Trail
 

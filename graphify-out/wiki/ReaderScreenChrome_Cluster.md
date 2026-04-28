@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ReaderScreenChrome.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderContentSurface()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderOverscrollOverlay()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
-- **ReaderScreenChrome()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderScreenChrome.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderContentSurface()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderOverscrollOverlay()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- **ReaderScreenChrome()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderScreenChrome.kt`
 
 ## Audit Trail
 

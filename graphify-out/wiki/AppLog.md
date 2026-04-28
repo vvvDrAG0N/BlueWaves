@@ -1,6 +1,6 @@
 # AppLog
 
-> God node · 6 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\core\debug\AppLog.kt`
+> God node · 6 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\core\debug\AppLog.kt`
 
 ## Connections by Relation
 

@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **ThemeEditorSections.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
-- **ThemeEditorColorField** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
-- **ThemeEditorFieldCell()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
-- **ThemeEditorFieldGrid()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
-- **ThemeEditorSection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
+- **ThemeEditorSections.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
+- **ThemeEditorColorField** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
+- **ThemeEditorFieldCell()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
+- **ThemeEditorFieldGrid()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
+- **ThemeEditorSection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorSections.kt`
 
 ## Audit Trail
 

@@ -4,16 +4,16 @@
 
 ## Key Concepts
 
-- **PdfGeneratedEpubWriter.kt** (9 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **addEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **addFileEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **addStoredEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **anchorId()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **buildNcxDocument()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **buildOpfDocument()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **buildSectionDocument()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **escapeForXhtml()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
-- **writeGeneratedEpub()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **PdfGeneratedEpubWriter.kt** (9 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **addEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **addFileEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **addStoredEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **anchorId()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **buildNcxDocument()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **buildOpfDocument()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **buildSectionDocument()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **escapeForXhtml()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- **writeGeneratedEpub()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
 
 ## Relationships
 
@@ -21,7 +21,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfGeneratedEpubWriter.kt`
 
 ## Audit Trail
 

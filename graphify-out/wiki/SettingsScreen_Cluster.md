@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **SettingsScreen.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
-- **NetworkPlaceholderTab()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
-- **SettingsMenuList()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
-- **SettingsScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
-- **SettingsSection** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
+- **SettingsScreen.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
+- **NetworkPlaceholderTab()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
+- **SettingsMenuList()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
+- **SettingsScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
+- **SettingsSection** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsScreen.kt`
 
 ## Audit Trail
 

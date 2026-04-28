@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **ReaderVerticalScrubber.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderVerticalScrubber.kt`
-- **rememberConflatedScrollToItem()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderVerticalScrubber.kt`
-- **VerticalScrubber()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderVerticalScrubber.kt`
+- **ReaderVerticalScrubber.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderVerticalScrubber.kt`
+- **rememberConflatedScrollToItem()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderVerticalScrubber.kt`
+- **VerticalScrubber()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderVerticalScrubber.kt`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderVerticalScrubber.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderVerticalScrubber.kt`
 
 ## Audit Trail
 

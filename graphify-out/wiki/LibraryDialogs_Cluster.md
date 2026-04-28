@@ -4,16 +4,16 @@
 
 ## Key Concepts
 
-- **LibraryDialogs.kt** (9 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **ChangelogDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **CreateFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **DeleteBooksDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **DeleteFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **DeleteFoldersDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **LibraryDialogHost()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **LibrarySortSheet()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **RenameFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
-- **WelcomeDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **LibraryDialogs.kt** (9 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **ChangelogDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **CreateFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **DeleteBooksDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **DeleteFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **DeleteFoldersDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **LibraryDialogHost()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **LibrarySortSheet()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **RenameFolderDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- **WelcomeDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
 
 ## Relationships
 
@@ -21,7 +21,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryDialogs.kt`
 
 ## Audit Trail
 

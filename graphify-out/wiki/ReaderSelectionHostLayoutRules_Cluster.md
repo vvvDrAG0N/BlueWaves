@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **ReaderSelectionHostLayoutRules.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHostLayoutRules.kt`
-- **resolveVisibleReaderSelectionHandleAnchor()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHostLayoutRules.kt`
-- **shouldMoveReaderSelectionActionBarToTop()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHostLayoutRules.kt`
+- **ReaderSelectionHostLayoutRules.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHostLayoutRules.kt`
+- **resolveVisibleReaderSelectionHandleAnchor()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHostLayoutRules.kt`
+- **shouldMoveReaderSelectionActionBarToTop()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHostLayoutRules.kt`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHostLayoutRules.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHostLayoutRules.kt`
 
 ## Audit Trail
 

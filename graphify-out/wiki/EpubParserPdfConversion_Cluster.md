@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **EpubParserPdfConversion.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfConversion.kt`
-- **convertStoredPdfForBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfConversion.kt`
+- **EpubParserPdfConversion.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfConversion.kt`
+- **convertStoredPdfForBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfConversion.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfConversion.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserPdfConversion.kt`
 
 ## Audit Trail
 

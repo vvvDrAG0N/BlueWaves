@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ReaderSelectionHandleDragGeometry.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
-- **ReaderSelectionHandleDragGeometry** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
-- **.resolveLogicalTextAnchorPointer()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
-- **resolveReaderSelectionHandleDragGeometry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
+- **ReaderSelectionHandleDragGeometry.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
+- **ReaderSelectionHandleDragGeometry** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
+- **.resolveLogicalTextAnchorPointer()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
+- **resolveReaderSelectionHandleDragGeometry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionHandleDragGeometry.kt`
 
 ## Audit Trail
 

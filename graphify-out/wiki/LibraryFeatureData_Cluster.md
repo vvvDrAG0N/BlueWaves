@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **LibraryFeatureData.kt** (14 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **buildFolders()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **buildLibraryDerivedData()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **buildLibraryItems()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **buildLibraryProgressTargets()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **buildVisibleProgressTargets()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **findLastOpenedBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **findSelectedEditableBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **FolderDragPreviewUpdate** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **LibraryDerivedData** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **parseFolderOrder()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **parseStringMap()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **resolveCurrentSort()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **resolveDisplayedFolders()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
-- **updateFolderDragPreview()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **LibraryFeatureData.kt** (14 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **buildFolders()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **buildLibraryDerivedData()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **buildLibraryItems()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **buildLibraryProgressTargets()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **buildVisibleProgressTargets()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **findLastOpenedBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **findSelectedEditableBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **FolderDragPreviewUpdate** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **LibraryDerivedData** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **parseFolderOrder()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **parseStringMap()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **resolveCurrentSort()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **resolveDisplayedFolders()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- **updateFolderDragPreview()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
 
 ## Relationships
 
@@ -26,7 +26,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureData.kt`
 
 ## Audit Trail
 

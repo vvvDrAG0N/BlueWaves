@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **ThemeEditorControlRow.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorControlRow.kt`
-- **ThemeEditorControlsSection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorControlRow.kt`
-- **ThemeEditorModeRow()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorControlRow.kt`
+- **ThemeEditorControlRow.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorControlRow.kt`
+- **ThemeEditorControlsSection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorControlRow.kt`
+- **ThemeEditorModeRow()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorControlRow.kt`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorControlRow.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorControlRow.kt`
 
 ## Audit Trail
 

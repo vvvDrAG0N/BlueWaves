@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **SettingsAppearanceControlHub.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsAppearanceControlHub.kt`
-- **HubButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsAppearanceControlHub.kt`
-- **ThemeControlHub()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsAppearanceControlHub.kt`
+- **SettingsAppearanceControlHub.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsAppearanceControlHub.kt`
+- **HubButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsAppearanceControlHub.kt`
+- **ThemeControlHub()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsAppearanceControlHub.kt`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsAppearanceControlHub.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\SettingsAppearanceControlHub.kt`
 
 ## Audit Trail
 

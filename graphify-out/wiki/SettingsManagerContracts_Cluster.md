@@ -4,18 +4,18 @@
 
 ## Key Concepts
 
-- **SettingsManagerContracts.kt** (11 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **bookProgressKeyPrefix()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **BookProgressPreferenceKeys** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **GlobalSettingsSnapshot** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **legacyBookProgressPreferenceKeys()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **parseColorFromKeys()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **parseCustomThemes()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **SettingsPreferenceKeys** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **toBookProgress()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **toCustomThemesJson()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **toGlobalSettings()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
-- **toGlobalSettingsSnapshot()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **SettingsManagerContracts.kt** (11 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **bookProgressKeyPrefix()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **BookProgressPreferenceKeys** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **GlobalSettingsSnapshot** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **legacyBookProgressPreferenceKeys()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **parseColorFromKeys()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **parseCustomThemes()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **SettingsPreferenceKeys** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **toBookProgress()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **toCustomThemesJson()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **toGlobalSettings()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- **toGlobalSettingsSnapshot()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
 
 ## Relationships
 
@@ -23,7 +23,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerContracts.kt`
 
 ## Audit Trail
 

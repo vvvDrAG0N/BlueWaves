@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ThemeEditorPreviewCard.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorPreviewCard.kt`
-- **ThemeEditorPreviewCard()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorPreviewCard.kt`
+- **ThemeEditorPreviewCard.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorPreviewCard.kt`
+- **ThemeEditorPreviewCard()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorPreviewCard.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorPreviewCard.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeEditorPreviewCard.kt`
 
 ## Audit Trail
 

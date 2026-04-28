@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReaderSelectionSessionRules.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionSessionRules.kt`
-- **shouldClearReaderStaleSelection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionSessionRules.kt`
+- **ReaderSelectionSessionRules.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionSessionRules.kt`
+- **shouldClearReaderStaleSelection()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionSessionRules.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionSessionRules.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\runtime\epub\ReaderSelectionSessionRules.kt`
 
 ## Audit Trail
 

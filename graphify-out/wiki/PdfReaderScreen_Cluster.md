@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **PdfReaderScreen.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\pdf-legacy\src\main\java\com\epubreader\feature\pdf\legacy\PdfReaderScreen.kt`
-- **PdfPageItem()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\pdf-legacy\src\main\java\com\epubreader\feature\pdf\legacy\PdfReaderScreen.kt`
-- **PdfReaderScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\pdf-legacy\src\main\java\com\epubreader\feature\pdf\legacy\PdfReaderScreen.kt`
+- **PdfReaderScreen.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\pdf-legacy\src\main\java\com\epubreader\feature\pdf\legacy\PdfReaderScreen.kt`
+- **PdfPageItem()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\pdf-legacy\src\main\java\com\epubreader\feature\pdf\legacy\PdfReaderScreen.kt`
+- **PdfReaderScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\pdf-legacy\src\main\java\com\epubreader\feature\pdf\legacy\PdfReaderScreen.kt`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\pdf-legacy\src\main\java\com\epubreader\feature\pdf\legacy\PdfReaderScreen.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\pdf-legacy\src\main\java\com\epubreader\feature\pdf\legacy\PdfReaderScreen.kt`
 
 ## Audit Trail
 

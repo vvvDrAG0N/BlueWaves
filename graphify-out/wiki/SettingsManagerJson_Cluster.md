@@ -4,18 +4,18 @@
 
 ## Key Concepts
 
-- **SettingsManagerJson.kt** (11 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **removeEntriesWithStringValue()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **renameStringEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **replaceStringValues()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **replacingEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **safeJsonArray()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **safeJsonObject()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **strictJsonArray()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **strictJsonObject()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **toJsonArray()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **toStringList()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
-- **withoutEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **SettingsManagerJson.kt** (11 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **removeEntriesWithStringValue()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **renameStringEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **replaceStringValues()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **replacingEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **safeJsonArray()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **safeJsonObject()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **strictJsonArray()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **strictJsonObject()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **toJsonArray()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **toStringList()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- **withoutEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
 
 ## Relationships
 
@@ -23,7 +23,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManagerJson.kt`
 
 ## Audit Trail
 

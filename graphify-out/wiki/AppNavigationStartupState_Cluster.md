@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **AppNavigationStartupState.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
-- **AppStartupState** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
-- **resolveStartupPhaseAfterEvaluation()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
-- **shouldRunInitialLibraryRefresh()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
-- **StartupPhase** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
+- **AppNavigationStartupState.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
+- **AppStartupState** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
+- **resolveStartupPhaseAfterEvaluation()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
+- **shouldRunInitialLibraryRefresh()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
+- **StartupPhase** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupState.kt`
 
 ## Audit Trail
 

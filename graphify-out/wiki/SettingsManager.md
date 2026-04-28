@@ -1,6 +1,6 @@
 # SettingsManager
 
-> God node · 32 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\settings\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
+> God node · 32 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\settings\src\main\java\com\epubreader\data\settings\SettingsManager.kt`
 
 ## Connections by Relation
 

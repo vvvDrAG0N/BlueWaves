@@ -1,6 +1,6 @@
 # PdfConversionWorkspaceState
 
-> God node · 8 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubWorkspace.kt`
+> God node · 8 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubWorkspace.kt`
 
 ## Connections by Relation
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **LibraryScreen.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryScreen.kt`
-- **LibraryScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryScreen.kt`
+- **LibraryScreen.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryScreen.kt`
+- **LibraryScreen()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryScreen.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryScreen.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\ui\LibraryScreen.kt`
 
 ## Audit Trail
 

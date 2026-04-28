@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **LibraryFeatureMutations.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureMutations.kt`
-- **buildLibraryFeatureMutations()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureMutations.kt`
-- **LibraryFeatureMutations** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureMutations.kt`
+- **LibraryFeatureMutations.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureMutations.kt`
+- **buildLibraryFeatureMutations()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureMutations.kt`
+- **LibraryFeatureMutations** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureMutations.kt`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureMutations.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureMutations.kt`
 
 ## Audit Trail
 

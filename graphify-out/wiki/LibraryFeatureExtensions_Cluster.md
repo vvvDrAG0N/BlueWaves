@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **LibraryFeatureExtensions.kt** (6 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
-- **dispatchLibraryImportRequest()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
-- **LibraryResolvedHostExtensions** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
-- **logLibraryExtensionFailure()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
-- **resolveLibraryHostExtensions()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
-- **wrapLibraryActionSlot()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
-- **wrapLibraryDecorationSlot()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
+- **LibraryFeatureExtensions.kt** (6 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
+- **dispatchLibraryImportRequest()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
+- **LibraryResolvedHostExtensions** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
+- **logLibraryExtensionFailure()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
+- **resolveLibraryHostExtensions()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
+- **wrapLibraryActionSlot()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
+- **wrapLibraryDecorationSlot()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\library\src\main\java\com\epubreader\feature\library\internal\LibraryFeatureExtensions.kt`
 
 ## Audit Trail
 

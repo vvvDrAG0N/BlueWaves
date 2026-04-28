@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **rebuild_graphify.py** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\rebuild_graphify.py`
-- **build_file_label_map()** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\rebuild_graphify.py`
-- **rebuild()** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\rebuild_graphify.py`
-- **build_labels()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\rebuild_graphify.py`
-- **sanitize_path()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\rebuild_graphify.py`
+- **rebuild_graphify.py** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\scripts\rebuild_graphify.py`
+- **build_file_label_map()** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\scripts\rebuild_graphify.py`
+- **rebuild()** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\scripts\rebuild_graphify.py`
+- **build_labels()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\scripts\rebuild_graphify.py`
+- **sanitize_path()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\scripts\rebuild_graphify.py`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\scripts\rebuild_graphify.py`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\scripts\rebuild_graphify.py`
 
 ## Audit Trail
 

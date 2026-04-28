@@ -4,17 +4,17 @@
 
 ## Key Concepts
 
-- **EpubParserChapter.kt** (10 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **flushText()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **hashImageKey()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **isBlockTag()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **materializeChapterImage()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **parseBookChapter()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **preProcessXml()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **resolveChapterArchiveFile()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **resolveChapterEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **resolveImageEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
-- **unescapeHtml()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **EpubParserChapter.kt** (10 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **flushText()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **hashImageKey()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **isBlockTag()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **materializeChapterImage()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **parseBookChapter()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **preProcessXml()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **resolveChapterArchiveFile()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **resolveChapterEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **resolveImageEntry()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- **unescapeHtml()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
 
 ## Relationships
 
@@ -22,7 +22,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserChapter.kt`
 
 ## Audit Trail
 

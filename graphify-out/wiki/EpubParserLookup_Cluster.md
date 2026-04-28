@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **EpubParserLookup.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
-- **loadStoredBookById()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
-- **rebuildStoredBookMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
-- **resolveStoredBookFile()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
+- **EpubParserLookup.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
+- **loadStoredBookById()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
+- **rebuildStoredBookMetadata()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
+- **resolveStoredBookFile()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\EpubParserLookup.kt`
 
 ## Audit Trail
 

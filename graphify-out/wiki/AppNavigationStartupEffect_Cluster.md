@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AppNavigationStartupEffect()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupEffect.kt`
-- **AppNavigationStartupEffect.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupEffect.kt`
+- **AppNavigationStartupEffect()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupEffect.kt`
+- **AppNavigationStartupEffect.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupEffect.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationStartupEffect.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationStartupEffect.kt`
 
 ## Audit Trail
 

@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **EditBookChaptersTab.kt** (6 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
-- **ActionGroup()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
-- **ActionStrip()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
-- **ChapterActionButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
-- **ChapterRow()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
-- **ChapterStatChip()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
-- **EditBookChaptersTab()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
+- **EditBookChaptersTab.kt** (6 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
+- **ActionGroup()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
+- **ActionStrip()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
+- **ChapterActionButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
+- **ChapterRow()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
+- **ChapterStatChip()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
+- **EditBookChaptersTab()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookChaptersTab.kt`
 
 ## Audit Trail
 

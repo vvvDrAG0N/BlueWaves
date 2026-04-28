@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **AppNavigationDerivedState.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
-- **buildLibraryProgressTargets()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
-- **findLastOpenedBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
-- **findSelectedEditableBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
-- **resolveDisplayedFolders()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
+- **AppNavigationDerivedState.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
+- **buildLibraryProgressTargets()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
+- **findLastOpenedBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
+- **findSelectedEditableBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
+- **resolveDisplayedFolders()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppNavigationDerivedState.kt`
 
 ## Audit Trail
 

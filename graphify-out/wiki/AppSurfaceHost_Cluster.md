@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AppSurfaceHost** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppSurfaceHost.kt`
-- **AppSurfaceHost.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppSurfaceHost.kt`
+- **AppSurfaceHost** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppSurfaceHost.kt`
+- **AppSurfaceHost.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppSurfaceHost.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppSurfaceHost.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppSurfaceHost.kt`
 
 ## Audit Trail
 

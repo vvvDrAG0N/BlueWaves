@@ -1,6 +1,6 @@
 # InternalEpubParser
 
-> God node · 10 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\parser\InternalEpubParser.kt`
+> God node · 10 connections · `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\parser\InternalEpubParser.kt`
 
 ## Connections by Relation
 

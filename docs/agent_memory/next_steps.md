@@ -1,12 +1,12 @@
 # Next Steps
 
-## Theme Picker Editor Refresh
-- Goal: Execute the refreshed picker-editor plan for the theme picker: editable `HEX` and `RGB`, header save/cancel icons, guided typed correction, preview-only local edits, and guarded dirty exits.
-- Why now: The updated implementation plan now matches the approved design. The branch should build from that current plan instead of the older spectrum-only behavior or the earlier bottom-`Done` contract.
+## Theme Picker Editor Merge / Smoke Decision
+- Goal: Treat the picker-editor implementation as complete on `codex/theme-spectrum-picker` and decide whether to merge directly, request one more review pass, or do one extra in-hand smoke check before integration.
+- Why now: The picker branch now has the approved editable `HEX`/`RGB` top band, header `X` + `check`, preview-only local edits, guided typed correction, dirty `Back`/cancel handling, the guided opening-color dirty fix, and a green connected picker suite.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerGuidance.kt`
-- Risks: Reintroducing multiple save behaviors across modes, making guided auto-correction feel arbitrary during typing, or growing the picker owner file into a new monolith while adding the text-entry UI.
-- Verification target: Follow the plan's required checks: `:feature:settings:testDebugUnitTest`, the connected picker class, `checkKotlinFileLineLimit`, and one emulator manual pass over typed guided adjustment plus `Back`/`X` flows.
+- Starting docs/files: `AGENTS.md`, `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTestSupport.kt`, `logs/picker_debug_2026-04-28/`
+- Risks: Forgetting that the last remaining picker issues were around guided opening-state dirtiness and focused-input `Back`, or reopening the picker lane without preserving the now-green test coverage around guarded exits and advanced literal numeric entry.
+- Verification target: Optional one more emulator or device smoke over guided typed adjustment, clean `X`, dirty `Back`, and advanced RGB entry; otherwise rely on the already-green `:feature:settings:testDebugUnitTest`, `SettingsThemeEditorGuidedPickerTest`, and `checkKotlinFileLineLimit` results before integration.
 
 ## Reader Shadow Startup Target Met
 - Goal: Treat the `Shadow Slave 1435 / 2927 ch` cold-entry reader lag as parked unless a fresh in-hand hitch is still noticeable on the physical phone.

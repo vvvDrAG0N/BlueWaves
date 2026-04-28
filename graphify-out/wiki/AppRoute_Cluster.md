@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AppRoute.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
-- **AppRoute** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
-- **EditBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
-- **Reader()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
+- **AppRoute.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppRoute.kt`
+- **AppRoute** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppRoute.kt`
+- **EditBook()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppRoute.kt`
+- **Reader()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppRoute.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\app\src\main\java\com\epubreader\app\AppRoute.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\app\src\main\java\com\epubreader\app\AppRoute.kt`
 
 ## Audit Trail
 

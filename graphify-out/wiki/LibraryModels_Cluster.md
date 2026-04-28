@@ -4,16 +4,16 @@
 
 ## Key Concepts
 
-- **LibraryModels.kt** (8 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **EpubBook** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **BookFormat** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **BookRepresentation** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **ChapterElement** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **ConversionStatus** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **.displayCoverPath()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **Image** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **Text** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
-- **TocItem** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **LibraryModels.kt** (8 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **EpubBook** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **BookFormat** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **BookRepresentation** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **ChapterElement** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **ConversionStatus** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **.displayCoverPath()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **Image** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **Text** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- **TocItem** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
 
 ## Relationships
 
@@ -21,7 +21,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\model\src\main\java\com\epubreader\core\model\LibraryModels.kt`
 
 ## Audit Trail
 

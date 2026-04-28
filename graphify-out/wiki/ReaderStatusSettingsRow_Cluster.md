@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **ReaderStatusSettingsRow()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderStatusSettingsRow.kt`
-- **ReaderStatusSettingsRow.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\ReaderStatusSettingsRow.kt`
-- **ReaderStatusSettingsRow.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderStatusSettingsRow.kt`
+- **ReaderStatusSettingsRow()** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderStatusSettingsRow.kt`
+- **ReaderStatusSettingsRow.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\ReaderStatusSettingsRow.kt`
+- **ReaderStatusSettingsRow.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderStatusSettingsRow.kt`
 
 ## Relationships
 
@@ -14,8 +14,8 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\ReaderStatusSettingsRow.kt`
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderStatusSettingsRow.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\ReaderStatusSettingsRow.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\ReaderStatusSettingsRow.kt`
 
 ## Audit Trail
 

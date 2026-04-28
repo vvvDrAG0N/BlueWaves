@@ -1,5 +1,4 @@
 package com.epubreader.feature.settings
-
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.geometry.Offset
@@ -17,20 +16,29 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.SemanticsMatcher
+import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.GuidedThemePaletteInput
+import com.epubreader.core.model.LightThemeId
 import com.epubreader.core.model.formatThemeColor
+import com.epubreader.core.model.generatePaletteFromBase
 import com.epubreader.core.model.generatePaletteFromGuidedInput
+import com.epubreader.core.model.themePaletteSeed
+import androidx.test.espresso.Espresso.pressBack
 
-internal suspend fun SettingsThemeEditorGuidedPickerTest.resetSettings() {
+internal suspend fun SettingsThemeEditorGuidedPickerTest.resetSettings(
+    theme: String = "light",
+    customThemes: List<CustomTheme> = emptyList(),
+) {
     settingsManager.updateGlobalSettings(
         GlobalSettings(
             fontSize = 18,
             fontType = "serif",
-            theme = "light",
-            customThemes = emptyList(),
+            theme = theme,
+            customThemes = customThemes,
             lineHeight = 1.6f,
             horizontalPadding = 16,
             showScrubber = false,
@@ -60,6 +68,23 @@ internal fun SettingsThemeEditorGuidedPickerTest.launchThemeEditor() {
     composeRule.onNodeWithTag("custom_theme_name").performTextInput("Guided Picker Test")
 }
 
+internal fun SettingsThemeEditorGuidedPickerTest.launchCurrentThemeEditor() {
+    composeRule.runOnUiThread {
+        composeRule.activity.setContent {
+            MaterialTheme {
+                SettingsScreen(
+                    settingsManager = settingsManager,
+                    onBack = {},
+                )
+            }
+        }
+    }
+    waitUntilDisplayed("Settings")
+    composeRule.onNodeWithTag("settings_section_appearance").performClick()
+    composeRule.onNodeWithContentDescription("Modify").performClick()
+    waitUntilTagExists("custom_theme_name")
+}
+
 internal fun SettingsThemeEditorGuidedPickerTest.selectThemeEditorMode(mode: String) {
     composeRule.onNodeWithTag("theme_editor_mode_${mode.lowercase()}").performClick()
     composeRule.waitForIdle()
@@ -79,7 +104,10 @@ internal fun SettingsThemeEditorGuidedPickerTest.setPickerColor(
         saturation = saturation,
         value = brightness,
     )
+    val previewHex = readPreviewHex("${testTagPrefix}_picker_preview")
     tapHeaderSave(testTagPrefix)
+    waitUntilPickerClosed(testTagPrefix)
+    waitUntilTextContains(testTagPrefix, previewHex)
 }
 
 internal fun SettingsThemeEditorGuidedPickerTest.closeColorPicker() {
@@ -89,6 +117,43 @@ internal fun SettingsThemeEditorGuidedPickerTest.closeColorPicker() {
 
 internal fun SettingsThemeEditorGuidedPickerTest.tapHeaderSave(testTagPrefix: String) {
     composeRule.onNodeWithTag("${testTagPrefix}_picker_save").performClick()
+    composeRule.waitForIdle()
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.pressActivityBack(testTagPrefix: String? = null) {
+    pressBack()
+    composeRule.waitForIdle()
+    if (testTagPrefix == null) {
+        return
+    }
+    val exitDialogTag = "${testTagPrefix}_picker_exit_dialog"
+    val pickerTag = "${testTagPrefix}_picker_hex"
+    val exitDialogVisible = runCatching {
+        composeRule.onNodeWithTag(exitDialogTag).fetchSemanticsNode()
+        true
+    }.getOrDefault(false)
+    if (!exitDialogVisible) {
+        val pickerStillOpen = runCatching {
+            composeRule.onNodeWithTag(pickerTag).fetchSemanticsNode()
+            true
+        }.getOrDefault(false)
+        if (pickerStillOpen) {
+            pressBack()
+            composeRule.waitForIdle()
+        }
+    }
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.requestCloseColorPicker(testTagPrefix: String) {
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_close").performClick()
+    composeRule.waitForIdle()
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.tapExitDialogAction(
+    testTagPrefix: String,
+    action: String,
+) {
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_exit_${action}").performClick()
     composeRule.waitForIdle()
 }
 
@@ -173,6 +238,22 @@ internal fun SettingsThemeEditorGuidedPickerTest.assertPreviewHex(
     }
 }
 
+internal fun SettingsThemeEditorGuidedPickerTest.readPreviewHex(tag: String): String {
+    return composeRule.onNodeWithTag(tag)
+        .fetchSemanticsNode()
+        .config
+        .getOrElse(SemanticsProperties.ContentDescription) { emptyList<String>() }
+        .firstOrNull()
+        ?: throw AssertionError("Expected preview hex content description on '$tag'")
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.readNodeText(tag: String): String {
+    val config = composeRule.onNodeWithTag(tag).fetchSemanticsNode().config
+    return runCatching { config[SemanticsProperties.EditableText].text }.getOrNull()
+        ?: runCatching { config[SemanticsProperties.Text].joinToString(separator = "") { text -> text.text } }.getOrNull()
+        ?: throw AssertionError("Expected text semantics on '$tag'")
+}
+
 internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextContains(
     tag: String,
     text: String,
@@ -206,6 +287,13 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagAbsent(
     }
 }
 
+internal fun SettingsThemeEditorGuidedPickerTest.waitUntilPickerClosed(
+    testTagPrefix: String,
+    timeoutMillis: Long = 10_000,
+) {
+    waitUntilTagAbsent("${testTagPrefix}_picker_spectrum", timeoutMillis)
+}
+
 internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextVisible(
     text: String,
     timeoutMillis: Long = 10_000,
@@ -229,8 +317,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.replaceHexInput(
     testTagPrefix: String,
     nextHex: String,
 ) {
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextClearance()
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextInput(nextHex)
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextReplacement(nextHex)
 }
 
 internal fun SettingsThemeEditorGuidedPickerTest.replaceRgbInput(
@@ -239,12 +326,9 @@ internal fun SettingsThemeEditorGuidedPickerTest.replaceRgbInput(
     green: String,
     blue: String,
 ) {
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_red").performTextClearance()
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_red").performTextInput(red)
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_green").performTextClearance()
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_green").performTextInput(green)
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_blue").performTextClearance()
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_blue").performTextInput(blue)
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_red").performTextReplacement(red)
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_green").performTextReplacement(green)
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_blue").performTextReplacement(blue)
 }
 
 internal fun SettingsThemeEditorGuidedPickerTest.setSpectrumPoint(
@@ -333,14 +417,39 @@ internal fun guidedDraftAfterSavedEdits(
 }
 
 internal fun defaultExtendedGuidedDraft(): ThemeEditorDraft {
-    return extendedDraft(
-        palette = generatePaletteFromGuidedInput(
-            GuidedThemePaletteInput(
-                accent = 0xFF4F46E5,
-                appBackground = 0xFFFFFFFF,
-                readerLinked = true,
-            ),
+    return createThemeSeedDraft(
+        mode = ThemeEditorMode.EXTENDED,
+        readerLinked = true,
+        legacyIsAdvanced = false,
+    )
+}
+
+internal fun defaultBasicDraft(): ThemeEditorDraft {
+    return createThemeSeedDraft(
+        mode = ThemeEditorMode.BASIC,
+        readerLinked = true,
+        legacyIsAdvanced = false,
+    )
+}
+
+private fun createThemeSeedDraft(
+    mode: ThemeEditorMode,
+    readerLinked: Boolean,
+    legacyIsAdvanced: Boolean,
+): ThemeEditorDraft {
+    val seedPalette = themePaletteSeed(
+        themeId = LightThemeId,
+        customThemes = emptyList(),
+    )
+    return ThemeEditorDraft.fromPalette(
+        name = "Guided Picker Test",
+        palette = generatePaletteFromBase(
+            primary = seedPalette.accent,
+            background = seedPalette.appBackground,
         ),
+        mode = mode,
+        readerLinked = readerLinked,
+        legacyIsAdvanced = legacyIsAdvanced,
     )
 }
 
@@ -358,12 +467,9 @@ internal fun extendedDraft(
 }
 
 internal fun basicDraft(
-    palette: com.epubreader.core.model.ThemePalette = generatePaletteFromGuidedInput(
-        GuidedThemePaletteInput(
-            accent = 0xFF4F46E5,
-            appBackground = 0xFFFFFFFF,
-            readerLinked = true,
-        ),
+    palette: com.epubreader.core.model.ThemePalette = generatePaletteFromBase(
+        primary = themePaletteSeed(LightThemeId, emptyList()).accent,
+        background = themePaletteSeed(LightThemeId, emptyList()).appBackground,
     ),
 ): ThemeEditorDraft {
     return ThemeEditorDraft.fromPalette(
@@ -371,6 +477,6 @@ internal fun basicDraft(
         palette = palette,
         mode = ThemeEditorMode.BASIC,
         readerLinked = true,
-        legacyIsAdvanced = true,
+        legacyIsAdvanced = false,
     )
 }

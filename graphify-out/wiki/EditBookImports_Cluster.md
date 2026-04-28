@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **EditBookImports.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
-- **loadCoverUpdate()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
-- **loadImportedChapterDraft()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
-- **queryDisplayName()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
+- **EditBookImports.kt** (3 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
+- **loadCoverUpdate()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
+- **loadImportedChapterDraft()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
+- **queryDisplayName()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookImports.kt`
 
 ## Audit Trail
 

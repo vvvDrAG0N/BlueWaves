@@ -4,16 +4,16 @@
 
 ## Key Concepts
 
-- **PdfToEpubConverter.kt** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **MlKitPdfToEpubConverter** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **PdfToEpubConverter** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **extractDirectTextParagraphs()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **.convert()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **PdfTextExtractionMethod** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **.convert()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **readPageCountWithRenderer()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **recognizeBitmapParagraphs()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
-- **recognizePageParagraphs()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **PdfToEpubConverter.kt** (7 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **MlKitPdfToEpubConverter** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **PdfToEpubConverter** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **extractDirectTextParagraphs()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.convert()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **PdfTextExtractionMethod** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **.convert()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **readPageCountWithRenderer()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **recognizeBitmapParagraphs()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- **recognizePageParagraphs()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
 
 ## Relationships
 
@@ -21,7 +21,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\data\books\src\main\java\com\epubreader\data\pdf\legacy\PdfToEpubConverter.kt`
 
 ## Audit Trail
 

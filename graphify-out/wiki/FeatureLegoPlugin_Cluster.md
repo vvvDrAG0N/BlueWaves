@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **FeatureLegoPlugin.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
-- **FeatureLegoPlugin** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
-- **.Render()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
-- **ShellChromeSpec** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
+- **FeatureLegoPlugin.kt** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
+- **FeatureLegoPlugin** (2 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
+- **.Render()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
+- **ShellChromeSpec** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\FeatureLegoPlugin.kt`
 
 ## Audit Trail
 

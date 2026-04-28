@@ -1,22 +1,13 @@
 package com.epubreader.feature.settings
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialogDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -32,6 +23,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -57,6 +53,7 @@ internal fun ThemeColorPickerOverlay(
     val initialColor = remember(initialValue) { parseThemeColorOrNull(initialValue) ?: DefaultPickerColor }
     val initialHex = remember(initialColor) { formatThemeColor(initialColor) }
     val initialHsv = remember(initialColor) { initialColor.toThemeColorPickerHsv() }
+    val initialTextFields = remember(initialHex) { themeColorPickerTextFields(initialHex) }
     val guidedPreviewValueChange = if (isGuided) {
         requireNotNull(onPreviewValueChange) { "Guided color picker requires a preview callback" }
     } else {
@@ -73,6 +70,7 @@ internal fun ThemeColorPickerOverlay(
     var wasAdjusted by remember { mutableStateOf(false) }
     var snapPulseToken by remember { mutableFloatStateOf(0f) }
     var showSnapHighlight by remember { mutableStateOf(false) }
+    var showExitDialog by remember { mutableStateOf(false) }
 
     val guidedSafeZone by produceState<ThemeColorPickerSafeZone?>(
         initialValue = safeZoneCache?.cachedZoneForHue(pickerHue),
@@ -111,6 +109,19 @@ internal fun ThemeColorPickerOverlay(
                 value = pickerValue,
             ).toColorLong(),
         )
+    }
+
+    fun currentGuidedResolution(): ThemeColorPickerPreviewResult? {
+        if (!isGuided || guidedPreviewValueChange == null) {
+            return null
+        }
+        return guidedPreviewValueChange(currentPreviewHex())
+    }
+
+    fun isDirty(): Boolean {
+        return currentPreviewHex() != initialHex ||
+            textFields.hexText != initialTextFields.hexText ||
+            textFields.rgbText != initialTextFields.rgbText
     }
 
     fun setPickerColor(
@@ -161,6 +172,7 @@ internal fun ThemeColorPickerOverlay(
         hue: Float = pickerHue,
         saturation: Float = pickerSaturation,
         value: Float = pickerValue,
+        preserveAdjustedState: Boolean = false,
     ) {
         setPickerColor(
             hue = hue,
@@ -168,13 +180,19 @@ internal fun ThemeColorPickerOverlay(
             value = value.coerceIn(0f, 1f),
         )
         syncTextFields()
-        wasAdjusted = false
+        if (!preserveAdjustedState) {
+            wasAdjusted = false
+        }
         showSnapHighlight = false
     }
 
     LaunchedEffect(isGuided, guidedSafeZone, pickerHue) {
         if (!isGuided) return@LaunchedEffect
         val safeZone = guidedSafeZone ?: return@LaunchedEffect
+        val currentResolution = currentGuidedResolution() ?: return@LaunchedEffect
+        if (!currentResolution.wasAdjusted) {
+            return@LaunchedEffect
+        }
         val projected = safeZone.project(
             ThemeColorPickerPoint(
                 saturation = pickerSaturation,
@@ -190,6 +208,7 @@ internal fun ThemeColorPickerOverlay(
         applyPreviewPoint(
             saturation = projected.saturation,
             value = projected.value,
+            preserveAdjustedState = wasAdjusted,
         )
     }
 
@@ -280,6 +299,7 @@ internal fun ThemeColorPickerOverlay(
     }
 
     fun commitCurrentColor() {
+        showExitDialog = false
         val result = onValueChange(currentPreviewHex())
         applyPreviewHex(
             hex = result.resolvedHex,
@@ -291,10 +311,22 @@ internal fun ThemeColorPickerOverlay(
         onDismiss()
     }
 
-    val backdropInteractionSource = remember { MutableInteractionSource() }
+    fun requestDismiss() {
+        if (isDirty()) {
+            showExitDialog = true
+        } else {
+            onDismiss()
+        }
+    }
 
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {
+            if (showExitDialog) {
+                showExitDialog = false
+            } else {
+                requestDismiss()
+            }
+        },
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = false,
@@ -312,11 +344,6 @@ internal fun ThemeColorPickerOverlay(
                             Modifier
                         },
                     )
-                    .clickable(
-                        interactionSource = backdropInteractionSource,
-                        indication = null,
-                        onClick = onDismiss,
-                    ),
             )
 
             Surface(
@@ -325,6 +352,18 @@ internal fun ThemeColorPickerOverlay(
                     .padding(horizontal = 24.dp)
                     .fillMaxWidth()
                     .widthIn(max = 560.dp)
+                    .onPreviewKeyEvent { event ->
+                        if (event.key == Key.Back && event.type == KeyEventType.KeyUp) {
+                            if (showExitDialog) {
+                                showExitDialog = false
+                            } else {
+                                requestDismiss()
+                            }
+                            true
+                        } else {
+                            false
+                        }
+                    }
                     .pointerInput(Unit) {
                         detectTapGestures(onTap = {})
                     }
@@ -343,7 +382,7 @@ internal fun ThemeColorPickerOverlay(
                     ThemeColorPickerHeader(
                         label = label,
                         testTagPrefix = testTagPrefix,
-                        onClose = {},
+                        onClose = ::requestDismiss,
                         onSave = ::commitCurrentColor,
                     )
 
@@ -424,52 +463,20 @@ internal fun ThemeColorPickerOverlay(
                     )
                 }
             }
-        }
-    }
-}
 
-@Composable
-private fun ThemeColorPickerHeader(
-    label: String,
-    testTagPrefix: String?,
-    onClose: () -> Unit,
-    onSave: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        IconButton(
-            onClick = onClose,
-            modifier = if (testTagPrefix != null) {
-                Modifier.testTag("${testTagPrefix}_picker_close")
-            } else {
-                Modifier
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Close",
-            )
-        }
-        Text(
-            text = "$label Color",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        IconButton(
-            onClick = onSave,
-            modifier = if (testTagPrefix != null) {
-                Modifier.testTag("${testTagPrefix}_picker_save")
-            } else {
-                Modifier
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Save",
-            )
+            if (showExitDialog) {
+                ThemeColorPickerExitDialog(
+                    testTagPrefix = testTagPrefix,
+                    onSave = ::commitCurrentColor,
+                    onDiscard = {
+                        showExitDialog = false
+                        onDismiss()
+                    },
+                    onKeepEditing = {
+                        showExitDialog = false
+                    },
+                )
+            }
         }
     }
 }

@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **EditBookDialogs.kt** (6 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
-- **AddTextOrImportChapterDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
-- **ChapterSelectionDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
-- **PositionDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
-- **RenameChapterDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
-- **SelectionModeCard()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
-- **SimpleConfirmDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
+- **EditBookDialogs.kt** (6 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
+- **AddTextOrImportChapterDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
+- **ChapterSelectionDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
+- **PositionDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
+- **RenameChapterDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
+- **SelectionModeCard()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
+- **SimpleConfirmDialog()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\editbook\src\main\java\com\epubreader\feature\editbook\EditBookDialogs.kt`
 
 ## Audit Trail
 

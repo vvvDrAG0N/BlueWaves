@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **SurfaceExtensions.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
-- **ExtensionFailure** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
-- **ExtensionPoint** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
-- **ExtensionResolution** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
-- **resolveExtensionPoint()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
-- **SurfaceExtension** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
+- **SurfaceExtensions.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
+- **ExtensionFailure** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
+- **ExtensionPoint** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
+- **ExtensionResolution** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
+- **resolveExtensionPoint()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
+- **SurfaceExtension** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\core\ui\src\main\java\com\epubreader\core\ui\SurfaceExtensions.kt`
 
 ## Audit Trail
 

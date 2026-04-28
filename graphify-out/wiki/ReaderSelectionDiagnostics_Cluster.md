@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReaderSelectionDiagnostics.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\ReaderSelectionDiagnostics.kt`
-- **logReaderSelectionTransition()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\ReaderSelectionDiagnostics.kt`
+- **ReaderSelectionDiagnostics.kt** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\ReaderSelectionDiagnostics.kt`
+- **logReaderSelectionTransition()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\ReaderSelectionDiagnostics.kt`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `C:\Users\Amon\Desktop\projects\bluewaves_v1\feature\reader\src\main\java\com\epubreader\feature\reader\internal\ReaderSelectionDiagnostics.kt`
+- `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\reader\src\main\java\com\epubreader\feature\reader\internal\ReaderSelectionDiagnostics.kt`
 
 ## Audit Trail
 
