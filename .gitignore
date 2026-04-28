@@ -2,6 +2,7 @@
 .gradle
 .agents
 .codex
+.worktrees/
 .gemini
 /local.properties
 /.idea/caches
