@@ -2633,3 +2633,26 @@ This file is append-only.
   - No known blocker remains in the picker UX/perf lane inside this worktree.
 - Suggested next step:
   - Have the user try the picker on the emulator/device directly, then decide whether to merge the branch or ask for one final review pass before integration.
+
+## 119. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Refresh the theme picker design spec after the user approved expanding the spectrum picker into a fuller color editor with numeric entry, explicit header actions, and dirty-exit protection.
+- Area/files: `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Re-read the current picker owner file and the existing spectrum-picker spec so the redesign stayed grounded in the real branch state rather than drifting into a separate parallel concept.
+  2. Reworked the spec in place so there is still one authoritative picker-design file, but it now captures the approved expansion: editable `HEX` and `RGB` in all modes, compact live swatch at the top, header `X` and check actions, preview-only local edits across all modes, disabled outside tap, and a dirty `Back`/cancel confirm dialog.
+  3. Made the guided contract explicit for typed input as well as drag input, including the rule that only complete valid text triggers guided resolution and that guided corrections must rewrite both numeric displays with a small readability cue.
+  4. Updated `docs/agent_memory/next_steps.md` so future implementation work starts by refreshing the stale older implementation plan instead of blindly executing the previous spectrum-only plan.
+- Result:
+  - The picker design truth is current again and matches the user's newly approved interaction model.
+  - The older narrower design is no longer the thing future agents will accidentally follow.
+  - The repo continuity layer now clearly says that planning must be refreshed before more picker implementation starts.
+- Verification:
+  - Read-back review of `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`
+  - Placeholder scan for `TODO` and `TBD`
+  - Read-back review of the new theme picker follow-up entry in `docs/agent_memory/next_steps.md`
+- Blockers:
+  - No design blocker remains. The only open gate is user review of the refreshed written spec before the implementation plan is rewritten.
+- Suggested next step:
+  - Have the user review `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, then invoke the writing-plans workflow to refresh the implementation plan from that updated spec.

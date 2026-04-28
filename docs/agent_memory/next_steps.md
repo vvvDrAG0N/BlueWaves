@@ -1,5 +1,13 @@
 # Next Steps
 
+## Theme Picker Editor Refresh
+- Goal: Refresh the implementation plan for the theme picker now that the approved design has expanded from spectrum-only interaction into a full mini editor with editable `HEX` and `RGB`, header save/cancel icons, dirty-exit handling, and preview-only local edits in all modes.
+- Why now: The current implementation plan and older picker design were written before the user approved direct text entry, header actions, outside-tap disablement, and the new `Back -> Save/Discard/Keep editing` contract.
+- Suggested owner/model: Codex / GPT-5.
+- Starting docs/files: `AGENTS.md`, `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerGuidance.kt`
+- Risks: Letting the stale plan drive implementation, reintroducing multiple save behaviors across modes, making guided auto-correction feel arbitrary during typing, or growing the picker owner file into a new monolith.
+- Verification target: Rewrite the implementation plan first, then require JVM coverage for text parsing/sync, connected picker tests for the dirty-exit contract, and one emulator manual pass over typed guided adjustment plus `Back`/`X` flows.
+
 ## Reader Shadow Startup Target Met
 - Goal: Treat the `Shadow Slave 1435 / 2927 ch` cold-entry reader lag as parked unless a fresh in-hand hitch is still noticeable on the physical phone.
 - Why now: The latest exact-state release-like pass on **April 27, 2026** met the requested target across both lanes. Immediate reruns landed at `37`, `42`, and `63` for an average of `47.33`; `15s later` reruns landed at `29`, `63`, and `35` for an average of `42.33`; the combined six-run average is `44.83`.
