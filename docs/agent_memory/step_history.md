@@ -2526,3 +2526,26 @@ This file is append-only.
   - No technical blocker at the design stage. The only open gate is user review of the updated spec before a fresh implementation plan is written.
 - Suggested next step:
   - Have the user review `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, then refresh the implementation plan from that spec instead of using the older broader plan unchanged.
+
+## 115. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Convert the approved picker-only spectrum spec into an executable implementation plan that matches the narrowed scope and current settings-file seams.
+- Area/files: `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Re-read the approved spectrum-picker spec, the stale older implementation plan, and the current settings picker/editor/test files before drafting the plan.
+  2. Replaced the old broader plan in place with a new execution plan that stays within the approved scope: no RGB field-token work, no theme-grid display churn, no persistence contract changes, and no fake guided circle divorced from the real resolver.
+  3. Grounded the refreshed plan in the actual current code seams by keeping the hue slider, extracting only the 2D spectrum and guidance helpers, and reusing the existing `ThemeEditorColorEditResult` commit path with one new preview-only callback for safe-zone sampling.
+  4. Updated `docs/agent_memory/next_steps.md` so the repo now points to plan execution, not just a future plan refresh.
+- Result:
+  - The repository now has a concrete implementation plan at `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md` that matches the approved spec instead of the superseded broader concept.
+  - The plan is intentionally picker-only and TDD-shaped: pure guidance tests first, then runtime picker tests, then the spectrum UI, then scoped verification and emulator smoke.
+  - Future execution can now proceed directly from the refreshed plan without reinterpretation.
+- Verification:
+  - Read-back review of `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`
+  - Placeholder scan over the plan for `TBD`, `TODO`, and stale broader-scope references
+  - Read-back review of the updated theme spectrum picker entry in `docs/agent_memory/next_steps.md`
+- Blockers:
+  - No planning blocker remains. The next decision is execution mode only.
+- Suggested next step:
+  - Choose either subagent-driven execution or inline execution and start Task 1 of `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`.
