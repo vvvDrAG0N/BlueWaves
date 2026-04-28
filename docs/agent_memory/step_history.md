@@ -2549,3 +2549,33 @@ This file is append-only.
   - No planning blocker remains. The next decision is execution mode only.
 - Suggested next step:
   - Choose either subagent-driven execution or inline execution and start Task 1 of `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`.
+
+## 116. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Implement the approved picker-only spectrum redesign for theme editing, keep guided mode constrained to the real safe zone, preserve Advanced freedom, and verify the scoped settings lane as far as the local environment allows.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeEditorColorEditing.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerGuidance.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/test/java/com/epubreader/feature/settings/ThemeColorPickerGuidanceTest.kt`, `feature/settings/src/test/java/com/epubreader/feature/settings/ThemeEditorGuidedColorEditTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`, `docs/agent_memory/step_history.md`, and `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Created an isolated `codex/theme-spectrum-picker` worktree branch, copied `local.properties` into it so Gradle could resolve the local SDK, and verified the existing settings guided-color unit slice before touching runtime code.
+  2. Implemented the pure guidance layer first: added preview-only guided evaluation, safe-zone sampling/projection models, and focused unit coverage for non-mutating preview behavior plus preview/commit parity.
+  3. Tightened the safe-zone contract after review feedback by making guided projection discrete-row based instead of allowing unsampled between-row HSV points to pass through unchanged.
+  4. Extracted the new `ThemeColorSpectrumField` canvas surface, rewired the picker dialog to use it instead of the visible saturation/value sliders, kept the hue slider, and preserved the preview swatch plus guided `Done`/dismiss semantics.
+  5. Wired guided picker sessions through the real preview seam so guided mode builds its safe zone from the same resolver the commit path uses, and added compatibility `SetProgress` semantics for the old saturation/value test tags to minimize wider settings-test fallout.
+  6. Updated the guided picker instrumentation class to drive the new spectrum surface directly, assert guided safe-zone visibility and Advanced absence, and compute guided expected colors through the same safe-zone projection model used by the picker.
+  7. Kept the refactor under the repo size guard by extracting picker support pieces so `SettingsThemeColorPicker.kt` finishes below the danger threshold instead of growing into a near-500-line owner file.
+- Result:
+  - The theme editor picker now uses a 2D saturation/value spectrum plus hue slider.
+  - Guided mode constrains the chosen point to the real sampled safe zone and shows that zone visually; Advanced mode remains unrestricted and hides the safe-zone overlay.
+  - Existing guided commit semantics remain intact: preview stays local until `Done`, while BACK and outside dismiss still discard pending guided changes.
+  - Compatibility semantics exist for the removed saturation/value sliders so older Android tests can still drive the picker through `SetProgress` even though the visible UI is now spectrum-based.
+  - The only unfinished verification is real connected runtime execution: this shell had no attached device, no configured AVDs, and no `emulator` command on `PATH`, so the connected guided picker class could not be run here.
+- Verification:
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest --tests "com.epubreader.feature.settings.ThemeColorPickerGuidanceTest" --tests "com.epubreader.feature.settings.ThemeEditorGuidedColorEditTest"`
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest`
+  - `.\gradlew.bat :feature:settings:compileDebugKotlin :feature:settings:compileDebugAndroidTestKotlin`
+  - `adb devices`
+  - `& "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe" -list-avds`
+- Blockers:
+  - No code blocker remains, but connected verification is blocked in this environment because there is no attached device and no configured AVD to boot.
+- Suggested next step:
+  - Attach a device or configure an emulator, run `SettingsThemeEditorGuidedPickerTest`, then do one quick manual Basic/Advanced picker smoke before merging or finishing the branch.

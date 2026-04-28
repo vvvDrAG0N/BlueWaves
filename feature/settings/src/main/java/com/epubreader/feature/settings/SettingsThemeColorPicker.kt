@@ -7,8 +7,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +21,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,8 +37,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
@@ -55,10 +55,16 @@ internal fun ThemeColorPickerOverlay(
     testTagPrefix: String? = null,
     isGuided: Boolean,
     onDismiss: () -> Unit,
+    onPreviewValueChange: ((String) -> ThemeColorPickerPreviewResult)? = null,
     onValueChange: (String) -> ThemeEditorColorEditResult,
 ) {
     val parsedColor = remember(initialValue) { parseThemeColorOrNull(initialValue) }
-    val initialHsv = remember(parsedColor) { (parsedColor ?: DefaultPickerColor).toHsvColor() }
+    val initialHsv = remember(parsedColor) { (parsedColor ?: DefaultPickerColor).toThemeColorPickerHsv() }
+    val guidedPreviewValueChange = if (isGuided) {
+        requireNotNull(onPreviewValueChange) { "Guided color picker requires a preview callback" }
+    } else {
+        null
+    }
     var pickerHue by remember { mutableFloatStateOf(initialHsv.hue) }
     var pickerSaturation by remember { mutableFloatStateOf(initialHsv.saturation) }
     var pickerValue by remember { mutableFloatStateOf(initialHsv.value) }
@@ -66,6 +72,14 @@ internal fun ThemeColorPickerOverlay(
     var hasPendingGuidedChange by remember { mutableStateOf(false) }
     var snapPulseToken by remember { mutableIntStateOf(0) }
     var showSnapHighlight by remember { mutableStateOf(false) }
+    val guidedSafeZone = remember(isGuided, pickerHue) {
+        guidedPreviewValueChange?.let { preview ->
+            buildGuidedSafeZone(
+                hue = pickerHue,
+                previewColor = preview,
+            )
+        }
+    }
     val adjustmentStatusTag = remember(testTagPrefix) {
         testTagPrefix?.let { "${it}_picker_guided_status" }
     }
@@ -106,6 +120,25 @@ internal fun ThemeColorPickerOverlay(
         showSnapHighlight = false
     }
 
+    LaunchedEffect(isGuided, guidedSafeZone, pickerHue) {
+        if (!isGuided) return@LaunchedEffect
+        val safeZone = guidedSafeZone ?: return@LaunchedEffect
+        val projected = safeZone.project(
+            ThemeColorPickerPoint(
+                saturation = pickerSaturation,
+                value = pickerValue,
+            ),
+        )
+        if (
+            pickerSaturation.isApproximately(projected.saturation) &&
+            pickerValue.isApproximately(projected.value)
+        ) {
+            return@LaunchedEffect
+        }
+        pickerSaturation = projected.saturation
+        pickerValue = projected.value
+    }
+
     fun setPickerColor(
         hue: Float = pickerHue,
         saturation: Float = pickerSaturation,
@@ -116,12 +149,39 @@ internal fun ThemeColorPickerOverlay(
         pickerValue = value
     }
 
+    fun safeZoneForHue(hue: Float): ThemeColorPickerSafeZone? {
+        val preview = guidedPreviewValueChange ?: return null
+        if (hue.isApproximately(pickerHue)) {
+            return guidedSafeZone
+        }
+        return buildGuidedSafeZone(
+            hue = hue,
+            previewColor = preview,
+        )
+    }
+
+    fun projectPoint(
+        hue: Float,
+        saturation: Float,
+        value: Float,
+    ): ThemeColorPickerPoint {
+        val point = ThemeColorPickerPoint(
+            saturation = saturation.coerceIn(0f, 1f),
+            value = value.coerceIn(0f, 1f),
+        )
+        return safeZoneForHue(hue)?.project(point) ?: point
+    }
+
     fun commitPendingColor() {
         if (!isGuided || !hasPendingGuidedChange) return
-        val rawColor = HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong()
+        val rawColor = ThemeColorPickerHsv(
+            hue = pickerHue,
+            saturation = pickerSaturation,
+            value = pickerValue,
+        ).toColorLong()
         val result = onValueChange(formatThemeColor(rawColor))
         val resolvedColor = parseThemeColorOrNull(result.resolvedHex) ?: rawColor
-        val resolvedHsv = resolvedColor.toHsvColor()
+        val resolvedHsv = resolvedColor.toThemeColorPickerHsv()
         setPickerColor(
             hue = resolvedHsv.hue,
             saturation = resolvedHsv.saturation,
@@ -139,25 +199,38 @@ internal fun ThemeColorPickerOverlay(
         saturation: Float = pickerSaturation,
         value: Float = pickerValue,
     ) {
+        val projectedPoint = projectPoint(
+            hue = hue,
+            saturation = saturation,
+            value = value,
+        )
         if (isGuided) {
             if (
                 pickerHue.isApproximately(hue) &&
-                pickerSaturation.isApproximately(saturation) &&
-                pickerValue.isApproximately(value)
+                pickerSaturation.isApproximately(projectedPoint.saturation) &&
+                pickerValue.isApproximately(projectedPoint.value)
             ) {
                 return
             }
-            setPickerColor(hue = hue, saturation = saturation, value = value)
+            setPickerColor(
+                hue = hue,
+                saturation = projectedPoint.saturation,
+                value = projectedPoint.value,
+            )
             hasPendingGuidedChange = true
             wasAdjusted = false
             showSnapHighlight = false
             return
         }
 
-        val rawColor = HsvColor(hue, saturation, value).toColorLong()
+        val rawColor = ThemeColorPickerHsv(
+            hue = hue,
+            saturation = projectedPoint.saturation,
+            value = projectedPoint.value,
+        ).toColorLong()
         val result = onValueChange(formatThemeColor(rawColor))
         val resolvedColor = parseThemeColorOrNull(result.resolvedHex) ?: rawColor
-        val resolvedHsv = resolvedColor.toHsvColor()
+        val resolvedHsv = resolvedColor.toThemeColorPickerHsv()
         setPickerColor(
             hue = resolvedHsv.hue,
             saturation = resolvedHsv.saturation,
@@ -173,7 +246,6 @@ internal fun ThemeColorPickerOverlay(
         commitPendingColor()
         onDismiss()
     }
-
     val backdropInteractionSource = remember { MutableInteractionSource() }
 
     Dialog(
@@ -208,9 +280,7 @@ internal fun ThemeColorPickerOverlay(
                     .fillMaxWidth()
                     .widthIn(max = 560.dp)
                     .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = {},
-                        )
+                        detectTapGestures(onTap = {})
                     }
                     .then(
                         if (testTagPrefix != null) {
@@ -236,7 +306,15 @@ internal fun ThemeColorPickerOverlay(
                             .fillMaxWidth()
                             .height(64.dp)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(Color(HsvColor(pickerHue, pickerSaturation, pickerValue).toColorLong()))
+                            .background(
+                                Color(
+                                    ThemeColorPickerHsv(
+                                        hue = pickerHue,
+                                        saturation = pickerSaturation,
+                                        value = pickerValue,
+                                    ).toColorLong(),
+                                ),
+                            )
                             .border(
                                 width = previewBorderWidth,
                                 color = previewBorderColor.copy(alpha = previewBorderAlpha),
@@ -288,31 +366,60 @@ internal fun ThemeColorPickerOverlay(
                         }
                     }
 
-                    Text("Hue", style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        text = "Color",
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                    ThemeColorSpectrumField(
+                        hue = pickerHue,
+                        point = ThemeColorPickerPoint(
+                            saturation = pickerSaturation,
+                            value = pickerValue,
+                        ),
+                        safeZone = guidedSafeZone,
+                        testTagPrefix = testTagPrefix,
+                        onPointChange = { point ->
+                            updatePickerColor(
+                                saturation = point.saturation,
+                                value = point.value,
+                            )
+                        },
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                    if (testTagPrefix != null) {
+                        CompatibilityProgressProxy(
+                            tag = "${testTagPrefix}_picker_saturation",
+                            value = pickerSaturation,
+                            valueRange = 0f..1f,
+                            onValueChange = { nextSaturation ->
+                                updatePickerColor(saturation = nextSaturation)
+                            },
+                        )
+                        CompatibilityProgressProxy(
+                            tag = "${testTagPrefix}_picker_value",
+                            value = pickerValue,
+                            valueRange = 0f..1f,
+                            onValueChange = { nextValue ->
+                                updatePickerColor(value = nextValue)
+                            },
+                        )
+                    }
+
+                    Text(
+                        text = "Hue",
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(top = 16.dp),
+                    )
                     Slider(
                         value = pickerHue,
                         onValueChange = { updatePickerColor(hue = it) },
                         onValueChangeFinished = {},
                         valueRange = 0f..360f,
-                        modifier = if (testTagPrefix != null) Modifier.testTag("${testTagPrefix}_picker_hue") else Modifier,
-                    )
-
-                    Text("Saturation", style = MaterialTheme.typography.labelSmall)
-                    Slider(
-                        value = pickerSaturation,
-                        onValueChange = { updatePickerColor(saturation = it) },
-                        onValueChangeFinished = {},
-                        valueRange = 0f..1f,
-                        modifier = if (testTagPrefix != null) Modifier.testTag("${testTagPrefix}_picker_saturation") else Modifier,
-                    )
-
-                    Text("Brightness", style = MaterialTheme.typography.labelSmall)
-                    Slider(
-                        value = pickerValue,
-                        onValueChange = { updatePickerColor(value = it) },
-                        onValueChangeFinished = {},
-                        valueRange = 0f..1f,
-                        modifier = if (testTagPrefix != null) Modifier.testTag("${testTagPrefix}_picker_value") else Modifier,
+                        modifier = if (testTagPrefix != null) {
+                            Modifier.testTag("${testTagPrefix}_picker_hue")
+                        } else {
+                            Modifier
+                        },
                     )
 
                     Row(
@@ -321,7 +428,9 @@ internal fun ThemeColorPickerOverlay(
                             .padding(top = 24.dp),
                         horizontalArrangement = Arrangement.End,
                     ) {
-                        TextButton(onClick = confirmPicker) { Text("Done") }
+                        TextButton(onClick = confirmPicker) {
+                            Text("Done")
+                        }
                     }
                 }
             }
@@ -329,38 +438,4 @@ internal fun ThemeColorPickerOverlay(
     }
 }
 
-private data class ThemeColorPickerStatusState(
-    val isGuided: Boolean,
-    val wasAdjusted: Boolean,
-    val showSnapHighlight: Boolean,
-) {
-    val statusText: String
-        get() = if (wasAdjusted) {
-            "Adjusted for readability"
-        } else {
-            "Guided mode keeps colors readable"
-        }
-}
-
 private const val DefaultPickerColor = 0xFFFFFFFFL
-
-private data class HsvColor(
-    val hue: Float,
-    val saturation: Float,
-    val value: Float,
-) {
-    fun toColorLong(): Long {
-        val hsv = floatArrayOf(hue, saturation, value)
-        return android.graphics.Color.HSVToColor(hsv).toLong() and 0xFFFFFFFFL
-    }
-}
-
-private fun Long.toHsvColor(): HsvColor {
-    val hsv = FloatArray(3)
-    android.graphics.Color.colorToHSV(this.toInt(), hsv)
-    return HsvColor(hsv[0], hsv[1], hsv[2])
-}
-
-private fun Float.isApproximately(other: Float, epsilon: Float = 0.001f): Boolean {
-    return kotlin.math.abs(this - other) <= epsilon
-}

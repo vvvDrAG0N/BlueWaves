@@ -109,6 +109,13 @@ internal fun CustomThemeEditorDialog(
                             initialValue = value,
                             testTagPrefix = themeEditorColorTestTag(key),
                             isGuided = guided,
+                            onColorPreview = { nextValue ->
+                                draft.previewColorEdit(
+                                    fieldKey = key,
+                                    rawHex = nextValue,
+                                    guided = guided,
+                                )
+                            },
                             onColorChange = { nextValue ->
                                 val result = draft.applyColorEdit(
                                     fieldKey = key,
@@ -373,6 +380,7 @@ internal fun CustomThemeEditorDialog(
                     testTagPrefix = field.testTagPrefix,
                     isGuided = field.isGuided,
                     onDismiss = { activePicker = null },
+                    onPreviewValueChange = field.onColorPreview,
                     onValueChange = field.onColorChange,
                 )
             }
