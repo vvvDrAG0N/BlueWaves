@@ -1,12 +1,12 @@
 # Next Steps
 
 ## Theme Picker Editor Refresh
-- Goal: Refresh the implementation plan for the theme picker now that the approved design has expanded from spectrum-only interaction into a full mini editor with editable `HEX` and `RGB`, header save/cancel icons, dirty-exit handling, and preview-only local edits in all modes.
-- Why now: The current implementation plan and older picker design were written before the user approved direct text entry, header actions, outside-tap disablement, and the new `Back -> Save/Discard/Keep editing` contract.
+- Goal: Execute the refreshed picker-editor plan for the theme picker: editable `HEX` and `RGB`, header save/cancel icons, guided typed correction, preview-only local edits, and guarded dirty exits.
+- Why now: The updated implementation plan now matches the approved design. The branch should build from that current plan instead of the older spectrum-only behavior or the earlier bottom-`Done` contract.
 - Suggested owner/model: Codex / GPT-5.
 - Starting docs/files: `AGENTS.md`, `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerGuidance.kt`
-- Risks: Letting the stale plan drive implementation, reintroducing multiple save behaviors across modes, making guided auto-correction feel arbitrary during typing, or growing the picker owner file into a new monolith.
-- Verification target: Rewrite the implementation plan first, then require JVM coverage for text parsing/sync, connected picker tests for the dirty-exit contract, and one emulator manual pass over typed guided adjustment plus `Back`/`X` flows.
+- Risks: Reintroducing multiple save behaviors across modes, making guided auto-correction feel arbitrary during typing, or growing the picker owner file into a new monolith while adding the text-entry UI.
+- Verification target: Follow the plan's required checks: `:feature:settings:testDebugUnitTest`, the connected picker class, `checkKotlinFileLineLimit`, and one emulator manual pass over typed guided adjustment plus `Back`/`X` flows.
 
 ## Reader Shadow Startup Target Met
 - Goal: Treat the `Shadow Slave 1435 / 2927 ch` cold-entry reader lag as parked unless a fresh in-hand hitch is still noticeable on the physical phone.

@@ -2656,3 +2656,26 @@ This file is append-only.
   - No design blocker remains. The only open gate is user review of the refreshed written spec before the implementation plan is rewritten.
 - Suggested next step:
   - Have the user review `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, then invoke the writing-plans workflow to refresh the implementation plan from that updated spec.
+
+## 120. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Rewrite the theme picker implementation plan so it matches the approved picker-editor design with editable HEX/RGB, header actions, and guarded dirty exits.
+- Area/files: `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Re-read the approved design spec, the current picker owner/tests, and the stale older implementation plan before rewriting anything.
+  2. Replaced the old spectrum-only plan in place with a new implementation plan that covers the full approved contract: pure text-entry helpers, top-band UI extraction, preview-only local edits across all modes, typed guided correction, header save/cancel actions, and dirty `Back`/`X` flows with outside tap disabled.
+  3. Ran a self-review pass over the new plan, then tightened two gaps inline so the plan now explicitly covers live preview assertions for typed input and the clean `X` immediate-close case.
+  4. Updated `docs/agent_memory/next_steps.md` so future work starts from plan execution rather than redoing the plan refresh.
+- Result:
+  - The repository now has one current execution plan for the picker lane, and it matches the approved design instead of the superseded bottom-`Done` / spectrum-only behavior.
+  - The plan is execution-ready for either subagent-driven work or inline execution.
+  - Continuity notes now point at implementing the refreshed plan rather than rewriting it again.
+- Verification:
+  - Read-back review of `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`
+  - Placeholder scan for `TODO`, `TBD`, and other no-detail plan anti-patterns
+  - Inline spec-coverage check that the plan includes typed input, preview-only behavior, clean and dirty header-close behavior, `Back` handling, and outside-tap disablement
+- Blockers:
+  - No planning blocker remains. The next choice is execution mode only.
+- Suggested next step:
+  - Choose either subagent-driven execution or inline execution and start Task 1 of `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`.
