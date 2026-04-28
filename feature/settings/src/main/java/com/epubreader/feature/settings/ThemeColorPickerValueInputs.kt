@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -156,12 +157,12 @@ internal fun ThemeColorPickerValueInputs(
             Box(
                 modifier = Modifier
                     .size(36.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(PickerTopControlShape)
                     .background(previewColor)
                     .border(
                         width = previewBorderWidth,
                         color = previewBorderColor.copy(alpha = previewBorderAlpha),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = PickerTopControlShape,
                     )
                     .then(
                         if (previewTag != null) {
@@ -232,7 +233,7 @@ private fun ThemeColorValueField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
-            .heightIn(min = 48.dp)
+            .height(PickerTopControlHeight)
             .then(if (tag != null) Modifier.testTag(tag) else Modifier),
         singleLine = singleLine,
         textStyle = textStyle,
@@ -263,6 +264,7 @@ private fun ThemeColorValueField(
             }
         },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        shape = PickerTopControlShape,
     )
 }
 
@@ -305,12 +307,12 @@ private fun ThemeColorRgbField(
 
     Row(
         modifier = modifier
-            .heightIn(min = 48.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .heightIn(min = PickerTopControlHeight)
+            .clip(PickerTopControlShape)
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f),
-                shape = RoundedCornerShape(12.dp),
+                shape = PickerTopControlShape,
             )
             .padding(horizontal = 6.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -381,7 +383,7 @@ private fun ThemeColorInputModeButton(
         onClick = onClick,
         modifier = Modifier
             .widthIn(min = 52.dp)
-            .heightIn(min = 44.dp)
+            .height(PickerTopControlHeight)
             .then(
                 if (testTagPrefix != null) {
                     Modifier
@@ -397,6 +399,7 @@ private fun ThemeColorInputModeButton(
             horizontal = 8.dp,
             vertical = 0.dp,
         ),
+        shape = PickerTopControlShape,
     ) {
         Text(
             text = selectedMode.label,
@@ -417,3 +420,6 @@ private enum class ThemeColorPickerInputMode(val label: String) {
         }
     }
 }
+
+private val PickerTopControlShape = RoundedCornerShape(12.dp)
+private val PickerTopControlHeight = 48.dp

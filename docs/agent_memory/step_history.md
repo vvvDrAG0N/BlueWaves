@@ -2871,3 +2871,24 @@ This file is append-only.
   - This remains a visually sensitive fix, so the final confidence gate is still the user reopening the exact RGB picker path on the emulator.
 - Suggested next step:
   - Re-test the same RGB picker repro on the installed build. If the left digit is still clipped, the next pass should likely simplify the channel-box chrome further or reduce the title/top-row width pressure.
+
+## 128. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Align the top-row chrome with the user's visual preference by using the preview swatch roundness as the shared control shape and by preventing the HEX field from changing the row height when toggling away from RGB.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerValueInputs.kt`.
+- Action taken:
+  1. Promoted the preview swatch's `12.dp` roundness into a shared top-control shape token and applied it to the preview border, the `HEX/RGB` mode button, the HEX text field, and the RGB channel boxes.
+  2. Locked the mode button and HEX field to the same `48.dp` control height used by the RGB row so switching between `HEX` and `RGB` no longer expands the picker vertically.
+  3. Re-ran the settings unit/check guard, reran the full picker instrumentation class, and reinstalled the debug app on the active emulator.
+- Result:
+  - The top row now uses one shared corner language instead of the button/inputs feeling rounder than the preview swatch.
+  - The `HEX` row no longer changes the picker's vertical footprint when the user toggles between input modes.
+- Verification:
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest checkKotlinFileLineLimit`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - No automated blocker remains; this is primarily a visual consistency pass.
+- Suggested next step:
+  - Re-open the picker and confirm the top row now feels like one system: matching roundness, stable height when toggling, and no lingering RGB clipping on the user's target density.
