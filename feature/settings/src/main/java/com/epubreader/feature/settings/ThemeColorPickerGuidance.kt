@@ -26,21 +26,29 @@ internal data class ThemeColorPickerSafeZone(
     }
 
     fun project(point: ThemeColorPickerPoint): ThemeColorPickerPoint {
+        return project(point = point, anchorPoint = null)
+    }
+
+    fun project(
+        point: ThemeColorPickerPoint,
+        anchorPoint: ThemeColorPickerPoint?,
+    ): ThemeColorPickerPoint {
         if (contains(point)) {
             return point
         }
 
-        val valueMatchedCandidates = spansAt(point.value).map { span ->
-            ThemeColorPickerPoint(
-                saturation = point.saturation.coerceIn(span.start, span.endInclusive),
-                value = point.value,
-            )
+        projectWithinRow(
+            value = point.value,
+            saturation = point.saturation,
+        )?.let { return it }
+
+        anchorPoint?.let { anchor ->
+            projectNearAnchor(
+                point = point,
+                anchorPoint = anchor,
+            )?.let { return it }
         }
-        if (valueMatchedCandidates.isNotEmpty()) {
-            return valueMatchedCandidates.minByOrNull { candidate ->
-                candidate.distanceSquaredTo(point)
-            } ?: point
-        }
+
         val rowCandidates = rows.flatMap { row ->
             row.spans.map { span ->
                 ThemeColorPickerPoint(
@@ -99,6 +107,52 @@ internal data class ThemeColorPickerSafeZone(
                 bottomSpan.endInclusive,
                 progress,
             )
+        }
+    }
+
+    private fun projectWithinRow(
+        value: Float,
+        saturation: Float,
+    ): ThemeColorPickerPoint? {
+        val spans = spansAt(value)
+        if (spans.isEmpty()) {
+            return null
+        }
+        return spans
+            .map { span ->
+                ThemeColorPickerPoint(
+                    saturation = saturation.coerceIn(span.start, span.endInclusive),
+                    value = value,
+                )
+            }
+            .minByOrNull { candidate ->
+                val delta = candidate.saturation - saturation
+                delta * delta
+            }
+    }
+
+    private fun projectNearAnchor(
+        point: ThemeColorPickerPoint,
+        anchorPoint: ThemeColorPickerPoint,
+    ): ThemeColorPickerPoint? {
+        if (!contains(anchorPoint)) {
+            return null
+        }
+        val valueWindow = maxOf(
+            rowStep * AnchorProjectionRowWindowMultiplier,
+            AnchorProjectionMinValueWindow,
+        )
+        if (abs(point.value - anchorPoint.value) > valueWindow) {
+            return null
+        }
+        val anchoredProjection = projectWithinRow(
+            value = anchorPoint.value,
+            saturation = point.saturation,
+        ) ?: return null
+        return if (abs(anchoredProjection.saturation - point.saturation) <= AnchorProjectionMaxSaturationGap) {
+            anchoredProjection
+        } else {
+            null
         }
     }
 }
@@ -294,5 +348,8 @@ private fun Int.toSafeZoneHue(): Float {
     return (((this % 360) + 360) % 360).toFloat()
 }
 
+private const val AnchorProjectionRowWindowMultiplier = 2.25f
+private const val AnchorProjectionMinValueWindow = 0.05f
+private const val AnchorProjectionMaxSaturationGap = 0.12f
 private const val SafeZoneRowValueEpsilon = 0.0001f
 private const val SafeZoneInterpolationGapEpsilon = 0.0001f

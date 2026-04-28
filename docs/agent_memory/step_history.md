@@ -2750,3 +2750,31 @@ This file is append-only.
   - No known blocker remains in the picker-polish lane on this branch.
 - Suggested next step:
   - Do an in-hand review of the refreshed picker feel if desired, then merge `codex/theme-spectrum-picker` back into the main working branch.
+
+## 123. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Finish the picker follow-up polish by making the `HEX` / `RGB` controls denser, turning the mode control into one compact button, calming guided edge-drag behavior near irregular safe-zone boundaries, and making long picker text wrap more naturally.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerValueInputs.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerChrome.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerGuidance.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/test/java/com/epubreader/feature/settings/ThemeColorPickerGuidanceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerInputSupport.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTestSupport.kt`, and `logs/picker_compact_2026-04-28/`.
+- Action taken:
+  1. Collapsed the picker's numeric-edit band into a single row with one compact `HEX` / `RGB` mode button, the active field set, and a smaller live swatch, which reduces vertical pressure without dropping either input path.
+  2. Reworked the header title lane so longer color names can flow across more lines while still reserving the save-icon lane.
+  3. Removed the old double-projection path from the spectrum canvas and taught guided safe-zone projection to prefer the current anchor row before hard-snapping to a distant sampled row, which calms the flicker/rigidity users felt when sliding along uneven boundaries.
+  4. Split the picker input-mode test helper into its own androidTest file to keep the support files under the repo's Kotlin size guard while preserving the existing picker instrumentation coverage.
+  5. Added a focused guidance unit test for the "missing intermediate rows" anchor case, then reran the full connected picker class plus a drag-focused guided picker case with fresh `gfxinfo` and `logcat` capture.
+- Result:
+  - The top band is materially tighter and now keeps the mode switch, active inputs, and swatch on one line.
+  - Long picker titles feel less boxed and no longer rely on the earlier stiff two-line cap.
+  - Guided drags near irregular safe-zone edges stay smoother because the projection now preserves local drag continuity before falling back to a harder clamp.
+  - The connected picker suite stayed green after the compaction and the focused guided-drag perf capture did not reproduce the old skipped-frame or `Davey!` spam pattern.
+- Verification:
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest checkKotlinFileLineLimit`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest#extendedInvalidAppText_resolvesToReadableColor_andShowsGuidedStatus`
+  - Focused emulator perf/log artifacts:
+    - `logs/picker_compact_2026-04-28/gfxinfo-guided-drag.txt`
+    - `logs/picker_compact_2026-04-28/logcat-guided-drag.txt`
+- Blockers:
+  - No known blocker remains in this compact-picker follow-up lane.
+- Suggested next step:
+  - Let the user try the denser picker in-hand, then either merge `codex/theme-spectrum-picker` or request one last visual pass if any spacing still feels off on their target device.

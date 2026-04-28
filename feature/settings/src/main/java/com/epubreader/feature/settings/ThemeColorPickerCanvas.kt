@@ -52,7 +52,6 @@ internal fun ThemeColorSpectrumField(
                     onPointChange(
                         offset.toSpectrumPoint(
                             size = Size(size.width.toFloat(), size.height.toFloat()),
-                            safeZone = safeZone,
                         ),
                     )
                 }
@@ -63,7 +62,6 @@ internal fun ThemeColorSpectrumField(
                         onPointChange(
                             offset.toSpectrumPoint(
                                 size = Size(size.width.toFloat(), size.height.toFloat()),
-                                safeZone = safeZone,
                             ),
                         )
                     },
@@ -72,7 +70,6 @@ internal fun ThemeColorSpectrumField(
                         onPointChange(
                             change.position.toSpectrumPoint(
                                 size = Size(size.width.toFloat(), size.height.toFloat()),
-                                safeZone = safeZone,
                             ),
                         )
                     },
@@ -136,13 +133,11 @@ internal fun ThemeColorSpectrumField(
 
 private fun Offset.toSpectrumPoint(
     size: Size,
-    safeZone: ThemeColorPickerSafeZone?,
 ): ThemeColorPickerPoint {
-    val point = ThemeColorPickerPoint(
+    return ThemeColorPickerPoint(
         saturation = if (size.width <= 0f) 0f else (x / size.width).coerceIn(0f, 1f),
         value = if (size.height <= 0f) 1f else (1f - (y / size.height)).coerceIn(0f, 1f),
     )
-    return safeZone?.project(point) ?: point
 }
 
 private fun ThemeColorPickerPoint.toOffset(size: Size): Offset {

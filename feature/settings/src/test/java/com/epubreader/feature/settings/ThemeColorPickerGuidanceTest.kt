@@ -172,6 +172,37 @@ class ThemeColorPickerGuidanceTest {
     }
 
     @Test
+    fun project_missingIntermediateRows_prefersAnchorRowBeforeHardSnap() {
+        val zone = ThemeColorPickerSafeZone(
+            rows = listOf(
+                ThemeColorPickerSafeZoneRow(
+                    value = 0.90f,
+                    spans = listOf(0.20f..0.40f),
+                ),
+                ThemeColorPickerSafeZoneRow(
+                    value = 0.70f,
+                    spans = listOf(0.25f..0.45f),
+                ),
+            ),
+            rowStep = 0.10f,
+        )
+
+        val projected = zone.project(
+            point = ThemeColorPickerPoint(
+                saturation = 0.38f,
+                value = 0.84f,
+            ),
+            anchorPoint = ThemeColorPickerPoint(
+                saturation = 0.35f,
+                value = 0.90f,
+            ),
+        )
+
+        assertEquals(0.38f, projected.saturation, 0.0001f)
+        assertEquals(0.90f, projected.value, 0.0001f)
+    }
+
+    @Test
     fun safeZoneCache_reusesExistingZoneWithinRoundedHueBucket() {
         val cache = ThemeColorPickerSafeZoneCache()
         var buildCount = 0

@@ -3,6 +3,7 @@ package com.epubreader.feature.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -18,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -52,11 +52,12 @@ internal fun ThemeColorPickerHeader(
         }
         Text(
             text = "$label Color",
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 2.dp),
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
+            maxLines = 3,
             textAlign = TextAlign.Start,
         )
         IconButton(

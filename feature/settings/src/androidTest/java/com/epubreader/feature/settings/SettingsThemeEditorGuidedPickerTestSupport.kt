@@ -333,14 +333,6 @@ internal fun SettingsThemeEditorGuidedPickerTest.replaceRgbInput(
     composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_blue").performTextReplacement(blue)
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.selectPickerInputMode(
-    testTagPrefix: String,
-    mode: String,
-) {
-    composeRule.onNodeWithTag("${testTagPrefix}_picker_mode_${mode.lowercase()}").performClick()
-    composeRule.waitForIdle()
-}
-
 internal fun SettingsThemeEditorGuidedPickerTest.setSpectrumPoint(
     tag: String,
     saturation: Float,

@@ -171,7 +171,6 @@ internal fun ThemeColorPickerOverlay(
         wasAdjusted = adjusted
         showSnapHighlight = false
     }
-
     fun applyPreviewPoint(
         hue: Float = pickerHue,
         saturation: Float = pickerSaturation,
@@ -231,6 +230,10 @@ internal fun ThemeColorPickerOverlay(
                 ThemeColorPickerPoint(
                     saturation = saturation.coerceIn(0f, 1f),
                     value = value.coerceIn(0f, 1f),
+                ),
+                anchorPoint = ThemeColorPickerPoint(
+                    saturation = pickerSaturation,
+                    value = pickerValue,
                 ),
             ) ?: ThemeColorPickerPoint(
                 saturation = saturation.coerceIn(0f, 1f),

@@ -1,11 +1,11 @@
 # Graph Report - C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker  (2026-04-28)
 
 ## Corpus Check
-- 150 files · ~74,418 words
+- 150 files · ~74,608 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1093 nodes · 964 edges · 147 communities detected
+- 1095 nodes · 966 edges · 147 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -15,8 +15,8 @@
 - [[_COMMUNITY_EpubParserEditing Cluster|EpubParserEditing Cluster]]
 - [[_COMMUNITY_PdfToEpubWorkspace Cluster|PdfToEpubWorkspace Cluster]]
 - [[_COMMUNITY_ReaderExtensions Cluster|ReaderExtensions Cluster]]
-- [[_COMMUNITY_EpubParser Cluster|EpubParser Cluster]]
 - [[_COMMUNITY_ThemeColorPickerGuidance Cluster|ThemeColorPickerGuidance Cluster]]
+- [[_COMMUNITY_EpubParser Cluster|EpubParser Cluster]]
 - [[_COMMUNITY_EditBookSurfacePlugin Cluster|EditBookSurfacePlugin Cluster]]
 - [[_COMMUNITY_ReaderSelectionGeometry Cluster|ReaderSelectionGeometry Cluster]]
 - [[_COMMUNITY_SettingsModels Cluster|SettingsModels Cluster]]
@@ -167,8 +167,8 @@
 6. `PdfConversionWorkspaceState` - 8 edges
 7. `ReaderSelectionLayoutRegistry` - 8 edges
 8. `AppLog` - 6 edges
-9. `PdfLegacyBridge` - 5 edges
-10. `PdfLegacyRuntime` - 5 edges
+9. `ThemeColorPickerSafeZone` - 6 edges
+10. `PdfLegacyBridge` - 5 edges
 
 ## Surprising Connections (you probably didn't know these)
 - None detected - all connections are within the same source files.
@@ -195,13 +195,13 @@ Nodes (4): PdfConversionWorkspaceState, PdfReflowSection, PdfWorkspacePage, Work
 Cohesion: 0.08
 Nodes (13): BuiltInReaderEngineExtension, ReaderEngineExtension, ReaderEngineHost, ReaderEngineState, ReaderOverlayExtension, ReaderOverlayHost, ReaderOverlayRenderContext, ReaderResolvedHostExtensions (+5 more)
 
-### Community 5 - "EpubParser Cluster"
+### Community 5 - "ThemeColorPickerGuidance Cluster"
+Cohesion: 0.08
+Nodes (7): ThemeColorPickerHsv, ThemeColorPickerPoint, ThemeColorPickerPreviewResult, ThemeColorPickerSafeZone, ThemeColorPickerSafeZoneCache, ThemeColorPickerSafeZoneRow, ThemeColorPickerTypedResolution
+
+### Community 6 - "EpubParser Cluster"
 Cohesion: 0.09
 Nodes (1): EpubParser
-
-### Community 6 - "ThemeColorPickerGuidance Cluster"
-Cohesion: 0.09
-Nodes (7): ThemeColorPickerHsv, ThemeColorPickerPoint, ThemeColorPickerPreviewResult, ThemeColorPickerSafeZone, ThemeColorPickerSafeZoneCache, ThemeColorPickerSafeZoneRow, ThemeColorPickerTypedResolution
 
 ### Community 7 - "EditBookSurfacePlugin Cluster"
 Cohesion: 0.1
@@ -842,5 +842,5 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `ReaderExtensions Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._
-- **Should `EpubParser Cluster` be split into smaller, more focused modules?**
-  _Cohesion score 0.09 - nodes in this community are weakly interconnected._
+- **Should `ThemeColorPickerGuidance Cluster` be split into smaller, more focused modules?**
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
