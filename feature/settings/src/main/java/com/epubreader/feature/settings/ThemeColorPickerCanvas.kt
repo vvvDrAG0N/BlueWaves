@@ -49,29 +49,32 @@ internal fun ThemeColorSpectrumField(
             )
             .pointerInput(hue, safeZone) {
                 detectTapGestures { offset ->
-                    onPointChange(
-                        offset.toSpectrumPoint(
-                            size = Size(size.width.toFloat(), size.height.toFloat()),
-                        ),
+                    val point = offset.toSpectrumPoint(
+                        size = Size(size.width.toFloat(), size.height.toFloat()),
                     )
+                    if (safeZone.acceptsInteractivePoint(point)) {
+                        onPointChange(point)
+                    }
                 }
             }
             .pointerInput(hue, safeZone) {
                 detectDragGestures(
                     onDragStart = { offset ->
-                        onPointChange(
-                            offset.toSpectrumPoint(
-                                size = Size(size.width.toFloat(), size.height.toFloat()),
-                            ),
+                        val point = offset.toSpectrumPoint(
+                            size = Size(size.width.toFloat(), size.height.toFloat()),
                         )
+                        if (safeZone.acceptsInteractivePoint(point)) {
+                            onPointChange(point)
+                        }
                     },
                     onDrag = { change, _ ->
                         change.consume()
-                        onPointChange(
-                            change.position.toSpectrumPoint(
-                                size = Size(size.width.toFloat(), size.height.toFloat()),
-                            ),
+                        val point = change.position.toSpectrumPoint(
+                            size = Size(size.width.toFloat(), size.height.toFloat()),
                         )
+                        if (safeZone.acceptsInteractivePoint(point)) {
+                            onPointChange(point)
+                        }
                     },
                 )
             }
@@ -145,6 +148,12 @@ private fun ThemeColorPickerPoint.toOffset(size: Size): Offset {
         x = saturation.coerceIn(0f, 1f) * size.width,
         y = (1f - value.coerceIn(0f, 1f)) * size.height,
     )
+}
+
+private fun ThemeColorPickerSafeZone?.acceptsInteractivePoint(
+    point: ThemeColorPickerPoint,
+): Boolean {
+    return this == null || contains(point)
 }
 
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSafeZoneVeil(

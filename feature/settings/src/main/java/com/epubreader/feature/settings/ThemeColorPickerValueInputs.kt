@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -91,7 +92,7 @@ internal fun ThemeColorPickerValueInputs(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             ThemeColorInputModeButton(
                 selectedMode = inputMode,
@@ -147,7 +148,7 @@ internal fun ThemeColorPickerValueInputs(
 
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(36.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(previewColor)
                     .border(
@@ -266,17 +267,30 @@ private fun ThemeColorRgbField(
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
 ) {
-    ThemeColorValueField(
-        label = channelLabel,
-        placeholder = "000",
-        prefixText = null,
-        value = value,
-        tag = tag,
-        modifier = modifier.widthIn(min = 0.dp),
-        keyboardType = KeyboardType.Number,
-        textStyle = MaterialTheme.typography.bodySmall,
-        onValueChange = onValueChange,
-    )
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        Text(
+            text = channelLabel,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        ThemeColorValueField(
+            label = null,
+            placeholder = "000",
+            prefixText = null,
+            value = value,
+            tag = tag,
+            modifier = Modifier
+                .weight(1f)
+                .widthIn(min = 0.dp),
+            keyboardType = KeyboardType.Number,
+            textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
+            onValueChange = onValueChange,
+        )
+    }
 }
 
 @Composable
@@ -288,8 +302,8 @@ private fun ThemeColorInputModeButton(
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier
-            .widthIn(min = 64.dp)
-            .heightIn(min = 48.dp)
+            .widthIn(min = 52.dp)
+            .heightIn(min = 44.dp)
             .then(
                 if (testTagPrefix != null) {
                     Modifier
@@ -302,7 +316,7 @@ private fun ThemeColorInputModeButton(
                 },
             ),
         contentPadding = PaddingValues(
-            horizontal = 12.dp,
+            horizontal = 8.dp,
             vertical = 0.dp,
         ),
     ) {

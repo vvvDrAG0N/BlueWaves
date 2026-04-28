@@ -2778,3 +2778,28 @@ This file is append-only.
   - No known blocker remains in this compact-picker follow-up lane.
 - Suggested next step:
   - Let the user try the denser picker in-hand, then either merge `codex/theme-spectrum-picker` or request one last visual pass if any spacing still feels off on their target device.
+
+## 124. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Finish the latest picker follow-up by turning guided invalid-touch behavior into a strict hard wall and giving the one-line RGB row more readable channel space after fresh screenshot feedback.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerValueInputs.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`.
+- Action taken:
+  1. Re-read the latest screenshot and the failing guided instrumentation result to separate the real interaction requirement from the stale projected-edge test assumptions.
+  2. Kept guided spectrum interaction on a true hard wall path by forwarding touch updates only when the touched point is inside the sampled safe zone, so blocked taps and drags leave the handle at the last valid point instead of sliding along a projected edge.
+  3. Tightened the top value row further by shrinking the mode button and swatch, reducing row gaps, and using lighter external `R/G/B` labels so the numeric channel fields read larger on narrow devices.
+  4. Reworked the blocked-touch instrumentation test to seed a dark extended theme, compute an actually blocked point from the same guided safe-zone builder the picker uses, and verify that a blocked tap leaves the preview unchanged and the picker clean enough to close immediately.
+  5. Recompiled the settings module, reran JVM tests plus the Kotlin line-limit guard, reran the focused blocked-touch androidTest, reran the full picker instrumentation class, and reinstalled the debug app on the active emulator.
+- Result:
+  - Guided mode now behaves like a real hard wall for invalid spectrum touches instead of performing last-moment boundary projection when the finger crosses into blocked space.
+  - The single-line RGB mode is more legible on cramped widths because the channel digits now get more of the row.
+  - The picker instrumentation suite now proves the strict guided blocked-touch behavior against a real blocked safe-zone point instead of an invalid light-theme assumption.
+- Verification:
+  - `.\gradlew.bat :feature:settings:compileDebugAndroidTestKotlin :feature:settings:testDebugUnitTest checkKotlinFileLineLimit`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest#extendedInvalidAppText_blockedSpectrumTap_keepsLastValidPreview`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - No known blocker remains in this strict-guided/RGB-readability follow-up lane.
+- Suggested next step:
+  - Let the user try the strict guided wall and wider RGB row in-hand, then merge `codex/theme-spectrum-picker` if the feel matches the target device.

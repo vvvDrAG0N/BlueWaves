@@ -174,8 +174,21 @@ class SettingsThemeEditorGuidedPickerTest {
     }
 
     @Test
-    fun extendedValidAppText_keepsExactChoice() {
-        launchThemeEditor()
+    fun extendedInvalidAppText_blockedSpectrumTap_keepsLastValidPreview() {
+        val seededTheme = blackExtendedTheme()
+        runBlocking {
+            resetSettings(
+                theme = seededTheme.id,
+                customThemes = listOf(seededTheme),
+            )
+        }
+        val blockedPoint = blockedPointForGuidedField(
+            fieldKey = "app_foreground",
+            hue = 0f,
+            draft = extendedDraft(seededTheme.palette),
+        )
+
+        launchCurrentThemeEditor()
         selectThemeEditorMode("extended")
 
         composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
@@ -184,35 +197,18 @@ class SettingsThemeEditorGuidedPickerTest {
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status").assertIsDisplayed()
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status")
             .assertTextContains("Guided mode keeps colors readable")
-        assertPreviewState("custom_theme_system_text_picker_preview", "default")
         setSliderProgress("custom_theme_system_text_picker_hue", 0f)
-        val attemptedPoint = setSpectrumPoint(
+        val previewBeforeBlockedTap = readPreviewHex("custom_theme_system_text_picker_preview")
+
+        setSpectrumPoint(
             tag = "custom_theme_system_text_picker_spectrum",
-            saturation = 0f,
-            value = 0f,
-        )
-        tapHeaderSave("custom_theme_system_text")
-
-        val expectedText = expectedGuidedProjectedColor(
-            fieldKey = "app_foreground",
-            attemptedPoint = attemptedPoint,
-            hue = 0f,
-            draft = extendedDraft(
-                palette = generatePaletteFromGuidedInput(
-                    GuidedThemePaletteInput(
-                        accent = 0xFF4F46E5,
-                        appBackground = 0xFFFFFFFF,
-                        appSurface = 0xFFFFFFFF,
-                        appForeground = 0xFF18181B,
-                        appForegroundMuted = 0xFF71717A,
-                        overlayScrim = 0xFF0F172A,
-                        readerLinked = true,
-                    ),
-                ),
-            ),
+            saturation = blockedPoint.saturation,
+            value = blockedPoint.value,
         )
 
-        waitUntilTextContains("custom_theme_system_text", expectedText)
+        assertPreviewHex("custom_theme_system_text_picker_preview", previewBeforeBlockedTap)
+        requestCloseColorPicker("custom_theme_system_text")
+        waitUntilPickerClosed("custom_theme_system_text")
     }
 
     @Test
@@ -403,5 +399,68 @@ class SettingsThemeEditorGuidedPickerTest {
                 ),
             ),
         )
+    }
+
+    private fun blockedPointForGuidedField(
+        fieldKey: String,
+        hue: Float,
+        draft: ThemeEditorDraft,
+    ): ThemeColorPickerPoint {
+        val safeZone = buildGuidedSafeZone(
+            hue = hue,
+            previewColor = { rawHex ->
+                draft.previewColorEdit(
+                    fieldKey = fieldKey,
+                    rawHex = rawHex,
+                    guided = true,
+                )
+            },
+        )
+        val point = safeZone.pickBlockedPoint()
+            ?: error("Expected a blocked guided point for $fieldKey at hue=$hue")
+        check(!safeZone.contains(point)) {
+            "Blocked point for $fieldKey at hue=$hue must be outside the guided safe zone"
+        }
+        return point
+    }
+
+    private fun ThemeColorPickerSafeZone.pickBlockedPoint(): ThemeColorPickerPoint? {
+        rows.forEach { row ->
+            val spans = row.spans.sortedBy { it.start }
+            val firstSpan = spans.firstOrNull() ?: return@forEach
+            if (firstSpan.start > 0.02f) {
+                return ThemeColorPickerPoint(
+                    saturation = firstSpan.start / 2f,
+                    value = row.value,
+                )
+            }
+
+            spans.zipWithNext().firstOrNull { (leftSpan, rightSpan) ->
+                rightSpan.start - leftSpan.endInclusive > 0.04f
+            }?.let { (leftSpan, rightSpan) ->
+                return ThemeColorPickerPoint(
+                    saturation = (leftSpan.endInclusive + rightSpan.start) / 2f,
+                    value = row.value,
+                )
+            }
+
+            val lastSpan = spans.last()
+            if (lastSpan.endInclusive < 0.98f) {
+                return ThemeColorPickerPoint(
+                    saturation = (lastSpan.endInclusive + 1f) / 2f,
+                    value = row.value,
+                )
+            }
+        }
+
+        val darkestAllowedValue = rows.lastOrNull()?.value ?: return ThemeColorPickerPoint(0.5f, 0.5f)
+        if (darkestAllowedValue > 0.02f) {
+            return ThemeColorPickerPoint(
+                saturation = 0.5f,
+                value = darkestAllowedValue / 2f,
+            )
+        }
+
+        return null
     }
 }
