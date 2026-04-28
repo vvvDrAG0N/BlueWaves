@@ -24,14 +24,6 @@
 - Risks: Forgetting that the old `pristine-state-cmd.tar` is chapter-1 Shadow and not the scary mid-book state, overfitting to `High input latency` alone without looking at the trace slices, or widening the investigation before reproducing a real felt hitch on the same book/progress state.
 - Verification target: Reproduce the felt hitch first on the phone, then use the exact-state `shadow-1435-2927-cmd.tar` snapshot to rerun only the delayed Shadow lane before opening a broader perf investigation.
 
-## Theme Spectrum Picker Emulator Verification
-- Goal: Finish the picker redesign lane by running the connected guided picker class and one manual Basic/Advanced picker smoke on an emulator or attached device.
-- Why now: The picker implementation is in place: the dialog now uses a 2D saturation/value spectrum plus hue slider, guided mode projects inside the real sampled safe zone, Advanced mode stays unrestricted, and the scoped settings unit plus Android-test compilation checks are already green.
-- Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/settings_persistence.md`, `docs/test_checklist.md`, `docs/superpowers/specs/2026-04-27-theme-spectrum-picker-design.md`, `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`
-- Risks: Leaving the connected lane unrun, missing a pointer-interaction edge on real Compose semantics, or assuming compatibility proxy semantics cover all older picker tests without one actual runtime pass.
-- Verification target: Run `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest` on an emulator/device, then manually smoke one Basic guided picker and one Advanced picker flow to confirm the safe-zone overlay, projection, and dismiss-vs-Done behavior.
-
 ## Reader Selection Reopen Only On Fresh Repro
 - Goal: Keep the reader selectable-text stabilization lane closed unless a fresh content-specific repro appears or the user explicitly asks for a separate physical-device confirmation pass.
 - Why now: The baseline restoration/session gate is green again, the focused 30-test reader selection slice is green, and the real-book emulator walkthrough on `Shadow Slave` confirmed live selection, mirrored handle readability, stable bottom-edge release, and clean deselection without any production reader changes.

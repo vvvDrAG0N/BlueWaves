@@ -86,9 +86,9 @@ internal fun SettingsThemeEditorGuidedPickerTest.closeColorPicker() {
     composeRule.waitForIdle()
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.dismissColorPickerByOutsideTap(dialogTag: String) {
-    composeRule.onNodeWithTag(dialogTag).performTouchInput {
-        click(Offset(width * 0.1f, height * 0.1f))
+internal fun SettingsThemeEditorGuidedPickerTest.dismissColorPickerByOutsideTap(backdropTag: String) {
+    composeRule.onNodeWithTag(backdropTag).performTouchInput {
+        click(Offset(24f, 24f))
     }
 }
 

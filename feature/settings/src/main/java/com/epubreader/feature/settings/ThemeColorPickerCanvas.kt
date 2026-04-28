@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,8 +40,6 @@ internal fun ThemeColorSpectrumField(
         modifier = modifier
             .fillMaxWidth()
             .height(220.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
             .then(
                 if (testTagPrefix != null) {
                     Modifier.testTag("${testTagPrefix}_picker_spectrum")
@@ -78,9 +77,11 @@ internal fun ThemeColorSpectrumField(
                         )
                     },
                 )
-            },
+            }
+            .clip(RoundedCornerShape(16.dp))
+            .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
     ) {
-        Canvas(modifier = Modifier.matchParentSize()) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(
                 brush = Brush.horizontalGradient(
                     colors = listOf(Color.White, Color(ThemeColorPickerHsv(hue, 1f, 1f).toColorLong())),
@@ -96,7 +97,7 @@ internal fun ThemeColorSpectrumField(
         safeZone?.let { zone ->
             Canvas(
                 modifier = Modifier
-                    .matchParentSize()
+                    .fillMaxSize()
                     .then(
                         if (testTagPrefix != null) {
                             Modifier.testTag("${testTagPrefix}_picker_safe_zone")
@@ -109,7 +110,7 @@ internal fun ThemeColorSpectrumField(
             }
         }
 
-        Canvas(modifier = Modifier.matchParentSize()) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             val handleCenter = point.toOffset(size)
             val handleColor = Color(ThemeColorPickerHsv(hue, point.saturation, point.value).toColorLong())
             drawCircle(

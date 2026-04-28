@@ -2579,3 +2579,29 @@ This file is append-only.
   - No code blocker remains, but connected verification is blocked in this environment because there is no attached device and no configured AVD to boot.
 - Suggested next step:
   - Attach a device or configure an emulator, run `SettingsThemeEditorGuidedPickerTest`, then do one quick manual Basic/Advanced picker smoke before merging or finishing the branch.
+
+## 117. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Finish the remaining runtime verification for the theme spectrum picker now that an emulator is available, and close the outstanding outside-dismiss test failure without widening scope.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTestSupport.kt`, `docs/agent_memory/step_history.md`, and `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Re-ran `SettingsThemeEditorGuidedPickerTest` on `emulator-5554` and confirmed a single remaining failure in `basicAccent_outsideDismiss_discardsPendingGuidedChoice`.
+  2. Traced the failure to the test dismissal helper rather than guided state rollback: the backdrop node covers the whole screen, so center-based helper taps land under the centered dialog instead of in true outside space.
+  3. Tightened the test helper to tap a fixed top-left backdrop coordinate and kept the production spectrum fix that moved pointer handling ahead of the rounded clip so corner taps register reliably.
+  4. Re-ran the full connected guided-picker class on the emulator, refreshed the local JVM and file-size guards, then installed the app and manually opened one Basic guided picker plus one Advanced picker on `emulator-5554`.
+- Result:
+  - The theme spectrum picker now passes the connected guided-picker runtime class on a real emulator.
+  - Outside-dismiss behavior is verified to discard pending guided changes, while dialog-chrome taps still keep the picker open.
+  - The earlier corner-tap regression is covered by the connected pass and remains fixed after the final helper adjustment.
+  - Manual emulator smoke confirms the intended UI split: the Basic picker shows the guided readability message, while the Advanced picker opens the same spectrum surface without that guided status block.
+- Verification:
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest`
+  - `.\gradlew.bat checkKotlinFileLineLimit`
+  - `.\gradlew.bat :app:installDebug`
+  - Manual emulator smoke on `emulator-5554`, with evidence captured in `logs/manual_qa/basic-picker.png`, `logs/manual_qa/advanced-picker.png`, and the paired UI dumps in `logs/manual_qa/`
+- Blockers:
+  - No known blocker remains in the picker lane.
+- Suggested next step:
+  - Review the worktree diff and decide whether to merge the branch directly or request one final code review pass before integration.
