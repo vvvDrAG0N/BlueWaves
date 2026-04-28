@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
@@ -155,12 +154,12 @@ private fun ThemeColorPickerPoint.toOffset(size: Size): Offset {
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSafeZoneVeil(
     safeZone: ThemeColorPickerSafeZone,
 ) {
+    val veilColor = Color.Black.copy(alpha = SafeZoneVeilAlpha)
     if (safeZone.rows.isEmpty()) {
-        drawRect(Color.Black.copy(alpha = 0.45f))
+        drawRect(veilColor)
         return
     }
 
-    drawRect(Color.Black.copy(alpha = 0.45f))
     val rowCenters = safeZone.rows.map { (1f - it.value.coerceIn(0f, 1f)) * size.height }
     safeZone.rows.forEachIndexed { index, row ->
         val centerY = rowCenters[index]
@@ -175,14 +174,24 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSafeZoneVeil(
             (centerY + rowCenters[index + 1]) / 2f
         }
         val bandHeight = (bottom - top).coerceAtLeast(1f)
+        var veilStart = 0f
         row.spans.forEach { span ->
             val left = span.start.coerceIn(0f, 1f) * size.width
-            val width = ((span.endInclusive - span.start).coerceIn(0f, 1f) * size.width).coerceAtLeast(2f)
+            val right = span.endInclusive.coerceIn(0f, 1f) * size.width
+            if (left > veilStart) {
+                drawRect(
+                    color = veilColor,
+                    topLeft = Offset(x = veilStart, y = top),
+                    size = Size(width = left - veilStart, height = bandHeight),
+                )
+            }
+            veilStart = maxOf(veilStart, right)
+        }
+        if (veilStart < size.width) {
             drawRect(
-                color = Color.Transparent,
-                topLeft = Offset(x = left, y = top),
-                size = Size(width = width, height = bandHeight),
-                blendMode = BlendMode.Clear,
+                color = veilColor,
+                topLeft = Offset(x = veilStart, y = top),
+                size = Size(width = size.width - veilStart, height = bandHeight),
             )
         }
     }
@@ -229,3 +238,5 @@ internal data class ThemeColorPickerStatusState(
 internal fun Float.isApproximately(other: Float, epsilon: Float = 0.001f): Boolean {
     return kotlin.math.abs(this - other) <= epsilon
 }
+
+private const val SafeZoneVeilAlpha = 0.22f

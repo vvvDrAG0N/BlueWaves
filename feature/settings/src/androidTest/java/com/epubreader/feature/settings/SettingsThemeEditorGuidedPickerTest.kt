@@ -58,7 +58,7 @@ class SettingsThemeEditorGuidedPickerTest {
         )
         composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
         composeRule.onNodeWithTag("custom_theme_system_text_picker_spectrum").assertIsDisplayed()
-        composeRule.onNodeWithTag("custom_theme_system_text_picker_safe_zone").assertIsDisplayed()
+        waitUntilTagDisplayed("custom_theme_system_text_picker_safe_zone")
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status").assertIsDisplayed()
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status")
             .assertTextContains("Guided mode keeps colors readable")
@@ -100,7 +100,7 @@ class SettingsThemeEditorGuidedPickerTest {
 
         composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
         composeRule.onNodeWithTag("custom_theme_system_text_picker_spectrum").assertIsDisplayed()
-        composeRule.onNodeWithTag("custom_theme_system_text_picker_safe_zone").assertIsDisplayed()
+        waitUntilTagDisplayed("custom_theme_system_text_picker_safe_zone")
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status").assertIsDisplayed()
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status")
             .assertTextContains("Guided mode keeps colors readable")
@@ -182,7 +182,7 @@ class SettingsThemeEditorGuidedPickerTest {
 
         composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
         waitUntilTagExists("custom_theme_primary_picker_spectrum")
-        composeRule.onNodeWithTag("custom_theme_primary_picker_safe_zone").assertIsDisplayed()
+        waitUntilTagDisplayed("custom_theme_primary_picker_safe_zone")
         closeColorPicker()
 
         selectThemeEditorMode("advanced")

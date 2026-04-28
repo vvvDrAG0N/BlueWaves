@@ -1,6 +1,7 @@
 package com.epubreader.feature.settings
 
 import com.epubreader.core.model.formatThemeColor
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -50,11 +51,30 @@ internal data class ThemeColorPickerPreviewResult(
     val wasAdjusted: Boolean,
 )
 
+internal class ThemeColorPickerSafeZoneCache {
+    private val zonesByHueBucket = ConcurrentHashMap<Int, ThemeColorPickerSafeZone>()
+
+    fun cachedZoneForHue(hue: Float): ThemeColorPickerSafeZone? {
+        return zonesByHueBucket[hue.toSafeZoneHueBucket()]
+    }
+
+    fun zoneForHue(
+        hue: Float,
+        buildZone: (Float) -> ThemeColorPickerSafeZone,
+    ): ThemeColorPickerSafeZone {
+        val bucket = hue.toSafeZoneHueBucket()
+        return zonesByHueBucket.computeIfAbsent(bucket) { bucketedHue ->
+            buildZone(bucketedHue.toSafeZoneHue())
+        }
+    }
+}
+
 internal fun buildGuidedSafeZone(
     hue: Float,
     previewColor: (String) -> ThemeColorPickerPreviewResult,
     rows: Int = 36,
     columns: Int = 48,
+    cancellationCheck: (() -> Unit)? = null,
 ): ThemeColorPickerSafeZone {
     val rowCount = rows.coerceAtLeast(2)
     val columnCount = columns.coerceAtLeast(2)
@@ -63,9 +83,13 @@ internal fun buildGuidedSafeZone(
     val saturationStep = 1f / maxColumnIndex.toFloat()
     val sampledRows = buildList {
         repeat(rowCount) { rowIndex ->
+            cancellationCheck?.invoke()
             val value = 1f - rowIndex.toFloat() / maxRowIndex.toFloat()
             val validSaturations = buildList {
                 repeat(columnCount) { columnIndex ->
+                    if (columnIndex % 8 == 0) {
+                        cancellationCheck?.invoke()
+                    }
                     val saturation = columnIndex.toFloat() / maxColumnIndex.toFloat()
                     val rawHex = formatThemeColor(
                         ThemeColorPickerHsv(
@@ -178,6 +202,15 @@ private fun List<Float>.toSafeZoneSpans(step: Float): List<ClosedFloatingPointRa
 
     spans += spanStart..spanEnd
     return spans
+}
+
+internal fun Float.toSafeZoneHueBucket(): Int {
+    val normalizedHue = ((this % 360f) + 360f) % 360f
+    return normalizedHue.roundToInt() % 360
+}
+
+private fun Int.toSafeZoneHue(): Float {
+    return (((this % 360) + 360) % 360).toFloat()
 }
 
 private const val SafeZoneRowValueEpsilon = 0.0001f

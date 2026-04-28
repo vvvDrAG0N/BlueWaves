@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,7 +47,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.epubreader.core.model.formatThemeColor
 import com.epubreader.core.model.parseThemeColorOrNull
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 
 @Composable
 internal fun ThemeColorPickerOverlay(
@@ -72,12 +76,28 @@ internal fun ThemeColorPickerOverlay(
     var hasPendingGuidedChange by remember { mutableStateOf(false) }
     var snapPulseToken by remember { mutableIntStateOf(0) }
     var showSnapHighlight by remember { mutableStateOf(false) }
-    val guidedSafeZone = remember(isGuided, pickerHue) {
-        guidedPreviewValueChange?.let { preview ->
-            buildGuidedSafeZone(
-                hue = pickerHue,
-                previewColor = preview,
-            )
+    val guidedSafeZoneCache = remember(guidedPreviewValueChange) {
+        guidedPreviewValueChange?.let { ThemeColorPickerSafeZoneCache() }
+    }
+    val guidedSafeZone by produceState<ThemeColorPickerSafeZone?>(
+        initialValue = guidedSafeZoneCache?.cachedZoneForHue(pickerHue),
+        key1 = isGuided,
+        key2 = guidedPreviewValueChange,
+        key3 = pickerHue.toSafeZoneHueBucket(),
+    ) {
+        if (!isGuided || guidedPreviewValueChange == null || guidedSafeZoneCache == null) {
+            value = null
+            return@produceState
+        }
+        value = withContext(Dispatchers.Default) {
+            val currentContext = coroutineContext
+            guidedSafeZoneCache.zoneForHue(pickerHue) { bucketedHue ->
+                buildGuidedSafeZone(
+                    hue = bucketedHue,
+                    previewColor = guidedPreviewValueChange,
+                    cancellationCheck = { currentContext.ensureActive() },
+                )
+            }
         }
     }
     val adjustmentStatusTag = remember(testTagPrefix) {
@@ -149,19 +169,7 @@ internal fun ThemeColorPickerOverlay(
         pickerValue = value
     }
 
-    fun safeZoneForHue(hue: Float): ThemeColorPickerSafeZone? {
-        val preview = guidedPreviewValueChange ?: return null
-        if (hue.isApproximately(pickerHue)) {
-            return guidedSafeZone
-        }
-        return buildGuidedSafeZone(
-            hue = hue,
-            previewColor = preview,
-        )
-    }
-
     fun projectPoint(
-        hue: Float,
         saturation: Float,
         value: Float,
     ): ThemeColorPickerPoint {
@@ -169,15 +177,35 @@ internal fun ThemeColorPickerOverlay(
             saturation = saturation.coerceIn(0f, 1f),
             value = value.coerceIn(0f, 1f),
         )
-        return safeZoneForHue(hue)?.project(point) ?: point
+        return guidedSafeZone?.project(point) ?: point
     }
 
     fun commitPendingColor() {
         if (!isGuided || !hasPendingGuidedChange) return
+        val committedPoint = if (guidedPreviewValueChange != null && guidedSafeZoneCache != null) {
+            guidedSafeZoneCache.zoneForHue(pickerHue) { bucketedHue ->
+                buildGuidedSafeZone(
+                    hue = bucketedHue,
+                    previewColor = guidedPreviewValueChange,
+                )
+            }.project(
+                ThemeColorPickerPoint(
+                    saturation = pickerSaturation,
+                    value = pickerValue,
+                ),
+            )
+        } else {
+            ThemeColorPickerPoint(
+                saturation = pickerSaturation,
+                value = pickerValue,
+            )
+        }
+        pickerSaturation = committedPoint.saturation
+        pickerValue = committedPoint.value
         val rawColor = ThemeColorPickerHsv(
             hue = pickerHue,
-            saturation = pickerSaturation,
-            value = pickerValue,
+            saturation = committedPoint.saturation,
+            value = committedPoint.value,
         ).toColorLong()
         val result = onValueChange(formatThemeColor(rawColor))
         val resolvedColor = parseThemeColorOrNull(result.resolvedHex) ?: rawColor
@@ -199,11 +227,17 @@ internal fun ThemeColorPickerOverlay(
         saturation: Float = pickerSaturation,
         value: Float = pickerValue,
     ) {
-        val projectedPoint = projectPoint(
-            hue = hue,
-            saturation = saturation,
-            value = value,
-        )
+        val projectedPoint = if (isGuided && !hue.isApproximately(pickerHue)) {
+            ThemeColorPickerPoint(
+                saturation = saturation.coerceIn(0f, 1f),
+                value = value.coerceIn(0f, 1f),
+            )
+        } else {
+            projectPoint(
+                saturation = saturation,
+                value = value,
+            )
+        }
         if (isGuided) {
             if (
                 pickerHue.isApproximately(hue) &&

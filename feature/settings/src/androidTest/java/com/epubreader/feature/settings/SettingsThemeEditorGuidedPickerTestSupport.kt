@@ -122,6 +122,18 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagExists(
     }
 }
 
+internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagDisplayed(
+    tag: String,
+    timeoutMillis: Long = 10_000,
+) {
+    composeRule.waitUntil(timeoutMillis) {
+        runCatching {
+            composeRule.onNodeWithTag(tag).assertIsDisplayed()
+            true
+        }.getOrDefault(false)
+    }
+}
+
 internal fun SettingsThemeEditorGuidedPickerTest.assertTagDoesNotExist(tag: String) {
     val exists = runCatching {
         composeRule.onNodeWithTag(tag).fetchSemanticsNode()

@@ -2605,3 +2605,31 @@ This file is append-only.
   - No known blocker remains in the picker lane.
 - Suggested next step:
   - Review the worktree diff and decide whether to merge the branch directly or request one final code review pass before integration.
+
+## 118. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Reproduce the reported spectrum-picker UI artifact and hue-slider lag on the emulator, inspect the runtime/perf evidence, and fix the scoped picker regressions without widening into unrelated theme-system churn.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerGuidance.kt`, `feature/settings/src/test/java/com/epubreader/feature/settings/ThemeColorPickerGuidanceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTestSupport.kt`, and `logs/picker_perf_2026-04-28/`.
+- Action taken:
+  1. Reproduced the complaint on `emulator-5554`, captured the broken picker screenshots/UI dumps, reset `gfxinfo`, dragged the hue slider repeatedly, and saved before-fix `logcat`, `gfxinfo`, and `simpleperf` artifacts under `logs/picker_perf_2026-04-28/`.
+  2. Traced the visual artifact to the safe-zone veil drawing path in `ThemeColorPickerCanvas.kt`, where `BlendMode.Clear` row punching produced visible stripe seams across the 2D spectrum.
+  3. Traced the lag to synchronous guided safe-zone recomputation on hue updates in `SettingsThemeColorPicker.kt`; every guided hue move could trigger a fresh `buildGuidedSafeZone(...)` pass, which samples `36 x 48` points through the real guided resolver.
+  4. Added safe-zone caching plus bucketed async rebuilding in `ThemeColorPickerGuidance.kt` and `SettingsThemeColorPicker.kt`, including cancellation checks so superseded hue computations can stop instead of stacking.
+  5. Reworked the canvas veil drawing to paint only the outside regions directly, removing the striped visual artifact without changing guided safe-zone meaning.
+  6. Fixed a follow-up guided commit race by projecting the current guided point against the current hue safe zone at `Done`, so a quick confirm after a hue change cannot commit a stale pre-projection point.
+  7. Updated the picker instrumentation support to wait for the async safe-zone overlay before asserting it, then reran the full connected guided-picker class plus the local JVM and file-size guards.
+- Result:
+  - The guided spectrum no longer renders the visible horizontal stripe artifact from the old veil-clearing approach.
+  - The catastrophic hue-drag jank is removed: the before-fix run showed repeated `Davey!` bursts and `Skipped 53-67 frames`, while the post-fix run no longer emitted those lines for the same scripted slider drags.
+  - The before/after `gfxinfo` tail improved where it mattered most: the pre-fix 99th percentile was `1100ms`, while the post-fix 99th percentile dropped to `32ms` for the same focused slider interaction capture.
+  - Guided behavior stays honest after the perf fix: the connected picker class is green again, including the fast-confirm path that now commits against the correct current-hue safe zone.
+- Verification:
+  - Manual emulator reproduction on `emulator-5554`, with evidence in `logs/picker_perf_2026-04-28/picker-open.png`, `logs/picker_perf_2026-04-28/after-slider.png`, `logs/picker_perf_2026-04-28/postfix-picker-open.png`, and `logs/picker_perf_2026-04-28/postfix-after-slider.png`
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat checkKotlinFileLineLimit`
+- Blockers:
+  - No known blocker remains in the picker UX/perf lane inside this worktree.
+- Suggested next step:
+  - Have the user try the picker on the emulator/device directly, then decide whether to merge the branch or ask for one final review pass before integration.

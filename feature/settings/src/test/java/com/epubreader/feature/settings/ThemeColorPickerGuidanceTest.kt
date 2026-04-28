@@ -4,6 +4,7 @@ import com.epubreader.core.model.GuidedThemePaletteInput
 import com.epubreader.core.model.generatePaletteFromGuidedInput
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -105,6 +106,56 @@ class ThemeColorPickerGuidanceTest {
 
         assertEquals(0.35f, projected.saturation, 0.0001f)
         assertEquals(0.50f, projected.value, 0.0001f)
+    }
+
+    @Test
+    fun safeZoneCache_reusesExistingZoneWithinRoundedHueBucket() {
+        val cache = ThemeColorPickerSafeZoneCache()
+        var buildCount = 0
+
+        val first = cache.zoneForHue(12.2f) {
+            buildCount += 1
+            ThemeColorPickerSafeZone(
+                rows = listOf(
+                    ThemeColorPickerSafeZoneRow(
+                        value = 0.5f,
+                        spans = listOf(0.2f..0.8f),
+                    ),
+                ),
+            )
+        }
+        val second = cache.zoneForHue(12.4f) {
+            buildCount += 1
+            ThemeColorPickerSafeZone(
+                rows = listOf(
+                    ThemeColorPickerSafeZoneRow(
+                        value = 0.25f,
+                        spans = listOf(0.1f..0.9f),
+                    ),
+                ),
+            )
+        }
+
+        assertEquals(1, buildCount)
+        assertSame(first, second)
+    }
+
+    @Test
+    fun safeZoneCache_wrapsNearZeroHueIntoSameBucket() {
+        val cache = ThemeColorPickerSafeZoneCache()
+        var buildCount = 0
+
+        val first = cache.zoneForHue(359.6f) {
+            buildCount += 1
+            ThemeColorPickerSafeZone(rows = emptyList())
+        }
+        val second = cache.zoneForHue(0.2f) {
+            buildCount += 1
+            ThemeColorPickerSafeZone(rows = emptyList())
+        }
+
+        assertEquals(1, buildCount)
+        assertSame(first, second)
     }
 
     private fun extendedDraft(
