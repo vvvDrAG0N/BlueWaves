@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.click
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -78,11 +79,16 @@ internal fun SettingsThemeEditorGuidedPickerTest.setPickerColor(
         saturation = saturation,
         value = brightness,
     )
-    closeColorPicker()
+    tapHeaderSave(testTagPrefix)
 }
 
 internal fun SettingsThemeEditorGuidedPickerTest.closeColorPicker() {
-    composeRule.onNodeWithText("Done").performClick()
+    composeRule.onNodeWithContentDescription("Save").performClick()
+    composeRule.waitForIdle()
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.tapHeaderSave(testTagPrefix: String) {
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_save").performClick()
     composeRule.waitForIdle()
 }
 
@@ -149,6 +155,19 @@ internal fun SettingsThemeEditorGuidedPickerTest.assertPreviewState(tag: String,
         .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, state))
 }
 
+internal fun SettingsThemeEditorGuidedPickerTest.assertPreviewHex(
+    tag: String,
+    expectedHex: String,
+) {
+    composeRule.onNodeWithTag(tag)
+        .assert(
+            SemanticsMatcher.expectValue(
+                SemanticsProperties.ContentDescription,
+                listOf(expectedHex.uppercase()),
+            ),
+        )
+}
+
 internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextContains(
     tag: String,
     text: String,
@@ -156,9 +175,21 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextContains(
 ) {
     composeRule.waitUntil(timeoutMillis) {
         runCatching {
-            composeRule.onNodeWithTag(tag).assertTextContains(text)
+            composeRule.onNodeWithTag(tag).performScrollTo().assertTextContains(text)
             true
         }.getOrDefault(false)
+    }
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagAbsent(
+    tag: String,
+    timeoutMillis: Long = 10_000,
+) {
+    composeRule.waitUntil(timeoutMillis) {
+        runCatching {
+            composeRule.onNodeWithTag(tag).fetchSemanticsNode()
+            false
+        }.getOrDefault(true)
     }
 }
 
@@ -167,6 +198,28 @@ internal fun SettingsThemeEditorGuidedPickerTest.setSliderProgress(tag: String, 
         .performSemanticsAction(SemanticsActions.SetProgress) { setProgress ->
             setProgress(value)
         }
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.replaceHexInput(
+    testTagPrefix: String,
+    nextHex: String,
+) {
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextClearance()
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextInput(nextHex)
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.replaceRgbInput(
+    testTagPrefix: String,
+    red: String,
+    green: String,
+    blue: String,
+) {
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_red").performTextClearance()
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_red").performTextInput(red)
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_green").performTextClearance()
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_green").performTextInput(green)
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_blue").performTextClearance()
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_blue").performTextInput(blue)
 }
 
 internal fun SettingsThemeEditorGuidedPickerTest.setSpectrumPoint(
@@ -228,6 +281,24 @@ internal fun extendedDraft(
         palette = palette,
         mode = ThemeEditorMode.EXTENDED,
         readerLinked = readerLinked,
+        legacyIsAdvanced = true,
+    )
+}
+
+internal fun basicDraft(
+    palette: com.epubreader.core.model.ThemePalette = generatePaletteFromGuidedInput(
+        GuidedThemePaletteInput(
+            accent = 0xFF4F46E5,
+            appBackground = 0xFFFFFFFF,
+            readerLinked = true,
+        ),
+    ),
+): ThemeEditorDraft {
+    return ThemeEditorDraft.fromPalette(
+        name = "Guided Picker Test",
+        palette = palette,
+        mode = ThemeEditorMode.BASIC,
+        readerLinked = true,
         legacyIsAdvanced = true,
     )
 }

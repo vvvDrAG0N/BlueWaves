@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ApplicationProvider
@@ -42,6 +43,97 @@ class SettingsThemeEditorGuidedPickerTest {
     }
 
     @Test
+    fun basicAccent_hexInput_savesWithHeaderCheck() {
+        launchThemeEditor()
+
+        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
+        val expectedHex = basicDraft()
+            .previewColorEdit(
+                fieldKey = "accent",
+                rawHex = "#3366CC",
+                guided = true,
+            )
+            .resolvedHex
+
+        replaceHexInput(
+            testTagPrefix = "custom_theme_primary",
+            nextHex = "3366CC",
+        )
+
+        assertPreviewHex("custom_theme_primary_picker_preview", expectedHex)
+        tapHeaderSave("custom_theme_primary")
+
+        waitUntilTextContains("custom_theme_primary", expectedHex)
+        assertTagDoesNotExist("custom_theme_primary_picker_spectrum")
+    }
+
+    @Test
+    fun advancedFavoriteAccent_rgbInput_savesLiteralChoice() {
+        launchThemeEditor()
+        selectThemeEditorMode("advanced")
+
+        composeRule.onNodeWithTag("custom_theme_favorite_accent_swatch").performScrollTo().performClick()
+        replaceRgbInput(
+            testTagPrefix = "custom_theme_favorite_accent",
+            red = "255",
+            green = "064",
+            blue = "032",
+        )
+
+        assertPreviewHex("custom_theme_favorite_accent_picker_preview", "#FF4020")
+        tapHeaderSave("custom_theme_favorite_accent")
+
+        waitUntilTextContains("custom_theme_favorite_accent", "#FF4020")
+    }
+
+    @Test
+    fun extendedInvalidAppText_typedHex_adjustsAndShowsGuidedCue() {
+        launchThemeEditor()
+        selectThemeEditorMode("extended")
+
+        setPickerColor(
+            swatchTag = "custom_theme_background_swatch",
+            testTagPrefix = "custom_theme_background",
+            brightness = 0f,
+        )
+        setPickerColor(
+            swatchTag = "custom_theme_surface_swatch",
+            testTagPrefix = "custom_theme_surface",
+            brightness = 0f,
+        )
+        composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+
+        val expectedHex = extendedDraft(
+            palette = generatePaletteFromGuidedInput(
+                GuidedThemePaletteInput(
+                    accent = 0xFF4F46E5,
+                    appBackground = 0xFF000000,
+                    appSurface = 0xFF000000,
+                    appForeground = 0xFFFFFFFF,
+                    appForegroundMuted = 0xFFAAAAAA,
+                    overlayScrim = 0xFF000000,
+                    readerLinked = true,
+                ),
+            ),
+        ).previewColorEdit(
+            fieldKey = "app_foreground",
+            rawHex = "#000000",
+            guided = true,
+        ).resolvedHex
+
+        replaceHexInput(
+            testTagPrefix = "custom_theme_system_text",
+            nextHex = "000000",
+        )
+
+        composeRule.onNodeWithText("Adjusted for readability").assertIsDisplayed()
+        assertPreviewHex("custom_theme_system_text_picker_preview", expectedHex)
+        tapHeaderSave("custom_theme_system_text")
+
+        waitUntilTextContains("custom_theme_system_text", expectedHex)
+    }
+
+    @Test
     fun extendedInvalidAppText_resolvesToReadableColor_andShowsGuidedStatus() {
         launchThemeEditor()
         selectThemeEditorMode("extended")
@@ -69,7 +161,7 @@ class SettingsThemeEditorGuidedPickerTest {
             saturation = 1f,
             value = 0f,
         )
-        closeColorPicker()
+        tapHeaderSave("custom_theme_system_text")
 
         val expectedText = expectedGuidedProjectedColor(
             fieldKey = "app_foreground",
@@ -111,7 +203,7 @@ class SettingsThemeEditorGuidedPickerTest {
             saturation = 0f,
             value = 0f,
         )
-        closeColorPicker()
+        tapHeaderSave("custom_theme_system_text")
 
         val expectedText = expectedGuidedProjectedColor(
             fieldKey = "app_foreground",
@@ -160,20 +252,19 @@ class SettingsThemeEditorGuidedPickerTest {
             value = 0f,
         )
 
-        waitUntilTextContains(
-            "custom_theme_system_text",
-            formatThemeColor(
-                ThemeColorPickerHsv(
-                    hue = 0f,
-                    saturation = attemptedPoint.saturation,
-                    value = attemptedPoint.value,
-                ).toColorLong(),
-            ),
+        val expectedHex = formatThemeColor(
+            ThemeColorPickerHsv(
+                hue = 0f,
+                saturation = attemptedPoint.saturation,
+                value = attemptedPoint.value,
+            ).toColorLong(),
         )
+        assertPreviewHex("custom_theme_system_text_picker_preview", expectedHex)
         assertTagDoesNotExist("custom_theme_system_text_picker_guided_status")
         assertTagDoesNotExist("custom_theme_system_text_picker_safe_zone")
         assertPreviewState("custom_theme_system_text_picker_preview", "default")
-        closeColorPicker()
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", expectedHex)
     }
 
     @Test
@@ -183,13 +274,13 @@ class SettingsThemeEditorGuidedPickerTest {
         composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
         waitUntilTagExists("custom_theme_primary_picker_spectrum")
         waitUntilTagDisplayed("custom_theme_primary_picker_safe_zone")
-        closeColorPicker()
+        tapHeaderSave("custom_theme_primary")
 
         selectThemeEditorMode("advanced")
         composeRule.onNodeWithTag("custom_theme_favorite_accent_swatch").performScrollTo().performClick()
         waitUntilTagExists("custom_theme_favorite_accent_picker_spectrum")
         assertTagDoesNotExist("custom_theme_favorite_accent_picker_safe_zone")
-        closeColorPicker()
+        tapHeaderSave("custom_theme_favorite_accent")
     }
 
     @Test
@@ -210,7 +301,7 @@ class SettingsThemeEditorGuidedPickerTest {
         composeRule.waitForIdle()
 
         composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        assertTagDoesNotExist("custom_theme_primary_picker_spectrum")
+        waitUntilTagAbsent("custom_theme_primary_picker_spectrum")
     }
 
     @Test
@@ -252,7 +343,7 @@ class SettingsThemeEditorGuidedPickerTest {
 
         waitUntilTagExists("custom_theme_primary_picker_spectrum")
         composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        closeColorPicker()
+        tapHeaderSave("custom_theme_primary")
     }
 
     @Test
@@ -278,7 +369,7 @@ class SettingsThemeEditorGuidedPickerTest {
             value = 0f,
         )
 
-        closeColorPicker()
+        tapHeaderSave("custom_theme_system_text")
 
         val expectedText = expectedGuidedProjectedColor(
             fieldKey = "app_foreground",

@@ -1,11 +1,5 @@
 package com.epubreader.feature.settings
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,33 +9,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -62,36 +54,39 @@ internal fun ThemeColorPickerOverlay(
     onPreviewValueChange: ((String) -> ThemeColorPickerPreviewResult)? = null,
     onValueChange: (String) -> ThemeEditorColorEditResult,
 ) {
-    val parsedColor = remember(initialValue) { parseThemeColorOrNull(initialValue) }
-    val initialHsv = remember(parsedColor) { (parsedColor ?: DefaultPickerColor).toThemeColorPickerHsv() }
+    val initialColor = remember(initialValue) { parseThemeColorOrNull(initialValue) ?: DefaultPickerColor }
+    val initialHex = remember(initialColor) { formatThemeColor(initialColor) }
+    val initialHsv = remember(initialColor) { initialColor.toThemeColorPickerHsv() }
     val guidedPreviewValueChange = if (isGuided) {
         requireNotNull(onPreviewValueChange) { "Guided color picker requires a preview callback" }
     } else {
         null
     }
+    val safeZoneCache = remember(guidedPreviewValueChange) {
+        guidedPreviewValueChange?.let { ThemeColorPickerSafeZoneCache() }
+    }
+
     var pickerHue by remember { mutableFloatStateOf(initialHsv.hue) }
     var pickerSaturation by remember { mutableFloatStateOf(initialHsv.saturation) }
     var pickerValue by remember { mutableFloatStateOf(initialHsv.value) }
+    var textFields by remember { mutableStateOf(themeColorPickerTextFields(initialHex)) }
     var wasAdjusted by remember { mutableStateOf(false) }
-    var hasPendingGuidedChange by remember { mutableStateOf(false) }
-    var snapPulseToken by remember { mutableIntStateOf(0) }
+    var snapPulseToken by remember { mutableFloatStateOf(0f) }
     var showSnapHighlight by remember { mutableStateOf(false) }
-    val guidedSafeZoneCache = remember(guidedPreviewValueChange) {
-        guidedPreviewValueChange?.let { ThemeColorPickerSafeZoneCache() }
-    }
+
     val guidedSafeZone by produceState<ThemeColorPickerSafeZone?>(
-        initialValue = guidedSafeZoneCache?.cachedZoneForHue(pickerHue),
+        initialValue = safeZoneCache?.cachedZoneForHue(pickerHue),
         key1 = isGuided,
         key2 = guidedPreviewValueChange,
         key3 = pickerHue.toSafeZoneHueBucket(),
     ) {
-        if (!isGuided || guidedPreviewValueChange == null || guidedSafeZoneCache == null) {
+        if (!isGuided || guidedPreviewValueChange == null || safeZoneCache == null) {
             value = null
             return@produceState
         }
         value = withContext(Dispatchers.Default) {
             val currentContext = coroutineContext
-            guidedSafeZoneCache.zoneForHue(pickerHue) { bucketedHue ->
+            safeZoneCache.zoneForHue(pickerHue) { bucketedHue ->
                 buildGuidedSafeZone(
                     hue = bucketedHue,
                     previewColor = guidedPreviewValueChange,
@@ -100,43 +95,80 @@ internal fun ThemeColorPickerOverlay(
             }
         }
     }
-    val adjustmentStatusTag = remember(testTagPrefix) {
-        testTagPrefix?.let { "${it}_picker_guided_status" }
-    }
-    val previewTag = remember(testTagPrefix) {
-        testTagPrefix?.let { "${it}_picker_preview" }
-    }
-    val statusState = remember(isGuided, wasAdjusted, showSnapHighlight) {
-        ThemeColorPickerStatusState(
-            isGuided = isGuided,
-            wasAdjusted = wasAdjusted,
-            showSnapHighlight = showSnapHighlight,
-        )
-    }
-    val previewBorderColor by animateColorAsState(
-        targetValue = if (statusState.showSnapHighlight) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.outlineVariant
-        },
-        animationSpec = tween(durationMillis = 220),
-        label = "theme_picker_preview_border_color",
-    )
-    val previewBorderWidth by animateDpAsState(
-        targetValue = if (statusState.showSnapHighlight) 3.dp else 1.dp,
-        animationSpec = tween(durationMillis = 220),
-        label = "theme_picker_preview_border_width",
-    )
-    val previewBorderAlpha by animateFloatAsState(
-        targetValue = if (statusState.showSnapHighlight) 1f else 0.85f,
-        animationSpec = tween(durationMillis = 220),
-        label = "theme_picker_preview_border_alpha",
-    )
 
     LaunchedEffect(snapPulseToken) {
-        if (snapPulseToken == 0) return@LaunchedEffect
+        if (snapPulseToken <= 0f) return@LaunchedEffect
         showSnapHighlight = true
         delay(650)
+        showSnapHighlight = false
+    }
+
+    fun currentPreviewHex(): String {
+        return formatThemeColor(
+            ThemeColorPickerHsv(
+                hue = pickerHue,
+                saturation = pickerSaturation,
+                value = pickerValue,
+            ).toColorLong(),
+        )
+    }
+
+    fun setPickerColor(
+        hue: Float = pickerHue,
+        saturation: Float = pickerSaturation,
+        value: Float = pickerValue,
+    ) {
+        pickerHue = hue
+        pickerSaturation = saturation
+        pickerValue = value
+    }
+
+    fun syncTextFields(
+        hex: String = currentPreviewHex(),
+        activeInput: ThemeColorPickerActiveInput? = null,
+        rgbOverride: ThemeColorPickerRgbText? = null,
+    ) {
+        textFields = themeColorPickerTextFields(
+            hex = hex,
+            rgbOverride = rgbOverride,
+            activeInput = activeInput,
+        )
+    }
+
+    fun applyPreviewHex(
+        hex: String,
+        adjusted: Boolean,
+        activeInput: ThemeColorPickerActiveInput? = null,
+        rgbOverride: ThemeColorPickerRgbText? = null,
+    ) {
+        val color = parseThemeColorOrNull(hex) ?: return
+        val hsv = color.toThemeColorPickerHsv()
+        setPickerColor(
+            hue = hsv.hue,
+            saturation = hsv.saturation,
+            value = hsv.value,
+        )
+        syncTextFields(
+            hex = formatThemeColor(color),
+            activeInput = activeInput,
+            rgbOverride = rgbOverride,
+        )
+        wasAdjusted = adjusted
+        showSnapHighlight = false
+    }
+
+    fun applyPreviewPoint(
+        hue: Float = pickerHue,
+        saturation: Float = pickerSaturation,
+        value: Float = pickerValue,
+    ) {
+        setPickerColor(
+            hue = hue,
+            saturation = saturation.coerceIn(0f, 1f),
+            value = value.coerceIn(0f, 1f),
+        )
+        syncTextFields()
+        wasAdjusted = false
         showSnapHighlight = false
     }
 
@@ -155,71 +187,10 @@ internal fun ThemeColorPickerOverlay(
         ) {
             return@LaunchedEffect
         }
-        pickerSaturation = projected.saturation
-        pickerValue = projected.value
-    }
-
-    fun setPickerColor(
-        hue: Float = pickerHue,
-        saturation: Float = pickerSaturation,
-        value: Float = pickerValue,
-    ) {
-        pickerHue = hue
-        pickerSaturation = saturation
-        pickerValue = value
-    }
-
-    fun projectPoint(
-        saturation: Float,
-        value: Float,
-    ): ThemeColorPickerPoint {
-        val point = ThemeColorPickerPoint(
-            saturation = saturation.coerceIn(0f, 1f),
-            value = value.coerceIn(0f, 1f),
+        applyPreviewPoint(
+            saturation = projected.saturation,
+            value = projected.value,
         )
-        return guidedSafeZone?.project(point) ?: point
-    }
-
-    fun commitPendingColor() {
-        if (!isGuided || !hasPendingGuidedChange) return
-        val committedPoint = if (guidedPreviewValueChange != null && guidedSafeZoneCache != null) {
-            guidedSafeZoneCache.zoneForHue(pickerHue) { bucketedHue ->
-                buildGuidedSafeZone(
-                    hue = bucketedHue,
-                    previewColor = guidedPreviewValueChange,
-                )
-            }.project(
-                ThemeColorPickerPoint(
-                    saturation = pickerSaturation,
-                    value = pickerValue,
-                ),
-            )
-        } else {
-            ThemeColorPickerPoint(
-                saturation = pickerSaturation,
-                value = pickerValue,
-            )
-        }
-        pickerSaturation = committedPoint.saturation
-        pickerValue = committedPoint.value
-        val rawColor = ThemeColorPickerHsv(
-            hue = pickerHue,
-            saturation = committedPoint.saturation,
-            value = committedPoint.value,
-        ).toColorLong()
-        val result = onValueChange(formatThemeColor(rawColor))
-        val resolvedColor = parseThemeColorOrNull(result.resolvedHex) ?: rawColor
-        val resolvedHsv = resolvedColor.toThemeColorPickerHsv()
-        setPickerColor(
-            hue = resolvedHsv.hue,
-            saturation = resolvedHsv.saturation,
-            value = resolvedHsv.value,
-        )
-        hasPendingGuidedChange = false
-        wasAdjusted = result.wasAdjusted
-        if (result.wasAdjusted) {
-            snapPulseToken += 1
-        }
     }
 
     fun updatePickerColor(
@@ -233,58 +204,99 @@ internal fun ThemeColorPickerOverlay(
                 value = value.coerceIn(0f, 1f),
             )
         } else {
-            projectPoint(
-                saturation = saturation,
-                value = value,
+            guidedSafeZone?.project(
+                ThemeColorPickerPoint(
+                    saturation = saturation.coerceIn(0f, 1f),
+                    value = value.coerceIn(0f, 1f),
+                ),
+            ) ?: ThemeColorPickerPoint(
+                saturation = saturation.coerceIn(0f, 1f),
+                value = value.coerceIn(0f, 1f),
             )
         }
-        if (isGuided) {
-            if (
-                pickerHue.isApproximately(hue) &&
-                pickerSaturation.isApproximately(projectedPoint.saturation) &&
-                pickerValue.isApproximately(projectedPoint.value)
-            ) {
-                return
-            }
-            setPickerColor(
-                hue = hue,
-                saturation = projectedPoint.saturation,
-                value = projectedPoint.value,
-            )
-            hasPendingGuidedChange = true
-            wasAdjusted = false
-            showSnapHighlight = false
+        if (
+            pickerHue.isApproximately(hue) &&
+            pickerSaturation.isApproximately(projectedPoint.saturation) &&
+            pickerValue.isApproximately(projectedPoint.value)
+        ) {
             return
         }
-
-        val rawColor = ThemeColorPickerHsv(
+        applyPreviewPoint(
             hue = hue,
             saturation = projectedPoint.saturation,
             value = projectedPoint.value,
-        ).toColorLong()
-        val result = onValueChange(formatThemeColor(rawColor))
-        val resolvedColor = parseThemeColorOrNull(result.resolvedHex) ?: rawColor
-        val resolvedHsv = resolvedColor.toThemeColorPickerHsv()
-        setPickerColor(
-            hue = resolvedHsv.hue,
-            saturation = resolvedHsv.saturation,
-            value = resolvedHsv.value,
         )
-        hasPendingGuidedChange = false
-        wasAdjusted = false
-        showSnapHighlight = false
     }
 
-    val dismissPicker = onDismiss
-    val confirmPicker = {
-        commitPendingColor()
+    fun updateHexInput(nextHex: String) {
+        val nextFields = textFields.withHexInput(nextHex)
+        textFields = nextFields
+        val resolvedHex = nextFields.tryResolveHex() ?: return
+        if (isGuided && guidedPreviewValueChange != null) {
+            val resolution = resolveGuidedTypedHex(
+                rawHex = resolvedHex,
+                previewColor = guidedPreviewValueChange,
+            )
+            applyPreviewHex(
+                hex = resolution.resolvedHex,
+                adjusted = resolution.wasAdjusted,
+                activeInput = ThemeColorPickerActiveInput.HEX,
+            )
+        } else {
+            applyPreviewHex(
+                hex = resolvedHex,
+                adjusted = false,
+                activeInput = ThemeColorPickerActiveInput.HEX,
+            )
+        }
+    }
+
+    fun updateRgbInput(nextRgb: ThemeColorPickerRgbText) {
+        val nextFields = textFields.withRgbInput(
+            red = nextRgb.red,
+            green = nextRgb.green,
+            blue = nextRgb.blue,
+        )
+        textFields = nextFields
+        val resolvedHex = nextFields.tryResolveHex() ?: return
+        if (isGuided && guidedPreviewValueChange != null) {
+            val resolution = resolveGuidedTypedHex(
+                rawHex = resolvedHex,
+                previewColor = guidedPreviewValueChange,
+            )
+            applyPreviewHex(
+                hex = resolution.resolvedHex,
+                adjusted = resolution.wasAdjusted,
+                activeInput = ThemeColorPickerActiveInput.RGB,
+            )
+        } else {
+            applyPreviewHex(
+                hex = resolvedHex,
+                adjusted = false,
+                activeInput = ThemeColorPickerActiveInput.RGB,
+                rgbOverride = nextFields.rgbText,
+            )
+        }
+    }
+
+    fun commitCurrentColor() {
+        val result = onValueChange(currentPreviewHex())
+        applyPreviewHex(
+            hex = result.resolvedHex,
+            adjusted = result.wasAdjusted,
+        )
+        if (result.wasAdjusted) {
+            snapPulseToken += 1f
+        }
         onDismiss()
     }
+
     val backdropInteractionSource = remember { MutableInteractionSource() }
 
     Dialog(
-        onDismissRequest = dismissPicker,
+        onDismissRequest = onDismiss,
         properties = DialogProperties(
+            dismissOnBackPress = true,
             dismissOnClickOutside = false,
             usePlatformDefaultWidth = false,
         ),
@@ -303,7 +315,7 @@ internal fun ThemeColorPickerOverlay(
                     .clickable(
                         interactionSource = backdropInteractionSource,
                         indication = null,
-                        onClick = dismissPicker,
+                        onClick = onDismiss,
                     ),
             )
 
@@ -328,81 +340,36 @@ internal fun ThemeColorPickerOverlay(
                 tonalElevation = AlertDialogDefaults.TonalElevation,
             ) {
                 Column(modifier = Modifier.padding(24.dp)) {
-                    Text(
-                        text = "$label Color",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
+                    ThemeColorPickerHeader(
+                        label = label,
+                        testTagPrefix = testTagPrefix,
+                        onClose = {},
+                        onSave = ::commitCurrentColor,
                     )
 
-                    Box(
-                        modifier = Modifier
-                            .padding(top = 24.dp)
-                            .fillMaxWidth()
-                            .height(64.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(
-                                Color(
-                                    ThemeColorPickerHsv(
-                                        hue = pickerHue,
-                                        saturation = pickerSaturation,
-                                        value = pickerValue,
-                                    ).toColorLong(),
-                                ),
-                            )
-                            .border(
-                                width = previewBorderWidth,
-                                color = previewBorderColor.copy(alpha = previewBorderAlpha),
-                                shape = RoundedCornerShape(12.dp),
-                            )
-                            .then(
-                                if (previewTag != null) {
-                                    Modifier
-                                        .testTag(previewTag)
-                                        .semantics {
-                                            stateDescription = if (statusState.showSnapHighlight) {
-                                                "adjusted"
-                                            } else {
-                                                "default"
-                                            }
-                                        }
-                                } else {
-                                    Modifier
-                                },
-                            ),
+                    ThemeColorPickerValueInputs(
+                        textFields = textFields,
+                        previewHex = currentPreviewHex(),
+                        previewColor = Color(
+                            ThemeColorPickerHsv(
+                                hue = pickerHue,
+                                saturation = pickerSaturation,
+                                value = pickerValue,
+                            ).toColorLong(),
+                        ),
+                        isGuided = isGuided,
+                        wasAdjusted = wasAdjusted,
+                        showSnapHighlight = showSnapHighlight,
+                        testTagPrefix = testTagPrefix,
+                        onHexInputChange = ::updateHexInput,
+                        onRgbInputChange = ::updateRgbInput,
+                        modifier = Modifier.padding(top = 20.dp),
                     )
-
-                    if (statusState.isGuided) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(32.dp)
-                                .padding(top = 8.dp)
-                                .then(
-                                    if (adjustmentStatusTag != null) {
-                                        Modifier
-                                            .testTag(adjustmentStatusTag)
-                                            .semantics(mergeDescendants = true) {}
-                                    } else {
-                                        Modifier
-                                    },
-                                ),
-                            contentAlignment = Alignment.CenterStart,
-                        ) {
-                            Text(
-                                text = statusState.statusText,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = if (statusState.wasAdjusted) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                },
-                            )
-                        }
-                    }
 
                     Text(
                         text = "Color",
                         style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(top = 20.dp),
                     )
                     ThemeColorSpectrumField(
                         hue = pickerHue,
@@ -455,19 +422,54 @@ internal fun ThemeColorPickerOverlay(
                             Modifier
                         },
                     )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 24.dp),
-                        horizontalArrangement = Arrangement.End,
-                    ) {
-                        TextButton(onClick = confirmPicker) {
-                            Text("Done")
-                        }
-                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ThemeColorPickerHeader(
+    label: String,
+    testTagPrefix: String?,
+    onClose: () -> Unit,
+    onSave: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        IconButton(
+            onClick = onClose,
+            modifier = if (testTagPrefix != null) {
+                Modifier.testTag("${testTagPrefix}_picker_close")
+            } else {
+                Modifier
+            },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close",
+            )
+        }
+        Text(
+            text = "$label Color",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        IconButton(
+            onClick = onSave,
+            modifier = if (testTagPrefix != null) {
+                Modifier.testTag("${testTagPrefix}_picker_save")
+            } else {
+                Modifier
+            },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Save",
+            )
         }
     }
 }
