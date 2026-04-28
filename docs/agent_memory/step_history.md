@@ -2917,3 +2917,18 @@ This file is append-only.
   - No known code blocker remains; the remaining confidence gate is just in-hand feel on the editor sheet.
 - Suggested next step:
   - Reopen `Edit Theme` on the emulator and sanity-check the new dirty-exit flow in-hand: `Back`, header `X`, `Save`, `Discard`, and `Keep editing`.
+
+## 130. 2026-04-29 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Write the merge-blocker follow-up plan for the theme spectrum picker after code review surfaced a guided-loading race, focused-field Back masking, guided-mode self-dirtying, and incomplete numeric-entry save ambiguity.
+- Area/files: `docs/superpowers/plans/2026-04-29-theme-spectrum-picker-merge-blockers.md`, `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Re-read the review findings against the current branch files (`SettingsThemeColorPicker.kt`, `ThemeColorPickerCanvas.kt`, `ThemeColorPickerGuidance.kt`, `ThemeColorPickerTextEntry.kt`, `SettingsThemeEditor.kt`, and the existing settings instrumentation suites).
+  2. Replaced the generic merge/smoke follow-up with a task-by-task implementation plan centered on guided safe-zone readiness, honest dirty/commit semantics, single-step Back handling, and the missing picker-save-versus-editor-discard persistence coverage.
+  3. Kept the plan scoped to `feature/settings` and avoided DataStore/schema changes.
+- Result:
+  - The active branch now has an execution-ready plan for the exact pre-merge blockers instead of a generic “smoke or merge” note.
+- Verification:
+  - Review findings re-read against the current production/test files
+  - Existing pre-merge review verification baseline retained
