@@ -2803,3 +2803,26 @@ This file is append-only.
   - No known blocker remains in this strict-guided/RGB-readability follow-up lane.
 - Suggested next step:
   - Let the user try the strict guided wall and wider RGB row in-hand, then merge `codex/theme-spectrum-picker` if the feel matches the target device.
+
+## 125. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the remaining RGB-row rendering bug where the values were still collapsing into unreadable slivers on-device even after the earlier spacing pass.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerValueInputs.kt`.
+- Action taken:
+  1. Re-read the latest screenshot against the current RGB-row implementation and traced the failure to the control choice itself: three miniature `OutlinedTextField`s were spending too much of their width on Material chrome and internal padding.
+  2. Replaced the RGB channel boxes with a compact custom `BasicTextField` row per channel, keeping the same one-line layout and test tags while moving the `R/G/B` labels inside each bordered field so the numeric content gets the width instead of the chrome.
+  3. Kept the HEX path, guided behavior, and picker save/cancel contract unchanged so this stayed a surgical visual/input-control fix.
+  4. Re-ran the settings unit/check guard, the full picker instrumentation class, and reinstalled the debug app on the active emulator.
+- Result:
+  - The RGB row now uses purpose-built compact channel inputs instead of overstuffed Material outlined fields.
+  - The channel values have materially more usable width and should no longer render as near-invisible slivers on-device.
+  - The rest of the picker flow remained green.
+- Verification:
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest checkKotlinFileLineLimit`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - No known blocker remains in this RGB-control rendering follow-up lane.
+- Suggested next step:
+  - Let the user verify the refreshed RGB control visually on the emulator, then merge if the row now reads cleanly on the target density.

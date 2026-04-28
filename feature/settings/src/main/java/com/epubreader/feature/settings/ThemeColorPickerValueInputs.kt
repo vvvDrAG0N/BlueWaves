@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,10 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
@@ -267,28 +270,56 @@ private fun ThemeColorRgbField(
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
 ) {
+    val valueTextStyle = MaterialTheme.typography.bodyMedium.copy(
+        fontFamily = FontFamily.Monospace,
+        textAlign = TextAlign.End,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+    val placeholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.72f)
+
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f),
+                shape = RoundedCornerShape(12.dp),
+            )
+            .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text(
             text = channelLabel,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        ThemeColorValueField(
-            label = null,
-            placeholder = "000",
-            prefixText = null,
+        BasicTextField(
             value = value,
-            tag = tag,
+            onValueChange = onValueChange,
             modifier = Modifier
                 .weight(1f)
-                .widthIn(min = 0.dp),
-            keyboardType = KeyboardType.Number,
-            textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
-            onValueChange = onValueChange,
+                .then(if (tag != null) Modifier.testTag(tag) else Modifier),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            textStyle = valueTextStyle,
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = "000",
+                            style = valueTextStyle,
+                            color = placeholderColor,
+                        )
+                    }
+                    innerTextField()
+                }
+            },
         )
     }
 }
