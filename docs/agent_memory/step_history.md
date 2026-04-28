@@ -2848,3 +2848,26 @@ This file is append-only.
   - The automated suite is green, but this remains a visually sensitive fix, so one more in-hand check of the exact RGB picker open state is still the practical confidence gate.
 - Suggested next step:
   - Re-open the same RGB picker on the emulator and confirm the digits render fully before any focus or arrow-key interaction, then merge if that exact repro is gone.
+
+## 127. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the remaining RGB clipping/wrapping issue after the first controlled-field pass, where the leftmost digit could still be partially cut and the empty placeholder could stack vertically in narrow fields.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerValueInputs.kt`.
+- Action taken:
+  1. Used the user's exact follow-up description to distinguish the remaining bug from the prior one: this was no longer "values missing until focus," but "initial cursor/viewport anchoring and placeholder wrapping still produce clipped left digits and a broken empty state."
+  2. Changed the controlled RGB text fields to mount with `TextRange.Zero` while unfocused, only moving the cursor to the end on actual focus, so the initial unfocused render no longer biases the text viewport toward the right edge.
+  3. Tightened field padding and label spacing slightly, and forced the placeholder to remain single-line with no soft wrap so `000` cannot stack vertically in a narrow box.
+  4. Re-ran the settings unit/check guard, reran the full picker instrumentation class, and reinstalled the debug app on the active emulator.
+- Result:
+  - The initial RGB field render now uses a neutral unfocused text selection state instead of an end-anchored viewport.
+  - The placeholder can no longer wrap into the broken `00` plus `0` stack shape.
+  - The picker suite stayed green after the fix.
+- Verification:
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest checkKotlinFileLineLimit`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - This remains a visually sensitive fix, so the final confidence gate is still the user reopening the exact RGB picker path on the emulator.
+- Suggested next step:
+  - Re-test the same RGB picker repro on the installed build. If the left digit is still clipped, the next pass should likely simplify the channel-box chrome further or reduce the title/top-row width pressure.

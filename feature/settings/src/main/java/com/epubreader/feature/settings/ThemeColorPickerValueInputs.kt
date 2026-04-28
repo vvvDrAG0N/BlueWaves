@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
@@ -277,15 +278,20 @@ private fun ThemeColorRgbField(
         mutableStateOf(
             TextFieldValue(
                 text = value,
-                selection = TextRange(value.length),
+                selection = TextRange.Zero,
             ),
         )
     }
+    var isFocused by remember(tag) { mutableStateOf(false) }
     LaunchedEffect(value) {
         if (fieldValue.text != value) {
             fieldValue = TextFieldValue(
                 text = value,
-                selection = TextRange(value.length),
+                selection = if (isFocused) {
+                    TextRange(value.length)
+                } else {
+                    TextRange.Zero
+                },
             )
         }
     }
@@ -306,9 +312,9 @@ private fun ThemeColorRgbField(
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f),
                 shape = RoundedCornerShape(12.dp),
             )
-            .padding(horizontal = 8.dp, vertical = 6.dp),
+            .padding(horizontal = 6.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = channelLabel,
@@ -330,6 +336,15 @@ private fun ThemeColorRgbField(
             },
             modifier = Modifier
                 .weight(1f)
+                .onFocusChanged { focusState ->
+                    if (isFocused == focusState.isFocused) {
+                        return@onFocusChanged
+                    }
+                    isFocused = focusState.isFocused
+                    if (focusState.isFocused && fieldValue.selection.end == 0 && fieldValue.text.isNotEmpty()) {
+                        fieldValue = fieldValue.copy(selection = TextRange(fieldValue.text.length))
+                    }
+                }
                 .then(if (tag != null) Modifier.testTag(tag) else Modifier),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
@@ -345,6 +360,8 @@ private fun ThemeColorRgbField(
                             text = "000",
                             style = valueTextStyle,
                             color = placeholderColor,
+                            softWrap = false,
+                            maxLines = 1,
                         )
                     }
                     innerTextField()
