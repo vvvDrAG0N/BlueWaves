@@ -69,6 +69,21 @@ class SettingsThemeEditorGuidedPickerTest {
     }
 
     @Test
+    fun basicAccent_rgbMode_showsCurrentChannelValues() {
+        launchThemeEditor()
+
+        openColorPicker("custom_theme_primary_swatch")
+        selectPickerInputMode("custom_theme_primary", "rgb")
+
+        composeRule.onNodeWithTag("custom_theme_primary_picker_rgb_red").assertTextContains("079")
+        composeRule.onNodeWithTag("custom_theme_primary_picker_rgb_green").assertTextContains("070")
+        composeRule.onNodeWithTag("custom_theme_primary_picker_rgb_blue").assertTextContains("229")
+
+        requestCloseColorPicker("custom_theme_primary")
+        waitUntilPickerClosed("custom_theme_primary")
+    }
+
+    @Test
     fun advancedFavoriteAccent_rgbInput_keepsLiteralPreviewWithoutGuidedCue() {
         val seededTheme = blackExtendedTheme()
         runBlocking {

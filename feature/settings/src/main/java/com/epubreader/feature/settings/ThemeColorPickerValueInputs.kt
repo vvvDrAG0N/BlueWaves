@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -35,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -115,35 +118,26 @@ internal fun ThemeColorPickerValueInputs(
                 ThemeColorPickerInputMode.RGB -> {
                     Row(
                         modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
-                        ThemeColorValueField(
-                            label = null,
-                            placeholder = "000",
-                            prefixText = "R",
+                        ThemeColorRgbField(
+                            channelLabel = "R",
                             value = textFields.rgbText.red,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_red" },
-                            keyboardType = KeyboardType.Number,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(red = it)) },
                             modifier = Modifier.weight(1f),
                         )
-                        ThemeColorValueField(
-                            label = null,
-                            placeholder = "000",
-                            prefixText = "G",
+                        ThemeColorRgbField(
+                            channelLabel = "G",
                             value = textFields.rgbText.green,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_green" },
-                            keyboardType = KeyboardType.Number,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(green = it)) },
                             modifier = Modifier.weight(1f),
                         )
-                        ThemeColorValueField(
-                            label = null,
-                            placeholder = "000",
-                            prefixText = "B",
+                        ThemeColorRgbField(
+                            channelLabel = "B",
                             value = textFields.rgbText.blue,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_blue" },
-                            keyboardType = KeyboardType.Number,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(blue = it)) },
                             modifier = Modifier.weight(1f),
                         )
@@ -153,7 +147,7 @@ internal fun ThemeColorPickerValueInputs(
 
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(44.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(previewColor)
                     .border(
@@ -223,16 +217,17 @@ private fun ThemeColorValueField(
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Ascii,
     singleLine: Boolean = true,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     onValueChange: (String) -> Unit,
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
-            .heightIn(min = 52.dp)
+            .heightIn(min = 48.dp)
             .then(if (tag != null) Modifier.testTag(tag) else Modifier),
         singleLine = singleLine,
-        textStyle = MaterialTheme.typography.bodyMedium,
+        textStyle = textStyle,
         label = label?.let {
             {
                 Text(
@@ -264,6 +259,27 @@ private fun ThemeColorValueField(
 }
 
 @Composable
+private fun ThemeColorRgbField(
+    channelLabel: String,
+    value: String,
+    tag: String?,
+    modifier: Modifier = Modifier,
+    onValueChange: (String) -> Unit,
+) {
+    ThemeColorValueField(
+        label = channelLabel,
+        placeholder = "000",
+        prefixText = null,
+        value = value,
+        tag = tag,
+        modifier = modifier.widthIn(min = 0.dp),
+        keyboardType = KeyboardType.Number,
+        textStyle = MaterialTheme.typography.bodySmall,
+        onValueChange = onValueChange,
+    )
+}
+
+@Composable
 private fun ThemeColorInputModeButton(
     selectedMode: ThemeColorPickerInputMode,
     testTagPrefix: String?,
@@ -272,7 +288,8 @@ private fun ThemeColorInputModeButton(
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier
-            .heightIn(min = 52.dp)
+            .widthIn(min = 64.dp)
+            .heightIn(min = 48.dp)
             .then(
                 if (testTagPrefix != null) {
                     Modifier
@@ -284,8 +301,15 @@ private fun ThemeColorInputModeButton(
                     Modifier
                 },
             ),
+        contentPadding = PaddingValues(
+            horizontal = 12.dp,
+            vertical = 0.dp,
+        ),
     ) {
-        Text(selectedMode.label)
+        Text(
+            text = selectedMode.label,
+            style = MaterialTheme.typography.labelLarge,
+        )
     }
 }
 
