@@ -1,7 +1,9 @@
 package com.epubreader.feature.settings
 
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ThemeColorPickerTextEntryTest {
@@ -61,5 +63,23 @@ class ThemeColorPickerTextEntryTest {
         assertEquals("255", updated.rgbText.green)
         assertEquals("255", updated.rgbText.blue)
         assertEquals("#FFFFFF", updated.tryResolveHex())
+    }
+
+    @Test
+    fun matchesResolvedPreview_falseWhenRgbDraftIsIncomplete() {
+        val initial = themeColorPickerTextFields("#12AB34")
+        val partial = initial.withRgbInput(red = "255", green = "", blue = "100")
+
+        assertFalse(partial.matchesResolvedPreview("#12AB34"))
+    }
+
+    @Test
+    fun matchesResolvedPreview_trueWhenFieldsReflectPreviewHex() {
+        val fields = themeColorPickerTextFields(
+            hex = "#12AB34",
+            activeInput = ThemeColorPickerActiveInput.RGB,
+        )
+
+        assertTrue(fields.matchesResolvedPreview("#12AB34"))
     }
 }

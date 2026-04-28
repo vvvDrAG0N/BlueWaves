@@ -122,10 +122,15 @@ internal fun ThemeColorPickerOverlay(
         return guidedPreviewValueChange(currentPreviewHex())
     }
 
-    fun isDirty(): Boolean {
-        return currentPreviewHex() != initialHex ||
-            textFields.hexText != initialTextFields.hexText ||
-            textFields.rgbText != initialTextFields.rgbText
+    fun currentSessionState(): ThemeColorPickerSessionState {
+        return ThemeColorPickerSessionState(
+            initialHex = initialHex,
+            previewHex = currentPreviewHex(),
+            initialTextFields = initialTextFields,
+            currentTextFields = textFields,
+            isGuided = isGuided,
+            isGuidedSafeZoneReady = !isGuided || guidedSafeZone != null,
+        )
     }
 
     fun setPickerColor(
@@ -306,6 +311,10 @@ internal fun ThemeColorPickerOverlay(
     }
 
     fun commitCurrentColor() {
+        val sessionState = currentSessionState()
+        if (!sessionState.canCommit) {
+            return
+        }
         showExitDialog = false
         val result = onValueChange(currentPreviewHex())
         applyPreviewHex(
@@ -319,7 +328,8 @@ internal fun ThemeColorPickerOverlay(
     }
 
     fun requestDismiss() {
-        if (isDirty()) {
+        val sessionState = currentSessionState()
+        if (sessionState.shouldPromptOnExit) {
             showExitDialog = true
         } else {
             onDismiss()
@@ -393,9 +403,11 @@ internal fun ThemeColorPickerOverlay(
                         .verticalScroll(dialogScrollState)
                         .padding(horizontal = 20.dp, vertical = 18.dp),
                 ) {
+                    val sessionState = currentSessionState()
                     ThemeColorPickerHeader(
                         label = label,
                         testTagPrefix = testTagPrefix,
+                        saveEnabled = sessionState.canCommit,
                         onClose = ::requestDismiss,
                         onSave = ::commitCurrentColor,
                     )
@@ -483,6 +495,7 @@ internal fun ThemeColorPickerOverlay(
             if (showExitDialog) {
                 ThemeColorPickerExitDialog(
                     testTagPrefix = testTagPrefix,
+                    saveEnabled = currentSessionState().canCommit,
                     onSave = ::commitCurrentColor,
                     onDiscard = {
                         showExitDialog = false

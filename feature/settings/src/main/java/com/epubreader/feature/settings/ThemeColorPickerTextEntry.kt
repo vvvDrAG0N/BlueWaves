@@ -71,6 +71,14 @@ internal data class ThemeColorPickerTextFields(
     }
 }
 
+internal fun ThemeColorPickerTextFields.matchesResolvedPreview(previewHex: String): Boolean {
+    val previewFields = themeColorPickerTextFields(
+        hex = previewHex,
+        activeInput = preferredInput,
+    )
+    return hexText == previewFields.hexText && rgbText == previewFields.rgbText
+}
+
 internal fun themeColorPickerTextFields(
     hex: String,
     rgbOverride: ThemeColorPickerRgbText? = null,

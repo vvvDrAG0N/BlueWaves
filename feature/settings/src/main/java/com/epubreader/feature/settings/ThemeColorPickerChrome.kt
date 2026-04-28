@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 internal fun ThemeColorPickerHeader(
     label: String,
     testTagPrefix: String?,
+    saveEnabled: Boolean,
     onClose: () -> Unit,
     onSave: () -> Unit,
 ) {
@@ -62,6 +63,7 @@ internal fun ThemeColorPickerHeader(
         )
         IconButton(
             onClick = onSave,
+            enabled = saveEnabled,
             modifier = Modifier
                 .size(40.dp)
                 .then(
@@ -83,6 +85,7 @@ internal fun ThemeColorPickerHeader(
 @Composable
 internal fun ThemeColorPickerExitDialog(
     testTagPrefix: String?,
+    saveEnabled: Boolean,
     onSave: () -> Unit,
     onDiscard: () -> Unit,
     onKeepEditing: () -> Unit,
@@ -93,6 +96,7 @@ internal fun ThemeColorPickerExitDialog(
         confirmButton = {
             TextButton(
                 onClick = onSave,
+                enabled = saveEnabled,
                 modifier = if (testTagPrefix != null) {
                     Modifier.testTag("${testTagPrefix}_picker_exit_save")
                 } else {
