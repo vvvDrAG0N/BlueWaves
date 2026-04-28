@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 
 @Composable
 internal fun ThemeColorSpectrumField(
@@ -38,7 +39,7 @@ internal fun ThemeColorSpectrumField(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(220.dp)
+            .height(192.dp)
             .then(
                 if (testTagPrefix != null) {
                     Modifier.testTag("${testTagPrefix}_picker_spectrum")
@@ -160,22 +161,33 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSafeZoneVeil(
         return
     }
 
-    val rowCenters = safeZone.rows.map { (1f - it.value.coerceIn(0f, 1f)) * size.height }
-    safeZone.rows.forEachIndexed { index, row ->
-        val centerY = rowCenters[index]
-        val top = if (index == 0) {
-            0f
-        } else {
-            (rowCenters[index - 1] + centerY) / 2f
-        }
-        val bottom = if (index == safeZone.rows.lastIndex) {
+    val stripeCount = size.height.roundToInt().coerceAtLeast(120)
+    val stripeHeight = if (stripeCount == 0) size.height else size.height / stripeCount.toFloat()
+    repeat(stripeCount) { stripeIndex ->
+        val top = stripeIndex * stripeHeight
+        val bottom = if (stripeIndex == stripeCount - 1) {
             size.height
         } else {
-            (centerY + rowCenters[index + 1]) / 2f
+            top + stripeHeight
         }
         val bandHeight = (bottom - top).coerceAtLeast(1f)
+        val centerY = top + (bandHeight / 2f)
+        val value = if (size.height <= 0f) {
+            1f
+        } else {
+            (1f - (centerY / size.height)).coerceIn(0f, 1f)
+        }
+        val spans = safeZone.spansAt(value)
+        if (spans.isEmpty()) {
+            drawRect(
+                color = veilColor,
+                topLeft = Offset(x = 0f, y = top),
+                size = Size(width = size.width, height = bandHeight),
+            )
+            return@repeat
+        }
         var veilStart = 0f
-        row.spans.forEach { span ->
+        spans.forEach { span ->
             val left = span.start.coerceIn(0f, 1f) * size.width
             val right = span.endInclusive.coerceIn(0f, 1f) * size.width
             if (left > veilStart) {

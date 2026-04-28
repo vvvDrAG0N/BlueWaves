@@ -87,7 +87,7 @@ class SettingsThemeEditorGuidedPickerTest {
             green = "064",
             blue = "032",
         )
-        val literalHex = "#${readNodeText("custom_theme_favorite_accent_picker_hex")}"
+        val literalHex = "#FF4020"
 
         assertPreviewHex("custom_theme_favorite_accent_picker_preview", literalHex)
         assertTagDoesNotExist("custom_theme_favorite_accent_picker_guided_status")
@@ -250,6 +250,17 @@ class SettingsThemeEditorGuidedPickerTest {
         waitUntilTagExists("custom_theme_favorite_accent_picker_spectrum")
         assertTagDoesNotExist("custom_theme_favorite_accent_picker_safe_zone")
         tapHeaderSave("custom_theme_favorite_accent")
+    }
+
+    @Test
+    fun basicAppBackground_longTitleKeepsSaveVisible() {
+        launchThemeEditor()
+
+        openColorPicker("custom_theme_background_swatch")
+        composeRule.onNodeWithTag("custom_theme_background_picker_close").assertIsDisplayed()
+        composeRule.onNodeWithTag("custom_theme_background_picker_save").assertIsDisplayed()
+        requestCloseColorPicker("custom_theme_background")
+        waitUntilPickerClosed("custom_theme_background")
     }
 
     @Test

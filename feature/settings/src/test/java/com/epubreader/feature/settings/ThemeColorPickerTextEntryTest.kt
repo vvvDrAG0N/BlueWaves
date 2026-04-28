@@ -48,4 +48,18 @@ class ThemeColorPickerTextEntryTest {
         assertEquals("128", complete.rgbText.green)
         assertEquals("255", complete.rgbText.blue)
     }
+
+    @Test
+    fun rgbInput_valuesAbove255_clampImmediately() {
+        val updated = themeColorPickerTextFields("#112233").withRgbInput(
+            red = "999",
+            green = "300",
+            blue = "256",
+        )
+
+        assertEquals("255", updated.rgbText.red)
+        assertEquals("255", updated.rgbText.green)
+        assertEquals("255", updated.rgbText.blue)
+        assertEquals("#FFFFFF", updated.tryResolveHex())
+    }
 }

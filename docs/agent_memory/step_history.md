@@ -2710,3 +2710,43 @@ This file is append-only.
   - No known blocker remains inside the picker-editor lane on this branch.
 - Suggested next step:
   - Do one final human smoke pass in-hand if desired, then merge or review `codex/theme-spectrum-picker` for integration.
+
+## 122. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Polish the new theme picker after screenshot-led UX feedback by fixing the cramped header/input layout, restoring visible save chrome on long titles, clamping RGB entry, and smoothing guided safe-zone drag behavior on the emulator.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerChrome.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerValueInputs.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerTextEntry.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerGuidance.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/test/java/com/epubreader/feature/settings/ThemeColorPickerTextEntryTest.kt`, `feature/settings/src/test/java/com/epubreader/feature/settings/ThemeColorPickerGuidanceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTestSupport.kt`, and `logs/picker_polish_2026-04-28/`.
+- Action taken:
+  1. Re-read the picker owner, header, value-input, guidance, and spectrum canvas files against the reported screenshots to separate layout-pressure bugs from safe-zone sampling bugs.
+  2. Rebuilt the header row so long labels wrap within the center lane instead of pushing the trailing `check` icon offscreen.
+  3. Compacted the value-input band by moving to a smaller live swatch plus a `HEX` / `RGB` toggle, which keeps both edit paths available without showing all fields at once.
+  4. Hardened typed RGB sanitization so `256+` values clamp immediately to `255` instead of lingering in the visible text fields.
+  5. Added a dialog-height cap plus internal scroll so the `Hue` label/slider stay reachable on smaller emulator screens even when the keyboard or longer labels squeeze the modal.
+  6. Reworked guided safe-zone projection to interpolate between adjacent sampled rows at the current value before falling back to row snapping, which removes the obvious stair-step feel during diagonal drags.
+  7. Reworked the safe-zone veil drawing to sample interpolated spans across many thin visual stripes, so blocked regions look continuous and fully cover invalid corners such as near pure black.
+  8. Updated JVM and instrumentation coverage for RGB clamping, interpolated guided projection, input-mode toggling, and the long-title app-background header case.
+  9. Reinstalled the app on `emulator-5554`, reran the connected picker class, drove the live picker through the app with adb, and captured fresh screenshot, UI-tree, gfxinfo, and logcat evidence under `logs/picker_polish_2026-04-28/`.
+- Result:
+  - `App Background Color` now keeps both the close and save icons visible in the live picker header.
+  - The top input band is materially smaller and less cramped while still exposing both `HEX` and `RGB` entry.
+  - RGB input no longer visually accepts channels above `255`.
+  - The live UI tree confirms the `Hue` label and slider remain present in the modal.
+  - Guided safe-zone interaction now projects along the current drag line where possible, which removes the harsh sampled-row stair feel and makes the veil look continuous instead of gridded.
+  - Emulator perf evidence for the focused picker-drag flow stayed in a healthy range (`99th percentile: 20ms`, `Slow UI thread: 1`, `Frame deadline missed: 5`) and the captured logcat no longer showed the old skipped-frame / `Davey!` style bursts during this pass.
+- Verification:
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest`
+  - `.\gradlew.bat :feature:settings:compileDebugAndroidTestKotlin`
+  - `.\gradlew.bat checkKotlinFileLineLimit`
+  - `.\gradlew.bat :app:installDebug`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - Live emulator artifacts:
+    - `logs/picker_polish_2026-04-28/picker-app-background.png`
+    - `logs/picker_polish_2026-04-28/picker-app-background-after-drag.png`
+    - `logs/picker_polish_2026-04-28/ui-picker.xml`
+    - `logs/picker_polish_2026-04-28/gfxinfo-after-drag.txt`
+    - `logs/picker_polish_2026-04-28/gfxinfo-after-drag-framestats.txt`
+    - `logs/picker_polish_2026-04-28/logcat-after-drag.txt`
+- Blockers:
+  - No known blocker remains in the picker-polish lane on this branch.
+- Suggested next step:
+  - Do an in-hand review of the refreshed picker feel if desired, then merge `codex/theme-spectrum-picker` back into the main working branch.

@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -29,6 +32,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -333,6 +337,8 @@ internal fun ThemeColorPickerOverlay(
             usePlatformDefaultWidth = false,
         ),
     ) {
+        val maxDialogHeight = LocalConfiguration.current.screenHeightDp.dp - 32.dp
+        val dialogScrollState = rememberScrollState()
         Box(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
@@ -349,9 +355,10 @@ internal fun ThemeColorPickerOverlay(
             Surface(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
                     .fillMaxWidth()
                     .widthIn(max = 560.dp)
+                    .heightIn(max = maxDialogHeight)
                     .onPreviewKeyEvent { event ->
                         if (event.key == Key.Back && event.type == KeyEventType.KeyUp) {
                             if (showExitDialog) {
@@ -378,7 +385,11 @@ internal fun ThemeColorPickerOverlay(
                 color = AlertDialogDefaults.containerColor,
                 tonalElevation = AlertDialogDefaults.TonalElevation,
             ) {
-                Column(modifier = Modifier.padding(24.dp)) {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(dialogScrollState)
+                        .padding(horizontal = 20.dp, vertical = 18.dp),
+                ) {
                     ThemeColorPickerHeader(
                         label = label,
                         testTagPrefix = testTagPrefix,
@@ -402,13 +413,13 @@ internal fun ThemeColorPickerOverlay(
                         testTagPrefix = testTagPrefix,
                         onHexInputChange = ::updateHexInput,
                         onRgbInputChange = ::updateRgbInput,
-                        modifier = Modifier.padding(top = 20.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                     )
 
                     Text(
                         text = "Color",
                         style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(top = 20.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                     )
                     ThemeColorSpectrumField(
                         hue = pickerHue,
@@ -448,7 +459,7 @@ internal fun ThemeColorPickerOverlay(
                     Text(
                         text = "Hue",
                         style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = 12.dp),
                     )
                     Slider(
                         value = pickerHue,
@@ -456,9 +467,11 @@ internal fun ThemeColorPickerOverlay(
                         onValueChangeFinished = {},
                         valueRange = 0f..360f,
                         modifier = if (testTagPrefix != null) {
-                            Modifier.testTag("${testTagPrefix}_picker_hue")
-                        } else {
                             Modifier
+                                .padding(top = 2.dp)
+                                .testTag("${testTagPrefix}_picker_hue")
+                        } else {
+                            Modifier.padding(top = 2.dp)
                         },
                     )
                 }

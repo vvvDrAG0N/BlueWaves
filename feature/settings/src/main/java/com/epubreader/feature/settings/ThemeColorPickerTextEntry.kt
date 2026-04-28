@@ -15,6 +15,9 @@ internal data class ThemeColorPickerTextFields(
     val lastValidHex: String,
     private val activeInput: ThemeColorPickerActiveInput? = null,
 ) {
+    val preferredInput: ThemeColorPickerActiveInput?
+        get() = activeInput
+
     fun withHexInput(nextHex: String): ThemeColorPickerTextFields {
         val sanitized = nextHex
             .uppercase()
@@ -40,9 +43,9 @@ internal data class ThemeColorPickerTextFields(
         blue: String = rgbText.blue,
     ): ThemeColorPickerTextFields {
         val nextRgb = ThemeColorPickerRgbText(
-            red = red.filter(Char::isDigit).take(3),
-            green = green.filter(Char::isDigit).take(3),
-            blue = blue.filter(Char::isDigit).take(3),
+            red = red.sanitizeRgbChannelInput(),
+            green = green.sanitizeRgbChannelInput(),
+            blue = blue.sanitizeRgbChannelInput(),
         )
         val resolved = nextRgb.toResolvedHexOrNull()
         return if (resolved != null) {
@@ -108,4 +111,17 @@ private fun ThemeColorPickerRgbText.toResolvedHexOrNull(): String? {
         (resolvedGreen.toLong() shl 8) or
         resolvedBlue.toLong()
     return formatThemeColor(color)
+}
+
+private fun String.sanitizeRgbChannelInput(): String {
+    val digitsOnly = filter(Char::isDigit).take(3)
+    if (digitsOnly.length < 3) {
+        return digitsOnly
+    }
+    val parsed = digitsOnly.toIntOrNull() ?: return digitsOnly
+    return if (parsed > 255) {
+        "255"
+    } else {
+        digitsOnly
+    }
 }

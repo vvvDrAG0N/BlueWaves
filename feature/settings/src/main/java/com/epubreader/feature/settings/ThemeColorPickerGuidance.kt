@@ -17,12 +17,10 @@ internal data class ThemeColorPickerSafeZoneRow(
 
 internal data class ThemeColorPickerSafeZone(
     val rows: List<ThemeColorPickerSafeZoneRow>,
+    val rowStep: Float = 1f,
 ) {
     fun contains(point: ThemeColorPickerPoint): Boolean {
-        val sampledRow = rows.firstOrNull { row ->
-            abs(row.value - point.value) <= SafeZoneRowValueEpsilon
-        } ?: return false
-        return sampledRow.spans.any { span ->
+        return spansAt(point.value).any { span ->
             point.saturation >= span.start && point.saturation <= span.endInclusive
         }
     }
@@ -32,17 +30,76 @@ internal data class ThemeColorPickerSafeZone(
             return point
         }
 
-        return rows
-            .flatMap { row ->
-                row.spans.map { span ->
-                    ThemeColorPickerPoint(
-                        saturation = point.saturation.coerceIn(span.start, span.endInclusive),
-                        value = row.value,
-                    )
-                }
+        val valueMatchedCandidates = spansAt(point.value).map { span ->
+            ThemeColorPickerPoint(
+                saturation = point.saturation.coerceIn(span.start, span.endInclusive),
+                value = point.value,
+            )
+        }
+        if (valueMatchedCandidates.isNotEmpty()) {
+            return valueMatchedCandidates.minByOrNull { candidate ->
+                candidate.distanceSquaredTo(point)
+            } ?: point
+        }
+        val rowCandidates = rows.flatMap { row ->
+            row.spans.map { span ->
+                ThemeColorPickerPoint(
+                    saturation = point.saturation.coerceIn(span.start, span.endInclusive),
+                    value = row.value,
+                )
             }
+        }
+
+        return rowCandidates
             .minByOrNull { candidate -> candidate.distanceSquaredTo(point) }
             ?: point
+    }
+
+    fun spansAt(value: Float): List<ClosedFloatingPointRange<Float>> {
+        if (rows.isEmpty()) {
+            return emptyList()
+        }
+        rows.firstOrNull { row ->
+            abs(row.value - value) <= SafeZoneRowValueEpsilon
+        }?.let { return it.spans }
+
+        val firstRow = rows.first()
+        val lastRow = rows.last()
+        if (value > firstRow.value || value < lastRow.value) {
+            return emptyList()
+        }
+
+        val bracketingRows = rows.zipWithNext().firstOrNull { (topRow, bottomRow) ->
+            value <= topRow.value && value >= bottomRow.value
+        } ?: return emptyList()
+        val (topRow, bottomRow) = bracketingRows
+        val gap = topRow.value - bottomRow.value
+        if (gap <= SafeZoneRowValueEpsilon) {
+            return topRow.spans
+        }
+        if (gap > rowStep + SafeZoneInterpolationGapEpsilon) {
+            return emptyList()
+        }
+        if (topRow.spans.size != bottomRow.spans.size) {
+            val topDistance = abs(topRow.value - value)
+            val bottomDistance = abs(bottomRow.value - value)
+            return if (topDistance <= bottomDistance) {
+                topRow.spans
+            } else {
+                bottomRow.spans
+            }
+        }
+
+        val progress = ((topRow.value - value) / gap).coerceIn(0f, 1f)
+        return topRow.spans.indices.map { index ->
+            val topSpan = topRow.spans[index]
+            val bottomSpan = bottomRow.spans[index]
+            lerp(topSpan.start, bottomSpan.start, progress)..lerp(
+                topSpan.endInclusive,
+                bottomSpan.endInclusive,
+                progress,
+            )
+        }
     }
 }
 
@@ -85,6 +142,7 @@ internal fun buildGuidedSafeZone(
     val columnCount = columns.coerceAtLeast(2)
     val maxRowIndex = rowCount - 1
     val maxColumnIndex = columnCount - 1
+    val rowStep = 1f / maxRowIndex.toFloat()
     val saturationStep = 1f / maxColumnIndex.toFloat()
     val sampledRows = buildList {
         repeat(rowCount) { rowIndex ->
@@ -121,7 +179,10 @@ internal fun buildGuidedSafeZone(
         }
     }
 
-    return ThemeColorPickerSafeZone(rows = sampledRows)
+    return ThemeColorPickerSafeZone(
+        rows = sampledRows,
+        rowStep = rowStep,
+    )
 }
 
 internal fun resolveGuidedTypedHex(
@@ -195,6 +256,10 @@ private fun ThemeColorPickerPoint.distanceSquaredTo(other: ThemeColorPickerPoint
     return saturationDelta * saturationDelta + valueDelta * valueDelta
 }
 
+private fun lerp(start: Float, end: Float, fraction: Float): Float {
+    return start + (end - start) * fraction
+}
+
 private fun List<Float>.toSafeZoneSpans(step: Float): List<ClosedFloatingPointRange<Float>> {
     if (isEmpty()) {
         return emptyList()
@@ -230,3 +295,4 @@ private fun Int.toSafeZoneHue(): Float {
 }
 
 private const val SafeZoneRowValueEpsilon = 0.0001f
+private const val SafeZoneInterpolationGapEpsilon = 0.0001f

@@ -127,7 +127,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.pressActivityBack(testTagPrefix
         return
     }
     val exitDialogTag = "${testTagPrefix}_picker_exit_dialog"
-    val pickerTag = "${testTagPrefix}_picker_hex"
+    val pickerTag = "${testTagPrefix}_picker_spectrum"
     val exitDialogVisible = runCatching {
         composeRule.onNodeWithTag(exitDialogTag).fetchSemanticsNode()
         true
@@ -317,6 +317,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.replaceHexInput(
     testTagPrefix: String,
     nextHex: String,
 ) {
+    selectPickerInputMode(testTagPrefix, "hex")
     composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextReplacement(nextHex)
 }
 
@@ -326,9 +327,18 @@ internal fun SettingsThemeEditorGuidedPickerTest.replaceRgbInput(
     green: String,
     blue: String,
 ) {
+    selectPickerInputMode(testTagPrefix, "rgb")
     composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_red").performTextReplacement(red)
     composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_green").performTextReplacement(green)
     composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_blue").performTextReplacement(blue)
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.selectPickerInputMode(
+    testTagPrefix: String,
+    mode: String,
+) {
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_mode_${mode.lowercase()}").performClick()
+    composeRule.waitForIdle()
 }
 
 internal fun SettingsThemeEditorGuidedPickerTest.setSpectrumPoint(

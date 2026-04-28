@@ -3,6 +3,7 @@ package com.epubreader.feature.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -16,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -28,15 +31,19 @@ internal fun ThemeColorPickerHeader(
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         IconButton(
             onClick = onClose,
-            modifier = if (testTagPrefix != null) {
-                Modifier.testTag("${testTagPrefix}_picker_close")
-            } else {
-                Modifier
-            },
+            modifier = Modifier
+                .size(40.dp)
+                .then(
+                    if (testTagPrefix != null) {
+                        Modifier.testTag("${testTagPrefix}_picker_close")
+                    } else {
+                        Modifier
+                    },
+                ),
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
@@ -45,16 +52,24 @@ internal fun ThemeColorPickerHeader(
         }
         Text(
             text = "$label Color",
+            modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
         )
         IconButton(
             onClick = onSave,
-            modifier = if (testTagPrefix != null) {
-                Modifier.testTag("${testTagPrefix}_picker_save")
-            } else {
-                Modifier
-            },
+            modifier = Modifier
+                .size(40.dp)
+                .then(
+                    if (testTagPrefix != null) {
+                        Modifier.testTag("${testTagPrefix}_picker_save")
+                    } else {
+                        Modifier
+                    },
+                ),
         ) {
             Icon(
                 imageVector = Icons.Default.Check,

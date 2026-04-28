@@ -57,7 +57,7 @@ class ThemeColorPickerGuidanceTest {
     }
 
     @Test
-    fun project_outsidePoint_snapsToNearestAllowedSpan() {
+    fun project_outsidePoint_clampsToInterpolatedBoundary() {
         val zone = ThemeColorPickerSafeZone(
             rows = listOf(
                 ThemeColorPickerSafeZoneRow(
@@ -69,6 +69,7 @@ class ThemeColorPickerGuidanceTest {
                     spans = listOf(0.30f..0.60f),
                 ),
             ),
+            rowStep = 0.25f,
         )
 
         val projected = zone.project(
@@ -78,12 +79,12 @@ class ThemeColorPickerGuidanceTest {
             ),
         )
 
-        assertEquals(0.60f, projected.saturation, 0.0001f)
-        assertEquals(0.50f, projected.value, 0.0001f)
+        assertEquals(0.584f, projected.saturation, 0.0001f)
+        assertEquals(0.52f, projected.value, 0.0001f)
     }
 
     @Test
-    fun project_betweenRows_snapsValueToSampledRow() {
+    fun project_betweenRows_keepsPointWhenInsideInterpolatedSpan() {
         val zone = ThemeColorPickerSafeZone(
             rows = listOf(
                 ThemeColorPickerSafeZoneRow(
@@ -95,6 +96,7 @@ class ThemeColorPickerGuidanceTest {
                     spans = listOf(0.30f..0.60f),
                 ),
             ),
+            rowStep = 0.25f,
         )
 
         val projected = zone.project(
@@ -105,7 +107,68 @@ class ThemeColorPickerGuidanceTest {
         )
 
         assertEquals(0.35f, projected.saturation, 0.0001f)
-        assertEquals(0.50f, projected.value, 0.0001f)
+        assertEquals(0.52f, projected.value, 0.0001f)
+    }
+
+    @Test
+    fun contains_interpolatesSpansBetweenAdjacentRows() {
+        val zone = ThemeColorPickerSafeZone(
+            rows = listOf(
+                ThemeColorPickerSafeZoneRow(
+                    value = 0.75f,
+                    spans = listOf(0.20f..0.40f),
+                ),
+                ThemeColorPickerSafeZoneRow(
+                    value = 0.50f,
+                    spans = listOf(0.30f..0.60f),
+                ),
+            ),
+            rowStep = 0.25f,
+        )
+
+        assertTrue(
+            zone.contains(
+                ThemeColorPickerPoint(
+                    saturation = 0.48f,
+                    value = 0.625f,
+                ),
+            ),
+        )
+        assertFalse(
+            zone.contains(
+                ThemeColorPickerPoint(
+                    saturation = 0.53f,
+                    value = 0.625f,
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun project_betweenRows_clampsSaturationWithoutSteppingValue() {
+        val zone = ThemeColorPickerSafeZone(
+            rows = listOf(
+                ThemeColorPickerSafeZoneRow(
+                    value = 0.75f,
+                    spans = listOf(0.20f..0.40f),
+                ),
+                ThemeColorPickerSafeZoneRow(
+                    value = 0.50f,
+                    spans = listOf(0.30f..0.60f),
+                ),
+            ),
+            rowStep = 0.25f,
+        )
+
+        val projected = zone.project(
+            ThemeColorPickerPoint(
+                saturation = 0.55f,
+                value = 0.625f,
+            ),
+        )
+
+        assertEquals(0.50f, projected.saturation, 0.0001f)
+        assertEquals(0.625f, projected.value, 0.0001f)
     }
 
     @Test
