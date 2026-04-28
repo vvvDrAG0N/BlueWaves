@@ -18,8 +18,10 @@ internal data class ThemeColorPickerSafeZone(
     val rows: List<ThemeColorPickerSafeZoneRow>,
 ) {
     fun contains(point: ThemeColorPickerPoint): Boolean {
-        val nearestRow = rows.minByOrNull { row -> abs(row.value - point.value) } ?: return false
-        return nearestRow.spans.any { span ->
+        val sampledRow = rows.firstOrNull { row ->
+            abs(row.value - point.value) <= SafeZoneRowValueEpsilon
+        } ?: return false
+        return sampledRow.spans.any { span ->
             point.saturation >= span.start && point.saturation <= span.endInclusive
         }
     }
@@ -177,3 +179,5 @@ private fun List<Float>.toSafeZoneSpans(step: Float): List<ClosedFloatingPointRa
     spans += spanStart..spanEnd
     return spans
 }
+
+private const val SafeZoneRowValueEpsilon = 0.0001f

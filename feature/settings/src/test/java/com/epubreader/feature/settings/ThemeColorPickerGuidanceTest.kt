@@ -81,6 +81,32 @@ class ThemeColorPickerGuidanceTest {
         assertEquals(0.50f, projected.value, 0.0001f)
     }
 
+    @Test
+    fun project_betweenRows_snapsValueToSampledRow() {
+        val zone = ThemeColorPickerSafeZone(
+            rows = listOf(
+                ThemeColorPickerSafeZoneRow(
+                    value = 0.75f,
+                    spans = listOf(0.20f..0.40f),
+                ),
+                ThemeColorPickerSafeZoneRow(
+                    value = 0.50f,
+                    spans = listOf(0.30f..0.60f),
+                ),
+            ),
+        )
+
+        val projected = zone.project(
+            ThemeColorPickerPoint(
+                saturation = 0.35f,
+                value = 0.52f,
+            ),
+        )
+
+        assertEquals(0.35f, projected.saturation, 0.0001f)
+        assertEquals(0.50f, projected.value, 0.0001f)
+    }
+
     private fun extendedDraft(
         palette: com.epubreader.core.model.ThemePalette,
         readerLinked: Boolean = true,
