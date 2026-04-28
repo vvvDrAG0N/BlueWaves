@@ -92,6 +92,11 @@ internal fun SettingsThemeEditorGuidedPickerTest.tapHeaderSave(testTagPrefix: St
     composeRule.waitForIdle()
 }
 
+internal fun SettingsThemeEditorGuidedPickerTest.openColorPicker(swatchTag: String) {
+    composeRule.onNodeWithTag(swatchTag).performScrollTo().performClick()
+    composeRule.waitForIdle()
+}
+
 internal fun SettingsThemeEditorGuidedPickerTest.dismissColorPickerByOutsideTap(backdropTag: String) {
     composeRule.onNodeWithTag(backdropTag).performTouchInput {
         click(Offset(24f, 24f))
@@ -159,13 +164,13 @@ internal fun SettingsThemeEditorGuidedPickerTest.assertPreviewHex(
     tag: String,
     expectedHex: String,
 ) {
-    composeRule.onNodeWithTag(tag)
-        .assert(
-            SemanticsMatcher.expectValue(
-                SemanticsProperties.ContentDescription,
-                listOf(expectedHex.uppercase()),
-            ),
-        )
+    val actualDescriptions = composeRule.onNodeWithTag(tag)
+        .fetchSemanticsNode()
+        .config
+        .getOrElse(SemanticsProperties.ContentDescription) { emptyList<String>() }
+    if (actualDescriptions.none { it.equals(expectedHex, ignoreCase = true) }) {
+        throw AssertionError("Expected preview hex $expectedHex on '$tag' but found $actualDescriptions")
+    }
 }
 
 internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextContains(
@@ -175,7 +180,15 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextContains(
 ) {
     composeRule.waitUntil(timeoutMillis) {
         runCatching {
-            composeRule.onNodeWithTag(tag).performScrollTo().assertTextContains(text)
+            val stableScrollTag = "${tag}_swatch"
+            val scrolled = runCatching {
+                composeRule.onNodeWithTag(stableScrollTag).performScrollTo()
+                true
+            }.getOrDefault(false)
+            if (!scrolled) {
+                composeRule.onNodeWithTag(tag).performScrollTo()
+            }
+            composeRule.onNodeWithTag(tag).assertTextContains(text)
             true
         }.getOrDefault(false)
     }
@@ -190,6 +203,18 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagAbsent(
             composeRule.onNodeWithTag(tag).fetchSemanticsNode()
             false
         }.getOrDefault(true)
+    }
+}
+
+internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextVisible(
+    text: String,
+    timeoutMillis: Long = 10_000,
+) {
+    composeRule.waitUntil(timeoutMillis) {
+        runCatching {
+            composeRule.onNodeWithText(text, substring = true).assertExists()
+            true
+        }.getOrDefault(false)
     }
 }
 
@@ -269,6 +294,53 @@ internal fun expectedGuidedProjectedColor(
             saturation = projectedPoint.saturation,
             value = projectedPoint.value,
         ).toColorLong(),
+    )
+}
+
+internal fun expectedGuidedSavedColor(
+    fieldKey: String,
+    attemptedPoint: ThemeColorPickerPoint,
+    hue: Float,
+    draft: ThemeEditorDraft,
+): String {
+    val rawHex = formatThemeColor(
+        ThemeColorPickerHsv(
+            hue = hue,
+            saturation = attemptedPoint.saturation,
+            value = attemptedPoint.value,
+        ).toColorLong(),
+    )
+    return draft.applyColorEdit(
+        fieldKey = fieldKey,
+        rawHex = rawHex,
+        guided = true,
+    ).resolvedHex
+}
+
+internal fun guidedDraftAfterSavedEdits(
+    baseDraft: ThemeEditorDraft,
+    vararg edits: Pair<String, String>,
+): ThemeEditorDraft {
+    var currentDraft = baseDraft
+    edits.forEach { (fieldKey, rawHex) ->
+        currentDraft = currentDraft.applyColorEdit(
+            fieldKey = fieldKey,
+            rawHex = rawHex,
+            guided = true,
+        ).updatedDraft
+    }
+    return currentDraft
+}
+
+internal fun defaultExtendedGuidedDraft(): ThemeEditorDraft {
+    return extendedDraft(
+        palette = generatePaletteFromGuidedInput(
+            GuidedThemePaletteInput(
+                accent = 0xFF4F46E5,
+                appBackground = 0xFFFFFFFF,
+                readerLinked = true,
+            ),
+        ),
     )
 }
 
