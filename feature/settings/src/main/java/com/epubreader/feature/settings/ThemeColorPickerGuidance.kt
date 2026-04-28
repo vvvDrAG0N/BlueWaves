@@ -51,6 +51,11 @@ internal data class ThemeColorPickerPreviewResult(
     val wasAdjusted: Boolean,
 )
 
+internal data class ThemeColorPickerTypedResolution(
+    val resolvedHex: String,
+    val wasAdjusted: Boolean,
+)
+
 internal class ThemeColorPickerSafeZoneCache {
     private val zonesByHueBucket = ConcurrentHashMap<Int, ThemeColorPickerSafeZone>()
 
@@ -117,6 +122,17 @@ internal fun buildGuidedSafeZone(
     }
 
     return ThemeColorPickerSafeZone(rows = sampledRows)
+}
+
+internal fun resolveGuidedTypedHex(
+    rawHex: String,
+    previewColor: (String) -> ThemeColorPickerPreviewResult,
+): ThemeColorPickerTypedResolution {
+    val preview = previewColor(rawHex)
+    return ThemeColorPickerTypedResolution(
+        resolvedHex = preview.resolvedHex,
+        wasAdjusted = preview.wasAdjusted,
+    )
 }
 
 internal data class ThemeColorPickerHsv(

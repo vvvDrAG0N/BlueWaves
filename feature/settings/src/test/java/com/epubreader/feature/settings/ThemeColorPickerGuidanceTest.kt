@@ -158,6 +158,40 @@ class ThemeColorPickerGuidanceTest {
         assertSame(first, second)
     }
 
+    @Test
+    fun resolveGuidedTypedHex_matchesCommitResolution() {
+        val draft = extendedDraft(
+            palette = generatePaletteFromGuidedInput(
+                GuidedThemePaletteInput(
+                    accent = 0xFF4F46E5,
+                    appBackground = 0xFF000000,
+                    appSurface = 0xFF000000,
+                    appForeground = 0xFFFFFFFF,
+                    appForegroundMuted = 0xFFAAAAAA,
+                    overlayScrim = 0xFF000000,
+                    readerLinked = true,
+                ),
+            ),
+        )
+
+        val expected = draft.applyColorEdit(
+            fieldKey = "app_foreground",
+            rawHex = "#000000",
+            guided = true,
+        )
+
+        val resolution = resolveGuidedTypedHex("#000000") { rawHex ->
+            draft.previewColorEdit(
+                fieldKey = "app_foreground",
+                rawHex = rawHex,
+                guided = true,
+            )
+        }
+
+        assertTrue(resolution.wasAdjusted)
+        assertEquals(expected.resolvedHex, resolution.resolvedHex)
+    }
+
     private fun extendedDraft(
         palette: com.epubreader.core.model.ThemePalette,
         readerLinked: Boolean = true,
