@@ -2826,3 +2826,25 @@ This file is append-only.
   - No known blocker remains in this RGB-control rendering follow-up lane.
 - Suggested next step:
   - Let the user verify the refreshed RGB control visually on the emulator, then merge if the row now reads cleanly on the target density.
+
+## 126. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Fix the remaining initial RGB-input bug where the channel digits only appeared progressively after focus/arrow-key movement even though later live updates rendered correctly.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerValueInputs.kt`.
+- Action taken:
+  1. Re-read the user's latest repro carefully and traced the likely failure away from RGB data and toward initial text-field state: the values were present, but the compact custom channel fields were mounting with a bad initial cursor/viewport behavior.
+  2. Switched the RGB channel boxes from plain string-backed `BasicTextField` usage to controlled `TextFieldValue` state with explicit initial selection at the end of the visible text, then synchronized external value updates back into that controlled state.
+  3. Centered the channel text inside each compact field so the control no longer depends on right-edge cursor/scroll positioning to reveal the digits.
+  4. Re-ran the settings unit/check guard, reran the full picker instrumentation class, and reinstalled the app on the active emulator.
+- Result:
+  - The RGB fields now have an explicit initial text/cursor state instead of relying on the default `BasicTextField` mounting behavior.
+  - Later RGB updates still stay in sync, and the likely first-render cursor/scroll glitch is now addressed at the control-state layer instead of just by restyling the box.
+- Verification:
+  - `.\gradlew.bat :feature:settings:testDebugUnitTest checkKotlinFileLineLimit`
+  - `.\gradlew.bat --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat :app:installDebug`
+- Blockers:
+  - The automated suite is green, but this remains a visually sensitive fix, so one more in-hand check of the exact RGB picker open state is still the practical confidence gate.
+- Suggested next step:
+  - Re-open the same RGB picker on the emulator and confirm the digits render fully before any focus or arrow-key interaction, then merge if that exact repro is gone.

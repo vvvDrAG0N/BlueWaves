@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,9 +41,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -270,9 +273,26 @@ private fun ThemeColorRgbField(
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
 ) {
+    var fieldValue by remember(tag) {
+        mutableStateOf(
+            TextFieldValue(
+                text = value,
+                selection = TextRange(value.length),
+            ),
+        )
+    }
+    LaunchedEffect(value) {
+        if (fieldValue.text != value) {
+            fieldValue = TextFieldValue(
+                text = value,
+                selection = TextRange(value.length),
+            )
+        }
+    }
+
     val valueTextStyle = MaterialTheme.typography.bodyMedium.copy(
         fontFamily = FontFamily.Monospace,
-        textAlign = TextAlign.End,
+        textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurface,
     )
     val placeholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.72f)
@@ -296,8 +316,18 @@ private fun ThemeColorRgbField(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
+            value = fieldValue,
+            onValueChange = { nextValue ->
+                val sanitizedText = nextValue.text
+                    .filter(Char::isDigit)
+                    .take(3)
+                val selectionEnd = nextValue.selection.end.coerceIn(0, sanitizedText.length)
+                fieldValue = nextValue.copy(
+                    text = sanitizedText,
+                    selection = TextRange(selectionEnd),
+                )
+                onValueChange(sanitizedText)
+            },
             modifier = Modifier
                 .weight(1f)
                 .then(if (tag != null) Modifier.testTag(tag) else Modifier),
@@ -308,9 +338,9 @@ private fun ThemeColorRgbField(
             decorationBox = { innerTextField ->
                 Box(
                     modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.CenterEnd,
+                    contentAlignment = Alignment.Center,
                 ) {
-                    if (value.isEmpty()) {
+                    if (fieldValue.text.isEmpty()) {
                         Text(
                             text = "000",
                             style = valueTextStyle,
