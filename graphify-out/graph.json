@@ -25,7 +25,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDerivedState.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_app_src_main_java_com_epubreader_app_appnavigationderivedstate_kt",
-      "community": 70
+      "community": 72
     },
     {
       "label": "resolveDisplayedFolders()",
@@ -33,7 +33,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDerivedState.kt",
       "source_location": "L6",
       "id": "appnavigationderivedstate_resolvedisplayedfolders",
-      "community": 70
+      "community": 72
     },
     {
       "label": "findLastOpenedBook()",
@@ -41,7 +41,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDerivedState.kt",
       "source_location": "L19",
       "id": "appnavigationderivedstate_findlastopenedbook",
-      "community": 70
+      "community": 72
     },
     {
       "label": "buildLibraryProgressTargets()",
@@ -49,7 +49,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDerivedState.kt",
       "source_location": "L25",
       "id": "appnavigationderivedstate_buildlibraryprogresstargets",
-      "community": 70
+      "community": 72
     },
     {
       "label": "findSelectedEditableBook()",
@@ -57,7 +57,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationDerivedState.kt",
       "source_location": "L37",
       "id": "appnavigationderivedstate_findselectededitablebook",
-      "community": 70
+      "community": 72
     },
     {
       "label": "AppNavigationEffects.kt",
@@ -169,7 +169,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartupState.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_app_src_main_java_com_epubreader_app_appnavigationstartupstate_kt",
-      "community": 71
+      "community": 73
     },
     {
       "label": "StartupPhase",
@@ -177,7 +177,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartupState.kt",
       "source_location": "L6",
       "id": "appnavigationstartupstate_startupphase",
-      "community": 71
+      "community": 73
     },
     {
       "label": "AppStartupState",
@@ -185,7 +185,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartupState.kt",
       "source_location": "L13",
       "id": "appnavigationstartupstate_appstartupstate",
-      "community": 71
+      "community": 73
     },
     {
       "label": "resolveStartupPhaseAfterEvaluation()",
@@ -193,7 +193,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartupState.kt",
       "source_location": "L20",
       "id": "appnavigationstartupstate_resolvestartupphaseafterevaluation",
-      "community": 71
+      "community": 73
     },
     {
       "label": "shouldRunInitialLibraryRefresh()",
@@ -201,7 +201,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartupState.kt",
       "source_location": "L31",
       "id": "appnavigationstartupstate_shouldruninitiallibraryrefresh",
-      "community": 71
+      "community": 73
     },
     {
       "label": "AppRoute.kt",
@@ -2233,7 +2233,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserPdfSupport.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_data_books_src_main_java_com_epubreader_data_parser_epubparserpdfsupport_kt",
-      "community": 72
+      "community": 74
     },
     {
       "label": "importPdfSource()",
@@ -2241,7 +2241,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserPdfSupport.kt",
       "source_location": "L9",
       "id": "epubparserpdfsupport_importpdfsource",
-      "community": 72
+      "community": 74
     },
     {
       "label": "healCachedBook()",
@@ -2249,7 +2249,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserPdfSupport.kt",
       "source_location": "L32",
       "id": "epubparserpdfsupport_healcachedbook",
-      "community": 72
+      "community": 74
     },
     {
       "label": "validateGeneratedEpub()",
@@ -2257,7 +2257,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserPdfSupport.kt",
       "source_location": "L71",
       "id": "epubparserpdfsupport_validategeneratedepub",
-      "community": 72
+      "community": 74
     },
     {
       "label": "isGeneratedEpubReadyForReading()",
@@ -2265,7 +2265,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserPdfSupport.kt",
       "source_location": "L91",
       "id": "epubparserpdfsupport_isgeneratedepubreadyforreading",
-      "community": 72
+      "community": 74
     },
     {
       "label": "ImportRouting.kt",
@@ -2609,7 +2609,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_data_books_src_main_java_com_epubreader_data_pdf_legacy_pdfconversionworker_kt",
-      "community": 44
+      "community": 45
     },
     {
       "label": "enqueuePdfConversionWork()",
@@ -2617,7 +2617,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L25",
       "id": "pdfconversionworker_enqueuepdfconversionwork",
-      "community": 44
+      "community": 45
     },
     {
       "label": "cancelPdfConversionWork()",
@@ -2625,7 +2625,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L43",
       "id": "pdfconversionworker_cancelpdfconversionwork",
-      "community": 44
+      "community": 45
     },
     {
       "label": "uniquePdfConversionWorkName()",
@@ -2633,7 +2633,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L50",
       "id": "pdfconversionworker_uniquepdfconversionworkname",
-      "community": 44
+      "community": 45
     },
     {
       "label": "PdfConversionWorker",
@@ -2641,7 +2641,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L52",
       "id": "pdfconversionworker_pdfconversionworker",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".doWork()",
@@ -2649,7 +2649,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L57",
       "id": "pdfconversionworker_pdfconversionworker_dowork",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".createForegroundInfo()",
@@ -2657,7 +2657,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L100",
       "id": "pdfconversionworker_pdfconversionworker_createforegroundinfo",
-      "community": 44
+      "community": 45
     },
     {
       "label": ".ensureNotificationChannel()",
@@ -2665,7 +2665,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\data\\books\\src\\main\\java\\com\\epubreader\\data\\pdf\\legacy\\PdfConversionWorker.kt",
       "source_location": "L125",
       "id": "pdfconversionworker_pdfconversionworker_ensurenotificationchannel",
-      "community": 44
+      "community": 45
     },
     {
       "label": "PdfGeneratedEpubWriter.kt",
@@ -3913,7 +3913,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\editbook\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_editbook_src_main_java_com_epubreader_feature_editbook_editbookscreen_kt",
-      "community": 73
+      "community": 75
     },
     {
       "label": "EditBookTab",
@@ -3921,7 +3921,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\editbook\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
       "source_location": "L61",
       "id": "editbookscreen_editbooktab",
-      "community": 73
+      "community": 75
     },
     {
       "label": "ChapterSelectionMode",
@@ -3929,7 +3929,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\editbook\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
       "source_location": "L62",
       "id": "editbookscreen_chapterselectionmode",
-      "community": 73
+      "community": 75
     },
     {
       "label": "ChapterDisplaySort",
@@ -3937,7 +3937,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\editbook\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
       "source_location": "L63",
       "id": "editbookscreen_chapterdisplaysort",
-      "community": 73
+      "community": 75
     },
     {
       "label": "EditBookScreen()",
@@ -3945,7 +3945,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\editbook\\src\\main\\java\\com\\epubreader\\feature\\editbook\\EditBookScreen.kt",
       "source_location": "L65",
       "id": "editbookscreen_editbookscreen",
-      "community": 73
+      "community": 75
     },
     {
       "label": "EditBookSurfacePlugin.kt",
@@ -5553,7 +5553,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionDocument.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectiondocument_kt",
-      "community": 45
+      "community": 46
     },
     {
       "label": "ReaderSelectionDocumentSection",
@@ -5561,7 +5561,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionDocument.kt",
       "source_location": "L8",
       "id": "readerselectiondocument_readerselectiondocumentsection",
-      "community": 45
+      "community": 46
     },
     {
       "label": "ReaderSelectionDocument",
@@ -5569,7 +5569,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionDocument.kt",
       "source_location": "L19",
       "id": "readerselectiondocument_readerselectiondocument",
-      "community": 45
+      "community": 46
     },
     {
       "label": ".sectionById()",
@@ -5577,7 +5577,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionDocument.kt",
       "source_location": "L24",
       "id": "readerselectiondocument_readerselectiondocument_sectionbyid",
-      "community": 45
+      "community": 46
     },
     {
       "label": ".sectionForOffset()",
@@ -5585,7 +5585,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionDocument.kt",
       "source_location": "L28",
       "id": "readerselectiondocument_readerselectiondocument_sectionforoffset",
-      "community": 45
+      "community": 46
     },
     {
       "label": ".rangeInSection()",
@@ -5593,7 +5593,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionDocument.kt",
       "source_location": "L50",
       "id": "readerselectiondocument_readerselectiondocument_rangeinsection",
-      "community": 45
+      "community": 46
     },
     {
       "label": ".extractSelectedText()",
@@ -5601,7 +5601,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionDocument.kt",
       "source_location": "L72",
       "id": "readerselectiondocument_readerselectiondocument_extractselectedtext",
-      "community": 45
+      "community": 46
     },
     {
       "label": "buildReaderSelectionDocument()",
@@ -5609,7 +5609,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionDocument.kt",
       "source_location": "L87",
       "id": "readerselectiondocument_buildreaderselectiondocument",
-      "community": 45
+      "community": 46
     },
     {
       "label": "ReaderSelectionGeometry.kt",
@@ -6425,7 +6425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_reader_src_main_java_com_epubreader_feature_reader_readercontrolswidgets_kt",
-      "community": 46
+      "community": 47
     },
     {
       "label": "ReaderThemeMiniSpecimen()",
@@ -6433,7 +6433,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
       "source_location": "L63",
       "id": "readercontrolswidgets_readerthememinispecimen",
-      "community": 46
+      "community": 47
     },
     {
       "label": "KeypadButton()",
@@ -6441,7 +6441,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
       "source_location": "L216",
       "id": "readercontrolswidgets_keypadbutton",
-      "community": 46
+      "community": 47
     },
     {
       "label": "TextSelectionActionBar()",
@@ -6449,7 +6449,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
       "source_location": "L241",
       "id": "readercontrolswidgets_textselectionactionbar",
-      "community": 46
+      "community": 47
     },
     {
       "label": "TextSelectionActionButton()",
@@ -6457,7 +6457,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
       "source_location": "L274",
       "id": "readercontrolswidgets_textselectionactionbutton",
-      "community": 46
+      "community": 47
     },
     {
       "label": "OverscrollIndicator()",
@@ -6465,7 +6465,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
       "source_location": "L309",
       "id": "readercontrolswidgets_overscrollindicator",
-      "community": 46
+      "community": 47
     },
     {
       "label": "readerFontFamily()",
@@ -6473,7 +6473,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
       "source_location": "L329",
       "id": "readercontrolswidgets_readerfontfamily",
-      "community": 46
+      "community": 47
     },
     {
       "label": "ReaderGeneralToggleRow()",
@@ -6481,7 +6481,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
       "source_location": "L339",
       "id": "readercontrolswidgets_readergeneraltogglerow",
-      "community": 46
+      "community": 47
     },
     {
       "label": "ReaderExtensions.kt",
@@ -6697,7 +6697,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_reader_src_main_java_com_epubreader_feature_reader_readerinternalfacades_kt",
-      "community": 47
+      "community": 48
     },
     {
       "label": "buildReaderChapterSections()",
@@ -6705,7 +6705,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
       "source_location": "L22",
       "id": "readerinternalfacades_buildreaderchaptersections",
-      "community": 47
+      "community": 48
     },
     {
       "label": "shouldPrefetchAdjacentReaderChapters()",
@@ -6713,7 +6713,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
       "source_location": "L32",
       "id": "readerinternalfacades_shouldprefetchadjacentreaderchapters",
-      "community": 47
+      "community": 48
     },
     {
       "label": "ReaderChapterSelectionHost()",
@@ -6721,7 +6721,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
       "source_location": "L50",
       "id": "readerinternalfacades_readerchapterselectionhost",
-      "community": 47
+      "community": 48
     },
     {
       "label": "ReaderScreenChrome()",
@@ -6729,7 +6729,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
       "source_location": "L79",
       "id": "readerinternalfacades_readerscreenchrome",
-      "community": 47
+      "community": 48
     },
     {
       "label": "ReaderControls()",
@@ -6737,7 +6737,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
       "source_location": "L90",
       "id": "readerinternalfacades_readercontrols",
-      "community": 47
+      "community": 48
     },
     {
       "label": "ReaderStatusOverlay()",
@@ -6745,7 +6745,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
       "source_location": "L131",
       "id": "readerinternalfacades_readerstatusoverlay",
-      "community": 47
+      "community": 48
     },
     {
       "label": "VerticalScrubber()",
@@ -6753,7 +6753,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
       "source_location": "L152",
       "id": "readerinternalfacades_verticalscrubber",
-      "community": 47
+      "community": 48
     },
     {
       "label": "ReaderProgressState.kt",
@@ -7377,7 +7377,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTransfers.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsappearancetransfers_kt",
-      "community": 48
+      "community": 49
     },
     {
       "label": "normalizeThemeName()",
@@ -7385,7 +7385,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTransfers.kt",
       "source_location": "L23",
       "id": "settingsappearancetransfers_normalizethemename",
-      "community": 48
+      "community": 49
     },
     {
       "label": "importThemesFromUris()",
@@ -7393,7 +7393,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTransfers.kt",
       "source_location": "L27",
       "id": "settingsappearancetransfers_importthemesfromuris",
-      "community": 48
+      "community": 49
     },
     {
       "label": "importSingleThemeJson()",
@@ -7401,7 +7401,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTransfers.kt",
       "source_location": "L109",
       "id": "settingsappearancetransfers_importsinglethemejson",
-      "community": 48
+      "community": 49
     },
     {
       "label": "exportThemeToUri()",
@@ -7409,7 +7409,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTransfers.kt",
       "source_location": "L198",
       "id": "settingsappearancetransfers_exportthemetouri",
-      "community": 48
+      "community": 49
     },
     {
       "label": "exportThemesPackToUri()",
@@ -7417,7 +7417,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTransfers.kt",
       "source_location": "L209",
       "id": "settingsappearancetransfers_exportthemespacktouri",
-      "community": 48
+      "community": 49
     },
     {
       "label": "parseColorFromKeys()",
@@ -7425,7 +7425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTransfers.kt",
       "source_location": "L229",
       "id": "settingsappearancetransfers_parsecolorfromkeys",
-      "community": 48
+      "community": 49
     },
     {
       "label": "toPortableThemeJson()",
@@ -7433,7 +7433,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTransfers.kt",
       "source_location": "L235",
       "id": "settingsappearancetransfers_toportablethemejson",
-      "community": 48
+      "community": 49
     },
     {
       "label": "SettingsAppearanceVisuals.kt",
@@ -7497,7 +7497,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsGeneralTabs.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsgeneraltabs_kt",
-      "community": 74
+      "community": 76
     },
     {
       "label": "InterfaceTab()",
@@ -7505,7 +7505,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsGeneralTabs.kt",
       "source_location": "L34",
       "id": "settingsgeneraltabs_interfacetab",
-      "community": 74
+      "community": 76
     },
     {
       "label": "InteractionTab()",
@@ -7513,7 +7513,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsGeneralTabs.kt",
       "source_location": "L98",
       "id": "settingsgeneraltabs_interactiontab",
-      "community": 74
+      "community": 76
     },
     {
       "label": "LibraryTab()",
@@ -7521,7 +7521,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsGeneralTabs.kt",
       "source_location": "L200",
       "id": "settingsgeneraltabs_librarytab",
-      "community": 74
+      "community": 76
     },
     {
       "label": "SettingsToggleRow()",
@@ -7529,7 +7529,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsGeneralTabs.kt",
       "source_location": "L231",
       "id": "settingsgeneraltabs_settingstogglerow",
-      "community": 74
+      "community": 76
     },
     {
       "label": "SettingsScreen.kt",
@@ -7537,7 +7537,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsscreen_kt",
-      "community": 75
+      "community": 77
     },
     {
       "label": "SettingsSection",
@@ -7545,7 +7545,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L57",
       "id": "settingsscreen_settingssection",
-      "community": 75
+      "community": 77
     },
     {
       "label": "SettingsScreen()",
@@ -7553,7 +7553,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L64",
       "id": "settingsscreen_settingsscreen",
-      "community": 75
+      "community": 77
     },
     {
       "label": "SettingsMenuList()",
@@ -7561,7 +7561,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L234",
       "id": "settingsscreen_settingsmenulist",
-      "community": 75
+      "community": 77
     },
     {
       "label": "NetworkPlaceholderTab()",
@@ -7569,7 +7569,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
       "source_location": "L286",
       "id": "settingsscreen_networkplaceholdertab",
-      "community": 75
+      "community": 77
     },
     {
       "label": "SettingsSurfacePlugin.kt",
@@ -7577,7 +7577,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsSurfacePlugin.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingssurfaceplugin_kt",
-      "community": 49
+      "community": 50
     },
     {
       "label": "SettingsRoute",
@@ -7585,7 +7585,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsSurfacePlugin.kt",
       "source_location": "L9",
       "id": "settingssurfaceplugin_settingsroute",
-      "community": 49
+      "community": 50
     },
     {
       "label": "SettingsDependencies",
@@ -7593,7 +7593,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsSurfacePlugin.kt",
       "source_location": "L11",
       "id": "settingssurfaceplugin_settingsdependencies",
-      "community": 49
+      "community": 50
     },
     {
       "label": "SettingsEvent",
@@ -7601,7 +7601,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsSurfacePlugin.kt",
       "source_location": "L15",
       "id": "settingssurfaceplugin_settingsevent",
-      "community": 49
+      "community": 50
     },
     {
       "label": "Back",
@@ -7609,7 +7609,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsSurfacePlugin.kt",
       "source_location": "L16",
       "id": "settingssurfaceplugin_back",
-      "community": 49
+      "community": 50
     },
     {
       "label": "SettingsSurfacePlugin",
@@ -7617,7 +7617,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsSurfacePlugin.kt",
       "source_location": "L19",
       "id": "settingssurfaceplugin_settingssurfaceplugin",
-      "community": 49
+      "community": 50
     },
     {
       "label": ".decodeRouteArgs()",
@@ -7625,7 +7625,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsSurfacePlugin.kt",
       "source_location": "L22",
       "id": "settingssurfaceplugin_settingssurfaceplugin_decoderouteargs",
-      "community": 49
+      "community": 50
     },
     {
       "label": ".Render()",
@@ -7633,7 +7633,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsSurfacePlugin.kt",
       "source_location": "L30",
       "id": "settingssurfaceplugin_settingssurfaceplugin_render",
-      "community": 49
+      "community": 50
     },
     {
       "label": "SettingsThemeColorPicker.kt",
@@ -7663,7 +7663,7 @@
       "label": "CustomThemeEditorDialog()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditor.kt",
-      "source_location": "L46",
+      "source_location": "L47",
       "id": "settingsthemeeditor_customthemeeditordialog",
       "community": 113
     },
@@ -7671,7 +7671,7 @@
       "label": "getFontFamily()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditor.kt",
-      "source_location": "L391",
+      "source_location": "L425",
       "id": "settingsthemeeditor_getfontfamily",
       "community": 113
     },
@@ -7729,7 +7729,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemestudiocomponents_kt",
-      "community": 76
+      "community": 69
     },
     {
       "label": "StudioHeader()",
@@ -7737,31 +7737,39 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
       "source_location": "L29",
       "id": "settingsthemestudiocomponents_studioheader",
-      "community": 76
+      "community": 69
+    },
+    {
+      "label": "ThemeEditorExitDialog()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
+      "source_location": "L73",
+      "id": "settingsthemestudiocomponents_themeeditorexitdialog",
+      "community": 69
     },
     {
       "label": "StudioTextField()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
-      "source_location": "L73",
+      "source_location": "L112",
       "id": "settingsthemestudiocomponents_studiotextfield",
-      "community": 76
+      "community": 69
     },
     {
       "label": "StudioColorCell()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
-      "source_location": "L108",
+      "source_location": "L147",
       "id": "settingsthemestudiocomponents_studiocolorcell",
-      "community": 76
+      "community": 69
     },
     {
       "label": "StudioToggleCell()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
-      "source_location": "L172",
+      "source_location": "L211",
       "id": "settingsthemestudiocomponents_studiotogglecell",
-      "community": 76
+      "community": 69
     },
     {
       "label": "SettingsTypographySettingsPanel.kt",
@@ -7793,7 +7801,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
-      "community": 50
+      "community": 43
     },
     {
       "label": "ThemeColorSpectrumField()",
@@ -7801,55 +7809,63 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
       "source_location": "L30",
       "id": "themecolorpickercanvas_themecolorspectrumfield",
-      "community": 50
+      "community": 43
     },
     {
       "label": "toSpectrumPoint()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L134",
+      "source_location": "L137",
       "id": "themecolorpickercanvas_tospectrumpoint",
-      "community": 50
+      "community": 43
     },
     {
       "label": "toOffset()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L143",
+      "source_location": "L146",
       "id": "themecolorpickercanvas_tooffset",
-      "community": 50
+      "community": 43
+    },
+    {
+      "label": "acceptsInteractivePoint()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
+      "source_location": "L153",
+      "id": "themecolorpickercanvas_acceptsinteractivepoint",
+      "community": 43
     },
     {
       "label": "drawSafeZoneVeil()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L150",
+      "source_location": "L159",
       "id": "themecolorpickercanvas_drawsafezoneveil",
-      "community": 50
+      "community": 43
     },
     {
       "label": "CompatibilityProgressProxy()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L207",
+      "source_location": "L216",
       "id": "themecolorpickercanvas_compatibilityprogressproxy",
-      "community": 50
+      "community": 43
     },
     {
       "label": "ThemeColorPickerStatusState",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L232",
+      "source_location": "L241",
       "id": "themecolorpickercanvas_themecolorpickerstatusstate",
-      "community": 50
+      "community": 43
     },
     {
       "label": "isApproximately()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L245",
+      "source_location": "L254",
       "id": "themecolorpickercanvas_isapproximately",
-      "community": 50
+      "community": 43
     },
     {
       "label": "ThemeColorPickerChrome.kt",
@@ -8073,7 +8089,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickertextentry_kt",
-      "community": 43
+      "community": 44
     },
     {
       "label": "ThemeColorPickerRgbText",
@@ -8081,7 +8097,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L6",
       "id": "themecolorpickertextentry_themecolorpickerrgbtext",
-      "community": 43
+      "community": 44
     },
     {
       "label": "ThemeColorPickerTextFields",
@@ -8089,7 +8105,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L12",
       "id": "themecolorpickertextentry_themecolorpickertextfields",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".withHexInput()",
@@ -8097,7 +8113,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L21",
       "id": "themecolorpickertextentry_themecolorpickertextfields_withhexinput",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".withRgbInput()",
@@ -8105,7 +8121,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L40",
       "id": "themecolorpickertextentry_themecolorpickertextfields_withrgbinput",
-      "community": 43
+      "community": 44
     },
     {
       "label": ".tryResolveHex()",
@@ -8113,7 +8129,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L65",
       "id": "themecolorpickertextentry_themecolorpickertextfields_tryresolvehex",
-      "community": 43
+      "community": 44
     },
     {
       "label": "ThemeColorPickerActiveInput",
@@ -8121,7 +8137,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L94",
       "id": "themecolorpickertextentry_themecolorpickeractiveinput",
-      "community": 43
+      "community": 44
     },
     {
       "label": "toResolvedHexOrNull()",
@@ -8129,7 +8145,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L99",
       "id": "themecolorpickertextentry_toresolvedhexornull",
-      "community": 43
+      "community": 44
     },
     {
       "label": "sanitizeRgbChannelInput()",
@@ -8137,7 +8153,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerTextEntry.kt",
       "source_location": "L116",
       "id": "themecolorpickertextentry_sanitizergbchannelinput",
-      "community": 43
+      "community": 44
     },
     {
       "label": "ThemeColorPickerValueInputs.kt",
@@ -8145,39 +8161,47 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickervalueinputs_kt",
-      "community": 77
+      "community": 70
     },
     {
       "label": "ThemeColorPickerValueInputs()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
-      "source_location": "L41",
+      "source_location": "L53",
       "id": "themecolorpickervalueinputs_themecolorpickervalueinputs",
-      "community": 77
+      "community": 70
     },
     {
       "label": "ThemeColorValueField()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
-      "source_location": "L216",
+      "source_location": "L219",
       "id": "themecolorpickervalueinputs_themecolorvaluefield",
-      "community": 77
+      "community": 70
+    },
+    {
+      "label": "ThemeColorRgbField()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
+      "source_location": "L271",
+      "id": "themecolorpickervalueinputs_themecolorrgbfield",
+      "community": 70
     },
     {
       "label": "ThemeColorInputModeButton()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
-      "source_location": "L266",
+      "source_location": "L376",
       "id": "themecolorpickervalueinputs_themecolorinputmodebutton",
-      "community": 77
+      "community": 70
     },
     {
       "label": "ThemeColorPickerInputMode",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
-      "source_location": "L292",
+      "source_location": "L411",
       "id": "themecolorpickervalueinputs_themecolorpickerinputmode",
-      "community": 77
+      "community": 70
     },
     {
       "label": "ThemeEditorChrome.kt",
@@ -8601,7 +8625,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\scripts\\check_graph_staleness.py",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_scripts_check_graph_staleness_py",
-      "community": 69
+      "community": 71
     },
     {
       "label": "get_last_modified()",
@@ -8609,7 +8633,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\scripts\\check_graph_staleness.py",
       "source_location": "L9",
       "id": "check_graph_staleness_get_last_modified",
-      "community": 69
+      "community": 71
     },
     {
       "label": "check_staleness()",
@@ -8617,7 +8641,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\scripts\\check_graph_staleness.py",
       "source_location": "L21",
       "id": "check_graph_staleness_check_staleness",
-      "community": 69
+      "community": 71
     },
     {
       "label": "interpreter_has_graphify()",
@@ -8625,7 +8649,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\scripts\\check_graph_staleness.py",
       "source_location": "L41",
       "id": "check_graph_staleness_interpreter_has_graphify",
-      "community": 69
+      "community": 71
     },
     {
       "label": "infer_python_from_graphify_bin()",
@@ -8633,7 +8657,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\scripts\\check_graph_staleness.py",
       "source_location": "L54",
       "id": "check_graph_staleness_infer_python_from_graphify_bin",
-      "community": 69
+      "community": 71
     },
     {
       "label": "resolve_graphify_python()",
@@ -8641,7 +8665,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\scripts\\check_graph_staleness.py",
       "source_location": "L77",
       "id": "check_graph_staleness_resolve_graphify_python",
-      "community": 69
+      "community": 71
     },
     {
       "label": "graph_corpus.py",
@@ -18729,7 +18753,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditor.kt",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemeeditor_kt",
       "_tgt": "settingsthemeeditor_customthemeeditordialog",
@@ -18741,7 +18765,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditor.kt",
-      "source_location": "L391",
+      "source_location": "L425",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemeeditor_kt",
       "_tgt": "settingsthemeeditor_getfontfamily",
@@ -18816,6 +18840,18 @@
       "source_location": "L73",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemestudiocomponents_kt",
+      "_tgt": "settingsthemestudiocomponents_themeeditorexitdialog",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemestudiocomponents_kt",
+      "target": "settingsthemestudiocomponents_themeeditorexitdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemestudiocomponents_kt",
       "_tgt": "settingsthemestudiocomponents_studiotextfield",
       "source": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemestudiocomponents_kt",
       "target": "settingsthemestudiocomponents_studiotextfield",
@@ -18825,7 +18861,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
-      "source_location": "L108",
+      "source_location": "L147",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemestudiocomponents_kt",
       "_tgt": "settingsthemestudiocomponents_studiocolorcell",
@@ -18837,7 +18873,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeStudioComponents.kt",
-      "source_location": "L172",
+      "source_location": "L211",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemestudiocomponents_kt",
       "_tgt": "settingsthemestudiocomponents_studiotogglecell",
@@ -18885,7 +18921,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L134",
+      "source_location": "L137",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
       "_tgt": "themecolorpickercanvas_tospectrumpoint",
@@ -18897,7 +18933,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L143",
+      "source_location": "L146",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
       "_tgt": "themecolorpickercanvas_tooffset",
@@ -18909,7 +18945,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L150",
+      "source_location": "L153",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
+      "_tgt": "themecolorpickercanvas_acceptsinteractivepoint",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
+      "target": "themecolorpickercanvas_acceptsinteractivepoint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
+      "source_location": "L159",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
       "_tgt": "themecolorpickercanvas_drawsafezoneveil",
@@ -18921,7 +18969,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L207",
+      "source_location": "L216",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
       "_tgt": "themecolorpickercanvas_compatibilityprogressproxy",
@@ -18933,7 +18981,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L232",
+      "source_location": "L241",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
       "_tgt": "themecolorpickercanvas_themecolorpickerstatusstate",
@@ -18945,7 +18993,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerCanvas.kt",
-      "source_location": "L245",
+      "source_location": "L254",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickercanvas_kt",
       "_tgt": "themecolorpickercanvas_isapproximately",
@@ -19353,7 +19401,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
-      "source_location": "L41",
+      "source_location": "L53",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickervalueinputs_kt",
       "_tgt": "themecolorpickervalueinputs_themecolorpickervalueinputs",
@@ -19365,7 +19413,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
-      "source_location": "L216",
+      "source_location": "L219",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickervalueinputs_kt",
       "_tgt": "themecolorpickervalueinputs_themecolorvaluefield",
@@ -19377,7 +19425,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
-      "source_location": "L266",
+      "source_location": "L271",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickervalueinputs_kt",
+      "_tgt": "themecolorpickervalueinputs_themecolorrgbfield",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickervalueinputs_kt",
+      "target": "themecolorpickervalueinputs_themecolorrgbfield",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
+      "source_location": "L376",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickervalueinputs_kt",
       "_tgt": "themecolorpickervalueinputs_themecolorinputmodebutton",
@@ -19389,7 +19449,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\.worktrees\\theme-spectrum-picker\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeColorPickerValueInputs.kt",
-      "source_location": "L292",
+      "source_location": "L411",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_worktrees_theme_spectrum_picker_feature_settings_src_main_java_com_epubreader_feature_settings_themecolorpickervalueinputs_kt",
       "_tgt": "themecolorpickervalueinputs_themecolorpickerinputmode",

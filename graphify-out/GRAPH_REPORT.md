@@ -1,11 +1,11 @@
 # Graph Report - C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker  (2026-04-28)
 
 ## Corpus Check
-- 150 files · ~74,608 words
+- 150 files · ~75,102 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1095 nodes · 966 edges · 147 communities detected
+- 1098 nodes · 969 edges · 147 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -53,6 +53,7 @@
 - [[_COMMUNITY_MainActivity Cluster|MainActivity Cluster]]
 - [[_COMMUNITY_LibraryFeatureBindings Cluster|LibraryFeatureBindings Cluster]]
 - [[_COMMUNITY_ReaderScreenHelpers Cluster|ReaderScreenHelpers Cluster]]
+- [[_COMMUNITY_ThemeColorPickerCanvas Cluster|ThemeColorPickerCanvas Cluster]]
 - [[_COMMUNITY_ThemeColorPickerTextEntry Cluster|ThemeColorPickerTextEntry Cluster]]
 - [[_COMMUNITY_PdfConversionWorker Cluster|PdfConversionWorker Cluster]]
 - [[_COMMUNITY_ReaderSelectionDocument Cluster|ReaderSelectionDocument Cluster]]
@@ -60,7 +61,6 @@
 - [[_COMMUNITY_ReaderInternalFacades Cluster|ReaderInternalFacades Cluster]]
 - [[_COMMUNITY_SettingsAppearanceTransfers Cluster|SettingsAppearanceTransfers Cluster]]
 - [[_COMMUNITY_SettingsSurfacePlugin Cluster|SettingsSurfacePlugin Cluster]]
-- [[_COMMUNITY_ThemeColorPickerCanvas Cluster|ThemeColorPickerCanvas Cluster]]
 - [[_COMMUNITY_ThemeEditorColorEditing Cluster|ThemeEditorColorEditing Cluster]]
 - [[_COMMUNITY_ThemeGalleryTestScreen Cluster|ThemeGalleryTestScreen Cluster]]
 - [[_COMMUNITY_ThemeStudioScreen Cluster|ThemeStudioScreen Cluster]]
@@ -79,6 +79,8 @@
 - [[_COMMUNITY_ReaderSelectableTextSection Cluster|ReaderSelectableTextSection Cluster]]
 - [[_COMMUNITY_ReaderChapterSections Cluster|ReaderChapterSections Cluster]]
 - [[_COMMUNITY_ReaderControlsSections Cluster|ReaderControlsSections Cluster]]
+- [[_COMMUNITY_SettingsThemeStudioComponents Cluster|SettingsThemeStudioComponents Cluster]]
+- [[_COMMUNITY_ThemeColorPickerValueInputs Cluster|ThemeColorPickerValueInputs Cluster]]
 - [[_COMMUNITY_check_graph_staleness Cluster|check_graph_staleness Cluster]]
 - [[_COMMUNITY_AppNavigationDerivedState Cluster|AppNavigationDerivedState Cluster]]
 - [[_COMMUNITY_AppNavigationStartupState Cluster|AppNavigationStartupState Cluster]]
@@ -86,8 +88,6 @@
 - [[_COMMUNITY_EditBookScreen Cluster|EditBookScreen Cluster]]
 - [[_COMMUNITY_SettingsGeneralTabs Cluster|SettingsGeneralTabs Cluster]]
 - [[_COMMUNITY_SettingsScreen Cluster|SettingsScreen Cluster]]
-- [[_COMMUNITY_SettingsThemeStudioComponents Cluster|SettingsThemeStudioComponents Cluster]]
-- [[_COMMUNITY_ThemeColorPickerValueInputs Cluster|ThemeColorPickerValueInputs Cluster]]
 - [[_COMMUNITY_ThemeEditorSections Cluster|ThemeEditorSections Cluster]]
 - [[_COMMUNITY_rebuild_graphify Cluster|rebuild_graphify Cluster]]
 - [[_COMMUNITY_AppRoute Cluster|AppRoute Cluster]]
@@ -347,37 +347,37 @@ Nodes (0):
 Cohesion: 0.22
 Nodes (0): 
 
-### Community 43 - "ThemeColorPickerTextEntry Cluster"
+### Community 43 - "ThemeColorPickerCanvas Cluster"
+Cohesion: 0.22
+Nodes (1): ThemeColorPickerStatusState
+
+### Community 44 - "ThemeColorPickerTextEntry Cluster"
 Cohesion: 0.22
 Nodes (3): ThemeColorPickerActiveInput, ThemeColorPickerRgbText, ThemeColorPickerTextFields
 
-### Community 44 - "PdfConversionWorker Cluster"
+### Community 45 - "PdfConversionWorker Cluster"
 Cohesion: 0.25
 Nodes (1): PdfConversionWorker
 
-### Community 45 - "ReaderSelectionDocument Cluster"
+### Community 46 - "ReaderSelectionDocument Cluster"
 Cohesion: 0.25
 Nodes (2): ReaderSelectionDocument, ReaderSelectionDocumentSection
 
-### Community 46 - "ReaderControlsWidgets Cluster"
+### Community 47 - "ReaderControlsWidgets Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 47 - "ReaderInternalFacades Cluster"
+### Community 48 - "ReaderInternalFacades Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 48 - "SettingsAppearanceTransfers Cluster"
+### Community 49 - "SettingsAppearanceTransfers Cluster"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 49 - "SettingsSurfacePlugin Cluster"
+### Community 50 - "SettingsSurfacePlugin Cluster"
 Cohesion: 0.25
 Nodes (5): Back, SettingsDependencies, SettingsEvent, SettingsRoute, SettingsSurfacePlugin
-
-### Community 50 - "ThemeColorPickerCanvas Cluster"
-Cohesion: 0.25
-Nodes (1): ThemeColorPickerStatusState
 
 ### Community 51 - "ThemeEditorColorEditing Cluster"
 Cohesion: 0.25
@@ -451,41 +451,41 @@ Nodes (3): ImageSection, ReaderChapterSection, TextSection
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 69 - "check_graph_staleness Cluster"
+### Community 69 - "SettingsThemeStudioComponents Cluster"
+Cohesion: 0.33
+Nodes (0): 
+
+### Community 70 - "ThemeColorPickerValueInputs Cluster"
+Cohesion: 0.33
+Nodes (1): ThemeColorPickerInputMode
+
+### Community 71 - "check_graph_staleness Cluster"
 Cohesion: 0.53
 Nodes (5): check_staleness(), get_last_modified(), infer_python_from_graphify_bin(), interpreter_has_graphify(), resolve_graphify_python()
 
-### Community 70 - "AppNavigationDerivedState Cluster"
+### Community 72 - "AppNavigationDerivedState Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 71 - "AppNavigationStartupState Cluster"
+### Community 73 - "AppNavigationStartupState Cluster"
 Cohesion: 0.4
 Nodes (2): AppStartupState, StartupPhase
 
-### Community 72 - "EpubParserPdfSupport Cluster"
+### Community 74 - "EpubParserPdfSupport Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 73 - "EditBookScreen Cluster"
+### Community 75 - "EditBookScreen Cluster"
 Cohesion: 0.4
 Nodes (3): ChapterDisplaySort, ChapterSelectionMode, EditBookTab
 
-### Community 74 - "SettingsGeneralTabs Cluster"
+### Community 76 - "SettingsGeneralTabs Cluster"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 75 - "SettingsScreen Cluster"
+### Community 77 - "SettingsScreen Cluster"
 Cohesion: 0.4
 Nodes (1): SettingsSection
-
-### Community 76 - "SettingsThemeStudioComponents Cluster"
-Cohesion: 0.4
-Nodes (0): 
-
-### Community 77 - "ThemeColorPickerValueInputs Cluster"
-Cohesion: 0.4
-Nodes (1): ThemeColorPickerInputMode
 
 ### Community 78 - "ThemeEditorSections Cluster"
 Cohesion: 0.4

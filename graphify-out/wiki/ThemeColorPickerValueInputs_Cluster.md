@@ -1,13 +1,14 @@
 # ThemeColorPickerValueInputs Cluster
 
-> 5 nodes · cohesion 0.40
+> 6 nodes · cohesion 0.33
 
 ## Key Concepts
 
-- **ThemeColorPickerValueInputs.kt** (4 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeColorPickerValueInputs.kt`
+- **ThemeColorPickerValueInputs.kt** (5 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeColorPickerValueInputs.kt`
 - **ThemeColorInputModeButton()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeColorPickerValueInputs.kt`
 - **ThemeColorPickerInputMode** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeColorPickerValueInputs.kt`
 - **ThemeColorPickerValueInputs()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeColorPickerValueInputs.kt`
+- **ThemeColorRgbField()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeColorPickerValueInputs.kt`
 - **ThemeColorValueField()** (1 connections) — `C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker\feature\settings\src\main\java\com\epubreader\feature\settings\ThemeColorPickerValueInputs.kt`
 
 ## Relationships
@@ -20,7 +21,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

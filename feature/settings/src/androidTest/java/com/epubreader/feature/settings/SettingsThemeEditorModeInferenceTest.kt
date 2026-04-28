@@ -7,6 +7,7 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -205,6 +206,8 @@ class SettingsThemeEditorModeInferenceTest {
         composeRule.onNodeWithTag("custom_theme_favorite_accent").performScrollTo()
         composeRule.onNodeWithTag("custom_theme_favorite_accent").assertTextContains("#FF0000")
         composeRule.onNodeWithContentDescription("Close").performClick()
+        waitUntilTagExists("theme_editor_exit_dialog")
+        composeRule.onNodeWithTag("theme_editor_exit_discard").performClick()
     }
 
     private suspend fun resetSettings() {
@@ -321,16 +324,16 @@ class SettingsThemeEditorModeInferenceTest {
     }
 
     private fun closeColorPicker() {
-        composeRule.onNodeWithText("Done").performClick()
+        composeRule.onAllNodesWithContentDescription("Save")[1].performClick()
         composeRule.waitForIdle()
     }
 
     private fun closeColorPickerIfOpen() {
-        val doneExists = runCatching {
-            composeRule.onNodeWithText("Done").fetchSemanticsNode()
+        val pickerVisible = runCatching {
+            composeRule.onNodeWithText("Hue").fetchSemanticsNode()
             true
         }.getOrDefault(false)
-        if (doneExists) {
+        if (pickerVisible) {
             closeColorPicker()
         }
     }

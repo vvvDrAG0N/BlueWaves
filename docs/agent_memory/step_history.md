@@ -2892,3 +2892,28 @@ This file is append-only.
   - No automated blocker remains; this is primarily a visual consistency pass.
 - Suggested next step:
   - Re-open the picker and confirm the top row now feels like one system: matching roundness, stable height when toggling, and no lingering RGB clipping on the user's target density.
+
+## 129. 2026-04-28 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Add a true dirty-exit flow to the full `Edit Theme` dialog so `Back` and the header close icon stop silently discarding theme edits.
+- Area/files: `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeStudioComponents.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorExitTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorModeInferenceTest.kt`.
+- Action taken:
+  1. Added a single editor-level dirty check (`draft != session.draft`) and funneled `Back`, dialog dismiss requests, the backdrop tap, and the header close icon through one `requestEditorDismiss()` path.
+  2. Added a dedicated `ThemeEditorExitDialog` with `Save`, `Discard`, and `Keep editing`, with `Save` disabled when the draft is currently invalid so the exit flow stays consistent with the header save affordance.
+  3. Added a focused instrumentation slice for the new editor contract (`SettingsThemeEditorExitTest`) covering dirty `Back`, dirty `Back -> Save`, and dirty header close.
+  4. Updated the older mode-inference instrumentation helper to use the picker's current header-save flow and to discard intentionally after the new dirty editor close behavior appears.
+- Result:
+  - Dirty `Edit Theme` sessions now ask for confirmation instead of vanishing on `Back` or close.
+  - Clean editor sessions still dismiss immediately.
+  - The existing picker and editor-mode instrumentation slices stayed green with the new exit contract in place.
+- Verification:
+  - `.\gradlew.bat --console=plain :feature:settings:testDebugUnitTest checkKotlinFileLineLimit`
+  - `.\gradlew.bat --console=plain --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorExitTest`
+  - `.\gradlew.bat --console=plain --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest`
+  - `.\gradlew.bat --console=plain --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorModeInferenceTest`
+  - `.\gradlew.bat --console=plain :app:installDebug`
+- Blockers:
+  - No known code blocker remains; the remaining confidence gate is just in-hand feel on the editor sheet.
+- Suggested next step:
+  - Reopen `Edit Theme` on the emulator and sanity-check the new dirty-exit flow in-hand: `Back`, header `X`, `Save`, `Discard`, and `Keep editing`.

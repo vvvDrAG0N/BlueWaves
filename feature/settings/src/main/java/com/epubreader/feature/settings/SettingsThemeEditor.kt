@@ -1,5 +1,6 @@
 package com.epubreader.feature.settings
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -54,11 +55,13 @@ internal fun CustomThemeEditorDialog(
 ) {
     var draft by remember(session) { mutableStateOf(session.draft) }
     var activePicker by remember { mutableStateOf<ThemeEditorPickerSession?>(null) }
+    var showExitDialog by remember(session) { mutableStateOf(false) }
     val parsedTheme = remember(draft, session.themeId) { draft.toCustomTheme(session.themeId) }
     val nameConflict = remember(draft.name, session.themeId, existingThemes) {
         !isThemeNameUnique(draft.name, session.themeId, existingThemes)
     }
     val isValid = parsedTheme != null && draft.name.trim().isNotEmpty() && !nameConflict
+    val isDirty = draft != session.draft
     val shouldActivate = session.isNew || activeThemeId == session.themeId || session.chromeThemeId == session.themeId
     val chromePalette = remember(session.chromeThemeId, existingThemes) {
         themeEditorChromePalette(session.chromeThemeId, existingThemes)
@@ -90,6 +93,25 @@ internal fun CustomThemeEditorDialog(
     fun updateGuidedDraft(transform: (ThemeEditorDraft) -> ThemeEditorDraft) {
         val updated = transform(draft)
         draft = updated.rebalanceGuidedFields() ?: updated
+    }
+
+    fun closeEditorImmediately() {
+        showExitDialog = false
+        onDismiss()
+    }
+
+    fun requestEditorDismiss() {
+        if (isDirty) {
+            showExitDialog = true
+        } else {
+            closeEditorImmediately()
+        }
+    }
+
+    fun saveAndDismiss() {
+        val themeToSave = parsedTheme ?: return
+        showExitDialog = false
+        onSave(themeToSave, shouldActivate)
     }
 
     fun colorField(
@@ -218,8 +240,12 @@ internal fun CustomThemeEditorDialog(
         },
     )
 
+    BackHandler(enabled = activePicker == null && !showExitDialog) {
+        requestEditorDismiss()
+    }
+
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = ::requestEditorDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         MaterialTheme(colorScheme = chromeColorScheme) {
@@ -230,7 +256,7 @@ internal fun CustomThemeEditorDialog(
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = onDismiss,
+                        onClick = ::requestEditorDismiss,
                     ),
                 contentAlignment = Alignment.Center,
             ) {
@@ -254,8 +280,8 @@ internal fun CustomThemeEditorDialog(
                         StudioHeader(
                             isNew = session.isNew,
                             isValid = isValid,
-                            onDismiss = onDismiss,
-                            onSave = { parsedTheme?.let { onSave(it, shouldActivate) } },
+                            onDismiss = ::requestEditorDismiss,
+                            onSave = ::saveAndDismiss,
                             onDelete = onDelete,
                             showDelete = !session.isNew && session.themeId.startsWith(CustomThemeIdPrefix),
                         )
@@ -382,6 +408,14 @@ internal fun CustomThemeEditorDialog(
                     onDismiss = { activePicker = null },
                     onPreviewValueChange = field.onColorPreview,
                     onValueChange = field.onColorChange,
+                )
+            }
+            if (showExitDialog) {
+                ThemeEditorExitDialog(
+                    canSave = isValid,
+                    onSave = ::saveAndDismiss,
+                    onDiscard = ::closeEditorImmediately,
+                    onKeepEditing = { showExitDialog = false },
                 )
             }
         }

@@ -71,6 +71,45 @@ internal fun StudioHeader(
 }
 
 @Composable
+internal fun ThemeEditorExitDialog(
+    canSave: Boolean,
+    onSave: () -> Unit,
+    onDiscard: () -> Unit,
+    onKeepEditing: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onKeepEditing,
+        title = { Text("Save changes?") },
+        confirmButton = {
+            TextButton(
+                onClick = onSave,
+                enabled = canSave,
+                modifier = Modifier.testTag("theme_editor_exit_save"),
+            ) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(
+                    onClick = onDiscard,
+                    modifier = Modifier.testTag("theme_editor_exit_discard"),
+                ) {
+                    Text("Discard")
+                }
+                TextButton(
+                    onClick = onKeepEditing,
+                    modifier = Modifier.testTag("theme_editor_exit_keep_editing"),
+                ) {
+                    Text("Keep editing")
+                }
+            }
+        },
+        modifier = Modifier.testTag("theme_editor_exit_dialog"),
+    )
+}
+
+@Composable
 internal fun StudioTextField(
     value: String,
     onValueChange: (String) -> Unit,
