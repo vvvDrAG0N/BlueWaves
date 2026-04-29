@@ -3,7 +3,7 @@ package com.epubreader.feature.settings
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 
-internal fun SettingsThemeEditorGuidedPickerTest.selectPickerInputMode(
+internal fun SettingsThemeEditorGuidedPickerTestBase.selectPickerInputMode(
     testTagPrefix: String,
     mode: String,
 ) {

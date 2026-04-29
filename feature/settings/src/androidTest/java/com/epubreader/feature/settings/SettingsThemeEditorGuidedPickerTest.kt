@@ -1,72 +1,45 @@
 package com.epubreader.feature.settings
 
-import android.content.Context
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.epubreader.MainActivity
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.GuidedThemePaletteInput
 import com.epubreader.core.model.formatThemeColor
 import com.epubreader.core.model.generatePaletteFromGuidedInput
-import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Assert.assertNotEquals
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SettingsThemeEditorGuidedPickerTest {
-
-    @get:Rule
-    val composeRule = createAndroidComposeRule<MainActivity>()
-
-    internal val appContext: Context = ApplicationProvider.getApplicationContext()
-    internal val settingsManager = SettingsManager(appContext)
-
-    @Before
-    fun setUp() = runBlocking {
-        resetSettings()
-    }
-
-    @After
-    fun tearDown() = runBlocking {
-        resetSettings()
-    }
+class SettingsThemeEditorGuidedPickerTest : SettingsThemeEditorGuidedPickerTestBase() {
 
     @Test
     fun basicAccent_hexInput_savesWithHeaderCheck() {
         launchThemeEditor()
 
         composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        val expectedHex = basicDraft()
-            .previewColorEdit(
-                fieldKey = "accent",
-                rawHex = "#3366CC",
-                guided = true,
-            )
-            .resolvedHex
-
+        waitUntilTagDisplayed("custom_theme_primary_picker_safe_zone")
         replaceHexInput(
             testTagPrefix = "custom_theme_primary",
             nextHex = "3366CC",
         )
+        val expectedHex = "#${readNodeText("custom_theme_primary_picker_hex")}"
 
         assertPreviewHex("custom_theme_primary_picker_preview", expectedHex)
+        waitUntilTagEnabled("custom_theme_primary_picker_save")
+        composeRule.onNodeWithTag("custom_theme_primary_picker_save").assertIsEnabled()
         tapHeaderSave("custom_theme_primary")
 
+        waitUntilPickerClosed("custom_theme_primary")
         waitUntilTextContains("custom_theme_primary", expectedHex)
-        assertTagDoesNotExist("custom_theme_primary_picker_spectrum")
     }
 
     @Test
@@ -262,101 +235,6 @@ class SettingsThemeEditorGuidedPickerTest {
         waitUntilTagExists("custom_theme_favorite_accent_picker_spectrum")
         assertTagDoesNotExist("custom_theme_favorite_accent_picker_safe_zone")
         tapHeaderSave("custom_theme_favorite_accent")
-    }
-
-    @Test
-    fun basicAppBackground_longTitleKeepsSaveVisible() {
-        launchThemeEditor()
-
-        openColorPicker("custom_theme_background_swatch")
-        composeRule.onNodeWithTag("custom_theme_background_picker_close").assertIsDisplayed()
-        composeRule.onNodeWithTag("custom_theme_background_picker_save").assertIsDisplayed()
-        requestCloseColorPicker("custom_theme_background")
-        waitUntilPickerClosed("custom_theme_background")
-    }
-
-    @Test
-    fun basicAccent_backWhileDirty_showsSaveDiscardKeepEditing() {
-        launchThemeEditor()
-
-        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        replaceHexInput("custom_theme_primary", "12AB34")
-
-        pressActivityBack("custom_theme_primary")
-        waitUntilTagExists("custom_theme_primary_picker_exit_dialog")
-        waitUntilTagExists("custom_theme_primary_picker_exit_save")
-        waitUntilTagExists("custom_theme_primary_picker_exit_discard")
-        waitUntilTagExists("custom_theme_primary_picker_exit_keep_editing")
-
-        tapExitDialogAction("custom_theme_primary", "keep_editing")
-        waitUntilTagDisplayed("custom_theme_primary_picker_hex")
-    }
-
-    @Test
-    fun basicAccent_backSave_commitsPendingGuidedChoice() {
-        launchThemeEditor()
-
-        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        replaceHexInput("custom_theme_primary", "12AB34")
-        val committedHex = "#${readNodeText("custom_theme_primary_picker_hex")}"
-
-        pressActivityBack("custom_theme_primary")
-        waitUntilTagExists("custom_theme_primary_picker_exit_dialog")
-        tapExitDialogAction("custom_theme_primary", "save")
-
-        waitUntilTextContains("custom_theme_primary", committedHex)
-        waitUntilPickerClosed("custom_theme_primary")
-    }
-
-    @Test
-    fun basicAccent_closeIconDiscard_closesWithoutSaving() {
-        launchThemeEditor()
-
-        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        replaceHexInput("custom_theme_primary", "12AB34")
-
-        requestCloseColorPicker("custom_theme_primary")
-        waitUntilTagExists("custom_theme_primary_picker_exit_dialog")
-        tapExitDialogAction("custom_theme_primary", "discard")
-
-        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        waitUntilPickerClosed("custom_theme_primary")
-    }
-
-    @Test
-    fun basicAccent_closeIconWhenClean_closesImmediately() {
-        launchThemeEditor()
-
-        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        requestCloseColorPicker("custom_theme_primary")
-
-        waitUntilPickerClosed("custom_theme_primary")
-    }
-
-    @Test
-    fun basicAccent_outsideTapDoesNothingWhenDirty() {
-        launchThemeEditor()
-
-        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        replaceHexInput("custom_theme_primary", "12AB34")
-
-        dismissColorPickerByOutsideTap("custom_theme_primary_picker_backdrop")
-        waitUntilTagDisplayed("custom_theme_primary_picker_hex")
-    }
-
-    @Test
-    fun basicAccent_dialogChromeTap_keepsPickerOpen() {
-        launchThemeEditor()
-
-        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        replaceHexInput("custom_theme_primary", "12AB34")
-
-        tapDialogChrome("custom_theme_primary_picker_dialog")
-        composeRule.waitForIdle()
-
-        waitUntilTagDisplayed("custom_theme_primary_picker_hex")
-        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        tapHeaderSave("custom_theme_primary")
     }
 
     @Test

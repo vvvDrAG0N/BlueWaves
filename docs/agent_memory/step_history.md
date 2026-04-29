@@ -2932,3 +2932,34 @@ This file is append-only.
 - Verification:
   - Review findings re-read against the current production/test files
   - Existing pre-merge review verification baseline retained
+
+## 131. 2026-04-29 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Finish the remaining Task 4 pre-merge stabilization slice inside the fenced settings androidTest/docs files, including picker-save-versus-editor-discard coverage, invalid-draft exit-dialog coverage, and the reproduced `basicAccent_hexInput_savesWithHeaderCheck` failure.
+- Area/files: `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorExitTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTestSupport.kt`, `docs/agent_memory/step_history.md`, `docs/agent_memory/next_steps.md`.
+- Action taken:
+  1. Reproduced `SettingsThemeEditorGuidedPickerTest#basicAccent_hexInput_savesWithHeaderCheck` on the `codex/theme-spectrum-picker` worktree and traced the timeout to test-side assumptions around picker readiness and immediate header-save clicking after typed HEX input.
+  2. Updated the guided-picker tests/support to wait for the guided safe zone and save-button enabled state before pressing the picker header check, to assert against the user-visible resolved HEX, and to pin the clean outside-tap no-op behavior.
+  3. Added the missing end-to-end persistence and exit coverage: picker save then editor discard does not persist, invalid drafts keep editor-exit save disabled, and the older persistence picker test now follows the current header-save contract and asserts against the live preview HEX rather than a hardcoded slider snap.
+  4. Split the oversized guided-picker instrumentation surface into `SettingsThemeEditorGuidedPickerTest.kt` plus `SettingsThemeEditorGuidedPickerDismissalTest.kt`, with a shared `SettingsThemeEditorGuidedPickerTestBase.kt`, so the branch still honors the repo's hard 500-line guard while keeping the Task 4 behavior coverage intact.
+  5. Kept the entire fix inside the allowed androidTest/docs fence and avoided production changes after confirming the reproduced failure was solvable as test-contract drift rather than a production owner bug.
+  6. Re-ran the full post-slice proof set, refreshed `graphify-out/`, and updated continuity docs so the branch now points at merge/integration handling rather than still claiming more verification is queued.
+- Result:
+  - The remaining Task 4 editor/picker exit and persistence expectations are now pinned in the fenced instrumentation suites.
+  - `basicAccent_hexInput_savesWithHeaderCheck` now passes under the current guided-picker contract.
+  - The focused settings instrumentation slice is green again on the branch worktree.
+- Verification:
+  - `.\gradlew.bat --console=plain --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest#basicAccent_hexInput_savesWithHeaderCheck`
+  - `.\gradlew.bat --console=plain checkKotlinFileLineLimit`
+  - `.\gradlew.bat --console=plain :feature:settings:testDebugUnitTest`
+  - `.\gradlew.bat --console=plain --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest,com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerDismissalTest`
+  - `.\gradlew.bat --console=plain --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.SettingsScreenPersistenceTest,com.epubreader.feature.settings.SettingsThemeEditorExitTest,com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerTest,com.epubreader.feature.settings.SettingsThemeEditorGuidedPickerDismissalTest`
+  - `.\gradlew.bat --console=plain --% :feature:settings:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.epubreader.feature.settings.ThemeColorPickerOverlayTest`
+  - `.\gradlew.bat --console=plain :app:installDebug`
+  - `python scripts/check_graph_staleness.py --rebuild`
+  - `python scripts/check_graph_staleness.py`
+- Blockers:
+  - No code blocker remained inside the allowed file fence once the failing guided-picker case was traced to test-side readiness assumptions.
+- Suggested next step:
+  - If merge prep continues, run the broader verification block from `docs/superpowers/plans/2026-04-29-theme-spectrum-picker-merge-blockers.md` so the branch has a fresh post-slice proof set beyond the focused instrumentation trio.

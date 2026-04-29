@@ -1,6 +1,7 @@
 package com.epubreader.feature.settings
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -105,6 +106,24 @@ class SettingsThemeEditorExitTest : SettingsScreenPersistenceTestBase() {
 
         pressBack()
         waitUntilTagExists("theme_editor_exit_dialog")
+    }
+
+    @Test
+    fun invalidDraft_exitDialogSaveRemainsDisabled() {
+        runBlocking {
+            seedActiveCustomTheme()
+        }
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+        openCurrentThemeEditor()
+
+        composeRule.onNodeWithTag("custom_theme_name").performTextClearance()
+
+        requestEditorBack()
+
+        composeRule.onNodeWithTag("theme_editor_exit_dialog").assertIsDisplayed()
+        composeRule.onNodeWithTag("theme_editor_exit_save").assertIsNotEnabled()
     }
 
     private suspend fun seedActiveCustomTheme(): CustomTheme {

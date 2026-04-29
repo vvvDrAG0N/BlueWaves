@@ -3,6 +3,7 @@ package com.epubreader.feature.settings
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
@@ -12,8 +13,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
+import androidx.compose.ui.semantics.SemanticsProperties
 import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.CustomThemeIdPrefix
 import com.epubreader.core.model.generatePaletteFromBase
@@ -88,6 +92,59 @@ internal fun SettingsScreenPersistenceTestBase.closeThemeGallery() {
 
 internal fun SettingsScreenPersistenceTestBase.closeColorPicker() {
     composeRule.onNodeWithText("Done").performClick()
+    composeRule.waitForIdle()
+}
+
+internal fun SettingsScreenPersistenceTestBase.replacePickerHexInput(
+    testTagPrefix: String,
+    value: String,
+) {
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextClearance()
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextInput(value)
+}
+
+internal fun SettingsScreenPersistenceTestBase.waitUntilPickerSaveEnabled(
+    testTagPrefix: String,
+    timeoutMillis: Long = 10_000,
+) {
+    composeRule.waitUntil(timeoutMillis) {
+        runCatching {
+            composeRule.onNodeWithTag("${testTagPrefix}_picker_save").assertIsEnabled()
+            true
+        }.getOrDefault(false)
+    }
+}
+
+internal fun SettingsScreenPersistenceTestBase.waitUntilPickerHexValue(
+    testTagPrefix: String,
+    value: String,
+    timeoutMillis: Long = 10_000,
+) {
+    waitUntilTextContains("${testTagPrefix}_picker_hex", value, timeoutMillis)
+}
+
+internal fun SettingsScreenPersistenceTestBase.waitUntilPickerHexDiffersFrom(
+    testTagPrefix: String,
+    value: String,
+    timeoutMillis: Long = 10_000,
+) {
+    composeRule.waitUntil(timeoutMillis) {
+        runCatching {
+            !readPickerHexValue(testTagPrefix).equals(value, ignoreCase = true)
+        }.getOrDefault(false)
+    }
+}
+
+internal fun SettingsScreenPersistenceTestBase.readPickerHexValue(testTagPrefix: String): String {
+    val config = composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").fetchSemanticsNode().config
+    return runCatching { config[SemanticsProperties.EditableText].text }.getOrNull()
+        ?: runCatching { config[SemanticsProperties.Text].joinToString(separator = "") { text -> text.text } }.getOrNull()
+        ?: throw AssertionError("Expected picker hex text semantics on '${testTagPrefix}_picker_hex'")
+}
+
+internal fun SettingsScreenPersistenceTestBase.saveColorPicker(testTagPrefix: String) {
+    waitUntilPickerSaveEnabled(testTagPrefix)
+    composeRule.onNodeWithTag("${testTagPrefix}_picker_save").performClick()
     composeRule.waitForIdle()
 }
 

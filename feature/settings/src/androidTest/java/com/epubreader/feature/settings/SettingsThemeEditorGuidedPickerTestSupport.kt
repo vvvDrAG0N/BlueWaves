@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assert
@@ -29,7 +30,7 @@ import com.epubreader.core.model.generatePaletteFromGuidedInput
 import com.epubreader.core.model.themePaletteSeed
 import androidx.test.espresso.Espresso.pressBack
 
-internal suspend fun SettingsThemeEditorGuidedPickerTest.resetSettings(
+internal suspend fun SettingsThemeEditorGuidedPickerTestBase.resetSettings(
     theme: String = "light",
     customThemes: List<CustomTheme> = emptyList(),
 ) {
@@ -48,7 +49,7 @@ internal suspend fun SettingsThemeEditorGuidedPickerTest.resetSettings(
     )
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.launchThemeEditor() {
+internal fun SettingsThemeEditorGuidedPickerTestBase.launchThemeEditor() {
     composeRule.runOnUiThread {
         composeRule.activity.setContent {
             MaterialTheme {
@@ -68,7 +69,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.launchThemeEditor() {
     composeRule.onNodeWithTag("custom_theme_name").performTextInput("Guided Picker Test")
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.launchCurrentThemeEditor() {
+internal fun SettingsThemeEditorGuidedPickerTestBase.launchCurrentThemeEditor() {
     composeRule.runOnUiThread {
         composeRule.activity.setContent {
             MaterialTheme {
@@ -85,12 +86,12 @@ internal fun SettingsThemeEditorGuidedPickerTest.launchCurrentThemeEditor() {
     waitUntilTagExists("custom_theme_name")
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.selectThemeEditorMode(mode: String) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.selectThemeEditorMode(mode: String) {
     composeRule.onNodeWithTag("theme_editor_mode_${mode.lowercase()}").performClick()
     composeRule.waitForIdle()
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.setPickerColor(
+internal fun SettingsThemeEditorGuidedPickerTestBase.setPickerColor(
     swatchTag: String,
     testTagPrefix: String,
     hue: Float = 0f,
@@ -110,17 +111,17 @@ internal fun SettingsThemeEditorGuidedPickerTest.setPickerColor(
     waitUntilTextContains(testTagPrefix, previewHex)
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.closeColorPicker() {
+internal fun SettingsThemeEditorGuidedPickerTestBase.closeColorPicker() {
     composeRule.onNodeWithContentDescription("Save").performClick()
     composeRule.waitForIdle()
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.tapHeaderSave(testTagPrefix: String) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.tapHeaderSave(testTagPrefix: String) {
     composeRule.onNodeWithTag("${testTagPrefix}_picker_save").performClick()
     composeRule.waitForIdle()
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.pressActivityBack(testTagPrefix: String? = null) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.pressActivityBack(testTagPrefix: String? = null) {
     pressBack()
     composeRule.waitForIdle()
     if (testTagPrefix != null) {
@@ -128,12 +129,12 @@ internal fun SettingsThemeEditorGuidedPickerTest.pressActivityBack(testTagPrefix
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.requestCloseColorPicker(testTagPrefix: String) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.requestCloseColorPicker(testTagPrefix: String) {
     composeRule.onNodeWithTag("${testTagPrefix}_picker_close").performClick()
     composeRule.waitForIdle()
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.tapExitDialogAction(
+internal fun SettingsThemeEditorGuidedPickerTestBase.tapExitDialogAction(
     testTagPrefix: String,
     action: String,
 ) {
@@ -141,24 +142,24 @@ internal fun SettingsThemeEditorGuidedPickerTest.tapExitDialogAction(
     composeRule.waitForIdle()
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.openColorPicker(swatchTag: String) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.openColorPicker(swatchTag: String) {
     composeRule.onNodeWithTag(swatchTag).performScrollTo().performClick()
     composeRule.waitForIdle()
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.dismissColorPickerByOutsideTap(backdropTag: String) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.dismissColorPickerByOutsideTap(backdropTag: String) {
     composeRule.onNodeWithTag(backdropTag).performTouchInput {
         click(Offset(24f, 24f))
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.tapDialogChrome(dialogTag: String) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.tapDialogChrome(dialogTag: String) {
     composeRule.onNodeWithTag(dialogTag).performTouchInput {
         click(Offset(width * 0.9f, 24f))
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.waitUntilDisplayed(
+internal fun SettingsThemeEditorGuidedPickerTestBase.waitUntilDisplayed(
     text: String,
     timeoutMillis: Long = 10_000,
 ) {
@@ -170,7 +171,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilDisplayed(
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagExists(
+internal fun SettingsThemeEditorGuidedPickerTestBase.waitUntilTagExists(
     tag: String,
     timeoutMillis: Long = 10_000,
 ) {
@@ -182,7 +183,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagExists(
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagDisplayed(
+internal fun SettingsThemeEditorGuidedPickerTestBase.waitUntilTagDisplayed(
     tag: String,
     timeoutMillis: Long = 10_000,
 ) {
@@ -194,7 +195,19 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagDisplayed(
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.assertTagDoesNotExist(tag: String) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.waitUntilTagEnabled(
+    tag: String,
+    timeoutMillis: Long = 10_000,
+) {
+    composeRule.waitUntil(timeoutMillis) {
+        runCatching {
+            composeRule.onNodeWithTag(tag).assertIsEnabled()
+            true
+        }.getOrDefault(false)
+    }
+}
+
+internal fun SettingsThemeEditorGuidedPickerTestBase.assertTagDoesNotExist(tag: String) {
     val exists = runCatching {
         composeRule.onNodeWithTag(tag).fetchSemanticsNode()
         true
@@ -204,12 +217,12 @@ internal fun SettingsThemeEditorGuidedPickerTest.assertTagDoesNotExist(tag: Stri
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.assertPreviewState(tag: String, state: String) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.assertPreviewState(tag: String, state: String) {
     composeRule.onNodeWithTag(tag)
         .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, state))
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.assertPreviewHex(
+internal fun SettingsThemeEditorGuidedPickerTestBase.assertPreviewHex(
     tag: String,
     expectedHex: String,
 ) {
@@ -222,7 +235,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.assertPreviewHex(
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.readPreviewHex(tag: String): String {
+internal fun SettingsThemeEditorGuidedPickerTestBase.readPreviewHex(tag: String): String {
     return composeRule.onNodeWithTag(tag)
         .fetchSemanticsNode()
         .config
@@ -231,14 +244,14 @@ internal fun SettingsThemeEditorGuidedPickerTest.readPreviewHex(tag: String): St
         ?: throw AssertionError("Expected preview hex content description on '$tag'")
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.readNodeText(tag: String): String {
+internal fun SettingsThemeEditorGuidedPickerTestBase.readNodeText(tag: String): String {
     val config = composeRule.onNodeWithTag(tag).fetchSemanticsNode().config
     return runCatching { config[SemanticsProperties.EditableText].text }.getOrNull()
         ?: runCatching { config[SemanticsProperties.Text].joinToString(separator = "") { text -> text.text } }.getOrNull()
         ?: throw AssertionError("Expected text semantics on '$tag'")
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextContains(
+internal fun SettingsThemeEditorGuidedPickerTestBase.waitUntilTextContains(
     tag: String,
     text: String,
     timeoutMillis: Long = 10_000,
@@ -259,7 +272,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextContains(
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagAbsent(
+internal fun SettingsThemeEditorGuidedPickerTestBase.waitUntilTagAbsent(
     tag: String,
     timeoutMillis: Long = 10_000,
 ) {
@@ -271,14 +284,14 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTagAbsent(
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.waitUntilPickerClosed(
+internal fun SettingsThemeEditorGuidedPickerTestBase.waitUntilPickerClosed(
     testTagPrefix: String,
     timeoutMillis: Long = 10_000,
 ) {
     waitUntilTagAbsent("${testTagPrefix}_picker_spectrum", timeoutMillis)
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextVisible(
+internal fun SettingsThemeEditorGuidedPickerTestBase.waitUntilTextVisible(
     text: String,
     timeoutMillis: Long = 10_000,
 ) {
@@ -290,14 +303,14 @@ internal fun SettingsThemeEditorGuidedPickerTest.waitUntilTextVisible(
     }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.setSliderProgress(tag: String, value: Float) {
+internal fun SettingsThemeEditorGuidedPickerTestBase.setSliderProgress(tag: String, value: Float) {
     composeRule.onNodeWithTag(tag)
         .performSemanticsAction(SemanticsActions.SetProgress) { setProgress ->
             setProgress(value)
         }
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.replaceHexInput(
+internal fun SettingsThemeEditorGuidedPickerTestBase.replaceHexInput(
     testTagPrefix: String,
     nextHex: String,
 ) {
@@ -305,7 +318,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.replaceHexInput(
     composeRule.onNodeWithTag("${testTagPrefix}_picker_hex").performTextReplacement(nextHex)
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.replaceRgbInput(
+internal fun SettingsThemeEditorGuidedPickerTestBase.replaceRgbInput(
     testTagPrefix: String,
     red: String,
     green: String,
@@ -317,7 +330,7 @@ internal fun SettingsThemeEditorGuidedPickerTest.replaceRgbInput(
     composeRule.onNodeWithTag("${testTagPrefix}_picker_rgb_blue").performTextReplacement(blue)
 }
 
-internal fun SettingsThemeEditorGuidedPickerTest.setSpectrumPoint(
+internal fun SettingsThemeEditorGuidedPickerTestBase.setSpectrumPoint(
     tag: String,
     saturation: Float,
     value: Float,

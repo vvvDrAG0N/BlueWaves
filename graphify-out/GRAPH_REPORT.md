@@ -1,11 +1,11 @@
-# Graph Report - C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker  (2026-04-28)
+# Graph Report - C:\Users\Amon\Desktop\projects\bluewaves_v1\.worktrees\theme-spectrum-picker  (2026-04-29)
 
 ## Corpus Check
-- 150 files · ~75,102 words
+- 152 files · ~75,843 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1098 nodes · 969 edges · 147 communities detected
+- 1109 nodes · 978 edges · 149 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -14,8 +14,8 @@
 - [[_COMMUNITY_ThemePaletteGeneration Cluster|ThemePaletteGeneration Cluster]]
 - [[_COMMUNITY_EpubParserEditing Cluster|EpubParserEditing Cluster]]
 - [[_COMMUNITY_PdfToEpubWorkspace Cluster|PdfToEpubWorkspace Cluster]]
-- [[_COMMUNITY_ReaderExtensions Cluster|ReaderExtensions Cluster]]
 - [[_COMMUNITY_ThemeColorPickerGuidance Cluster|ThemeColorPickerGuidance Cluster]]
+- [[_COMMUNITY_ReaderExtensions Cluster|ReaderExtensions Cluster]]
 - [[_COMMUNITY_EpubParser Cluster|EpubParser Cluster]]
 - [[_COMMUNITY_EditBookSurfacePlugin Cluster|EditBookSurfacePlugin Cluster]]
 - [[_COMMUNITY_ReaderSelectionGeometry Cluster|ReaderSelectionGeometry Cluster]]
@@ -49,12 +49,12 @@
 - [[_COMMUNITY_PdfGeneratedEpubWriter Cluster|PdfGeneratedEpubWriter Cluster]]
 - [[_COMMUNITY_PdfToEpubConverter Cluster|PdfToEpubConverter Cluster]]
 - [[_COMMUNITY_LibraryDialogs Cluster|LibraryDialogs Cluster]]
+- [[_COMMUNITY_ThemeColorPickerTextEntry Cluster|ThemeColorPickerTextEntry Cluster]]
 - [[_COMMUNITY_graph_corpus Cluster|graph_corpus Cluster]]
 - [[_COMMUNITY_MainActivity Cluster|MainActivity Cluster]]
 - [[_COMMUNITY_LibraryFeatureBindings Cluster|LibraryFeatureBindings Cluster]]
 - [[_COMMUNITY_ReaderScreenHelpers Cluster|ReaderScreenHelpers Cluster]]
 - [[_COMMUNITY_ThemeColorPickerCanvas Cluster|ThemeColorPickerCanvas Cluster]]
-- [[_COMMUNITY_ThemeColorPickerTextEntry Cluster|ThemeColorPickerTextEntry Cluster]]
 - [[_COMMUNITY_PdfConversionWorker Cluster|PdfConversionWorker Cluster]]
 - [[_COMMUNITY_ReaderSelectionDocument Cluster|ReaderSelectionDocument Cluster]]
 - [[_COMMUNITY_ReaderControlsWidgets Cluster|ReaderControlsWidgets Cluster]]
@@ -70,6 +70,7 @@
 - [[_COMMUNITY_LibraryFeatureExtensions Cluster|LibraryFeatureExtensions Cluster]]
 - [[_COMMUNITY_ReaderChapterContentCommon Cluster|ReaderChapterContentCommon Cluster]]
 - [[_COMMUNITY_SettingsAppearanceVisuals Cluster|SettingsAppearanceVisuals Cluster]]
+- [[_COMMUNITY_SettingsThemeStudioComponents Cluster|SettingsThemeStudioComponents Cluster]]
 - [[_COMMUNITY_ThemeEditorChrome Cluster|ThemeEditorChrome Cluster]]
 - [[_COMMUNITY_AppNavigationStartup Cluster|AppNavigationStartup Cluster]]
 - [[_COMMUNITY_SurfaceExtensions Cluster|SurfaceExtensions Cluster]]
@@ -79,7 +80,6 @@
 - [[_COMMUNITY_ReaderSelectableTextSection Cluster|ReaderSelectableTextSection Cluster]]
 - [[_COMMUNITY_ReaderChapterSections Cluster|ReaderChapterSections Cluster]]
 - [[_COMMUNITY_ReaderControlsSections Cluster|ReaderControlsSections Cluster]]
-- [[_COMMUNITY_SettingsThemeStudioComponents Cluster|SettingsThemeStudioComponents Cluster]]
 - [[_COMMUNITY_ThemeColorPickerValueInputs Cluster|ThemeColorPickerValueInputs Cluster]]
 - [[_COMMUNITY_check_graph_staleness Cluster|check_graph_staleness Cluster]]
 - [[_COMMUNITY_AppNavigationDerivedState Cluster|AppNavigationDerivedState Cluster]]
@@ -105,6 +105,7 @@
 - [[_COMMUNITY_ReaderStatusOverlay Cluster|ReaderStatusOverlay Cluster]]
 - [[_COMMUNITY_ReaderTextActions Cluster|ReaderTextActions Cluster]]
 - [[_COMMUNITY_SettingsThemeGallery Cluster|SettingsThemeGallery Cluster]]
+- [[_COMMUNITY_ThemeColorPickerSafeZoneState Cluster|ThemeColorPickerSafeZoneState Cluster]]
 - [[_COMMUNITY_AppNavigationScreenHost Cluster|AppNavigationScreenHost Cluster]]
 - [[_COMMUNITY_AppWarmUpScreen Cluster|AppWarmUpScreen Cluster]]
 - [[_COMMUNITY_SurfaceRegistry Cluster|SurfaceRegistry Cluster]]
@@ -155,6 +156,7 @@
 - [[_COMMUNITY_SettingsAppearanceTab Cluster|SettingsAppearanceTab Cluster]]
 - [[_COMMUNITY_SettingsThemeColorPicker Cluster|SettingsThemeColorPicker Cluster]]
 - [[_COMMUNITY_SettingsThemeEditorTags Cluster|SettingsThemeEditorTags Cluster]]
+- [[_COMMUNITY_ThemeColorPickerSessionState Cluster|ThemeColorPickerSessionState Cluster]]
 - [[_COMMUNITY_ThemeEditorPreviewCard Cluster|ThemeEditorPreviewCard Cluster]]
 - [[_COMMUNITY_LibraryDataContracts Cluster|LibraryDataContracts Cluster]]
 
@@ -191,13 +193,13 @@ Nodes (8): ChapterContent, CoverAction, EditedChapterEntry, Existing, Navigation
 Cohesion: 0.07
 Nodes (4): PdfConversionWorkspaceState, PdfReflowSection, PdfWorkspacePage, WorkspacePageStat
 
-### Community 4 - "ReaderExtensions Cluster"
+### Community 4 - "ThemeColorPickerGuidance Cluster"
+Cohesion: 0.07
+Nodes (8): ThemeColorPickerHsv, ThemeColorPickerPoint, ThemeColorPickerPreviewResult, ThemeColorPickerSafeZone, ThemeColorPickerSafeZoneCache, ThemeColorPickerSafeZoneResolver, ThemeColorPickerSafeZoneRow, ThemeColorPickerTypedResolution
+
+### Community 5 - "ReaderExtensions Cluster"
 Cohesion: 0.08
 Nodes (13): BuiltInReaderEngineExtension, ReaderEngineExtension, ReaderEngineHost, ReaderEngineState, ReaderOverlayExtension, ReaderOverlayHost, ReaderOverlayRenderContext, ReaderResolvedHostExtensions (+5 more)
-
-### Community 5 - "ThemeColorPickerGuidance Cluster"
-Cohesion: 0.08
-Nodes (7): ThemeColorPickerHsv, ThemeColorPickerPoint, ThemeColorPickerPreviewResult, ThemeColorPickerSafeZone, ThemeColorPickerSafeZoneCache, ThemeColorPickerSafeZoneRow, ThemeColorPickerTypedResolution
 
 ### Community 6 - "EpubParser Cluster"
 Cohesion: 0.09
@@ -331,29 +333,29 @@ Nodes (3): MlKitPdfToEpubConverter, PdfTextExtractionMethod, PdfToEpubConverter
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 39 - "graph_corpus Cluster"
+### Community 39 - "ThemeColorPickerTextEntry Cluster"
+Cohesion: 0.2
+Nodes (3): ThemeColorPickerActiveInput, ThemeColorPickerRgbText, ThemeColorPickerTextFields
+
+### Community 40 - "graph_corpus Cluster"
 Cohesion: 0.47
 Nodes (8): graph_code_files(), graph_document_files(), graph_input_files(), graph_rule_files(), graph_workflow_code_files(), production_source_dirs(), _repo_paths(), staleness_watch_paths()
 
-### Community 40 - "MainActivity Cluster"
+### Community 41 - "MainActivity Cluster"
 Cohesion: 0.22
 Nodes (1): MainActivity
 
-### Community 41 - "LibraryFeatureBindings Cluster"
+### Community 42 - "LibraryFeatureBindings Cluster"
 Cohesion: 0.22
 Nodes (0): 
 
-### Community 42 - "ReaderScreenHelpers Cluster"
+### Community 43 - "ReaderScreenHelpers Cluster"
 Cohesion: 0.22
 Nodes (0): 
 
-### Community 43 - "ThemeColorPickerCanvas Cluster"
+### Community 44 - "ThemeColorPickerCanvas Cluster"
 Cohesion: 0.22
 Nodes (1): ThemeColorPickerStatusState
-
-### Community 44 - "ThemeColorPickerTextEntry Cluster"
-Cohesion: 0.22
-Nodes (3): ThemeColorPickerActiveInput, ThemeColorPickerRgbText, ThemeColorPickerTextFields
 
 ### Community 45 - "PdfConversionWorker Cluster"
 Cohesion: 0.25
@@ -415,43 +417,43 @@ Nodes (1): ReaderNestedScrollWebView
 Cohesion: 0.29
 Nodes (1): SpecimenGeometry
 
-### Community 60 - "ThemeEditorChrome Cluster"
+### Community 60 - "SettingsThemeStudioComponents Cluster"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 61 - "AppNavigationStartup Cluster"
+### Community 61 - "ThemeEditorChrome Cluster"
+Cohesion: 0.29
+Nodes (0): 
+
+### Community 62 - "AppNavigationStartup Cluster"
 Cohesion: 0.33
 Nodes (1): AppShellStartupDecision
 
-### Community 62 - "SurfaceExtensions Cluster"
+### Community 63 - "SurfaceExtensions Cluster"
 Cohesion: 0.33
 Nodes (4): ExtensionFailure, ExtensionPoint, ExtensionResolution, SurfaceExtension
 
-### Community 63 - "PdfLegacyRuntime Cluster"
+### Community 64 - "PdfLegacyRuntime Cluster"
 Cohesion: 0.33
 Nodes (1): PdfLegacyRuntime
 
-### Community 64 - "EditBookDetailsTab Cluster"
+### Community 65 - "EditBookDetailsTab Cluster"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 65 - "PdfReaderSupport Cluster"
+### Community 66 - "PdfReaderSupport Cluster"
 Cohesion: 0.33
 Nodes (1): PdfDocumentHandle
 
-### Community 66 - "ReaderSelectableTextSection Cluster"
+### Community 67 - "ReaderSelectableTextSection Cluster"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 67 - "ReaderChapterSections Cluster"
+### Community 68 - "ReaderChapterSections Cluster"
 Cohesion: 0.33
 Nodes (3): ImageSection, ReaderChapterSection, TextSection
 
-### Community 68 - "ReaderControlsSections Cluster"
-Cohesion: 0.33
-Nodes (0): 
-
-### Community 69 - "SettingsThemeStudioComponents Cluster"
+### Community 69 - "ReaderControlsSections Cluster"
 Cohesion: 0.33
 Nodes (0): 
 
@@ -555,216 +557,224 @@ Nodes (3): Define, Translate, WebLookupAction
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 95 - "AppNavigationScreenHost Cluster"
+### Community 95 - "ThemeColorPickerSafeZoneState Cluster"
+Cohesion: 0.5
+Nodes (1): ThemeColorPickerSafeZoneState
+
+### Community 96 - "AppNavigationScreenHost Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 96 - "AppWarmUpScreen Cluster"
+### Community 97 - "AppWarmUpScreen Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 97 - "SurfaceRegistry Cluster"
+### Community 98 - "SurfaceRegistry Cluster"
 Cohesion: 0.67
 Nodes (1): SurfaceRegistry
 
-### Community 98 - "ReaderStatusSettingsRow Cluster"
+### Community 99 - "ReaderStatusSettingsRow Cluster"
 Cohesion: 0.67
 Nodes (1): ReaderStatusSettingsRow()
 
-### Community 99 - "ReaderUiSupport Cluster"
+### Community 100 - "ReaderUiSupport Cluster"
 Cohesion: 0.67
 Nodes (1): ReaderTheme
 
-### Community 100 - "LibraryFeatureMutations Cluster"
+### Community 101 - "LibraryFeatureMutations Cluster"
 Cohesion: 0.67
 Nodes (1): LibraryFeatureMutations
 
-### Community 101 - "LibrarySelectionActionBar Cluster"
+### Community 102 - "LibrarySelectionActionBar Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 102 - "PdfReaderScreen Cluster"
+### Community 103 - "PdfReaderScreen Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 103 - "ReaderRuntimeRenderingPlan Cluster"
+### Community 104 - "ReaderRuntimeRenderingPlan Cluster"
 Cohesion: 0.67
 Nodes (1): ReaderRuntimeRenderingPlan
 
-### Community 104 - "ReaderSelectionGestures Cluster"
+### Community 105 - "ReaderSelectionGestures Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 105 - "ReaderSelectionHostLayoutRules Cluster"
+### Community 106 - "ReaderSelectionHostLayoutRules Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 106 - "ReaderControlsAdditionalSections Cluster"
+### Community 107 - "ReaderControlsAdditionalSections Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 107 - "ReaderChapterSelectionHost Cluster"
+### Community 108 - "ReaderChapterSelectionHost Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 108 - "ReaderScreenBindings Cluster"
+### Community 109 - "ReaderScreenBindings Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 109 - "ReaderTapGestures Cluster"
+### Community 110 - "ReaderTapGestures Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 110 - "ReaderTopBarAndFab Cluster"
+### Community 111 - "ReaderTopBarAndFab Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 111 - "ReaderVerticalScrubber Cluster"
+### Community 112 - "ReaderVerticalScrubber Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 112 - "SettingsAppearanceControlHub Cluster"
+### Community 113 - "SettingsAppearanceControlHub Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 113 - "SettingsThemeEditor Cluster"
+### Community 114 - "SettingsThemeEditor Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 114 - "SettingsTypographySettingsPanel Cluster"
+### Community 115 - "SettingsTypographySettingsPanel Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 115 - "ThemeColorPickerChrome Cluster"
+### Community 116 - "ThemeColorPickerChrome Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 116 - "ThemeEditorControlRow Cluster"
+### Community 117 - "ThemeEditorControlRow Cluster"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 117 - "AppNavigation Cluster"
+### Community 118 - "AppNavigation Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 118 - "AppNavigationEffects Cluster"
+### Community 119 - "AppNavigationEffects Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 119 - "AppNavigationStartupEffect Cluster"
+### Community 120 - "AppNavigationStartupEffect Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 120 - "AppSurfaceHost Cluster"
+### Community 121 - "AppSurfaceHost Cluster"
 Cohesion: 1.0
 Nodes (1): AppSurfaceHost
 
-### Community 121 - "LibraryCoverModels Cluster"
+### Community 122 - "LibraryCoverModels Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 122 - "WindowInsetsUtils Cluster"
+### Community 123 - "WindowInsetsUtils Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 123 - "EpubParserPdfConversion Cluster"
+### Community 124 - "EpubParserPdfConversion Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 124 - "LibraryFeatureContent Cluster"
+### Community 125 - "LibraryFeatureContent Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 125 - "LibraryFeatureImport Cluster"
+### Community 126 - "LibraryFeatureImport Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 126 - "LibraryBookGrid Cluster"
+### Community 127 - "LibraryBookGrid Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 127 - "LibraryDrawerContent Cluster"
+### Community 128 - "LibraryDrawerContent Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 128 - "LibraryScreen Cluster"
+### Community 129 - "LibraryScreen Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 129 - "LibraryTopBar Cluster"
+### Community 130 - "LibraryTopBar Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 130 - "ReaderSelectionDiagnostics Cluster"
+### Community 131 - "ReaderSelectionDiagnostics Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 131 - "ReaderSelectionActionBarOverlay Cluster"
+### Community 132 - "ReaderSelectionActionBarOverlay Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 132 - "ReaderSelectionChapterActions Cluster"
+### Community 133 - "ReaderSelectionChapterActions Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 133 - "ReaderSelectionSessionRules Cluster"
+### Community 134 - "ReaderSelectionSessionRules Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 134 - "ReaderFeatureShell Cluster"
+### Community 135 - "ReaderFeatureShell Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 135 - "ReaderFeatureShellCallbacks Cluster"
+### Community 136 - "ReaderFeatureShellCallbacks Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 136 - "ReaderChapterContent Cluster"
+### Community 137 - "ReaderChapterContent Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 137 - "ReaderProgressState Cluster"
+### Community 138 - "ReaderProgressState Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 138 - "ReaderScreen Cluster"
+### Community 139 - "ReaderScreen Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 139 - "ReaderScreenControls Cluster"
+### Community 140 - "ReaderScreenControls Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 140 - "ReaderTocDrawer Cluster"
+### Community 141 - "ReaderTocDrawer Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 141 - "SettingsAppearanceGalleryHost Cluster"
+### Community 142 - "SettingsAppearanceGalleryHost Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 142 - "SettingsAppearanceTab Cluster"
+### Community 143 - "SettingsAppearanceTab Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 143 - "SettingsThemeColorPicker Cluster"
+### Community 144 - "SettingsThemeColorPicker Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 144 - "SettingsThemeEditorTags Cluster"
+### Community 145 - "SettingsThemeEditorTags Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 145 - "ThemeEditorPreviewCard Cluster"
+### Community 146 - "ThemeColorPickerSessionState Cluster"
+Cohesion: 1.0
+Nodes (1): ThemeColorPickerSessionState
+
+### Community 147 - "ThemeEditorPreviewCard Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 146 - "LibraryDataContracts Cluster"
+### Community 148 - "LibraryDataContracts Cluster"
 Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
-- **186 isolated node(s):** `AppShellStartupDecision`, `StartupPhase`, `AppStartupState`, `AppRoute`, `AppSurfaceHost` (+181 more)
+- **188 isolated node(s):** `AppShellStartupDecision`, `StartupPhase`, `AppStartupState`, `AppRoute`, `AppSurfaceHost` (+183 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `AppNavigation Cluster`** (2 nodes): `AppNavigation()`, `AppNavigation.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -822,6 +832,8 @@ Nodes (0):
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `SettingsThemeEditorTags Cluster`** (2 nodes): `SettingsThemeEditorTags.kt`, `themeEditorColorTestTag()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `ThemeColorPickerSessionState Cluster`** (2 nodes): `ThemeColorPickerSessionState.kt`, `ThemeColorPickerSessionState`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `ThemeEditorPreviewCard Cluster`** (2 nodes): `ThemeEditorPreviewCard.kt`, `ThemeEditorPreviewCard()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `LibraryDataContracts Cluster`** (1 nodes): `LibraryDataContracts.kt`
@@ -831,7 +843,7 @@ Nodes (0):
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `AppShellStartupDecision`, `StartupPhase`, `AppStartupState` to the rest of the system?**
-  _186 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _188 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `SettingsManager Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
 - **Should `ThemePaletteGeneration Cluster` be split into smaller, more focused modules?**
@@ -840,7 +852,7 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `PdfToEpubWorkspace Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.07 - nodes in this community are weakly interconnected._
-- **Should `ReaderExtensions Cluster` be split into smaller, more focused modules?**
-  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Should `ThemeColorPickerGuidance Cluster` be split into smaller, more focused modules?**
+  _Cohesion score 0.07 - nodes in this community are weakly interconnected._
+- **Should `ReaderExtensions Cluster` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._

@@ -1,12 +1,12 @@
 # Next Steps
 
-## Theme Picker Merge-Blocker Follow-Up
-- Goal: Execute `docs/superpowers/plans/2026-04-29-theme-spectrum-picker-merge-blockers.md` before merging `codex/theme-spectrum-picker` back to `1.1.2-UI+FPS`.
-- Why now: The pre-merge review found one high-severity guided-preview trust break plus medium contract gaps around focused-field Back, guided-mode self-dirtying, partial numeric drafts, and unpinned picker-save-versus-editor-discard persistence.
+## Theme Picker Merge Decision
+- Goal: Decide how to integrate `codex/theme-spectrum-picker` now that the merge-blocker plan and post-slice verification proof set are complete.
+- Why now: The Task 4 androidTest/docs slice is complete, the 500-line extraction is in place, the focused and broader settings instrumentation packs passed, `ThemeColorPickerOverlayTest` passed, `:feature:settings:testDebugUnitTest` and `checkKotlinFileLineLimit` passed, the debug app is installed, and graph freshness is current.
 - Suggested owner/model: Codex / GPT-5.
-- Starting docs/files: `AGENTS.md`, `docs/settings_persistence.md`, `docs/superpowers/plans/2026-04-29-theme-spectrum-picker-merge-blockers.md`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeColorPicker.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerCanvas.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerGuidance.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/ThemeColorPickerTextEntry.kt`, `feature/settings/src/main/java/com/epubreader/feature/settings/SettingsThemeEditor.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorExitTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`
-- Risks: Merging a guided picker that can confirm one color and save another, keeping the current hidden double-Back test behavior, or treating partial invalid numeric input as a real saveable edit.
-- Verification target: Run the full verification block in the new plan before merging.
+- Starting docs/files: `AGENTS.md`, `docs/settings_persistence.md`, `docs/superpowers/plans/2026-04-29-theme-spectrum-picker-merge-blockers.md`, `docs/agent_memory/step_history.md`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsScreenPersistenceTestSupport.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorExitTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerTest.kt`, `feature/settings/src/androidTest/java/com/epubreader/feature/settings/SettingsThemeEditorGuidedPickerDismissalTest.kt`
+- Risks: Forgetting that the broader settings-suite rerun needed one manual androidTest APK reinstall after an emulator install-write hiccup, or losing the verified “picker save stays local until editor save” contract during merge/cherry-pick cleanup.
+- Verification target: No additional pre-merge verification is queued from this branch slice; the next step is merge/PR handling plus any optional in-hand smoke the owner still wants.
 
 ## Reader Shadow Startup Target Met
 - Goal: Treat the `Shadow Slave 1435 / 2927 ch` cold-entry reader lag as parked unless a fresh in-hand hitch is still noticeable on the physical phone.
