@@ -20,7 +20,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,10 +38,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.epubreader.core.model.formatThemeColor
 import com.epubreader.core.model.parseThemeColorOrNull
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.withContext
 
 @Composable
 internal fun ThemeColorPickerOverlay(
@@ -50,6 +46,7 @@ internal fun ThemeColorPickerOverlay(
     initialValue: String,
     testTagPrefix: String? = null,
     isGuided: Boolean,
+    safeZoneResolverOverride: ThemeColorPickerSafeZoneResolver? = null,
     onDismiss: () -> Unit,
     onPreviewValueChange: ((String) -> ThemeColorPickerPreviewResult)? = null,
     onValueChange: (String) -> ThemeEditorColorEditResult,
@@ -63,9 +60,6 @@ internal fun ThemeColorPickerOverlay(
     } else {
         null
     }
-    val safeZoneCache = remember(guidedPreviewValueChange) {
-        guidedPreviewValueChange?.let { ThemeColorPickerSafeZoneCache() }
-    }
 
     var pickerHue by remember { mutableFloatStateOf(initialHsv.hue) }
     var pickerSaturation by remember { mutableFloatStateOf(initialHsv.saturation) }
@@ -75,28 +69,18 @@ internal fun ThemeColorPickerOverlay(
     var snapPulseToken by remember { mutableFloatStateOf(0f) }
     var showSnapHighlight by remember { mutableStateOf(false) }
     var showExitDialog by remember { mutableStateOf(false) }
+    var pendingHue by remember { mutableStateOf<Float?>(null) }
 
-    val guidedSafeZone by produceState<ThemeColorPickerSafeZone?>(
-        initialValue = safeZoneCache?.cachedZoneForHue(pickerHue),
-        key1 = isGuided,
-        key2 = guidedPreviewValueChange,
-        key3 = pickerHue.toSafeZoneHueBucket(),
-    ) {
-        if (!isGuided || guidedPreviewValueChange == null || safeZoneCache == null) {
-            value = null
-            return@produceState
-        }
-        value = withContext(Dispatchers.Default) {
-            val currentContext = coroutineContext
-            safeZoneCache.zoneForHue(pickerHue) { bucketedHue ->
-                buildGuidedSafeZone(
-                    hue = bucketedHue,
-                    previewColor = guidedPreviewValueChange,
-                    cancellationCheck = { currentContext.ensureActive() },
-                )
-            }
-        }
-    }
+    val guidedSafeZoneHue = pendingHue ?: pickerHue
+
+    val guidedSafeZoneState = rememberGuidedSafeZoneState(
+        isGuided = isGuided,
+        pickerHue = guidedSafeZoneHue,
+        guidedPreviewValueChange = guidedPreviewValueChange,
+        safeZoneResolverOverride = safeZoneResolverOverride,
+    )
+    val guidedSafeZone = guidedSafeZoneState.zone
+    val isGuidedLoadingGateActive = isGuided && guidedSafeZoneState.isLoading
 
     LaunchedEffect(snapPulseToken) {
         if (snapPulseToken <= 0f) return@LaunchedEffect
@@ -105,54 +89,30 @@ internal fun ThemeColorPickerOverlay(
         showSnapHighlight = false
     }
 
-    fun currentPreviewHex(): String {
-        return formatThemeColor(
-            ThemeColorPickerHsv(
-                hue = pickerHue,
-                saturation = pickerSaturation,
-                value = pickerValue,
-            ).toColorLong(),
-        )
-    }
+    fun currentPreviewHex(): String =
+        formatThemeColor(ThemeColorPickerHsv(hue = pickerHue, saturation = pickerSaturation, value = pickerValue).toColorLong())
 
-    fun currentGuidedResolution(): ThemeColorPickerPreviewResult? {
-        if (!isGuided || guidedPreviewValueChange == null) {
-            return null
-        }
-        return guidedPreviewValueChange(currentPreviewHex())
-    }
+    fun currentGuidedResolution(): ThemeColorPickerPreviewResult? =
+        guidedPreviewValueChange?.takeIf { isGuided }?.invoke(currentPreviewHex())
 
-    fun currentSessionState(): ThemeColorPickerSessionState {
-        return ThemeColorPickerSessionState(
+    fun currentSessionState(): ThemeColorPickerSessionState =
+        ThemeColorPickerSessionState(
             initialHex = initialHex,
             previewHex = currentPreviewHex(),
             initialTextFields = initialTextFields,
             currentTextFields = textFields,
             isGuided = isGuided,
-            isGuidedSafeZoneReady = !isGuided || guidedSafeZone != null,
+            isGuidedSafeZoneReady = !isGuidedLoadingGateActive,
         )
-    }
 
-    fun setPickerColor(
-        hue: Float = pickerHue,
-        saturation: Float = pickerSaturation,
-        value: Float = pickerValue,
-    ) {
+    fun setPickerColor(hue: Float = pickerHue, saturation: Float = pickerSaturation, value: Float = pickerValue) {
         pickerHue = hue
         pickerSaturation = saturation
         pickerValue = value
     }
 
-    fun syncTextFields(
-        hex: String = currentPreviewHex(),
-        activeInput: ThemeColorPickerActiveInput? = null,
-        rgbOverride: ThemeColorPickerRgbText? = null,
-    ) {
-        textFields = themeColorPickerTextFields(
-            hex = hex,
-            rgbOverride = rgbOverride,
-            activeInput = activeInput,
-        )
+    fun syncTextFields(hex: String = currentPreviewHex(), activeInput: ThemeColorPickerActiveInput? = null, rgbOverride: ThemeColorPickerRgbText? = null) {
+        textFields = themeColorPickerTextFields(hex = hex, rgbOverride = rgbOverride, activeInput = activeInput)
     }
 
     fun applyPreviewHex(
@@ -188,14 +148,26 @@ internal fun ThemeColorPickerOverlay(
             value = value.coerceIn(0f, 1f),
         )
         syncTextFields()
-        if (!preserveAdjustedState) {
-            wasAdjusted = false
-        }
+        if (!preserveAdjustedState) wasAdjusted = false
         showSnapHighlight = false
     }
 
-    LaunchedEffect(isGuided, guidedSafeZone, pickerHue) {
+    LaunchedEffect(isGuided, guidedSafeZone, guidedSafeZoneState.isLoading, pendingHue, pickerHue) {
         if (!isGuided) return@LaunchedEffect
+        val queuedHue = pendingHue
+        if (queuedHue != null) {
+            if (guidedSafeZoneState.isLoading) return@LaunchedEffect
+            val safeZone = guidedSafeZone ?: return@LaunchedEffect
+            val projected = safeZone.project(
+                ThemeColorPickerPoint(
+                    saturation = pickerSaturation,
+                    value = pickerValue,
+                ),
+            )
+            pendingHue = null
+            applyPreviewPoint(hue = queuedHue, saturation = projected.saturation, value = projected.value)
+            return@LaunchedEffect
+        }
         val safeZone = guidedSafeZone ?: return@LaunchedEffect
         val currentResolution = currentGuidedResolution() ?: return@LaunchedEffect
         if (!currentResolution.wasAdjusted) {
@@ -225,6 +197,15 @@ internal fun ThemeColorPickerOverlay(
         saturation: Float = pickerSaturation,
         value: Float = pickerValue,
     ) {
+        if (isGuided && !hue.isApproximately(pickerHue) && !guidedSafeZoneState.isHueCached(hue)) {
+            pendingHue = hue
+            showSnapHighlight = false
+            return
+        }
+        if (isGuided && guidedSafeZoneState.isLoading) {
+            return
+        }
+        pendingHue = null
         val projectedPoint = if (isGuided && !hue.isApproximately(pickerHue)) {
             ThemeColorPickerPoint(
                 saturation = saturation.coerceIn(0f, 1f),
@@ -263,6 +244,7 @@ internal fun ThemeColorPickerOverlay(
         val nextFields = textFields.withHexInput(nextHex)
         textFields = nextFields
         val resolvedHex = nextFields.tryResolveHex() ?: return
+        pendingHue = null
         if (isGuided && guidedPreviewValueChange != null) {
             val resolution = resolveGuidedTypedHex(
                 rawHex = resolvedHex,
@@ -290,6 +272,7 @@ internal fun ThemeColorPickerOverlay(
         )
         textFields = nextFields
         val resolvedHex = nextFields.tryResolveHex() ?: return
+        pendingHue = null
         if (isGuided && guidedPreviewValueChange != null) {
             val resolution = resolveGuidedTypedHex(
                 rawHex = resolvedHex,
@@ -423,6 +406,7 @@ internal fun ThemeColorPickerOverlay(
                             ).toColorLong(),
                         ),
                         isGuided = isGuided,
+                        isTextInputEnabled = true,
                         wasAdjusted = wasAdjusted,
                         showSnapHighlight = showSnapHighlight,
                         testTagPrefix = testTagPrefix,
@@ -442,7 +426,9 @@ internal fun ThemeColorPickerOverlay(
                             saturation = pickerSaturation,
                             value = pickerValue,
                         ),
+                        isGuided = isGuided,
                         safeZone = guidedSafeZone,
+                        loadingStateDescription = if (!isGuided) null else if (isGuidedLoadingGateActive) "loading" else "ready",
                         testTagPrefix = testTagPrefix,
                         onPointChange = { point ->
                             updatePickerColor(
@@ -479,6 +465,7 @@ internal fun ThemeColorPickerOverlay(
                     Slider(
                         value = pickerHue,
                         onValueChange = { updatePickerColor(hue = it) },
+                        enabled = !isGuidedLoadingGateActive,
                         onValueChangeFinished = {},
                         valueRange = 0f..360f,
                         modifier = if (testTagPrefix != null) {

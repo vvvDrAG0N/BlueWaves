@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
@@ -31,7 +32,9 @@ import kotlin.math.roundToInt
 internal fun ThemeColorSpectrumField(
     hue: Float,
     point: ThemeColorPickerPoint,
+    isGuided: Boolean,
     safeZone: ThemeColorPickerSafeZone?,
+    loadingStateDescription: String?,
     testTagPrefix: String?,
     onPointChange: (ThemeColorPickerPoint) -> Unit,
     modifier: Modifier = Modifier,
@@ -47,12 +50,21 @@ internal fun ThemeColorSpectrumField(
                     Modifier
                 },
             )
+            .then(
+                if (loadingStateDescription != null) {
+                    Modifier.semantics {
+                        stateDescription = loadingStateDescription
+                    }
+                } else {
+                    Modifier
+                },
+            )
             .pointerInput(hue, safeZone) {
                 detectTapGestures { offset ->
                     val point = offset.toSpectrumPoint(
                         size = Size(size.width.toFloat(), size.height.toFloat()),
                     )
-                    if (safeZone.acceptsInteractivePoint(point)) {
+                    if (acceptsInteractivePoint(isGuided, safeZone, point)) {
                         onPointChange(point)
                     }
                 }
@@ -63,7 +75,7 @@ internal fun ThemeColorSpectrumField(
                         val point = offset.toSpectrumPoint(
                             size = Size(size.width.toFloat(), size.height.toFloat()),
                         )
-                        if (safeZone.acceptsInteractivePoint(point)) {
+                        if (acceptsInteractivePoint(isGuided, safeZone, point)) {
                             onPointChange(point)
                         }
                     },
@@ -72,7 +84,7 @@ internal fun ThemeColorSpectrumField(
                         val point = change.position.toSpectrumPoint(
                             size = Size(size.width.toFloat(), size.height.toFloat()),
                         )
-                        if (safeZone.acceptsInteractivePoint(point)) {
+                        if (acceptsInteractivePoint(isGuided, safeZone, point)) {
                             onPointChange(point)
                         }
                     },
@@ -150,10 +162,16 @@ private fun ThemeColorPickerPoint.toOffset(size: Size): Offset {
     )
 }
 
-private fun ThemeColorPickerSafeZone?.acceptsInteractivePoint(
+private fun acceptsInteractivePoint(
+    isGuided: Boolean,
+    safeZone: ThemeColorPickerSafeZone?,
     point: ThemeColorPickerPoint,
 ): Boolean {
-    return this == null || contains(point)
+    return when {
+        !isGuided -> true
+        safeZone == null -> false
+        else -> safeZone.contains(point)
+    }
 }
 
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSafeZoneVeil(

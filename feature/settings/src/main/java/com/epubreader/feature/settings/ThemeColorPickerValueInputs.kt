@@ -56,6 +56,7 @@ internal fun ThemeColorPickerValueInputs(
     previewHex: String,
     previewColor: Color,
     isGuided: Boolean,
+    isTextInputEnabled: Boolean,
     wasAdjusted: Boolean,
     showSnapHighlight: Boolean,
     testTagPrefix: String?,
@@ -118,6 +119,7 @@ internal fun ThemeColorPickerValueInputs(
                         prefixText = "#",
                         value = textFields.hexText,
                         tag = testTagPrefix?.let { "${it}_picker_hex" },
+                        enabled = isTextInputEnabled,
                         singleLine = true,
                         onValueChange = onHexInputChange,
                         modifier = Modifier.weight(1f),
@@ -133,6 +135,7 @@ internal fun ThemeColorPickerValueInputs(
                             channelLabel = "R",
                             value = textFields.rgbText.red,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_red" },
+                            enabled = isTextInputEnabled,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(red = it)) },
                             modifier = Modifier.weight(1f),
                         )
@@ -140,6 +143,7 @@ internal fun ThemeColorPickerValueInputs(
                             channelLabel = "G",
                             value = textFields.rgbText.green,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_green" },
+                            enabled = isTextInputEnabled,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(green = it)) },
                             modifier = Modifier.weight(1f),
                         )
@@ -147,6 +151,7 @@ internal fun ThemeColorPickerValueInputs(
                             channelLabel = "B",
                             value = textFields.rgbText.blue,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_blue" },
+                            enabled = isTextInputEnabled,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(blue = it)) },
                             modifier = Modifier.weight(1f),
                         )
@@ -223,6 +228,7 @@ private fun ThemeColorValueField(
     prefixText: String?,
     value: String,
     tag: String?,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Ascii,
     singleLine: Boolean = true,
@@ -235,6 +241,7 @@ private fun ThemeColorValueField(
         modifier = modifier
             .height(PickerTopControlHeight)
             .then(if (tag != null) Modifier.testTag(tag) else Modifier),
+        enabled = enabled,
         singleLine = singleLine,
         textStyle = textStyle,
         label = label?.let {
@@ -273,6 +280,7 @@ private fun ThemeColorRgbField(
     channelLabel: String,
     value: String,
     tag: String?,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
 ) {
@@ -348,6 +356,7 @@ private fun ThemeColorRgbField(
                     }
                 }
                 .then(if (tag != null) Modifier.testTag(tag) else Modifier),
+            enabled = enabled,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
             textStyle = valueTextStyle,

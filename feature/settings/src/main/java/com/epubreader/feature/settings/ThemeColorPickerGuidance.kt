@@ -2,6 +2,8 @@ package com.epubreader.feature.settings
 
 import com.epubreader.core.model.formatThemeColor
 import java.util.concurrent.ConcurrentHashMap
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -167,6 +169,13 @@ internal data class ThemeColorPickerTypedResolution(
     val wasAdjusted: Boolean,
 )
 
+internal fun interface ThemeColorPickerSafeZoneResolver {
+    suspend fun resolve(
+        hue: Float,
+        previewColor: (String) -> ThemeColorPickerPreviewResult,
+    ): ThemeColorPickerSafeZone
+}
+
 internal class ThemeColorPickerSafeZoneCache {
     private val zonesByHueBucket = ConcurrentHashMap<Int, ThemeColorPickerSafeZone>()
 
@@ -181,6 +190,21 @@ internal class ThemeColorPickerSafeZoneCache {
         val bucket = hue.toSafeZoneHueBucket()
         return zonesByHueBucket.computeIfAbsent(bucket) { bucketedHue ->
             buildZone(bucketedHue.toSafeZoneHue())
+        }
+    }
+}
+
+internal fun defaultThemeColorPickerSafeZoneResolver(
+    cache: ThemeColorPickerSafeZoneCache,
+): ThemeColorPickerSafeZoneResolver {
+    return ThemeColorPickerSafeZoneResolver { hue, previewColor ->
+        val currentContext = currentCoroutineContext()
+        cache.zoneForHue(hue) { bucketedHue ->
+            buildGuidedSafeZone(
+                hue = bucketedHue,
+                previewColor = previewColor,
+                cancellationCheck = { currentContext.ensureActive() },
+            )
         }
     }
 }
