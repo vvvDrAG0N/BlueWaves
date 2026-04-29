@@ -60,6 +60,7 @@ internal fun ThemeColorPickerValueInputs(
     wasAdjusted: Boolean,
     showSnapHighlight: Boolean,
     testTagPrefix: String?,
+    onBackPressed: (() -> Unit)?,
     onHexInputChange: (String) -> Unit,
     onRgbInputChange: (ThemeColorPickerRgbText) -> Unit,
     modifier: Modifier = Modifier,
@@ -120,6 +121,7 @@ internal fun ThemeColorPickerValueInputs(
                         value = textFields.hexText,
                         tag = testTagPrefix?.let { "${it}_picker_hex" },
                         enabled = isTextInputEnabled,
+                        onBackPressed = onBackPressed,
                         singleLine = true,
                         onValueChange = onHexInputChange,
                         modifier = Modifier.weight(1f),
@@ -136,6 +138,7 @@ internal fun ThemeColorPickerValueInputs(
                             value = textFields.rgbText.red,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_red" },
                             enabled = isTextInputEnabled,
+                            onBackPressed = onBackPressed,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(red = it)) },
                             modifier = Modifier.weight(1f),
                         )
@@ -144,6 +147,7 @@ internal fun ThemeColorPickerValueInputs(
                             value = textFields.rgbText.green,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_green" },
                             enabled = isTextInputEnabled,
+                            onBackPressed = onBackPressed,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(green = it)) },
                             modifier = Modifier.weight(1f),
                         )
@@ -152,6 +156,7 @@ internal fun ThemeColorPickerValueInputs(
                             value = textFields.rgbText.blue,
                             tag = testTagPrefix?.let { "${it}_picker_rgb_blue" },
                             enabled = isTextInputEnabled,
+                            onBackPressed = onBackPressed,
                             onValueChange = { onRgbInputChange(textFields.rgbText.copy(blue = it)) },
                             modifier = Modifier.weight(1f),
                         )
@@ -229,6 +234,7 @@ private fun ThemeColorValueField(
     value: String,
     tag: String?,
     enabled: Boolean,
+    onBackPressed: (() -> Unit)?,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Ascii,
     singleLine: Boolean = true,
@@ -240,6 +246,7 @@ private fun ThemeColorValueField(
         onValueChange = onValueChange,
         modifier = modifier
             .height(PickerTopControlHeight)
+            .interceptBackBeforeSoftKeyboard(onBackPressed)
             .then(if (tag != null) Modifier.testTag(tag) else Modifier),
         enabled = enabled,
         singleLine = singleLine,
@@ -281,6 +288,7 @@ private fun ThemeColorRgbField(
     value: String,
     tag: String?,
     enabled: Boolean,
+    onBackPressed: (() -> Unit)?,
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
 ) {
@@ -346,6 +354,7 @@ private fun ThemeColorRgbField(
             },
             modifier = Modifier
                 .weight(1f)
+                .interceptBackBeforeSoftKeyboard(onBackPressed)
                 .onFocusChanged { focusState ->
                     if (isFocused == focusState.isFocused) {
                         return@onFocusChanged

@@ -123,24 +123,8 @@ internal fun SettingsThemeEditorGuidedPickerTest.tapHeaderSave(testTagPrefix: St
 internal fun SettingsThemeEditorGuidedPickerTest.pressActivityBack(testTagPrefix: String? = null) {
     pressBack()
     composeRule.waitForIdle()
-    if (testTagPrefix == null) {
-        return
-    }
-    val exitDialogTag = "${testTagPrefix}_picker_exit_dialog"
-    val pickerTag = "${testTagPrefix}_picker_spectrum"
-    val exitDialogVisible = runCatching {
-        composeRule.onNodeWithTag(exitDialogTag).fetchSemanticsNode()
-        true
-    }.getOrDefault(false)
-    if (!exitDialogVisible) {
-        val pickerStillOpen = runCatching {
-            composeRule.onNodeWithTag(pickerTag).fetchSemanticsNode()
-            true
-        }.getOrDefault(false)
-        if (pickerStillOpen) {
-            pressBack()
-            composeRule.waitForIdle()
-        }
+    if (testTagPrefix != null) {
+        waitUntilTagExists("${testTagPrefix}_picker_exit_dialog")
     }
 }
 

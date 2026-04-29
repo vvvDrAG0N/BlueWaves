@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.CompletableDeferred
 import org.junit.Test
@@ -175,5 +176,16 @@ class ThemeColorPickerOverlayTest : ThemeColorPickerOverlayTestSupport() {
         composeRule.onNodeWithTag("overlay_picker_save").assertIsEnabled()
         composeRule.onNodeWithTag("overlay_picker_save").performClick()
         assertLastCommittedHex("#FF0000")
+    }
+
+    @Test
+    fun pickerHexField_focused_backShowsExitDialogOnFirstPress() {
+        launchUnguidedOverlay(initialHex = "#4F46E5")
+
+        composeRule.onNodeWithTag("overlay_picker_hex").performClick()
+        replaceHexInput("overlay", "12AB34")
+
+        pressBack()
+        waitUntilTagExists("overlay_picker_exit_dialog")
     }
 }

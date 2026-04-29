@@ -322,6 +322,7 @@ internal fun CustomThemeEditorDialog(
                                     else -> null
                                 },
                                 testTag = "custom_theme_name",
+                                onBackPressed = ::requestEditorDismiss,
                             )
                         }
 
@@ -335,7 +336,15 @@ internal fun CustomThemeEditorDialog(
                         ) {
                             ThemeEditorControlsSection(
                                 mode = draft.mode,
-                                onModeChange = { draft = draft.copy(mode = it) },
+                                onModeChange = { mode ->
+                                    val modeDraft = draft.copy(mode = mode)
+                                    draft = when (mode) {
+                                        ThemeEditorMode.ADVANCED -> modeDraft
+                                        ThemeEditorMode.BASIC,
+                                        ThemeEditorMode.EXTENDED,
+                                        -> modeDraft.rebalanceGuidedFields() ?: modeDraft
+                                    }
+                                },
                                 onRebalance = { draft = draft.rebalanceGuidedFields() ?: draft },
                             )
 

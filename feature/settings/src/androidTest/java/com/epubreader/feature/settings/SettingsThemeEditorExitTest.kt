@@ -90,6 +90,23 @@ class SettingsThemeEditorExitTest : SettingsScreenPersistenceTestBase() {
         composeRule.onNodeWithTag("theme_editor_exit_discard").assertIsDisplayed()
     }
 
+    @Test
+    fun editorNameField_focused_backShowsExitDialogOnFirstPress() {
+        runBlocking {
+            seedActiveCustomTheme()
+        }
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+        openCurrentThemeEditor()
+
+        composeRule.onNodeWithTag("custom_theme_name").performClick()
+        composeRule.onNodeWithTag("custom_theme_name").performTextInput(" 2")
+
+        pressBack()
+        waitUntilTagExists("theme_editor_exit_dialog")
+    }
+
     private suspend fun seedActiveCustomTheme(): CustomTheme {
         val theme = CustomTheme(
             id = "$CustomThemeIdPrefix-exit-guard",
@@ -107,9 +124,6 @@ class SettingsThemeEditorExitTest : SettingsScreenPersistenceTestBase() {
     private fun requestEditorBack() {
         pressBack()
         composeRule.waitForIdle()
-        if (!tagExists("theme_editor_exit_dialog") && tagExists("theme_editor_sheet")) {
-            pressBack()
-            composeRule.waitForIdle()
-        }
+        waitUntilTagExists("theme_editor_exit_dialog")
     }
 }

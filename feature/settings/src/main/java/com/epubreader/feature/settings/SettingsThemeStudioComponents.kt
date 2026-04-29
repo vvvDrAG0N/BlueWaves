@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +20,11 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -117,6 +123,7 @@ internal fun StudioTextField(
     isError: Boolean,
     errorText: String? = null,
     testTag: String? = null,
+    onBackPressed: (() -> Unit)? = null,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -126,6 +133,7 @@ internal fun StudioTextField(
             isError = isError,
             modifier = Modifier
                 .fillMaxWidth()
+                .interceptBackBeforeSoftKeyboard(onBackPressed)
                 .then(if (testTag != null) Modifier.testTag(testTag) else Modifier),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
@@ -239,6 +247,23 @@ internal fun StudioToggleCell(
                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Medium), 
                 color = if (checked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+internal fun Modifier.interceptBackBeforeSoftKeyboard(
+    onBackPressed: (() -> Unit)?,
+): Modifier {
+    if (onBackPressed == null) {
+        return this
+    }
+    return onPreInterceptKeyBeforeSoftKeyboard { event ->
+        if (event.key == Key.Back && event.type == KeyEventType.KeyUp) {
+            onBackPressed()
+            true
+        } else {
+            false
         }
     }
 }

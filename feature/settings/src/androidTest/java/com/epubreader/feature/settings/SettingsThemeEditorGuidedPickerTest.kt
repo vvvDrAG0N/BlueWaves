@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -381,6 +382,64 @@ class SettingsThemeEditorGuidedPickerTest {
         tapHeaderSave("custom_theme_system_text")
         waitUntilTextContains("custom_theme_system_text", previewHex)
         waitUntilPickerClosed("custom_theme_system_text")
+    }
+
+    @Test
+    fun advancedToExtended_openingGuidedPicker_startsCleanWhenDraftWasRebalanced() {
+        launchThemeEditor()
+        selectThemeEditorMode("advanced")
+
+        composeRule.onNodeWithTag("custom_theme_background_swatch").performScrollTo().performClick()
+        replaceHexInput("custom_theme_background", "000000")
+        tapHeaderSave("custom_theme_background")
+        waitUntilTextContains("custom_theme_background", "#000000")
+
+        composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        replaceHexInput("custom_theme_system_text", "000000")
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", "#000000")
+
+        composeRule.onNodeWithContentDescription("Save").performClick()
+        composeRule.waitForIdle()
+
+        launchCurrentThemeEditor()
+        selectThemeEditorMode("extended")
+        composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        waitUntilTagExists("custom_theme_system_text_picker_safe_zone")
+
+        requestCloseColorPicker("custom_theme_system_text")
+
+        assertTagDoesNotExist("custom_theme_system_text_picker_exit_dialog")
+        waitUntilPickerClosed("custom_theme_system_text")
+    }
+
+    @Test
+    fun advancedToBasic_openingGuidedPicker_startsCleanWhenDraftWasRebalanced() {
+        launchThemeEditor()
+        selectThemeEditorMode("advanced")
+
+        composeRule.onNodeWithTag("custom_theme_background_swatch").performScrollTo().performClick()
+        replaceHexInput("custom_theme_background", "000000")
+        tapHeaderSave("custom_theme_background")
+        waitUntilTextContains("custom_theme_background", "#000000")
+
+        composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        replaceHexInput("custom_theme_system_text", "000000")
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", "#000000")
+
+        composeRule.onNodeWithContentDescription("Save").performClick()
+        composeRule.waitForIdle()
+
+        launchCurrentThemeEditor()
+        selectThemeEditorMode("basic")
+        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
+        waitUntilTagExists("custom_theme_primary_picker_safe_zone")
+
+        requestCloseColorPicker("custom_theme_primary")
+
+        assertTagDoesNotExist("custom_theme_primary_picker_exit_dialog")
+        waitUntilPickerClosed("custom_theme_primary")
     }
 
     private fun blackExtendedTheme(): CustomTheme {

@@ -92,8 +92,7 @@ internal fun ThemeColorPickerOverlay(
     fun currentPreviewHex(): String =
         formatThemeColor(ThemeColorPickerHsv(hue = pickerHue, saturation = pickerSaturation, value = pickerValue).toColorLong())
 
-    fun currentGuidedResolution(): ThemeColorPickerPreviewResult? =
-        guidedPreviewValueChange?.takeIf { isGuided }?.invoke(currentPreviewHex())
+    fun currentGuidedResolution(): ThemeColorPickerPreviewResult? = guidedPreviewValueChange?.takeIf { isGuided }?.invoke(currentPreviewHex())
 
     fun currentSessionState(): ThemeColorPickerSessionState =
         ThemeColorPickerSessionState(
@@ -136,6 +135,7 @@ internal fun ThemeColorPickerOverlay(
         wasAdjusted = adjusted
         showSnapHighlight = false
     }
+
     fun applyPreviewPoint(
         hue: Float = pickerHue,
         saturation: Float = pickerSaturation,
@@ -318,7 +318,6 @@ internal fun ThemeColorPickerOverlay(
             onDismiss()
         }
     }
-
     Dialog(
         onDismissRequest = {
             if (showExitDialog) {
@@ -410,6 +409,7 @@ internal fun ThemeColorPickerOverlay(
                         wasAdjusted = wasAdjusted,
                         showSnapHighlight = showSnapHighlight,
                         testTagPrefix = testTagPrefix,
+                        onBackPressed = ::requestDismiss,
                         onHexInputChange = ::updateHexInput,
                         onRgbInputChange = ::updateRgbInput,
                         modifier = Modifier.padding(top = 16.dp),
