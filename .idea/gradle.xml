@@ -10,6 +10,18 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/model" />
+            <option value="$PROJECT_DIR$/core/ui" />
+            <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/data/books" />
+            <option value="$PROJECT_DIR$/data/settings" />
+            <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/editbook" />
+            <option value="$PROJECT_DIR$/feature/library" />
+            <option value="$PROJECT_DIR$/feature/pdf-legacy" />
+            <option value="$PROJECT_DIR$/feature/reader" />
+            <option value="$PROJECT_DIR$/feature/settings" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,5 +1,13 @@
 # Next Steps
 
+## Reader Restore And Progress Durability Plan Execution
+- Goal: Execute the combined phased reader stabilization plan that first hardens progress durability across background/kill cases and then removes the saved-position reopen flicker.
+- Why now: The investigation phase is complete and has been turned into one durable spec plus one durable plan. The approved implementation order is progress durability first, restore-presentation masking second, so the second phase lands on top of stronger lifecycle coverage.
+- Suggested owner/model: Codex / GPT-5.
+- Starting docs/files: `AGENTS.md`, `docs/reader_screen.md`, `docs/ai_mental_model.md`, `docs/app_shell_navigation.md`, `docs/settings_persistence.md`, `docs/test_checklist.md`, `docs/superpowers/specs/2026-04-29-reader-restore-and-progress-durability-design.md`, `docs/superpowers/plans/2026-04-29-reader-restore-and-progress-durability.md`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenHelpers.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `data/settings/src/main/java/com/epubreader/data/settings/SettingsManager.kt`
+- Risks: Accidentally overwriting good progress during restore, growing `ReaderFeatureShell.kt` past the repo size guard instead of extracting helpers, or broadening scope into app-route persistence without explicit approval.
+- Verification target: Follow the phased plan exactly: pure helper tests first, reader lifecycle/runtime instrumentation second, then the manual matrix for HOME/background, force-stop, recents-close, and saved-mid-chapter reopen.
+
 ## Reader Shadow Startup Target Met
 - Goal: Treat the `Shadow Slave 1435 / 2927 ch` cold-entry reader lag as parked unless a fresh in-hand hitch is still noticeable on the physical phone.
 - Why now: The latest exact-state release-like pass on **April 27, 2026** met the requested target across both lanes. Immediate reruns landed at `37`, `42`, and `63` for an average of `47.33`; `15s later` reruns landed at `29`, `63`, and `35` for an average of `42.33`; the combined six-run average is `44.83`.

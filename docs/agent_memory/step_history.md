@@ -2549,3 +2549,54 @@ This file is append-only.
   - No planning blocker remains. The next decision is execution mode only.
 - Suggested next step:
   - Choose either subagent-driven execution or inline execution and start Task 1 of `docs/superpowers/plans/2026-04-27-theme-spectrum-picker.md`.
+
+## 116. 2026-04-28 07:27
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Investigate two reader follow-ups without implementation: the book-open flicker before restored position settles, and reader progress edge cases when the app is backgrounded or killed while a book is still open.
+- Area/files: `AGENTS.md`, `docs/README.md`, `docs/project_graph.md`, `graphify-out/GRAPH_REPORT.md`, `docs/reader_screen.md`, `docs/ai_mental_model.md`, `docs/app_shell_navigation.md`, `docs/settings_persistence.md`, `docs/AI_DEBUG_GUIDE.md`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderSurfacePlugin.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderScreenEffects.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenHelpers.kt`, `feature/reader/src/androidTest/java/com/epubreader/feature/reader/ReaderScreenRestorationTest.kt`, `app/src/main/java/com/epubreader/MainActivity.kt`, `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `app/src/main/java/com/epubreader/app/AppNavigationEffects.kt`, `data/settings/src/main/java/com/epubreader/data/settings/SettingsManager.kt`, `docs/agent_memory/next_steps.md`, `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Re-read the repo guardrails plus the focused reader, shell-navigation, and settings-persistence docs before opening source so the investigation stayed inside the current ownership boundaries.
+  2. Traced the reader-open path from `ReaderSurfacePlugin.kt` into `ReaderFeatureShell.kt` and confirmed that the saved chapter is chosen before render, but the saved item offset is restored only after chapter content has already mounted and the `LazyColumn` has measured, which creates a plausible first-paint flicker window before the later `scrollToItem(...)`.
+  3. Traced the reader progress path and app lifecycle boundaries through `ReaderFeatureShell.kt`, `ReaderScreenHelpers.kt`, `AppNavigation.kt`, `MainActivity.kt`, and `SettingsManager.kt`, then compared that behavior against the existing progress/restoration tests.
+  4. Confirmed there is no dedicated reader progress flush on `ON_STOP` or `ON_PAUSE`; current EPUB progress safety comes from the debounced in-reader save flow plus explicit `saveAndBack()` when the reader exits through its own back path.
+  5. Confirmed `AppNavigation.kt` stores the active route only in plain `remember`, so a cold restart/process death does not preserve "reader still open" route state; the app comes back through normal startup on the library route and depends on persisted `BookProgress` when the book is opened again.
+  6. Added two durable follow-up notes to `docs/agent_memory/next_steps.md`: one for the restore-after-render flicker, and one for reader background/task-removal/process-death progress edge cases.
+- Result:
+  - The open-book flicker suspicion looks real: the likely visible jump is not "wrong chapter then restore," but "correct chapter paints at default top position, then later restore jumps to the saved offset."
+  - If the app is merely backgrounded and kept alive, reopening it should return to the same in-memory reader state because the reader route and list state are still live in memory.
+  - If the activity/process is recreated while the app is in the background, or if the system kills the app after backgrounding, the app will cold-start back to the library route because the current route is not persisted outside Compose memory.
+  - In those cold-restart cases, reopening the book restores only the latest persisted `BookProgress`; any very recent reading movement that has not yet passed through the debounced save path can be lost.
+  - The existing tests cover final restoration correctness and `SettingsManager` persistence behavior, but they do not currently cover first-frame flicker, background-progress flush timing, or task-removal/process-death behavior from an active reader.
+- Verification:
+  - Read-back review of the traced reader-open and progress-save code paths
+  - Read-back review of `docs/agent_memory/next_steps.md`
+  - Read-back review of this `docs/agent_memory/step_history.md` entry
+- Blockers:
+  - None for the investigation itself. Runtime verification on emulator/device was intentionally avoided once the user warned that another agent was actively using the test environment.
+- Suggested next step:
+  - After Agent 1 is done, reopen these as two focused reader follow-ups: first add lifecycle/first-frame tests that prove the gaps, then implement the smallest shell-safe fixes without loosening the existing restoration and progress guards.
+
+## 117. 2026-04-29 00:00
+- Agent model: Codex GPT-5
+- Agent name: Codex
+- Task goal: Convert the approved reader investigation findings into one durable phased design and one execution-ready implementation plan, without starting implementation.
+- Area/files: `AGENTS.md`, `docs/README.md`, `docs/project_graph.md`, `graphify-out/GRAPH_REPORT.md`, `docs/reader_screen.md`, `docs/ai_mental_model.md`, `docs/app_shell_navigation.md`, `docs/settings_persistence.md`, `docs/test_checklist.md`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/shell/ReaderFeatureShell.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderScreenHelpers.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/internal/runtime/epub/EpubReaderRuntime.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContent.kt`, `feature/reader/src/main/java/com/epubreader/feature/reader/ReaderChapterContentCommon.kt`, `app/src/main/java/com/epubreader/app/AppNavigation.kt`, `data/settings/src/main/java/com/epubreader/data/settings/SettingsManager.kt`, `docs/superpowers/specs/2026-04-29-reader-restore-and-progress-durability-design.md`, `docs/superpowers/plans/2026-04-29-reader-restore-and-progress-durability.md`, `docs/agent_memory/next_steps.md`, and `docs/agent_memory/step_history.md`
+- Action taken:
+  1. Re-read the repo guardrails, the reader/shell/settings docs, the prior investigation notes, and the current reader helper/runtime files before locking the plan shape.
+  2. Chose the approved phased approach: solve progress durability first and the reader-open flicker second, while explicitly keeping app-route persistence out of scope for this pass.
+  3. Wrote a durable design spec at `docs/superpowers/specs/2026-04-29-reader-restore-and-progress-durability-design.md` that captures the problem statement, alternative approaches, approved architecture, lifecycle policy, risk guards, and testing strategy.
+  4. Wrote an execution-ready phased implementation plan at `docs/superpowers/plans/2026-04-29-reader-restore-and-progress-durability.md` with exact file targets, helper extraction strategy, test-first sequencing, focused verification commands, and the manual lifecycle matrix.
+  5. Collapsed the older two generic next-step entries into one combined execution pointer so future agents follow the new spec/plan pair instead of re-splitting the work ad hoc.
+- Result:
+  - The repo now has one authoritative planning lane for these reader findings instead of two loosely connected reminders.
+  - The plan keeps the builder innocent, keeps `SettingsManager` as the persisted source of truth, and explicitly avoids growing `ReaderFeatureShell.kt` further by extracting lifecycle and restore helpers into focused reader-local files.
+  - The design also makes one important product-policy choice explicit for this pass: cold restart may still return to the library route; the goal here is durable progress plus a clean reopen, not route persistence.
+- Verification:
+  - Read-back review of `docs/superpowers/specs/2026-04-29-reader-restore-and-progress-durability-design.md`
+  - Read-back review of `docs/superpowers/plans/2026-04-29-reader-restore-and-progress-durability.md`
+  - Read-back review of the updated top entry in `docs/agent_memory/next_steps.md`
+- Blockers:
+  - No planning blocker remains. The next gate is user review of the spec/plan pair before any implementation begins.
+- Suggested next step:
+  - Review the new spec and plan together, decide whether the cold-restart policy should stay "return to library, but preserve latest progress" for this pass, and then either revise the plan or explicitly approve execution.

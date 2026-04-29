@@ -9,7 +9,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigation.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appnavigation_kt",
-      "community": 110
+      "community": 113
     },
     {
       "label": "AppNavigation()",
@@ -17,7 +17,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigation.kt",
       "source_location": "L31",
       "id": "appnavigation_appnavigation",
-      "community": 110
+      "community": 113
     },
     {
       "label": "AppNavigationDerivedState.kt",
@@ -65,7 +65,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationEffects.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appnavigationeffects_kt",
-      "community": 111
+      "community": 114
     },
     {
       "label": "AppNavigationSideEffects()",
@@ -73,7 +73,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationEffects.kt",
       "source_location": "L21",
       "id": "appnavigationeffects_appnavigationsideeffects",
-      "community": 111
+      "community": 114
     },
     {
       "label": "AppNavigationScreenHost.kt",
@@ -81,15 +81,23 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationScreenHost.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appnavigationscreenhost_kt",
-      "community": 112
+      "community": 92
     },
     {
       "label": "AppNavigationScreenHost()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationScreenHost.kt",
-      "source_location": "L17",
+      "source_location": "L20",
       "id": "appnavigationscreenhost_appnavigationscreenhost",
-      "community": 112
+      "community": 92
+    },
+    {
+      "label": "shouldAnimateAppRouteTransition()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationScreenHost.kt",
+      "source_location": "L52",
+      "id": "appnavigationscreenhost_shouldanimateapproutetransition",
+      "community": 92
     },
     {
       "label": "AppNavigationStartup.kt",
@@ -145,7 +153,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartupEffect.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appnavigationstartupeffect_kt",
-      "community": 113
+      "community": 115
     },
     {
       "label": "AppNavigationStartupEffect()",
@@ -153,7 +161,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationStartupEffect.kt",
       "source_location": "L10",
       "id": "appnavigationstartupeffect_appnavigationstartupeffect",
-      "community": 113
+      "community": 115
     },
     {
       "label": "AppNavigationStartupState.kt",
@@ -233,7 +241,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceHost.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appsurfacehost_kt",
-      "community": 114
+      "community": 116
     },
     {
       "label": "AppSurfaceHost",
@@ -241,7 +249,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceHost.kt",
       "source_location": "L12",
       "id": "appsurfacehost_appsurfacehost",
-      "community": 114
+      "community": 116
     },
     {
       "label": "AppSurfaceRegistry.kt",
@@ -249,7 +257,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appsurfaceregistry_kt",
-      "community": 21
+      "community": 22
     },
     {
       "label": "AppSurfaceRegistry",
@@ -257,7 +265,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L39",
       "id": "appsurfaceregistry_appsurfaceregistry",
-      "community": 21
+      "community": 22
     },
     {
       "label": ".resolve()",
@@ -265,7 +273,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L68",
       "id": "appsurfaceregistry_appsurfaceregistry_resolve",
-      "community": 21
+      "community": 22
     },
     {
       "label": ".boundSurface()",
@@ -273,7 +281,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L77",
       "id": "appsurfaceregistry_appsurfaceregistry_boundsurface",
-      "community": 21
+      "community": 22
     },
     {
       "label": "AppSurfaceEntry",
@@ -281,7 +289,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L89",
       "id": "appsurfaceregistry_appsurfaceentry",
-      "community": 21
+      "community": 22
     },
     {
       "label": ".resolve()",
@@ -289,7 +297,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L90",
       "id": "appsurfaceregistry_appsurfaceentry_resolve",
-      "community": 21
+      "community": 22
     },
     {
       "label": "BoundSurface",
@@ -297,7 +305,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L93",
       "id": "appsurfaceregistry_boundsurface",
-      "community": 21
+      "community": 22
     },
     {
       "label": ".resolve()",
@@ -305,7 +313,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L101",
       "id": "appsurfaceregistry_boundsurface_resolve",
-      "community": 21
+      "community": 22
     },
     {
       "label": ".fallbackSurface()",
@@ -313,7 +321,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L119",
       "id": "appsurfaceregistry_appsurfaceregistry_fallbacksurface",
-      "community": 21
+      "community": 22
     },
     {
       "label": "AppResolvedSurface",
@@ -321,7 +329,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L133",
       "id": "appsurfaceregistry_appresolvedsurface",
-      "community": 21
+      "community": 22
     },
     {
       "label": ".Render()",
@@ -329,7 +337,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L138",
       "id": "appsurfaceregistry_appresolvedsurface_render",
-      "community": 21
+      "community": 22
     },
     {
       "label": "UnknownSurfaceScreen()",
@@ -337,7 +345,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppSurfaceRegistry.kt",
       "source_location": "L144",
       "id": "appsurfaceregistry_unknownsurfacescreen",
-      "community": 21
+      "community": 22
     },
     {
       "label": "AppWarmUpScreen.kt",
@@ -345,7 +353,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppWarmUpScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appwarmupscreen_kt",
-      "community": 90
+      "community": 93
     },
     {
       "label": "AppWarmUpScreen()",
@@ -353,7 +361,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppWarmUpScreen.kt",
       "source_location": "L35",
       "id": "appwarmupscreen_appwarmupscreen",
-      "community": 90
+      "community": 93
     },
     {
       "label": "warmUpStatusText()",
@@ -361,7 +369,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppWarmUpScreen.kt",
       "source_location": "L101",
       "id": "appwarmupscreen_warmupstatustext",
-      "community": 90
+      "community": 93
     },
     {
       "label": "SurfaceRegistry.kt",
@@ -369,7 +377,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\SurfaceRegistry.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_surfaceregistry_kt",
-      "community": 91
+      "community": 94
     },
     {
       "label": "SurfaceRegistry",
@@ -377,7 +385,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\SurfaceRegistry.kt",
       "source_location": "L6",
       "id": "surfaceregistry_surfaceregistry",
-      "community": 91
+      "community": 94
     },
     {
       "label": ".find()",
@@ -385,7 +393,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\SurfaceRegistry.kt",
       "source_location": "L20",
       "id": "surfaceregistry_surfaceregistry_find",
-      "community": 91
+      "community": 94
     },
     {
       "label": "MainActivity.kt",
@@ -1113,7 +1121,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\core\\ui\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCoverModels.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_core_ui_src_main_java_com_epubreader_core_ui_librarycovermodels_kt",
-      "community": 115
+      "community": 117
     },
     {
       "label": "rememberLibraryCoverModel()",
@@ -1121,7 +1129,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\core\\ui\\src\\main\\java\\com\\epubreader\\core\\ui\\LibraryCoverModels.kt",
       "source_location": "L13",
       "id": "librarycovermodels_rememberlibrarycovermodel",
-      "community": 115
+      "community": 117
     },
     {
       "label": "ReaderStatusSettingsRow.kt",
@@ -1129,15 +1137,15 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\core\\ui\\src\\main\\java\\com\\epubreader\\core\\ui\\ReaderStatusSettingsRow.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_core_ui_src_main_java_com_epubreader_core_ui_readerstatussettingsrow_kt",
-      "community": 92
+      "community": 95
     },
     {
       "label": "ReaderStatusSettingsRow()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderStatusSettingsRow.kt",
-      "source_location": "L8",
+      "source_location": "L9",
       "id": "readerstatussettingsrow_readerstatussettingsrow",
-      "community": 92
+      "community": 95
     },
     {
       "label": "ReaderUiSupport.kt",
@@ -1145,7 +1153,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\core\\ui\\src\\main\\java\\com\\epubreader\\core\\ui\\ReaderUiSupport.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_core_ui_src_main_java_com_epubreader_core_ui_readeruisupport_kt",
-      "community": 93
+      "community": 96
     },
     {
       "label": "ReaderTheme",
@@ -1153,7 +1161,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\core\\ui\\src\\main\\java\\com\\epubreader\\core\\ui\\ReaderUiSupport.kt",
       "source_location": "L15",
       "id": "readeruisupport_readertheme",
-      "community": 93
+      "community": 96
     },
     {
       "label": "getThemeColors()",
@@ -1161,7 +1169,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\core\\ui\\src\\main\\java\\com\\epubreader\\core\\ui\\ReaderUiSupport.kt",
       "source_location": "L24",
       "id": "readeruisupport_getthemecolors",
-      "community": 93
+      "community": 96
     },
     {
       "label": "SurfaceExtensionRender.kt",
@@ -1329,7 +1337,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\core\\ui\\src\\main\\java\\com\\epubreader\\core\\ui\\WindowInsetsUtils.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_core_ui_src_main_java_com_epubreader_core_ui_windowinsetsutils_kt",
-      "community": 116
+      "community": 118
     },
     {
       "label": "getStaticWindowInsets()",
@@ -1337,7 +1345,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\core\\ui\\src\\main\\java\\com\\epubreader\\core\\ui\\WindowInsetsUtils.kt",
       "source_location": "L12",
       "id": "windowinsetsutils_getstaticwindowinsets",
-      "community": 116
+      "community": 118
     },
     {
       "label": "AppLog.kt",
@@ -2209,7 +2217,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserPdfConversion.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_data_books_src_main_java_com_epubreader_data_parser_epubparserpdfconversion_kt",
-      "community": 117
+      "community": 119
     },
     {
       "label": "convertStoredPdfForBook()",
@@ -2217,7 +2225,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\EpubParserPdfConversion.kt",
       "source_location": "L10",
       "id": "epubparserpdfconversion_convertstoredpdfforbook",
-      "community": 117
+      "community": 119
     },
     {
       "label": "EpubParserPdfSupport.kt",
@@ -2401,7 +2409,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_data_books_src_main_java_com_epubreader_data_parser_internalepubparser_kt",
-      "community": 15
+      "community": 14
     },
     {
       "label": "ManifestItem",
@@ -2409,7 +2417,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L15",
       "id": "internalepubparser_manifestitem",
-      "community": 15
+      "community": 14
     },
     {
       "label": "RawEpubMetadata",
@@ -2417,7 +2425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L22",
       "id": "internalepubparser_rawepubmetadata",
-      "community": 15
+      "community": 14
     },
     {
       "label": "InternalEpubParser",
@@ -2425,7 +2433,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L32",
       "id": "internalepubparser_internalepubparser",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".parseEpub()",
@@ -2433,7 +2441,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L34",
       "id": "internalepubparser_internalepubparser_parseepub",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".findOpfPath()",
@@ -2441,7 +2449,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L71",
       "id": "internalepubparser_internalepubparser_findopfpath",
-      "community": 15
+      "community": 14
     },
     {
       "label": "OpfData",
@@ -2449,7 +2457,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L89",
       "id": "internalepubparser_opfdata",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".parseOpf()",
@@ -2457,7 +2465,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L99",
       "id": "internalepubparser_internalepubparser_parseopf",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".parseNcx()",
@@ -2465,7 +2473,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L164",
       "id": "internalepubparser_internalepubparser_parsencx",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".parseNav()",
@@ -2473,7 +2481,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L192",
       "id": "internalepubparser_internalepubparser_parsenav",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".readTextContent()",
@@ -2481,7 +2489,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L224",
       "id": "internalepubparser_internalepubparser_readtextcontent",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".resolveZipPath()",
@@ -2489,7 +2497,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L239",
       "id": "internalepubparser_internalepubparser_resolvezippath",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".toStoredHref()",
@@ -2497,7 +2505,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L254",
       "id": "internalepubparser_internalepubparser_tostoredhref",
-      "community": 15
+      "community": 14
     },
     {
       "label": ".newPullParser()",
@@ -2505,7 +2513,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L269",
       "id": "internalepubparser_internalepubparser_newpullparser",
-      "community": 15
+      "community": 14
     },
     {
       "label": "normalizePath()",
@@ -2513,7 +2521,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\books\\src\\main\\java\\com\\epubreader\\data\\parser\\InternalEpubParser.kt",
       "source_location": "L274",
       "id": "internalepubparser_normalizepath",
-      "community": 15
+      "community": 14
     },
     {
       "label": "PdfLegacyBridge.kt",
@@ -3361,7 +3369,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_data_settings_src_main_java_com_epubreader_data_settings_settingsmanagercontracts_kt",
-      "community": 22
+      "community": 23
     },
     {
       "label": "SettingsPreferenceKeys",
@@ -3369,7 +3377,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L45",
       "id": "settingsmanagercontracts_settingspreferencekeys",
-      "community": 22
+      "community": 23
     },
     {
       "label": "BookProgressPreferenceKeys",
@@ -3377,7 +3385,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L79",
       "id": "settingsmanagercontracts_bookprogresspreferencekeys",
-      "community": 22
+      "community": 23
     },
     {
       "label": "GlobalSettingsSnapshot",
@@ -3385,7 +3393,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L85",
       "id": "settingsmanagercontracts_globalsettingssnapshot",
-      "community": 22
+      "community": 23
     },
     {
       "label": "bookProgressKeyPrefix()",
@@ -3393,7 +3401,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L113",
       "id": "settingsmanagercontracts_bookprogresskeyprefix",
-      "community": 22
+      "community": 23
     },
     {
       "label": "legacyBookProgressPreferenceKeys()",
@@ -3401,7 +3409,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L117",
       "id": "settingsmanagercontracts_legacybookprogresspreferencekeys",
-      "community": 22
+      "community": 23
     },
     {
       "label": "toGlobalSettings()",
@@ -3409,7 +3417,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L137",
       "id": "settingsmanagercontracts_toglobalsettings",
-      "community": 22
+      "community": 23
     },
     {
       "label": "toGlobalSettingsSnapshot()",
@@ -3417,7 +3425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L141",
       "id": "settingsmanagercontracts_toglobalsettingssnapshot",
-      "community": 22
+      "community": 23
     },
     {
       "label": "parseCustomThemes()",
@@ -3425,7 +3433,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L226",
       "id": "settingsmanagercontracts_parsecustomthemes",
-      "community": 22
+      "community": 23
     },
     {
       "label": "toCustomThemesJson()",
@@ -3433,7 +3441,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L302",
       "id": "settingsmanagercontracts_tocustomthemesjson",
-      "community": 22
+      "community": 23
     },
     {
       "label": "parseColorFromKeys()",
@@ -3441,7 +3449,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L340",
       "id": "settingsmanagercontracts_parsecolorfromkeys",
-      "community": 22
+      "community": 23
     },
     {
       "label": "toBookProgress()",
@@ -3449,7 +3457,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerContracts.kt",
       "source_location": "L346",
       "id": "settingsmanagercontracts_tobookprogress",
-      "community": 22
+      "community": 23
     },
     {
       "label": "SettingsManagerJson.kt",
@@ -3457,7 +3465,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_data_settings_src_main_java_com_epubreader_data_settings_settingsmanagerjson_kt",
-      "community": 23
+      "community": 24
     },
     {
       "label": "safeJsonObject()",
@@ -3465,7 +3473,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L12",
       "id": "settingsmanagerjson_safejsonobject",
-      "community": 23
+      "community": 24
     },
     {
       "label": "safeJsonArray()",
@@ -3473,7 +3481,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L20",
       "id": "settingsmanagerjson_safejsonarray",
-      "community": 23
+      "community": 24
     },
     {
       "label": "strictJsonObject()",
@@ -3481,7 +3489,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L28",
       "id": "settingsmanagerjson_strictjsonobject",
-      "community": 23
+      "community": 24
     },
     {
       "label": "strictJsonArray()",
@@ -3489,7 +3497,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L32",
       "id": "settingsmanagerjson_strictjsonarray",
-      "community": 23
+      "community": 24
     },
     {
       "label": "toStringList()",
@@ -3497,7 +3505,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L36",
       "id": "settingsmanagerjson_tostringlist",
-      "community": 23
+      "community": 24
     },
     {
       "label": "toJsonArray()",
@@ -3505,7 +3513,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L44",
       "id": "settingsmanagerjson_tojsonarray",
-      "community": 23
+      "community": 24
     },
     {
       "label": "replacingEntry()",
@@ -3513,7 +3521,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L50",
       "id": "settingsmanagerjson_replacingentry",
-      "community": 23
+      "community": 24
     },
     {
       "label": "withoutEntry()",
@@ -3521,7 +3529,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L59",
       "id": "settingsmanagerjson_withoutentry",
-      "community": 23
+      "community": 24
     },
     {
       "label": "renameStringEntry()",
@@ -3529,7 +3537,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L70",
       "id": "settingsmanagerjson_renamestringentry",
-      "community": 23
+      "community": 24
     },
     {
       "label": "replaceStringValues()",
@@ -3537,7 +3545,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L80",
       "id": "settingsmanagerjson_replacestringvalues",
-      "community": 23
+      "community": 24
     },
     {
       "label": "removeEntriesWithStringValue()",
@@ -3545,7 +3553,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\data\\settings\\src\\main\\java\\com\\epubreader\\data\\settings\\SettingsManagerJson.kt",
       "source_location": "L90",
       "id": "settingsmanagerjson_removeentrieswithstringvalue",
-      "community": 23
+      "community": 24
     },
     {
       "label": "EditBookChaptersTab.kt",
@@ -4201,7 +4209,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\app\\LibraryDataContracts.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_app_librarydatacontracts_kt",
-      "community": 138
+      "community": 141
     },
     {
       "label": "LibraryFeatureBindings.kt",
@@ -4281,7 +4289,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContent.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontent_kt",
-      "community": 118
+      "community": 120
     },
     {
       "label": "LibraryFeatureContent()",
@@ -4289,7 +4297,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContent.kt",
       "source_location": "L36",
       "id": "libraryfeaturecontent_libraryfeaturecontent",
-      "community": 118
+      "community": 120
     },
     {
       "label": "LibraryFeatureContracts.kt",
@@ -4311,7 +4319,7 @@
       "label": "LibraryScreenState",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L24",
+      "source_location": "L23",
       "id": "libraryfeaturecontracts_libraryscreenstate",
       "community": 17
     },
@@ -4319,7 +4327,7 @@
       "label": "BookSelectionUiState",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L39",
+      "source_location": "L38",
       "id": "libraryfeaturecontracts_bookselectionuistate",
       "community": 17
     },
@@ -4327,7 +4335,7 @@
       "label": "FolderDrawerUiState",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L47",
+      "source_location": "L46",
       "id": "libraryfeaturecontracts_folderdraweruistate",
       "community": 17
     },
@@ -4335,7 +4343,7 @@
       "label": "LibraryScreenActions",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L57",
+      "source_location": "L56",
       "id": "libraryfeaturecontracts_libraryscreenactions",
       "community": 17
     },
@@ -4343,7 +4351,7 @@
       "label": "FolderDrawerActions",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L72",
+      "source_location": "L71",
       "id": "libraryfeaturecontracts_folderdraweractions",
       "community": 17
     },
@@ -4351,7 +4359,7 @@
       "label": "BookSelectionActionBarState",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L91",
+      "source_location": "L90",
       "id": "libraryfeaturecontracts_bookselectionactionbarstate",
       "community": 17
     },
@@ -4359,7 +4367,7 @@
       "label": "BookSelectionActionBarActions",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L96",
+      "source_location": "L95",
       "id": "libraryfeaturecontracts_bookselectionactionbaractions",
       "community": 17
     },
@@ -4367,7 +4375,7 @@
       "label": "LibraryScreenSlots",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L102",
+      "source_location": "L101",
       "id": "libraryfeaturecontracts_libraryscreenslots",
       "community": 17
     },
@@ -4375,7 +4383,7 @@
       "label": "LibraryBackAction",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L107",
+      "source_location": "L106",
       "id": "libraryfeaturecontracts_librarybackaction",
       "community": 17
     },
@@ -4383,7 +4391,7 @@
       "label": "resolveLibraryBackAction()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L113",
+      "source_location": "L112",
       "id": "libraryfeaturecontracts_resolvelibrarybackaction",
       "community": 17
     },
@@ -4391,7 +4399,7 @@
       "label": "LibraryDialogState",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L126",
+      "source_location": "L125",
       "id": "libraryfeaturecontracts_librarydialogstate",
       "community": 17
     },
@@ -4399,7 +4407,7 @@
       "label": "LibraryDialogActions",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L141",
+      "source_location": "L140",
       "id": "libraryfeaturecontracts_librarydialogactions",
       "community": 17
     },
@@ -4409,7 +4417,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturedata_kt",
-      "community": 16
+      "community": 15
     },
     {
       "label": "LibraryDerivedData",
@@ -4417,7 +4425,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L16",
       "id": "libraryfeaturedata_libraryderiveddata",
-      "community": 16
+      "community": 15
     },
     {
       "label": "FolderDragPreviewUpdate",
@@ -4425,7 +4433,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L26",
       "id": "libraryfeaturedata_folderdragpreviewupdate",
-      "community": 16
+      "community": 15
     },
     {
       "label": "parseStringMap()",
@@ -4433,7 +4441,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L32",
       "id": "libraryfeaturedata_parsestringmap",
-      "community": 16
+      "community": 15
     },
     {
       "label": "parseFolderOrder()",
@@ -4441,7 +4449,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L47",
       "id": "libraryfeaturedata_parsefolderorder",
-      "community": 16
+      "community": 15
     },
     {
       "label": "buildLibraryDerivedData()",
@@ -4449,7 +4457,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L57",
       "id": "libraryfeaturedata_buildlibraryderiveddata",
-      "community": 16
+      "community": 15
     },
     {
       "label": "resolveCurrentSort()",
@@ -4457,7 +4465,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L98",
       "id": "libraryfeaturedata_resolvecurrentsort",
-      "community": 16
+      "community": 15
     },
     {
       "label": "buildFolders()",
@@ -4465,7 +4473,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L110",
       "id": "libraryfeaturedata_buildfolders",
-      "community": 16
+      "community": 15
     },
     {
       "label": "buildLibraryItems()",
@@ -4473,7 +4481,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L141",
       "id": "libraryfeaturedata_buildlibraryitems",
-      "community": 16
+      "community": 15
     },
     {
       "label": "buildVisibleProgressTargets()",
@@ -4481,7 +4489,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L170",
       "id": "libraryfeaturedata_buildvisibleprogresstargets",
-      "community": 16
+      "community": 15
     },
     {
       "label": "buildLibraryProgressTargets()",
@@ -4489,7 +4497,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L202",
       "id": "libraryfeaturedata_buildlibraryprogresstargets",
-      "community": 16
+      "community": 15
     },
     {
       "label": "updateFolderDragPreview()",
@@ -4497,7 +4505,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L214",
       "id": "libraryfeaturedata_updatefolderdragpreview",
-      "community": 16
+      "community": 15
     },
     {
       "label": "resolveDisplayedFolders()",
@@ -4505,7 +4513,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L262",
       "id": "libraryfeaturedata_resolvedisplayedfolders",
-      "community": 16
+      "community": 15
     },
     {
       "label": "findLastOpenedBook()",
@@ -4513,7 +4521,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L275",
       "id": "libraryfeaturedata_findlastopenedbook",
-      "community": 16
+      "community": 15
     },
     {
       "label": "findSelectedEditableBook()",
@@ -4521,7 +4529,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureData.kt",
       "source_location": "L281",
       "id": "libraryfeaturedata_findselectededitablebook",
-      "community": 16
+      "community": 15
     },
     {
       "label": "LibraryFeatureExtensions.kt",
@@ -4585,7 +4593,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureImport.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureimport_kt",
-      "community": 119
+      "community": 121
     },
     {
       "label": "rememberBookImportLauncher()",
@@ -4593,7 +4601,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureImport.kt",
       "source_location": "L17",
       "id": "libraryfeatureimport_rememberbookimportlauncher",
-      "community": 119
+      "community": 121
     },
     {
       "label": "LibraryFeatureMutations.kt",
@@ -4601,7 +4609,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureMutations.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturemutations_kt",
-      "community": 94
+      "community": 97
     },
     {
       "label": "LibraryFeatureMutations",
@@ -4609,7 +4617,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureMutations.kt",
       "source_location": "L11",
       "id": "libraryfeaturemutations_libraryfeaturemutations",
-      "community": 94
+      "community": 97
     },
     {
       "label": "buildLibraryFeatureMutations()",
@@ -4617,7 +4625,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureMutations.kt",
       "source_location": "L24",
       "id": "libraryfeaturemutations_buildlibraryfeaturemutations",
-      "community": 94
+      "community": 97
     },
     {
       "label": "LibraryFeatureOperations.kt",
@@ -4625,7 +4633,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
-      "community": 13
+      "community": 16
     },
     {
       "label": "ImportBookResult",
@@ -4633,7 +4641,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
       "source_location": "L26",
       "id": "libraryfeatureoperations_importbookresult",
-      "community": 13
+      "community": 16
     },
     {
       "label": "Duplicate",
@@ -4641,7 +4649,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
       "source_location": "L27",
       "id": "libraryfeatureoperations_duplicate",
-      "community": 13
+      "community": 16
     },
     {
       "label": "Imported",
@@ -4649,7 +4657,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
       "source_location": "L28",
       "id": "libraryfeatureoperations_imported",
-      "community": 13
+      "community": 16
     },
     {
       "label": "Failed",
@@ -4657,7 +4665,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
       "source_location": "L29",
       "id": "libraryfeatureoperations_failed",
-      "community": 13
+      "community": 16
     },
     {
       "label": "EditBookResult",
@@ -4665,7 +4673,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
       "source_location": "L32",
       "id": "libraryfeatureoperations_editbookresult",
-      "community": 13
+      "community": 16
     },
     {
       "label": "Updated",
@@ -4673,7 +4681,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
       "source_location": "L33",
       "id": "libraryfeatureoperations_updated",
-      "community": 13
+      "community": 16
     },
     {
       "label": "scanLibrary()",
@@ -4681,71 +4689,63 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
       "source_location": "L37",
       "id": "libraryfeatureoperations_scanlibrary",
-      "community": 13
-    },
-    {
-      "label": "touchBookLastRead()",
-      "file_type": "code",
-      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L43",
-      "id": "libraryfeatureoperations_touchbooklastread",
-      "community": 13
+      "community": 16
     },
     {
       "label": "importBookIntoLibrary()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L54",
+      "source_location": "L43",
       "id": "libraryfeatureoperations_importbookintolibrary",
-      "community": 13
+      "community": 16
     },
     {
       "label": "moveBooksToFolder()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L99",
+      "source_location": "L88",
       "id": "libraryfeatureoperations_movebookstofolder",
-      "community": 13
+      "community": 16
     },
     {
       "label": "deleteSelectedBooks()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L110",
+      "source_location": "L99",
       "id": "libraryfeatureoperations_deleteselectedbooks",
-      "community": 13
+      "community": 16
     },
     {
       "label": "editBookInLibrary()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L126",
+      "source_location": "L115",
       "id": "libraryfeatureoperations_editbookinlibrary",
-      "community": 13
+      "community": 16
     },
     {
       "label": "findExistingBook()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L163",
+      "source_location": "L152",
       "id": "libraryfeatureoperations_findexistingbook",
-      "community": 13
+      "community": 16
     },
     {
       "label": "repairProgressAfterBookEdit()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L182",
+      "source_location": "L171",
       "id": "libraryfeatureoperations_repairprogressafterbookedit",
-      "community": 13
+      "community": 16
     },
     {
       "label": "normalizeProgressHref()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L227",
+      "source_location": "L216",
       "id": "libraryfeatureoperations_normalizeprogresshref",
-      "community": 13
+      "community": 16
     },
     {
       "label": "LibraryBookGrid.kt",
@@ -4753,7 +4753,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibraryBookGrid.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_ui_librarybookgrid_kt",
-      "community": 120
+      "community": 122
     },
     {
       "label": "LibraryBookGrid()",
@@ -4761,7 +4761,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibraryBookGrid.kt",
       "source_location": "L38",
       "id": "librarybookgrid_librarybookgrid",
-      "community": 120
+      "community": 122
     },
     {
       "label": "LibraryDialogs.kt",
@@ -4849,7 +4849,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibraryDrawerContent.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_ui_librarydrawercontent_kt",
-      "community": 121
+      "community": 123
     },
     {
       "label": "LibraryDrawerContent()",
@@ -4857,7 +4857,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibraryDrawerContent.kt",
       "source_location": "L56",
       "id": "librarydrawercontent_librarydrawercontent",
-      "community": 121
+      "community": 123
     },
     {
       "label": "LibraryScreen.kt",
@@ -4865,7 +4865,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibraryScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_ui_libraryscreen_kt",
-      "community": 122
+      "community": 124
     },
     {
       "label": "LibraryScreen()",
@@ -4873,7 +4873,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibraryScreen.kt",
       "source_location": "L34",
       "id": "libraryscreen_libraryscreen",
-      "community": 122
+      "community": 124
     },
     {
       "label": "LibrarySelectionActionBar.kt",
@@ -4881,7 +4881,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibrarySelectionActionBar.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_ui_libraryselectionactionbar_kt",
-      "community": 95
+      "community": 98
     },
     {
       "label": "BookSelectionActionBar()",
@@ -4889,7 +4889,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibrarySelectionActionBar.kt",
       "source_location": "L34",
       "id": "libraryselectionactionbar_bookselectionactionbar",
-      "community": 95
+      "community": 98
     },
     {
       "label": "SelectionActionButton()",
@@ -4897,7 +4897,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibrarySelectionActionBar.kt",
       "source_location": "L111",
       "id": "libraryselectionactionbar_selectionactionbutton",
-      "community": 95
+      "community": 98
     },
     {
       "label": "LibraryTopBar.kt",
@@ -4905,7 +4905,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibraryTopBar.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_ui_librarytopbar_kt",
-      "community": 123
+      "community": 125
     },
     {
       "label": "LibraryTopBar()",
@@ -4913,7 +4913,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\ui\\LibraryTopBar.kt",
       "source_location": "L27",
       "id": "librarytopbar_librarytopbar",
-      "community": 123
+      "community": 125
     },
     {
       "label": "LibraryExtensions.kt",
@@ -5233,7 +5233,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\pdf-legacy\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_pdf_legacy_src_main_java_com_epubreader_feature_pdf_legacy_pdfreaderscreen_kt",
-      "community": 96
+      "community": 99
     },
     {
       "label": "PdfReaderScreen()",
@@ -5241,7 +5241,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\pdf-legacy\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L101",
       "id": "pdfreaderscreen_pdfreaderscreen",
-      "community": 96
+      "community": 99
     },
     {
       "label": "PdfPageItem()",
@@ -5249,7 +5249,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\pdf-legacy\\src\\main\\java\\com\\epubreader\\feature\\pdf\\legacy\\PdfReaderScreen.kt",
       "source_location": "L409",
       "id": "pdfreaderscreen_pdfpageitem",
-      "community": 96
+      "community": 99
     },
     {
       "label": "PdfReaderSupport.kt",
@@ -5305,7 +5305,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\ReaderSelectionDiagnostics.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_readerselectiondiagnostics_kt",
-      "community": 124
+      "community": 126
     },
     {
       "label": "logReaderSelectionTransition()",
@@ -5313,7 +5313,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\ReaderSelectionDiagnostics.kt",
       "source_location": "L8",
       "id": "readerselectiondiagnostics_logreaderselectiontransition",
-      "community": 124
+      "community": 126
     },
     {
       "label": "EpubReaderRuntime.kt",
@@ -5321,15 +5321,55 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\EpubReaderRuntime.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_epubreaderruntime_kt",
-      "community": 125
+      "community": 84
     },
     {
       "label": "EpubReaderRuntime()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\EpubReaderRuntime.kt",
-      "source_location": "L21",
+      "source_location": "L24",
       "id": "epubreaderruntime_epubreaderruntime",
-      "community": 125
+      "community": 84
+    },
+    {
+      "label": "ReaderRuntimeSectionList()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\EpubReaderRuntime.kt",
+      "source_location": "L86",
+      "id": "epubreaderruntime_readerruntimesectionlist",
+      "community": 84
+    },
+    {
+      "label": "ReaderPlainTextSection()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\EpubReaderRuntime.kt",
+      "source_location": "L144",
+      "id": "epubreaderruntime_readerplaintextsection",
+      "community": 84
+    },
+    {
+      "label": "ReaderRuntimeRenderingPlan.kt",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderRuntimeRenderingPlan.kt",
+      "source_location": "L1",
+      "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerruntimerenderingplan_kt",
+      "community": 100
+    },
+    {
+      "label": "ReaderRuntimeRenderingPlan",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderRuntimeRenderingPlan.kt",
+      "source_location": "L3",
+      "id": "readerruntimerenderingplan_readerruntimerenderingplan",
+      "community": 100
+    },
+    {
+      "label": "buildReaderRuntimeRenderingPlan()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderRuntimeRenderingPlan.kt",
+      "source_location": "L8",
+      "id": "readerruntimerenderingplan_buildreaderruntimerenderingplan",
+      "community": 100
     },
     {
       "label": "ReaderSelectableTextSection.kt",
@@ -5380,12 +5420,44 @@
       "community": 63
     },
     {
+      "label": "ReaderSelectionActionBarOverlay.kt",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionActionBarOverlay.kt",
+      "source_location": "L1",
+      "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionactionbaroverlay_kt",
+      "community": 127
+    },
+    {
+      "label": "ReaderSelectionActionBarOverlay()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionActionBarOverlay.kt",
+      "source_location": "L21",
+      "id": "readerselectionactionbaroverlay_readerselectionactionbaroverlay",
+      "community": 127
+    },
+    {
+      "label": "ReaderSelectionChapterActions.kt",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionChapterActions.kt",
+      "source_location": "L1",
+      "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionchapteractions_kt",
+      "community": 128
+    },
+    {
+      "label": "resolveReaderSelectAllRange()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionChapterActions.kt",
+      "source_location": "L5",
+      "id": "readerselectionchapteractions_resolvereaderselectallrange",
+      "community": 128
+    },
+    {
       "label": "ReaderSelectionController.kt",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectioncontroller_kt",
-      "community": 24
+      "community": 25
     },
     {
       "label": "ReaderSelectionController",
@@ -5393,7 +5465,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L7",
       "id": "readerselectioncontroller_readerselectioncontroller",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".highlightRangeForSection()",
@@ -5401,7 +5473,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L25",
       "id": "readerselectioncontroller_readerselectioncontroller_highlightrangeforsection",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".startSelectionAt()",
@@ -5409,7 +5481,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L27",
       "id": "readerselectioncontroller_readerselectioncontroller_startselectionat",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".updateSelectionGesture()",
@@ -5417,7 +5489,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L34",
       "id": "readerselectioncontroller_readerselectioncontroller_updateselectiongesture",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".finishSelectionGesture()",
@@ -5425,7 +5497,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L41",
       "id": "readerselectioncontroller_readerselectioncontroller_finishselectiongesture",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".updateSectionLayout()",
@@ -5433,7 +5505,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L45",
       "id": "readerselectioncontroller_readerselectioncontroller_updatesectionlayout",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".removeSectionLayout()",
@@ -5441,7 +5513,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L49",
       "id": "readerselectioncontroller_readerselectioncontroller_removesectionlayout",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".clearSelection()",
@@ -5449,7 +5521,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L53",
       "id": "readerselectioncontroller_readerselectioncontroller_clearselection",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".startHandleDrag()",
@@ -5457,7 +5529,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L57",
       "id": "readerselectioncontroller_readerselectioncontroller_starthandledrag",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".updateHandleDrag()",
@@ -5465,7 +5537,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L64",
       "id": "readerselectioncontroller_readerselectioncontroller_updatehandledrag",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".finishHandleDrag()",
@@ -5473,7 +5545,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionController.kt",
       "source_location": "L68",
       "id": "readerselectioncontroller_readerselectioncontroller_finishhandledrag",
-      "community": 24
+      "community": 25
     },
     {
       "label": "ReaderSelectionDocument.kt",
@@ -5713,7 +5785,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionGestures.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectiongestures_kt",
-      "community": 97
+      "community": 101
     },
     {
       "label": "readerSelectionLongPressGesture()",
@@ -5721,7 +5793,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionGestures.kt",
       "source_location": "L17",
       "id": "readerselectiongestures_readerselectionlongpressgesture",
-      "community": 97
+      "community": 101
     },
     {
       "label": "detectReaderHandleDragGestures()",
@@ -5729,7 +5801,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionGestures.kt",
       "source_location": "L59",
       "id": "readerselectiongestures_detectreaderhandledraggestures",
-      "community": 97
+      "community": 101
     },
     {
       "label": "ReaderSelectionHandleDragGeometry.kt",
@@ -5737,7 +5809,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHandleDragGeometry.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionhandledraggeometry_kt",
-      "community": 84
+      "community": 85
     },
     {
       "label": "ReaderSelectionHandleDragGeometry",
@@ -5745,7 +5817,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHandleDragGeometry.kt",
       "source_location": "L6",
       "id": "readerselectionhandledraggeometry_readerselectionhandledraggeometry",
-      "community": 84
+      "community": 85
     },
     {
       "label": ".resolveLogicalTextAnchorPointer()",
@@ -5753,7 +5825,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHandleDragGeometry.kt",
       "source_location": "L14",
       "id": "readerselectionhandledraggeometry_readerselectionhandledraggeometry_resolvelogicaltextanchorpointer",
-      "community": 84
+      "community": 85
     },
     {
       "label": "resolveReaderSelectionHandleDragGeometry()",
@@ -5761,7 +5833,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHandleDragGeometry.kt",
       "source_location": "L23",
       "id": "readerselectionhandledraggeometry_resolvereaderselectionhandledraggeometry",
-      "community": 84
+      "community": 85
     },
     {
       "label": "ReaderSelectionHandles.kt",
@@ -5769,7 +5841,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHandles.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionhandles_kt",
-      "community": 85
+      "community": 86
     },
     {
       "label": "ReaderSelectionHandleSemanticsData",
@@ -5777,7 +5849,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHandles.kt",
       "source_location": "L28",
       "id": "readerselectionhandles_readerselectionhandlesemanticsdata",
-      "community": 85
+      "community": 86
     },
     {
       "label": "ReaderSelectionHandleLayer()",
@@ -5785,7 +5857,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHandles.kt",
       "source_location": "L41",
       "id": "readerselectionhandles_readerselectionhandlelayer",
-      "community": 85
+      "community": 86
     },
     {
       "label": "ReaderSelectionHandle()",
@@ -5793,7 +5865,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHandles.kt",
       "source_location": "L93",
       "id": "readerselectionhandles_readerselectionhandle",
-      "community": 85
+      "community": 86
     },
     {
       "label": "ReaderSelectionHostLayoutRules.kt",
@@ -5801,7 +5873,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHostLayoutRules.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionhostlayoutrules_kt",
-      "community": 98
+      "community": 102
     },
     {
       "label": "resolveVisibleReaderSelectionHandleAnchor()",
@@ -5809,7 +5881,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHostLayoutRules.kt",
       "source_location": "L6",
       "id": "readerselectionhostlayoutrules_resolvevisiblereaderselectionhandleanchor",
-      "community": 98
+      "community": 102
     },
     {
       "label": "shouldMoveReaderSelectionActionBarToTop()",
@@ -5817,7 +5889,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionHostLayoutRules.kt",
       "source_location": "L21",
       "id": "readerselectionhostlayoutrules_shouldmovereaderselectionactionbartotop",
-      "community": 98
+      "community": 102
     },
     {
       "label": "ReaderSelectionLayoutRegistry.kt",
@@ -5961,7 +6033,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionSessionRules.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionsessionrules_kt",
-      "community": 126
+      "community": 129
     },
     {
       "label": "shouldClearReaderStaleSelection()",
@@ -5969,7 +6041,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionSessionRules.kt",
       "source_location": "L5",
       "id": "readerselectionsessionrules_shouldclearreaderstaleselection",
-      "community": 126
+      "community": 129
     },
     {
       "label": "ReaderSelectionState.kt",
@@ -5977,7 +6049,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionstate_kt",
-      "community": 14
+      "community": 13
     },
     {
       "label": "ReaderSelectionState",
@@ -5985,7 +6057,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L10",
       "id": "readerselectionstate_readerselectionstate",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".resolveSessionPhase()",
@@ -5993,7 +6065,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L39",
       "id": "readerselectionstate_readerselectionstate_resolvesessionphase",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".hasUsableSelection()",
@@ -6001,7 +6073,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L48",
       "id": "readerselectionstate_readerselectionstate_hasusableselection",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".activate()",
@@ -6009,7 +6081,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L52",
       "id": "readerselectionstate_readerselectionstate_activate",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".startSelectionGesture()",
@@ -6017,7 +6089,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L58",
       "id": "readerselectionstate_readerselectionstate_startselectiongesture",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".finishSelectionGesture()",
@@ -6025,7 +6097,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L64",
       "id": "readerselectionstate_readerselectionstate_finishselectiongesture",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".clear()",
@@ -6033,7 +6105,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L72",
       "id": "readerselectionstate_readerselectionstate_clear",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".startDraggingHandle()",
@@ -6041,7 +6113,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L78",
       "id": "readerselectionstate_readerselectionstate_startdragginghandle",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".updateDragPointer()",
@@ -6049,7 +6121,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L92",
       "id": "readerselectionstate_readerselectionstate_updatedragpointer",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".updateDraggedHandle()",
@@ -6057,7 +6129,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L96",
       "id": "readerselectionstate_readerselectionstate_updatedraggedhandle",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".finishHandleDrag()",
@@ -6065,7 +6137,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L124",
       "id": "readerselectionstate_readerselectionstate_finishhandledrag",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".updateSelection()",
@@ -6073,7 +6145,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L135",
       "id": "readerselectionstate_readerselectionstate_updateselection",
-      "community": 14
+      "community": 13
     },
     {
       "label": ".clearDragState()",
@@ -6081,7 +6153,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L141",
       "id": "readerselectionstate_readerselectionstate_cleardragstate",
-      "community": 14
+      "community": 13
     },
     {
       "label": "ReaderSelectionSessionPhase",
@@ -6089,7 +6161,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L148",
       "id": "readerselectionstate_readerselectionsessionphase",
-      "community": 14
+      "community": 13
     },
     {
       "label": "ReaderSelectionDragSource",
@@ -6097,7 +6169,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionState.kt",
       "source_location": "L155",
       "id": "readerselectionstate_readerselectiondragsource",
-      "community": 14
+      "community": 13
     },
     {
       "label": "ReaderFeatureShell.kt",
@@ -6105,15 +6177,15 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\shell\\ReaderFeatureShell.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_shell_readerfeatureshell_kt",
-      "community": 127
+      "community": 130
     },
     {
       "label": "ReaderFeatureShell()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\shell\\ReaderFeatureShell.kt",
-      "source_location": "L51",
+      "source_location": "L50",
       "id": "readerfeatureshell_readerfeatureshell",
-      "community": 127
+      "community": 130
     },
     {
       "label": "ReaderFeatureShellCallbacks.kt",
@@ -6121,7 +6193,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\shell\\ReaderFeatureShellCallbacks.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_shell_readerfeatureshellcallbacks_kt",
-      "community": 128
+      "community": 131
     },
     {
       "label": "buildReaderFeatureShellChromeCallbacks()",
@@ -6129,7 +6201,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\shell\\ReaderFeatureShellCallbacks.kt",
       "source_location": "L9",
       "id": "readerfeatureshellcallbacks_buildreaderfeatureshellchromecallbacks",
-      "community": 128
+      "community": 131
     },
     {
       "label": "ReaderControlsAdditionalSections.kt",
@@ -6137,7 +6209,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\ui\\ReaderControlsAdditionalSections.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_ui_readercontrolsadditionalsections_kt",
-      "community": 99
+      "community": 103
     },
     {
       "label": "ReaderReadingControlsSection()",
@@ -6145,15 +6217,15 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\ui\\ReaderControlsAdditionalSections.kt",
       "source_location": "L21",
       "id": "readercontrolsadditionalsections_readerreadingcontrolssection",
-      "community": 99
+      "community": 103
     },
     {
       "label": "ReaderOtherControlsSection()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\ui\\ReaderControlsAdditionalSections.kt",
-      "source_location": "L68",
+      "source_location": "L70",
       "id": "readercontrolsadditionalsections_readerothercontrolssection",
-      "community": 99
+      "community": 103
     },
     {
       "label": "ReaderChapterContent.kt",
@@ -6161,15 +6233,15 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderChapterContent.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerchaptercontent_kt",
-      "community": 129
+      "community": 132
     },
     {
       "label": "ReaderChapterContent()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderChapterContent.kt",
-      "source_location": "L9",
+      "source_location": "L8",
       "id": "readerchaptercontent_readerchaptercontent",
-      "community": 129
+      "community": 132
     },
     {
       "label": "ReaderChapterContentCommon.kt",
@@ -6281,23 +6353,23 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderChapterSelectionHost.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerchapterselectionhost_kt",
-      "community": 100
+      "community": 104
     },
     {
       "label": "ReaderChapterSelectionHost()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderChapterSelectionHost.kt",
-      "source_location": "L43",
+      "source_location": "L33",
       "id": "readerchapterselectionhost_readerchapterselectionhost",
-      "community": 100
+      "community": 104
     },
     {
       "label": "shouldClampReaderSelectionDragPointer()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderChapterSelectionHost.kt",
-      "source_location": "L497",
+      "source_location": "L494",
       "id": "readerchapterselectionhost_shouldclampreaderselectiondragpointer",
-      "community": 100
+      "community": 104
     },
     {
       "label": "ReaderControlsSections.kt",
@@ -6359,7 +6431,7 @@
       "label": "ReaderThemeMiniSpecimen()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L62",
+      "source_location": "L63",
       "id": "readercontrolswidgets_readerthememinispecimen",
       "community": 44
     },
@@ -6367,7 +6439,7 @@
       "label": "KeypadButton()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L215",
+      "source_location": "L216",
       "id": "readercontrolswidgets_keypadbutton",
       "community": 44
     },
@@ -6375,7 +6447,7 @@
       "label": "TextSelectionActionBar()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L240",
+      "source_location": "L241",
       "id": "readercontrolswidgets_textselectionactionbar",
       "community": 44
     },
@@ -6383,7 +6455,7 @@
       "label": "TextSelectionActionButton()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L267",
+      "source_location": "L274",
       "id": "readercontrolswidgets_textselectionactionbutton",
       "community": 44
     },
@@ -6391,7 +6463,7 @@
       "label": "OverscrollIndicator()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L297",
+      "source_location": "L309",
       "id": "readercontrolswidgets_overscrollindicator",
       "community": 44
     },
@@ -6399,7 +6471,7 @@
       "label": "readerFontFamily()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L317",
+      "source_location": "L329",
       "id": "readercontrolswidgets_readerfontfamily",
       "community": 44
     },
@@ -6407,7 +6479,7 @@
       "label": "ReaderGeneralToggleRow()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L327",
+      "source_location": "L339",
       "id": "readercontrolswidgets_readergeneraltogglerow",
       "community": 44
     },
@@ -6655,7 +6727,7 @@
       "label": "ReaderScreenChrome()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
-      "source_location": "L75",
+      "source_location": "L79",
       "id": "readerinternalfacades_readerscreenchrome",
       "community": 45
     },
@@ -6663,7 +6735,7 @@
       "label": "ReaderControls()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
-      "source_location": "L86",
+      "source_location": "L90",
       "id": "readerinternalfacades_readercontrols",
       "community": 45
     },
@@ -6671,7 +6743,7 @@
       "label": "ReaderStatusOverlay()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
-      "source_location": "L127",
+      "source_location": "L131",
       "id": "readerinternalfacades_readerstatusoverlay",
       "community": 45
     },
@@ -6679,7 +6751,7 @@
       "label": "VerticalScrubber()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
-      "source_location": "L148",
+      "source_location": "L152",
       "id": "readerinternalfacades_verticalscrubber",
       "community": 45
     },
@@ -6689,7 +6761,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderProgressState.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerprogressstate_kt",
-      "community": 130
+      "community": 133
     },
     {
       "label": "rememberReaderProgressPercentageState()",
@@ -6697,7 +6769,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderProgressState.kt",
       "source_location": "L10",
       "id": "readerprogressstate_rememberreaderprogresspercentagestate",
-      "community": 130
+      "community": 133
     },
     {
       "label": "ReaderScreen.kt",
@@ -6705,15 +6777,15 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreen.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreen_kt",
-      "community": 131
+      "community": 134
     },
     {
       "label": "ReaderScreen()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreen.kt",
-      "source_location": "L9",
+      "source_location": "L10",
       "id": "readerscreen_readerscreen",
-      "community": 131
+      "community": 134
     },
     {
       "label": "ReaderScreenBindings.kt",
@@ -6721,23 +6793,23 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenBindings.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreenbindings_kt",
-      "community": 101
+      "community": 105
     },
     {
       "label": "buildReaderChromeState()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenBindings.kt",
-      "source_location": "L19",
+      "source_location": "L20",
       "id": "readerscreenbindings_buildreaderchromestate",
-      "community": 101
+      "community": 105
     },
     {
       "label": "buildReaderChromeCallbacks()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenBindings.kt",
-      "source_location": "L67",
+      "source_location": "L70",
       "id": "readerscreenbindings_buildreaderchromecallbacks",
-      "community": 101
+      "community": 105
     },
     {
       "label": "ReaderScreenChrome.kt",
@@ -6745,31 +6817,31 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt",
-      "community": 86
+      "community": 87
     },
     {
       "label": "ReaderScreenChrome()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
-      "source_location": "L45",
+      "source_location": "L46",
       "id": "readerscreenchrome_readerscreenchrome",
-      "community": 86
+      "community": 87
     },
     {
       "label": "ReaderContentSurface()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
-      "source_location": "L69",
+      "source_location": "L70",
       "id": "readerscreenchrome_readercontentsurface",
-      "community": 86
+      "community": 87
     },
     {
       "label": "ReaderOverscrollOverlay()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
-      "source_location": "L223",
+      "source_location": "L226",
       "id": "readerscreenchrome_readeroverscrolloverlay",
-      "community": 86
+      "community": 87
     },
     {
       "label": "ReaderScreenContracts.kt",
@@ -6777,7 +6849,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreencontracts_kt",
-      "community": 25
+      "community": 21
     },
     {
       "label": "TocSort",
@@ -6785,7 +6857,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L19",
       "id": "readerscreencontracts_tocsort",
-      "community": 25
+      "community": 21
     },
     {
       "label": "ReaderSettingsDraft",
@@ -6793,7 +6865,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L24",
       "id": "readerscreencontracts_readersettingsdraft",
-      "community": 25
+      "community": 21
     },
     {
       "label": ".applyTo()",
@@ -6801,7 +6873,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L29",
       "id": "readerscreencontracts_readersettingsdraft_applyto",
-      "community": 25
+      "community": 21
     },
     {
       "label": ".matches()",
@@ -6809,7 +6881,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L37",
       "id": "readerscreencontracts_readersettingsdraft_matches",
-      "community": 25
+      "community": 21
     },
     {
       "label": "from()",
@@ -6817,7 +6889,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L44",
       "id": "readerscreencontracts_from",
-      "community": 25
+      "community": 21
     },
     {
       "label": "ReaderBackAction",
@@ -6825,7 +6897,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L54",
       "id": "readerscreencontracts_readerbackaction",
-      "community": 25
+      "community": 21
     },
     {
       "label": "resolveReaderBackAction()",
@@ -6833,7 +6905,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L61",
       "id": "readerscreencontracts_resolvereaderbackaction",
-      "community": 25
+      "community": 21
     },
     {
       "label": "shouldForceClearReaderSelectionSession()",
@@ -6841,31 +6913,39 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
       "source_location": "L74",
       "id": "readerscreencontracts_shouldforceclearreaderselectionsession",
-      "community": 25
+      "community": 21
+    },
+    {
+      "label": "shouldEnableReaderTocDrawerGestures()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
+      "source_location": "L81",
+      "id": "readerscreencontracts_shouldenablereadertocdrawergestures",
+      "community": 21
     },
     {
       "label": "getThemeColors()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
-      "source_location": "L84",
+      "source_location": "L90",
       "id": "readerscreencontracts_getthemecolors",
-      "community": 25
+      "community": 21
     },
     {
       "label": "ReaderChromeState",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
-      "source_location": "L89",
+      "source_location": "L95",
       "id": "readerscreencontracts_readerchromestate",
-      "community": 25
+      "community": 21
     },
     {
       "label": "ReaderChromeCallbacks",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
-      "source_location": "L114",
+      "source_location": "L121",
       "id": "readerscreencontracts_readerchromecallbacks",
-      "community": 25
+      "community": 21
     },
     {
       "label": "ReaderScreenControls.kt",
@@ -6873,7 +6953,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreencontrols_kt",
-      "community": 132
+      "community": 135
     },
     {
       "label": "ReaderControls()",
@@ -6881,7 +6961,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenControls.kt",
       "source_location": "L42",
       "id": "readerscreencontrols_readercontrols",
-      "community": 132
+      "community": 135
     },
     {
       "label": "ReaderScreenEffects.kt",
@@ -6889,23 +6969,31 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenEffects.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreeneffects_kt",
-      "community": 102
+      "community": 88
+    },
+    {
+      "label": "clearReaderImmersiveSystemUiFlags()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenEffects.kt",
+      "source_location": "L32",
+      "id": "readerscreeneffects_clearreaderimmersivesystemuiflags",
+      "community": 88
     },
     {
       "label": "ReaderSystemBarEffect()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenEffects.kt",
-      "source_location": "L21",
+      "source_location": "L36",
       "id": "readerscreeneffects_readersystembareffect",
-      "community": 102
+      "community": 88
     },
     {
       "label": "ReaderChapterLoadingEffect()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenEffects.kt",
-      "source_location": "L57",
+      "source_location": "L88",
       "id": "readerscreeneffects_readerchapterloadingeffect",
-      "community": 102
+      "community": 88
     },
     {
       "label": "ReaderScreenHelpers.kt",
@@ -6985,7 +7073,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderStatusOverlay.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerstatusoverlay_kt",
-      "community": 87
+      "community": 89
     },
     {
       "label": "ReaderStatusOverlay()",
@@ -6993,7 +7081,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderStatusOverlay.kt",
       "source_location": "L40",
       "id": "readerstatusoverlay_readerstatusoverlay",
-      "community": 87
+      "community": 89
     },
     {
       "label": "currentReaderTimeText()",
@@ -7001,7 +7089,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderStatusOverlay.kt",
       "source_location": "L163",
       "id": "readerstatusoverlay_currentreadertimetext",
-      "community": 87
+      "community": 89
     },
     {
       "label": "readBatteryText()",
@@ -7009,7 +7097,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderStatusOverlay.kt",
       "source_location": "L168",
       "id": "readerstatusoverlay_readbatterytext",
-      "community": 87
+      "community": 89
     },
     {
       "label": "ReaderStatusSettingsRow.kt",
@@ -7017,7 +7105,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderStatusSettingsRow.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerstatussettingsrow_kt",
-      "community": 92
+      "community": 95
     },
     {
       "label": "ReaderSurfacePlugin.kt",
@@ -7031,7 +7119,7 @@
       "label": "ReaderRoute",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L39",
+      "source_location": "L40",
       "id": "readersurfaceplugin_readerroute",
       "community": 30
     },
@@ -7039,7 +7127,7 @@
       "label": "ReaderRouteArgs",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L43",
+      "source_location": "L44",
       "id": "readersurfaceplugin_readerrouteargs",
       "community": 30
     },
@@ -7047,7 +7135,7 @@
       "label": "ReaderDependencies",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L47",
+      "source_location": "L48",
       "id": "readersurfaceplugin_readerdependencies",
       "community": 30
     },
@@ -7055,7 +7143,7 @@
       "label": "ReaderDependencyBag",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L55",
+      "source_location": "L57",
       "id": "readersurfaceplugin_readerdependencybag",
       "community": 30
     },
@@ -7063,7 +7151,7 @@
       "label": "ReaderEvent",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L63",
+      "source_location": "L66",
       "id": "readersurfaceplugin_readerevent",
       "community": 30
     },
@@ -7071,7 +7159,7 @@
       "label": "Back",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L64",
+      "source_location": "L67",
       "id": "readersurfaceplugin_back",
       "community": 30
     },
@@ -7079,7 +7167,7 @@
       "label": "ReaderSurfacePlugin",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L67",
+      "source_location": "L70",
       "id": "readersurfaceplugin_readersurfaceplugin",
       "community": 30
     },
@@ -7087,7 +7175,7 @@
       "label": ".decodeRouteArgs()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L71",
+      "source_location": "L74",
       "id": "readersurfaceplugin_readersurfaceplugin_decoderouteargs",
       "community": 30
     },
@@ -7095,7 +7183,7 @@
       "label": ".Render()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L80",
+      "source_location": "L83",
       "id": "readersurfaceplugin_readersurfaceplugin_render",
       "community": 30
     },
@@ -7103,7 +7191,7 @@
       "label": "ReaderPluginStatusScreen()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L133",
+      "source_location": "L137",
       "id": "readersurfaceplugin_readerpluginstatusscreen",
       "community": 30
     },
@@ -7113,7 +7201,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTapGestures.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readertapgestures_kt",
-      "community": 103
+      "community": 106
     },
     {
       "label": "readerTapGesture()",
@@ -7121,7 +7209,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTapGestures.kt",
       "source_location": "L13",
       "id": "readertapgestures_readertapgesture",
-      "community": 103
+      "community": 106
     },
     {
       "label": "readerDistance()",
@@ -7129,7 +7217,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTapGestures.kt",
       "source_location": "L50",
       "id": "readertapgestures_readerdistance",
-      "community": 103
+      "community": 106
     },
     {
       "label": "ReaderTextActions.kt",
@@ -7137,7 +7225,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTextActions.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readertextactions_kt",
-      "community": 88
+      "community": 90
     },
     {
       "label": "WebLookupAction",
@@ -7145,7 +7233,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTextActions.kt",
       "source_location": "L19",
       "id": "readertextactions_weblookupaction",
-      "community": 88
+      "community": 90
     },
     {
       "label": "Define",
@@ -7153,7 +7241,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTextActions.kt",
       "source_location": "L20",
       "id": "readertextactions_define",
-      "community": 88
+      "community": 90
     },
     {
       "label": "Translate",
@@ -7161,7 +7249,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTextActions.kt",
       "source_location": "L25",
       "id": "readertextactions_translate",
-      "community": 88
+      "community": 90
     },
     {
       "label": "ReaderTocDrawer.kt",
@@ -7169,7 +7257,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTocDrawer.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readertocdrawer_kt",
-      "community": 133
+      "community": 136
     },
     {
       "label": "ReaderTocDrawerContent()",
@@ -7177,7 +7265,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTocDrawer.kt",
       "source_location": "L58",
       "id": "readertocdrawer_readertocdrawercontent",
-      "community": 133
+      "community": 136
     },
     {
       "label": "ReaderTopBarAndFab.kt",
@@ -7185,7 +7273,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTopBarAndFab.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readertopbarandfab_kt",
-      "community": 104
+      "community": 107
     },
     {
       "label": "ReaderTopBar()",
@@ -7193,7 +7281,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTopBarAndFab.kt",
       "source_location": "L40",
       "id": "readertopbarandfab_readertopbar",
-      "community": 104
+      "community": 107
     },
     {
       "label": "ReaderScrollToTopFab()",
@@ -7201,7 +7289,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderTopBarAndFab.kt",
       "source_location": "L81",
       "id": "readertopbarandfab_readerscrolltotopfab",
-      "community": 104
+      "community": 107
     },
     {
       "label": "ReaderVerticalScrubber.kt",
@@ -7209,7 +7297,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderVerticalScrubber.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerverticalscrubber_kt",
-      "community": 105
+      "community": 108
     },
     {
       "label": "VerticalScrubber()",
@@ -7217,7 +7305,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderVerticalScrubber.kt",
       "source_location": "L31",
       "id": "readerverticalscrubber_verticalscrubber",
-      "community": 105
+      "community": 108
     },
     {
       "label": "rememberConflatedScrollToItem()",
@@ -7225,7 +7313,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderVerticalScrubber.kt",
       "source_location": "L109",
       "id": "readerverticalscrubber_rememberconflatedscrolltoitem",
-      "community": 105
+      "community": 108
     },
     {
       "label": "SettingsAppearanceControlHub.kt",
@@ -7233,7 +7321,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceControlHub.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsappearancecontrolhub_kt",
-      "community": 106
+      "community": 109
     },
     {
       "label": "ThemeControlHub()",
@@ -7241,7 +7329,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceControlHub.kt",
       "source_location": "L40",
       "id": "settingsappearancecontrolhub_themecontrolhub",
-      "community": 106
+      "community": 109
     },
     {
       "label": "HubButton()",
@@ -7249,7 +7337,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceControlHub.kt",
       "source_location": "L110",
       "id": "settingsappearancecontrolhub_hubbutton",
-      "community": 106
+      "community": 109
     },
     {
       "label": "SettingsAppearanceGalleryHost.kt",
@@ -7257,7 +7345,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceGalleryHost.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsappearancegalleryhost_kt",
-      "community": 134
+      "community": 137
     },
     {
       "label": "AppearanceGalleryHost()",
@@ -7265,7 +7353,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceGalleryHost.kt",
       "source_location": "L21",
       "id": "settingsappearancegalleryhost_appearancegalleryhost",
-      "community": 134
+      "community": 137
     },
     {
       "label": "SettingsAppearanceTab.kt",
@@ -7273,7 +7361,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTab.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsappearancetab_kt",
-      "community": 135
+      "community": 138
     },
     {
       "label": "AppearanceTab()",
@@ -7281,7 +7369,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsAppearanceTab.kt",
       "source_location": "L52",
       "id": "settingsappearancetab_appearancetab",
-      "community": 135
+      "community": 138
     },
     {
       "label": "SettingsAppearanceTransfers.kt",
@@ -7471,7 +7559,7 @@
       "label": "SettingsMenuList()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
-      "source_location": "L228",
+      "source_location": "L234",
       "id": "settingsscreen_settingsmenulist",
       "community": 73
     },
@@ -7479,7 +7567,7 @@
       "label": "NetworkPlaceholderTab()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
-      "source_location": "L280",
+      "source_location": "L286",
       "id": "settingsscreen_networkplaceholdertab",
       "community": 73
     },
@@ -7559,7 +7647,7 @@
       "label": "ThemeColorPickerOverlay()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L40",
+      "source_location": "L51",
       "id": "settingsthemecolorpicker_themecolorpickeroverlay",
       "community": 56
     },
@@ -7567,7 +7655,7 @@
       "label": "ThemeColorPickerStatusState",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L259",
+      "source_location": "L332",
       "id": "settingsthemecolorpicker_themecolorpickerstatusstate",
       "community": 56
     },
@@ -7575,7 +7663,7 @@
       "label": "HsvColor",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L274",
+      "source_location": "L347",
       "id": "settingsthemecolorpicker_hsvcolor",
       "community": 56
     },
@@ -7583,7 +7671,7 @@
       "label": ".toColorLong()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L279",
+      "source_location": "L352",
       "id": "settingsthemecolorpicker_hsvcolor_tocolorlong",
       "community": 56
     },
@@ -7591,7 +7679,7 @@
       "label": "toHsvColor()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L285",
+      "source_location": "L358",
       "id": "settingsthemecolorpicker_tohsvcolor",
       "community": 56
     },
@@ -7599,7 +7687,7 @@
       "label": "isApproximately()",
       "file_type": "code",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L291",
+      "source_location": "L364",
       "id": "settingsthemecolorpicker_isapproximately",
       "community": 56
     },
@@ -7609,7 +7697,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditor.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemeeditor_kt",
-      "community": 107
+      "community": 110
     },
     {
       "label": "CustomThemeEditorDialog()",
@@ -7617,7 +7705,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditor.kt",
       "source_location": "L46",
       "id": "settingsthemeeditor_customthemeeditordialog",
-      "community": 107
+      "community": 110
     },
     {
       "label": "getFontFamily()",
@@ -7625,7 +7713,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditor.kt",
       "source_location": "L383",
       "id": "settingsthemeeditor_getfontfamily",
-      "community": 107
+      "community": 110
     },
     {
       "label": "SettingsThemeEditorTags.kt",
@@ -7633,7 +7721,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditorTags.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemeeditortags_kt",
-      "community": 136
+      "community": 139
     },
     {
       "label": "themeEditorColorTestTag()",
@@ -7641,7 +7729,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeEditorTags.kt",
       "source_location": "L3",
       "id": "settingsthemeeditortags_themeeditorcolortesttag",
-      "community": 136
+      "community": 139
     },
     {
       "label": "SettingsThemeGallery.kt",
@@ -7649,7 +7737,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeGallery.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemegallery_kt",
-      "community": 89
+      "community": 91
     },
     {
       "label": "ThemeGalleryOverlay()",
@@ -7657,7 +7745,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeGallery.kt",
       "source_location": "L80",
       "id": "settingsthemegallery_themegalleryoverlay",
-      "community": 89
+      "community": 91
     },
     {
       "label": "ThemePreviewCard()",
@@ -7665,7 +7753,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeGallery.kt",
       "source_location": "L290",
       "id": "settingsthemegallery_themepreviewcard",
-      "community": 89
+      "community": 91
     },
     {
       "label": "BulkDeleteConfirmationDialog()",
@@ -7673,7 +7761,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeGallery.kt",
       "source_location": "L459",
       "id": "settingsthemegallery_bulkdeleteconfirmationdialog",
-      "community": 89
+      "community": 91
     },
     {
       "label": "SettingsThemeStudioComponents.kt",
@@ -7721,7 +7809,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsTypographySettingsPanel.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingstypographysettingspanel_kt",
-      "community": 108
+      "community": 111
     },
     {
       "label": "TypographySettingsPanel()",
@@ -7729,7 +7817,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsTypographySettingsPanel.kt",
       "source_location": "L29",
       "id": "settingstypographysettingspanel_typographysettingspanel",
-      "community": 108
+      "community": 111
     },
     {
       "label": "ControlSlider()",
@@ -7737,7 +7825,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsTypographySettingsPanel.kt",
       "source_location": "L116",
       "id": "settingstypographysettingspanel_controlslider",
-      "community": 108
+      "community": 111
     },
     {
       "label": "ThemeEditorChrome.kt",
@@ -7849,7 +7937,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeEditorControlRow.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_themeeditorcontrolrow_kt",
-      "community": 109
+      "community": 112
     },
     {
       "label": "ThemeEditorControlsSection()",
@@ -7857,7 +7945,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeEditorControlRow.kt",
       "source_location": "L28",
       "id": "themeeditorcontrolrow_themeeditorcontrolssection",
-      "community": 109
+      "community": 112
     },
     {
       "label": "ThemeEditorModeRow()",
@@ -7865,7 +7953,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeEditorControlRow.kt",
       "source_location": "L92",
       "id": "themeeditorcontrolrow_themeeditormoderow",
-      "community": 109
+      "community": 112
     },
     {
       "label": "ThemeEditorModels.kt",
@@ -7961,7 +8049,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeEditorPreviewCard.kt",
       "source_location": "L1",
       "id": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_themeeditorpreviewcard_kt",
-      "community": 137
+      "community": 140
     },
     {
       "label": "ThemeEditorPreviewCard()",
@@ -7969,7 +8057,7 @@
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\ThemeEditorPreviewCard.kt",
       "source_location": "L19",
       "id": "themeeditorpreviewcard_themeeditorpreviewcard",
-      "community": 137
+      "community": 140
     },
     {
       "label": "ThemeEditorSections.kt",
@@ -8385,12 +8473,24 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationScreenHost.kt",
-      "source_location": "L17",
+      "source_location": "L20",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appnavigationscreenhost_kt",
       "_tgt": "appnavigationscreenhost_appnavigationscreenhost",
       "source": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appnavigationscreenhost_kt",
       "target": "appnavigationscreenhost_appnavigationscreenhost",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\app\\src\\main\\java\\com\\epubreader\\app\\AppNavigationScreenHost.kt",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appnavigationscreenhost_kt",
+      "_tgt": "appnavigationscreenhost_shouldanimateapproutetransition",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_app_src_main_java_com_epubreader_app_appnavigationscreenhost_kt",
+      "target": "appnavigationscreenhost_shouldanimateapproutetransition",
       "confidence_score": 1.0
     },
     {
@@ -9765,7 +9865,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderStatusSettingsRow.kt",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerstatussettingsrow_kt",
       "_tgt": "readerstatussettingsrow_readerstatussettingsrow",
@@ -14073,7 +14173,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_libraryscreenstate",
@@ -14085,7 +14185,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L39",
+      "source_location": "L38",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_bookselectionuistate",
@@ -14097,7 +14197,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L47",
+      "source_location": "L46",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_folderdraweruistate",
@@ -14109,7 +14209,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L57",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_libraryscreenactions",
@@ -14121,7 +14221,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L72",
+      "source_location": "L71",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_folderdraweractions",
@@ -14133,7 +14233,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L91",
+      "source_location": "L90",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_bookselectionactionbarstate",
@@ -14145,7 +14245,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L96",
+      "source_location": "L95",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_bookselectionactionbaractions",
@@ -14157,7 +14257,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L102",
+      "source_location": "L101",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_libraryscreenslots",
@@ -14169,7 +14269,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L107",
+      "source_location": "L106",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_librarybackaction",
@@ -14181,7 +14281,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L113",
+      "source_location": "L112",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_resolvelibrarybackaction",
@@ -14193,7 +14293,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L126",
+      "source_location": "L125",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_librarydialogstate",
@@ -14205,7 +14305,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureContracts.kt",
-      "source_location": "L141",
+      "source_location": "L140",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeaturecontracts_kt",
       "_tgt": "libraryfeaturecontracts_librarydialogactions",
@@ -14580,18 +14680,6 @@
       "source_location": "L43",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
-      "_tgt": "libraryfeatureoperations_touchbooklastread",
-      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
-      "target": "libraryfeatureoperations_touchbooklastread",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L54",
-      "weight": 1.0,
-      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
       "_tgt": "libraryfeatureoperations_importbookintolibrary",
       "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
       "target": "libraryfeatureoperations_importbookintolibrary",
@@ -14601,7 +14689,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L99",
+      "source_location": "L88",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
       "_tgt": "libraryfeatureoperations_movebookstofolder",
@@ -14613,7 +14701,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L110",
+      "source_location": "L99",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
       "_tgt": "libraryfeatureoperations_deleteselectedbooks",
@@ -14625,7 +14713,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L126",
+      "source_location": "L115",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
       "_tgt": "libraryfeatureoperations_editbookinlibrary",
@@ -14637,7 +14725,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L163",
+      "source_location": "L152",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
       "_tgt": "libraryfeatureoperations_findexistingbook",
@@ -14649,7 +14737,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L182",
+      "source_location": "L171",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
       "_tgt": "libraryfeatureoperations_repairprogressafterbookedit",
@@ -14661,7 +14749,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\library\\src\\main\\java\\com\\epubreader\\feature\\library\\internal\\LibraryFeatureOperations.kt",
-      "source_location": "L227",
+      "source_location": "L216",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_library_src_main_java_com_epubreader_feature_library_internal_libraryfeatureoperations_kt",
       "_tgt": "libraryfeatureoperations_normalizeprogresshref",
@@ -15381,12 +15469,60 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\EpubReaderRuntime.kt",
-      "source_location": "L21",
+      "source_location": "L24",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_epubreaderruntime_kt",
       "_tgt": "epubreaderruntime_epubreaderruntime",
       "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_epubreaderruntime_kt",
       "target": "epubreaderruntime_epubreaderruntime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\EpubReaderRuntime.kt",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_epubreaderruntime_kt",
+      "_tgt": "epubreaderruntime_readerruntimesectionlist",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_epubreaderruntime_kt",
+      "target": "epubreaderruntime_readerruntimesectionlist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\EpubReaderRuntime.kt",
+      "source_location": "L144",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_epubreaderruntime_kt",
+      "_tgt": "epubreaderruntime_readerplaintextsection",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_epubreaderruntime_kt",
+      "target": "epubreaderruntime_readerplaintextsection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderRuntimeRenderingPlan.kt",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerruntimerenderingplan_kt",
+      "_tgt": "readerruntimerenderingplan_readerruntimerenderingplan",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerruntimerenderingplan_kt",
+      "target": "readerruntimerenderingplan_readerruntimerenderingplan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderRuntimeRenderingPlan.kt",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerruntimerenderingplan_kt",
+      "_tgt": "readerruntimerenderingplan_buildreaderruntimerenderingplan",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerruntimerenderingplan_kt",
+      "target": "readerruntimerenderingplan_buildreaderruntimerenderingplan",
       "confidence_score": 1.0
     },
     {
@@ -15447,6 +15583,30 @@
       "_tgt": "readerselectabletextsection_translateby",
       "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectabletextsection_kt",
       "target": "readerselectabletextsection_translateby",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionActionBarOverlay.kt",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionactionbaroverlay_kt",
+      "_tgt": "readerselectionactionbaroverlay_readerselectionactionbaroverlay",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionactionbaroverlay_kt",
+      "target": "readerselectionactionbaroverlay_readerselectionactionbaroverlay",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\runtime\\epub\\ReaderSelectionChapterActions.kt",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionchapteractions_kt",
+      "_tgt": "readerselectionchapteractions_resolvereaderselectallrange",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_runtime_epub_readerselectionchapteractions_kt",
+      "target": "readerselectionchapteractions_resolvereaderselectallrange",
       "confidence_score": 1.0
     },
     {
@@ -16413,7 +16573,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\shell\\ReaderFeatureShell.kt",
-      "source_location": "L51",
+      "source_location": "L50",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_shell_readerfeatureshell_kt",
       "_tgt": "readerfeatureshell_readerfeatureshell",
@@ -16449,7 +16609,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\internal\\ui\\ReaderControlsAdditionalSections.kt",
-      "source_location": "L68",
+      "source_location": "L70",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_internal_ui_readercontrolsadditionalsections_kt",
       "_tgt": "readercontrolsadditionalsections_readerothercontrolssection",
@@ -16461,7 +16621,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderChapterContent.kt",
-      "source_location": "L9",
+      "source_location": "L8",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerchaptercontent_kt",
       "_tgt": "readerchaptercontent_readerchaptercontent",
@@ -16605,7 +16765,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderChapterSelectionHost.kt",
-      "source_location": "L43",
+      "source_location": "L33",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerchapterselectionhost_kt",
       "_tgt": "readerchapterselectionhost_readerchapterselectionhost",
@@ -16617,7 +16777,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderChapterSelectionHost.kt",
-      "source_location": "L497",
+      "source_location": "L494",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerchapterselectionhost_kt",
       "_tgt": "readerchapterselectionhost_shouldclampreaderselectiondragpointer",
@@ -16689,7 +16849,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L62",
+      "source_location": "L63",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readercontrolswidgets_kt",
       "_tgt": "readercontrolswidgets_readerthememinispecimen",
@@ -16701,7 +16861,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L215",
+      "source_location": "L216",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readercontrolswidgets_kt",
       "_tgt": "readercontrolswidgets_keypadbutton",
@@ -16713,7 +16873,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L240",
+      "source_location": "L241",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readercontrolswidgets_kt",
       "_tgt": "readercontrolswidgets_textselectionactionbar",
@@ -16725,7 +16885,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L267",
+      "source_location": "L274",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readercontrolswidgets_kt",
       "_tgt": "readercontrolswidgets_textselectionactionbutton",
@@ -16737,7 +16897,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L297",
+      "source_location": "L309",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readercontrolswidgets_kt",
       "_tgt": "readercontrolswidgets_overscrollindicator",
@@ -16749,7 +16909,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L317",
+      "source_location": "L329",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readercontrolswidgets_kt",
       "_tgt": "readercontrolswidgets_readerfontfamily",
@@ -16761,7 +16921,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderControlsWidgets.kt",
-      "source_location": "L327",
+      "source_location": "L339",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readercontrolswidgets_kt",
       "_tgt": "readercontrolswidgets_readergeneraltogglerow",
@@ -17109,7 +17269,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
-      "source_location": "L75",
+      "source_location": "L79",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerinternalfacades_kt",
       "_tgt": "readerinternalfacades_readerscreenchrome",
@@ -17121,7 +17281,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
-      "source_location": "L86",
+      "source_location": "L90",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerinternalfacades_kt",
       "_tgt": "readerinternalfacades_readercontrols",
@@ -17133,7 +17293,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
-      "source_location": "L127",
+      "source_location": "L131",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerinternalfacades_kt",
       "_tgt": "readerinternalfacades_readerstatusoverlay",
@@ -17145,7 +17305,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderInternalFacades.kt",
-      "source_location": "L148",
+      "source_location": "L152",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerinternalfacades_kt",
       "_tgt": "readerinternalfacades_verticalscrubber",
@@ -17169,7 +17329,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreen.kt",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreen_kt",
       "_tgt": "readerscreen_readerscreen",
@@ -17181,7 +17341,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenBindings.kt",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreenbindings_kt",
       "_tgt": "readerscreenbindings_buildreaderchromestate",
@@ -17193,7 +17353,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenBindings.kt",
-      "source_location": "L67",
+      "source_location": "L70",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreenbindings_kt",
       "_tgt": "readerscreenbindings_buildreaderchromecallbacks",
@@ -17205,7 +17365,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt",
       "_tgt": "readerscreenchrome_readerscreenchrome",
@@ -17217,7 +17377,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt",
       "_tgt": "readerscreenchrome_readercontentsurface",
@@ -17229,7 +17389,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenChrome.kt",
-      "source_location": "L223",
+      "source_location": "L226",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreenchrome_kt",
       "_tgt": "readerscreenchrome_readeroverscrolloverlay",
@@ -17313,7 +17473,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
-      "source_location": "L84",
+      "source_location": "L81",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreencontracts_kt",
+      "_tgt": "readerscreencontracts_shouldenablereadertocdrawergestures",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreencontracts_kt",
+      "target": "readerscreencontracts_shouldenablereadertocdrawergestures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
+      "source_location": "L90",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreencontracts_kt",
       "_tgt": "readerscreencontracts_getthemecolors",
@@ -17325,7 +17497,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
-      "source_location": "L89",
+      "source_location": "L95",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreencontracts_kt",
       "_tgt": "readerscreencontracts_readerchromestate",
@@ -17337,7 +17509,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenContracts.kt",
-      "source_location": "L114",
+      "source_location": "L121",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreencontracts_kt",
       "_tgt": "readerscreencontracts_readerchromecallbacks",
@@ -17385,7 +17557,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenEffects.kt",
-      "source_location": "L21",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreeneffects_kt",
+      "_tgt": "readerscreeneffects_clearreaderimmersivesystemuiflags",
+      "source": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreeneffects_kt",
+      "target": "readerscreeneffects_clearreaderimmersivesystemuiflags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenEffects.kt",
+      "source_location": "L36",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreeneffects_kt",
       "_tgt": "readerscreeneffects_readersystembareffect",
@@ -17397,7 +17581,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderScreenEffects.kt",
-      "source_location": "L57",
+      "source_location": "L88",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readerscreeneffects_kt",
       "_tgt": "readerscreeneffects_readerchapterloadingeffect",
@@ -17541,7 +17725,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readersurfaceplugin_kt",
       "_tgt": "readersurfaceplugin_readerroute",
@@ -17553,7 +17737,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readersurfaceplugin_kt",
       "_tgt": "readersurfaceplugin_readerrouteargs",
@@ -17565,7 +17749,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readersurfaceplugin_kt",
       "_tgt": "readersurfaceplugin_readerdependencies",
@@ -17577,7 +17761,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L55",
+      "source_location": "L57",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readersurfaceplugin_kt",
       "_tgt": "readersurfaceplugin_readerdependencybag",
@@ -17589,7 +17773,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L63",
+      "source_location": "L66",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readersurfaceplugin_kt",
       "_tgt": "readersurfaceplugin_readerevent",
@@ -17601,7 +17785,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L64",
+      "source_location": "L67",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readersurfaceplugin_kt",
       "_tgt": "readersurfaceplugin_back",
@@ -17613,7 +17797,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L67",
+      "source_location": "L70",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readersurfaceplugin_kt",
       "_tgt": "readersurfaceplugin_readersurfaceplugin",
@@ -17625,7 +17809,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L133",
+      "source_location": "L137",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_reader_src_main_java_com_epubreader_feature_reader_readersurfaceplugin_kt",
       "_tgt": "readersurfaceplugin_readerpluginstatusscreen",
@@ -17637,7 +17821,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L71",
+      "source_location": "L74",
       "weight": 1.0,
       "_src": "readersurfaceplugin_readersurfaceplugin",
       "_tgt": "readersurfaceplugin_readersurfaceplugin_decoderouteargs",
@@ -17649,7 +17833,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\reader\\src\\main\\java\\com\\epubreader\\feature\\reader\\ReaderSurfacePlugin.kt",
-      "source_location": "L80",
+      "source_location": "L83",
       "weight": 1.0,
       "_src": "readersurfaceplugin_readersurfaceplugin",
       "_tgt": "readersurfaceplugin_readersurfaceplugin_render",
@@ -18057,7 +18241,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
-      "source_location": "L228",
+      "source_location": "L234",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsscreen_kt",
       "_tgt": "settingsscreen_settingsmenulist",
@@ -18069,7 +18253,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsScreen.kt",
-      "source_location": "L280",
+      "source_location": "L286",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsscreen_kt",
       "_tgt": "settingsscreen_networkplaceholdertab",
@@ -18165,7 +18349,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L40",
+      "source_location": "L51",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemecolorpicker_kt",
       "_tgt": "settingsthemecolorpicker_themecolorpickeroverlay",
@@ -18177,7 +18361,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L259",
+      "source_location": "L332",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemecolorpicker_kt",
       "_tgt": "settingsthemecolorpicker_themecolorpickerstatusstate",
@@ -18189,7 +18373,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L274",
+      "source_location": "L347",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemecolorpicker_kt",
       "_tgt": "settingsthemecolorpicker_hsvcolor",
@@ -18201,7 +18385,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L285",
+      "source_location": "L358",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemecolorpicker_kt",
       "_tgt": "settingsthemecolorpicker_tohsvcolor",
@@ -18213,7 +18397,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L291",
+      "source_location": "L364",
       "weight": 1.0,
       "_src": "c_users_amon_desktop_projects_bluewaves_v1_feature_settings_src_main_java_com_epubreader_feature_settings_settingsthemecolorpicker_kt",
       "_tgt": "settingsthemecolorpicker_isapproximately",
@@ -18225,7 +18409,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Amon\\Desktop\\projects\\bluewaves_v1\\feature\\settings\\src\\main\\java\\com\\epubreader\\feature\\settings\\SettingsThemeColorPicker.kt",
-      "source_location": "L279",
+      "source_location": "L352",
       "weight": 1.0,
       "_src": "settingsthemecolorpicker_hsvcolor",
       "_tgt": "settingsthemecolorpicker_hsvcolor_tocolorlong",
