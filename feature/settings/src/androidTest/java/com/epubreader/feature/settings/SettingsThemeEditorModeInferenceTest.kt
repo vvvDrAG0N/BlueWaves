@@ -5,6 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -109,9 +110,10 @@ class SettingsThemeEditorModeInferenceTest {
         waitUntilTagExists("custom_theme_reader_background_swatch")
         composeRule.onNodeWithTag("custom_theme_reader_background_swatch").performScrollTo().performClick()
         setSliderProgress("custom_theme_reader_background_picker_hue", 120f)
+        waitUntilTagEnabled("custom_theme_reader_background_picker_save")
         setSliderProgress("custom_theme_reader_background_picker_saturation", 1f)
         setSliderProgress("custom_theme_reader_background_picker_value", 1f)
-        closeColorPicker()
+        closeColorPicker("custom_theme_reader_background")
         waitUntilTextContains("custom_theme_reader_background", "#00FF00")
         saveThemeEditor()
 
@@ -154,7 +156,7 @@ class SettingsThemeEditorModeInferenceTest {
         setSliderProgress("custom_theme_favorite_accent_picker_hue", 0f)
         setSliderProgress("custom_theme_favorite_accent_picker_saturation", 1f)
         setSliderProgress("custom_theme_favorite_accent_picker_value", 1f)
-        closeColorPicker()
+        closeColorPicker("custom_theme_favorite_accent")
         waitUntilTextContains("custom_theme_favorite_accent", "#FF0000")
         saveThemeEditor()
 
@@ -196,7 +198,7 @@ class SettingsThemeEditorModeInferenceTest {
         setSliderProgress("custom_theme_favorite_accent_picker_hue", 0f)
         setSliderProgress("custom_theme_favorite_accent_picker_saturation", 1f)
         setSliderProgress("custom_theme_favorite_accent_picker_value", 1f)
-        closeColorPicker()
+        closeColorPicker("custom_theme_favorite_accent")
         waitUntilTextContains("custom_theme_favorite_accent", "#FF0000")
 
         scrollThemeEditorToTop()
@@ -205,6 +207,8 @@ class SettingsThemeEditorModeInferenceTest {
         composeRule.onNodeWithTag("custom_theme_favorite_accent").performScrollTo()
         composeRule.onNodeWithTag("custom_theme_favorite_accent").assertTextContains("#FF0000")
         composeRule.onNodeWithContentDescription("Close").performClick()
+        waitUntilTagExists("theme_editor_exit_dialog")
+        composeRule.onNodeWithTag("theme_editor_exit_discard").performClick()
     }
 
     private suspend fun resetSettings() {
@@ -320,18 +324,50 @@ class SettingsThemeEditorModeInferenceTest {
             }
     }
 
-    private fun closeColorPicker() {
-        composeRule.onNodeWithText("Done").performClick()
+    private fun waitUntilTagEnabled(tag: String, timeoutMillis: Long = 10_000) {
+        composeRule.waitUntil(timeoutMillis) {
+            runCatching {
+                composeRule.onNodeWithTag(tag).assertIsEnabled()
+                true
+            }.getOrDefault(false)
+        }
+    }
+
+    private fun waitUntilTagAbsent(tag: String, timeoutMillis: Long = 10_000) {
+        composeRule.waitUntil(timeoutMillis) {
+            runCatching {
+                composeRule.onNodeWithTag(tag).fetchSemanticsNode()
+                false
+            }.getOrDefault(true)
+        }
+    }
+
+    private fun closeColorPicker(testTagPrefix: String) {
+        waitUntilTagEnabled("${testTagPrefix}_picker_save")
+        composeRule.onNodeWithTag("${testTagPrefix}_picker_save").performClick()
         composeRule.waitForIdle()
+        waitUntilTagAbsent("${testTagPrefix}_picker_spectrum")
     }
 
     private fun closeColorPickerIfOpen() {
-        val doneExists = runCatching {
-            composeRule.onNodeWithText("Done").fetchSemanticsNode()
+        val pickerVisible = runCatching {
+            composeRule.onNodeWithText("Hue").fetchSemanticsNode()
             true
         }.getOrDefault(false)
-        if (doneExists) {
-            closeColorPicker()
+        if (pickerVisible) {
+            val knownPickerPrefixes = listOf(
+                "custom_theme_reader_background",
+                "custom_theme_favorite_accent",
+            )
+            val activePrefix = knownPickerPrefixes.firstOrNull { prefix ->
+                runCatching {
+                    composeRule.onNodeWithTag("${prefix}_picker_spectrum").fetchSemanticsNode()
+                    true
+                }.getOrDefault(false)
+            }
+            if (activePrefix != null) {
+                closeColorPicker(activePrefix)
+            }
         }
     }
 }

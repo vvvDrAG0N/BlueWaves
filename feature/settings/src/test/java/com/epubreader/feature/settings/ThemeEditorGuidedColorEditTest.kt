@@ -198,6 +198,63 @@ class ThemeEditorGuidedColorEditTest {
         assertEquals(formatThemeColor(expected.readerForeground), result.resolvedHex)
     }
 
+    @Test
+    fun previewColorEdit_doesNotMutateDraftBeforeCommit() {
+        val draft = extendedDraft(
+            palette = generatePaletteFromGuidedInput(
+                GuidedThemePaletteInput(
+                    accent = 0xFF4F46E5,
+                    appBackground = 0xFF000000,
+                    appSurface = 0xFF000000,
+                    appForeground = 0xFFFFFFFF,
+                    appForegroundMuted = 0xFFAAAAAA,
+                    overlayScrim = 0xFF000000,
+                    readerLinked = true,
+                ),
+            ),
+        )
+
+        val preview = draft.previewColorEdit(
+            fieldKey = "app_foreground",
+            rawHex = "#000000",
+            guided = true,
+        )
+
+        assertTrue(preview.wasAdjusted)
+        assertEquals("#FFFFFF", draft.appForeground)
+    }
+
+    @Test
+    fun previewColorEdit_matchesCommitResolvedHex() {
+        val draft = extendedDraft(
+            palette = generatePaletteFromGuidedInput(
+                GuidedThemePaletteInput(
+                    accent = 0xFF4F46E5,
+                    appBackground = 0xFF000000,
+                    appSurface = 0xFF000000,
+                    appForeground = 0xFFFFFFFF,
+                    appForegroundMuted = 0xFFAAAAAA,
+                    overlayScrim = 0xFF000000,
+                    readerLinked = true,
+                ),
+            ),
+        )
+
+        val preview = draft.previewColorEdit(
+            fieldKey = "app_foreground",
+            rawHex = "#000000",
+            guided = true,
+        )
+        val commit = draft.applyColorEdit(
+            fieldKey = "app_foreground",
+            rawHex = "#000000",
+            guided = true,
+        )
+
+        assertEquals(commit.resolvedHex, preview.resolvedHex)
+        assertEquals(commit.wasAdjusted, preview.wasAdjusted)
+    }
+
     private fun extendedDraft(
         palette: com.epubreader.core.model.ThemePalette,
         readerLinked: Boolean = true,

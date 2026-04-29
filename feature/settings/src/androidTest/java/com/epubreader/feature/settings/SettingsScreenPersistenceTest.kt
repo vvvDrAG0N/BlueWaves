@@ -20,6 +20,7 @@ import com.epubreader.core.model.GlobalSettings
 import com.epubreader.core.model.formatThemeColor
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -132,16 +133,59 @@ class SettingsScreenPersistenceTest : SettingsScreenPersistenceTestBase() {
         setSliderProgress("custom_theme_primary_picker_saturation", 1f)
         setSliderProgress("custom_theme_primary_picker_value", 1f)
 
-        closeColorPicker()
-        waitUntilTagGone("custom_theme_primary_picker_hue")
-        waitUntilTextContains("custom_theme_primary", "#FF0000")
+        waitUntilTagExists("custom_theme_primary_picker_safe_zone")
+        waitUntilPickerHexDiffersFrom("custom_theme_primary", "4F46E5")
+        val updatedHex = "#${readPickerHexValue("custom_theme_primary")}"
+        assertNotEquals("#4F46E5", updatedHex)
+        saveColorPicker("custom_theme_primary")
+        waitUntilTagGone("custom_theme_primary_picker_spectrum")
+        waitUntilTextContains("custom_theme_primary", updatedHex)
         saveThemeEditor()
 
         composeRule.waitUntil(10_000) {
             val settings = runBlocking { settingsManager.globalSettings.first() }
             settings.customThemes.any { theme ->
-                theme.name == "Sunset" && formatThemeColor(theme.palette.primary) == "#FF0000"
+                theme.name == "Sunset" && formatThemeColor(theme.palette.primary) == updatedHex
             }
+        }
+    }
+
+    @Test
+    fun pickerSave_thenEditorDiscard_doesNotPersistPaletteChange() {
+        launchSettingsScreen()
+        waitUntilDisplayed("Settings")
+        openAppearanceSection()
+
+        composeRule.onNodeWithTag("create_custom_theme_button").performClick()
+        waitUntilTagExists("custom_theme_name")
+        composeRule.onNodeWithTag("custom_theme_name").performTextClearance()
+        composeRule.onNodeWithTag("custom_theme_name").performTextInput("Discarded Picker Save")
+        saveThemeEditor()
+        composeRule.waitUntil(10_000) {
+            val settings = runBlocking { settingsManager.globalSettings.first() }
+            settings.theme.startsWith(CustomThemeIdPrefix) &&
+                settings.customThemes.any { it.name == "Discarded Picker Save" }
+        }
+
+        openCurrentThemeEditor()
+        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
+        replacePickerHexInput("custom_theme_primary", "FF0000")
+        saveColorPicker("custom_theme_primary")
+        waitUntilTagGone("custom_theme_primary_picker_spectrum")
+        waitUntilTextContains("custom_theme_primary", "#FF0000")
+
+        composeRule.onNodeWithContentDescription("Close").performClick()
+        waitUntilTagExists("theme_editor_exit_dialog")
+        composeRule.onNodeWithTag("theme_editor_exit_discard").performClick()
+        waitUntilTagGone("theme_editor_sheet")
+
+        composeRule.waitUntil(10_000) {
+            runBlocking { settingsManager.globalSettings.first() }
+                .customThemes
+                .any { theme ->
+                    theme.name == "Discarded Picker Save" &&
+                        formatThemeColor(theme.palette.primary) != "#FF0000"
+                }
         }
     }
 

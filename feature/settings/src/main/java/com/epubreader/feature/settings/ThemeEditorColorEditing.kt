@@ -12,9 +12,38 @@ internal data class ThemeEditorPickerSession(
     val testTagPrefix: String?,
     val isGuided: Boolean,
     val onColorChange: (String) -> ThemeEditorColorEditResult,
+    val onColorPreview: ((String) -> ThemeColorPickerPreviewResult)? = null,
 )
 
 internal fun ThemeEditorDraft.applyColorEdit(
+    fieldKey: String,
+    rawHex: String,
+    guided: Boolean,
+): ThemeEditorColorEditResult {
+    return resolveColorEdit(
+        fieldKey = fieldKey,
+        rawHex = rawHex,
+        guided = guided,
+    )
+}
+
+internal fun ThemeEditorDraft.previewColorEdit(
+    fieldKey: String,
+    rawHex: String,
+    guided: Boolean,
+): ThemeColorPickerPreviewResult {
+    val result = resolveColorEdit(
+        fieldKey = fieldKey,
+        rawHex = rawHex,
+        guided = guided,
+    )
+    return ThemeColorPickerPreviewResult(
+        resolvedHex = result.resolvedHex,
+        wasAdjusted = result.wasAdjusted,
+    )
+}
+
+private fun ThemeEditorDraft.resolveColorEdit(
     fieldKey: String,
     rawHex: String,
     guided: Boolean,

@@ -1,371 +1,403 @@
 package com.epubreader.feature.settings
 
-import android.content.Context
-import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.click
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performSemanticsAction
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.performTextClearance
-import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.SemanticsMatcher
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.epubreader.MainActivity
-import com.epubreader.core.model.GlobalSettings
+import com.epubreader.core.model.CustomTheme
 import com.epubreader.core.model.GuidedThemePaletteInput
 import com.epubreader.core.model.formatThemeColor
 import com.epubreader.core.model.generatePaletteFromGuidedInput
-import com.epubreader.data.settings.SettingsManager
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SettingsThemeEditorGuidedPickerTest {
+class SettingsThemeEditorGuidedPickerTest : SettingsThemeEditorGuidedPickerTestBase() {
 
-    @get:Rule
-    val composeRule = createAndroidComposeRule<MainActivity>()
+    @Test
+    fun basicAccent_hexInput_savesWithHeaderCheck() {
+        launchThemeEditor()
 
-    private val appContext: Context = ApplicationProvider.getApplicationContext()
-    private val settingsManager = SettingsManager(appContext)
+        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
+        waitUntilTagDisplayed("custom_theme_primary_picker_safe_zone")
+        replaceHexInput(
+            testTagPrefix = "custom_theme_primary",
+            nextHex = "3366CC",
+        )
+        val expectedHex = "#${readNodeText("custom_theme_primary_picker_hex")}"
 
-    @Before
-    fun setUp() = runBlocking {
-        resetSettings()
+        assertPreviewHex("custom_theme_primary_picker_preview", expectedHex)
+        waitUntilTagEnabled("custom_theme_primary_picker_save")
+        composeRule.onNodeWithTag("custom_theme_primary_picker_save").assertIsEnabled()
+        tapHeaderSave("custom_theme_primary")
+
+        waitUntilPickerClosed("custom_theme_primary")
+        waitUntilTextContains("custom_theme_primary", expectedHex)
     }
 
-    @After
-    fun tearDown() = runBlocking {
-        resetSettings()
+    @Test
+    fun basicAccent_rgbMode_showsCurrentChannelValues() {
+        launchThemeEditor()
+
+        openColorPicker("custom_theme_primary_swatch")
+        selectPickerInputMode("custom_theme_primary", "rgb")
+
+        composeRule.onNodeWithTag("custom_theme_primary_picker_rgb_red").assertTextContains("079")
+        composeRule.onNodeWithTag("custom_theme_primary_picker_rgb_green").assertTextContains("070")
+        composeRule.onNodeWithTag("custom_theme_primary_picker_rgb_blue").assertTextContains("229")
+
+        requestCloseColorPicker("custom_theme_primary")
+        waitUntilPickerClosed("custom_theme_primary")
+    }
+
+    @Test
+    fun advancedFavoriteAccent_rgbInput_keepsLiteralPreviewWithoutGuidedCue() {
+        val seededTheme = blackExtendedTheme()
+        runBlocking {
+            resetSettings(
+                theme = seededTheme.id,
+                customThemes = listOf(seededTheme),
+            )
+        }
+        launchCurrentThemeEditor()
+        selectThemeEditorMode("advanced")
+
+        openColorPicker("custom_theme_favorite_accent_swatch")
+        replaceRgbInput(
+            testTagPrefix = "custom_theme_favorite_accent",
+            red = "255",
+            green = "064",
+            blue = "032",
+        )
+        val literalHex = "#FF4020"
+
+        assertPreviewHex("custom_theme_favorite_accent_picker_preview", literalHex)
+        assertTagDoesNotExist("custom_theme_favorite_accent_picker_guided_status")
+        assertTagDoesNotExist("custom_theme_favorite_accent_picker_safe_zone")
+        requestCloseColorPicker("custom_theme_favorite_accent")
+        waitUntilTagExists("custom_theme_favorite_accent_picker_exit_dialog")
+        tapExitDialogAction("custom_theme_favorite_accent", "discard")
+        waitUntilPickerClosed("custom_theme_favorite_accent")
+    }
+
+    @Test
+    fun extendedInvalidAppText_typedHex_adjustsAndShowsGuidedCue() {
+        val seededTheme = blackExtendedTheme()
+        runBlocking {
+            resetSettings(
+                theme = seededTheme.id,
+                customThemes = listOf(seededTheme),
+            )
+        }
+        launchCurrentThemeEditor()
+        selectThemeEditorMode("extended")
+        composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        replaceHexInput(
+            testTagPrefix = "custom_theme_system_text",
+            nextHex = "000000",
+        )
+        val resolvedHex = "#${readNodeText("custom_theme_system_text_picker_hex")}"
+
+        composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status")
+            .assertIsDisplayed()
+        assertNotEquals("#000000", resolvedHex)
+        assertPreviewHex("custom_theme_system_text_picker_preview", resolvedHex)
+        composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status")
+            .assertTextContains("Adjusted for readability")
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", resolvedHex)
+        waitUntilPickerClosed("custom_theme_system_text")
     }
 
     @Test
     fun extendedInvalidAppText_resolvesToReadableColor_andShowsGuidedStatus() {
-        launchThemeEditor()
+        val seededTheme = blackExtendedTheme()
+        runBlocking {
+            resetSettings(
+                theme = seededTheme.id,
+                customThemes = listOf(seededTheme),
+            )
+        }
+        launchCurrentThemeEditor()
         selectThemeEditorMode("extended")
-
-        setPickerColor(
-            swatchTag = "custom_theme_background_swatch",
-            testTagPrefix = "custom_theme_background",
-            brightness = 0f,
-        )
-        setPickerColor(
-            swatchTag = "custom_theme_surface_swatch",
-            testTagPrefix = "custom_theme_surface",
-            brightness = 0f,
-        )
         composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        composeRule.onNodeWithTag("custom_theme_system_text_picker_spectrum").assertIsDisplayed()
+        waitUntilTagDisplayed("custom_theme_system_text_picker_safe_zone")
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status").assertIsDisplayed()
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status")
             .assertTextContains("Guided mode keeps colors readable")
         assertPreviewState("custom_theme_system_text_picker_preview", "default")
         setSliderProgress("custom_theme_system_text_picker_hue", 0f)
-        setSliderProgress("custom_theme_system_text_picker_saturation", 1f)
-        setSliderProgress("custom_theme_system_text_picker_value", 0f)
-        closeColorPicker()
-
-        val expectedText = formatThemeColor(
-            generatePaletteFromGuidedInput(
-                GuidedThemePaletteInput(
-                    accent = 0xFF4F46E5,
-                    appBackground = 0xFF000000,
-                    appSurface = 0xFF000000,
-                    appForeground = 0xFF000000,
-                    readerLinked = true,
-                ),
-            ).appForeground,
+        setSpectrumPoint(
+            tag = "custom_theme_system_text_picker_spectrum",
+            saturation = 1f,
+            value = 0f,
         )
-
-        waitUntilTextContains("custom_theme_system_text", expectedText)
+        val previewHex = readPreviewHex("custom_theme_system_text_picker_preview")
+        assertNotEquals("#000000", previewHex)
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", previewHex)
+        waitUntilPickerClosed("custom_theme_system_text")
     }
 
     @Test
-    fun extendedValidAppText_keepsExactChoice() {
-        launchThemeEditor()
+    fun extendedInvalidAppText_blockedSpectrumTap_keepsLastValidPreview() {
+        val seededTheme = blackExtendedTheme()
+        runBlocking {
+            resetSettings(
+                theme = seededTheme.id,
+                customThemes = listOf(seededTheme),
+            )
+        }
+        val blockedPoint = blockedPointForGuidedField(
+            fieldKey = "app_foreground",
+            hue = 0f,
+            draft = extendedDraft(seededTheme.palette),
+        )
+
+        launchCurrentThemeEditor()
         selectThemeEditorMode("extended")
 
         composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        composeRule.onNodeWithTag("custom_theme_system_text_picker_spectrum").assertIsDisplayed()
+        waitUntilTagDisplayed("custom_theme_system_text_picker_safe_zone")
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status").assertIsDisplayed()
         composeRule.onNodeWithTag("custom_theme_system_text_picker_guided_status")
             .assertTextContains("Guided mode keeps colors readable")
-        assertPreviewState("custom_theme_system_text_picker_preview", "default")
         setSliderProgress("custom_theme_system_text_picker_hue", 0f)
-        setSliderProgress("custom_theme_system_text_picker_saturation", 0f)
-        setSliderProgress("custom_theme_system_text_picker_value", 0f)
-        closeColorPicker()
+        val previewBeforeBlockedTap = readPreviewHex("custom_theme_system_text_picker_preview")
 
-        waitUntilTextContains("custom_theme_system_text", "#000000")
+        setSpectrumPoint(
+            tag = "custom_theme_system_text_picker_spectrum",
+            saturation = blockedPoint.saturation,
+            value = blockedPoint.value,
+        )
+
+        assertPreviewHex("custom_theme_system_text_picker_preview", previewBeforeBlockedTap)
+        requestCloseColorPicker("custom_theme_system_text")
+        waitUntilPickerClosed("custom_theme_system_text")
     }
 
     @Test
     fun advancedInvalidAppText_staysLiteral() {
-        launchThemeEditor()
+        val seededTheme = blackExtendedTheme()
+        runBlocking {
+            resetSettings(
+                theme = seededTheme.id,
+                customThemes = listOf(seededTheme),
+            )
+        }
+        launchCurrentThemeEditor()
         selectThemeEditorMode("advanced")
-
-        setPickerColor(
-            swatchTag = "custom_theme_background_swatch",
-            testTagPrefix = "custom_theme_background",
-            brightness = 0f,
-        )
-        setPickerColor(
-            swatchTag = "custom_theme_surface_swatch",
-            testTagPrefix = "custom_theme_surface",
-            brightness = 0f,
-        )
         composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        composeRule.onNodeWithTag("custom_theme_system_text_picker_spectrum").assertIsDisplayed()
         assertPreviewState("custom_theme_system_text_picker_preview", "default")
         setSliderProgress("custom_theme_system_text_picker_hue", 0f)
-        setSliderProgress("custom_theme_system_text_picker_saturation", 1f)
-        setSliderProgress("custom_theme_system_text_picker_value", 0f)
+        val attemptedPoint = setSpectrumPoint(
+            tag = "custom_theme_system_text_picker_spectrum",
+            saturation = 1f,
+            value = 0f,
+        )
 
-        waitUntilTextContains("custom_theme_system_text", "#000000")
+        val expectedHex = formatThemeColor(
+            ThemeColorPickerHsv(
+                hue = 0f,
+                saturation = attemptedPoint.saturation,
+                value = attemptedPoint.value,
+            ).toColorLong(),
+        )
+        assertPreviewHex("custom_theme_system_text_picker_preview", expectedHex)
         assertTagDoesNotExist("custom_theme_system_text_picker_guided_status")
+        assertTagDoesNotExist("custom_theme_system_text_picker_safe_zone")
         assertPreviewState("custom_theme_system_text_picker_preview", "default")
-        closeColorPicker()
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", expectedHex)
     }
 
     @Test
-    fun basicAccent_backDismiss_discardsPendingGuidedChoice() {
+    fun basicPicker_showsSafeZoneWhileAdvancedHidesIt() {
         launchThemeEditor()
 
         composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        setSliderProgress("custom_theme_primary_picker_hue", 0f)
-        setSliderProgress("custom_theme_primary_picker_saturation", 1f)
-        setSliderProgress("custom_theme_primary_picker_value", 1f)
-        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        waitUntilTagExists("custom_theme_primary_picker_hue")
+        waitUntilTagExists("custom_theme_primary_picker_spectrum")
+        waitUntilTagExists("custom_theme_primary_picker_safe_zone")
+        tapHeaderSave("custom_theme_primary")
 
-        pressBack()
-        composeRule.waitForIdle()
-
-        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        assertTagDoesNotExist("custom_theme_primary_picker_hue")
-    }
-
-    @Test
-    fun basicAccent_outsideDismiss_discardsPendingGuidedChoice() {
-        launchThemeEditor()
-
-        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        setSliderProgress("custom_theme_primary_picker_hue", 0f)
-        setSliderProgress("custom_theme_primary_picker_saturation", 1f)
-        setSliderProgress("custom_theme_primary_picker_value", 1f)
-        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        waitUntilTagExists("custom_theme_primary_picker_hue")
-
-        dismissColorPickerByOutsideTap("custom_theme_primary_picker_backdrop")
-        composeRule.waitForIdle()
-
-        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        assertTagDoesNotExist("custom_theme_primary_picker_hue")
-    }
-
-    @Test
-    fun basicAccent_dialogChromeTap_keepsPickerOpen() {
-        launchThemeEditor()
-
-        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
-        setSliderProgress("custom_theme_primary_picker_hue", 0f)
-        setSliderProgress("custom_theme_primary_picker_saturation", 1f)
-        setSliderProgress("custom_theme_primary_picker_value", 1f)
-        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-
-        tapDialogChrome("custom_theme_primary_picker_dialog")
-        composeRule.waitForIdle()
-
-        waitUntilTagExists("custom_theme_primary_picker_hue")
-        composeRule.onNodeWithTag("custom_theme_primary").assertTextContains("#4F46E5")
-        closeColorPicker()
+        selectThemeEditorMode("advanced")
+        composeRule.onNodeWithTag("custom_theme_favorite_accent_swatch").performScrollTo().performClick()
+        waitUntilTagExists("custom_theme_favorite_accent_picker_spectrum")
+        assertTagDoesNotExist("custom_theme_favorite_accent_picker_safe_zone")
+        tapHeaderSave("custom_theme_favorite_accent")
     }
 
     @Test
     fun extendedInvalidAppText_doneKeepsGuidedResolvedChoice() {
-        launchThemeEditor()
+        val seededTheme = blackExtendedTheme()
+        runBlocking {
+            resetSettings(
+                theme = seededTheme.id,
+                customThemes = listOf(seededTheme),
+            )
+        }
+        launchCurrentThemeEditor()
         selectThemeEditorMode("extended")
-
-        setPickerColor(
-            swatchTag = "custom_theme_background_swatch",
-            testTagPrefix = "custom_theme_background",
-            brightness = 0f,
-        )
-        setPickerColor(
-            swatchTag = "custom_theme_surface_swatch",
-            testTagPrefix = "custom_theme_surface",
-            brightness = 0f,
-        )
         composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
         setSliderProgress("custom_theme_system_text_picker_hue", 0f)
-        setSliderProgress("custom_theme_system_text_picker_saturation", 1f)
-        setSliderProgress("custom_theme_system_text_picker_value", 0f)
+        setSpectrumPoint(
+            tag = "custom_theme_system_text_picker_spectrum",
+            saturation = 1f,
+            value = 0f,
+        )
+        val previewHex = readPreviewHex("custom_theme_system_text_picker_preview")
+        assertNotEquals("#000000", previewHex)
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", previewHex)
+        waitUntilPickerClosed("custom_theme_system_text")
+    }
 
-        closeColorPicker()
+    @Test
+    fun advancedToExtended_openingGuidedPicker_startsCleanWhenDraftWasRebalanced() {
+        launchThemeEditor()
+        selectThemeEditorMode("advanced")
 
-        val expectedText = formatThemeColor(
-            generatePaletteFromGuidedInput(
+        composeRule.onNodeWithTag("custom_theme_background_swatch").performScrollTo().performClick()
+        replaceHexInput("custom_theme_background", "000000")
+        tapHeaderSave("custom_theme_background")
+        waitUntilTextContains("custom_theme_background", "#000000")
+
+        composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        replaceHexInput("custom_theme_system_text", "000000")
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", "#000000")
+
+        composeRule.onNodeWithContentDescription("Save").performClick()
+        composeRule.waitForIdle()
+
+        launchCurrentThemeEditor()
+        selectThemeEditorMode("extended")
+        composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        waitUntilTagExists("custom_theme_system_text_picker_safe_zone")
+
+        requestCloseColorPicker("custom_theme_system_text")
+
+        assertTagDoesNotExist("custom_theme_system_text_picker_exit_dialog")
+        waitUntilPickerClosed("custom_theme_system_text")
+    }
+
+    @Test
+    fun advancedToBasic_openingGuidedPicker_startsCleanWhenDraftWasRebalanced() {
+        launchThemeEditor()
+        selectThemeEditorMode("advanced")
+
+        composeRule.onNodeWithTag("custom_theme_background_swatch").performScrollTo().performClick()
+        replaceHexInput("custom_theme_background", "000000")
+        tapHeaderSave("custom_theme_background")
+        waitUntilTextContains("custom_theme_background", "#000000")
+
+        composeRule.onNodeWithTag("custom_theme_system_text_swatch").performScrollTo().performClick()
+        replaceHexInput("custom_theme_system_text", "000000")
+        tapHeaderSave("custom_theme_system_text")
+        waitUntilTextContains("custom_theme_system_text", "#000000")
+
+        composeRule.onNodeWithContentDescription("Save").performClick()
+        composeRule.waitForIdle()
+
+        launchCurrentThemeEditor()
+        selectThemeEditorMode("basic")
+        composeRule.onNodeWithTag("custom_theme_primary_swatch").performScrollTo().performClick()
+        waitUntilTagExists("custom_theme_primary_picker_safe_zone")
+
+        requestCloseColorPicker("custom_theme_primary")
+
+        assertTagDoesNotExist("custom_theme_primary_picker_exit_dialog")
+        waitUntilPickerClosed("custom_theme_primary")
+    }
+
+    private fun blackExtendedTheme(): CustomTheme {
+        return CustomTheme(
+            id = "custom-guided-black",
+            name = "Guided Black",
+            palette = generatePaletteFromGuidedInput(
                 GuidedThemePaletteInput(
                     accent = 0xFF4F46E5,
                     appBackground = 0xFF000000,
                     appSurface = 0xFF000000,
-                    appForeground = 0xFF000000,
+                    appForeground = 0xFFFFFFFF,
+                    appForegroundMuted = 0xFFAAAAAA,
+                    overlayScrim = 0xFF000000,
                     readerLinked = true,
                 ),
-            ).appForeground,
-        )
-
-        waitUntilTextContains("custom_theme_system_text", expectedText)
-    }
-
-    private suspend fun resetSettings() {
-        settingsManager.updateGlobalSettings(
-            GlobalSettings(
-                fontSize = 18,
-                fontType = "serif",
-                theme = "light",
-                customThemes = emptyList(),
-                lineHeight = 1.6f,
-                horizontalPadding = 16,
-                showScrubber = false,
-                showSystemBar = false,
-                allowBlankCovers = false,
             ),
         )
     }
 
-    private fun launchThemeEditor() {
-        composeRule.runOnUiThread {
-            composeRule.activity.setContent {
-                MaterialTheme {
-                    SettingsScreen(
-                        settingsManager = settingsManager,
-                        onBack = {},
-                    )
-                }
+    private fun blockedPointForGuidedField(
+        fieldKey: String,
+        hue: Float,
+        draft: ThemeEditorDraft,
+    ): ThemeColorPickerPoint {
+        val safeZone = buildGuidedSafeZone(
+            hue = hue,
+            previewColor = { rawHex ->
+                draft.previewColorEdit(
+                    fieldKey = fieldKey,
+                    rawHex = rawHex,
+                    guided = true,
+                )
+            },
+        )
+        val point = safeZone.pickBlockedPoint()
+            ?: error("Expected a blocked guided point for $fieldKey at hue=$hue")
+        check(!safeZone.contains(point)) {
+            "Blocked point for $fieldKey at hue=$hue must be outside the guided safe zone"
+        }
+        return point
+    }
+
+    private fun ThemeColorPickerSafeZone.pickBlockedPoint(): ThemeColorPickerPoint? {
+        rows.forEach { row ->
+            val spans = row.spans.sortedBy { it.start }
+            val firstSpan = spans.firstOrNull() ?: return@forEach
+            if (firstSpan.start > 0.02f) {
+                return ThemeColorPickerPoint(
+                    saturation = firstSpan.start / 2f,
+                    value = row.value,
+                )
+            }
+
+            spans.zipWithNext().firstOrNull { (leftSpan, rightSpan) ->
+                rightSpan.start - leftSpan.endInclusive > 0.04f
+            }?.let { (leftSpan, rightSpan) ->
+                return ThemeColorPickerPoint(
+                    saturation = (leftSpan.endInclusive + rightSpan.start) / 2f,
+                    value = row.value,
+                )
+            }
+
+            val lastSpan = spans.last()
+            if (lastSpan.endInclusive < 0.98f) {
+                return ThemeColorPickerPoint(
+                    saturation = (lastSpan.endInclusive + 1f) / 2f,
+                    value = row.value,
+                )
             }
         }
-        waitUntilDisplayed("Settings")
-        composeRule.onNodeWithTag("settings_section_appearance").performClick()
-        waitUntilTagExists("create_custom_theme_button")
-        composeRule.onNodeWithTag("create_custom_theme_button").performClick()
-        waitUntilTagExists("custom_theme_name")
-        composeRule.onNodeWithTag("custom_theme_name").performTextClearance()
-        composeRule.onNodeWithTag("custom_theme_name").performTextInput("Guided Picker Test")
-    }
 
-    private fun selectThemeEditorMode(mode: String) {
-        composeRule.onNodeWithTag("theme_editor_mode_${mode.lowercase()}").performClick()
-        composeRule.waitForIdle()
-    }
-
-    private fun setPickerColor(
-        swatchTag: String,
-        testTagPrefix: String,
-        hue: Float = 0f,
-        saturation: Float = 1f,
-        brightness: Float,
-    ) {
-        composeRule.onNodeWithTag(swatchTag).performScrollTo().performClick()
-        setSliderProgress("${testTagPrefix}_picker_hue", hue)
-        setSliderProgress("${testTagPrefix}_picker_saturation", saturation)
-        setSliderProgress("${testTagPrefix}_picker_value", brightness)
-        closeColorPicker()
-    }
-
-    private fun closeColorPicker() {
-        composeRule.onNodeWithText("Done").performClick()
-        composeRule.waitForIdle()
-    }
-
-    private fun dismissColorPickerByOutsideTap(dialogTag: String) {
-        composeRule.onNodeWithTag(dialogTag).performTouchInput {
-            click(Offset(width * 0.1f, height * 0.1f))
+        val darkestAllowedValue = rows.lastOrNull()?.value ?: return ThemeColorPickerPoint(0.5f, 0.5f)
+        if (darkestAllowedValue > 0.02f) {
+            return ThemeColorPickerPoint(
+                saturation = 0.5f,
+                value = darkestAllowedValue / 2f,
+            )
         }
-    }
 
-    private fun tapDialogChrome(dialogTag: String) {
-        composeRule.onNodeWithTag(dialogTag).performTouchInput {
-            click(Offset(width * 0.9f, 24f))
-        }
-    }
-
-    private fun waitUntilDisplayed(text: String, timeoutMillis: Long = 10_000) {
-        composeRule.waitUntil(timeoutMillis) {
-            runCatching {
-                composeRule.onNodeWithText(text).assertIsDisplayed()
-                true
-            }.getOrDefault(false)
-        }
-    }
-
-    private fun waitUntilTagExists(tag: String, timeoutMillis: Long = 10_000) {
-        composeRule.waitUntil(timeoutMillis) {
-            runCatching {
-                composeRule.onNodeWithTag(tag).fetchSemanticsNode()
-                true
-            }.getOrDefault(false)
-        }
-    }
-
-    private fun assertTagDoesNotExist(tag: String) {
-        val exists = runCatching {
-            composeRule.onNodeWithTag(tag).fetchSemanticsNode()
-            true
-        }.getOrDefault(false)
-        if (exists) {
-            throw AssertionError("Expected tag '$tag' to be absent")
-        }
-    }
-
-    private fun assertPreviewState(tag: String, state: String) {
-        composeRule.onNodeWithTag(tag)
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, state))
-    }
-
-    private fun waitUntilPreviewState(
-        tag: String,
-        state: String,
-        timeoutMillis: Long = 10_000,
-    ) {
-        composeRule.waitUntil(timeoutMillis) {
-            runCatching {
-                assertPreviewState(tag, state)
-                true
-            }.getOrDefault(false)
-        }
-    }
-
-    private fun waitUntilTextContains(
-        tag: String,
-        text: String,
-        timeoutMillis: Long = 10_000,
-    ) {
-        composeRule.waitUntil(timeoutMillis) {
-            runCatching {
-                composeRule.onNodeWithTag(tag).assertTextContains(text)
-                true
-            }.getOrDefault(false)
-        }
-    }
-
-    private fun setSliderProgress(tag: String, value: Float) {
-        composeRule.onNodeWithTag(tag)
-            .performSemanticsAction(SemanticsActions.SetProgress) { setProgress ->
-                setProgress(value)
-            }
+        return null
     }
 }
